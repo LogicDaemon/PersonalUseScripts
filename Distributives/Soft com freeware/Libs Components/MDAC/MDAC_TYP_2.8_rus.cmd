@@ -1,0 +1,1 @@
+"%~dp0MDAC_TYP_2.8_rus.EXE" /q

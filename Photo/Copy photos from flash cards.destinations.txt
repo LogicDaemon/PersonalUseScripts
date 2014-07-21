@@ -1,0 +1,2 @@
+﻿%USERPROFILE%\Pictures\Photo\.add
+\\miwifi.com\Share\Photo

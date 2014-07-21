@@ -1,0 +1,1 @@
+START "" /D "%~dp0" winrar.exe m -r -ep0 js.rar *.js

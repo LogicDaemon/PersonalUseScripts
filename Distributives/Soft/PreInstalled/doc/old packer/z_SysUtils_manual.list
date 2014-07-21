@@ -1,0 +1,15 @@
+﻿cpl
+cygwin
+LTRDATA
+nirsoft
+NTToolkit
+ResKit\APPSEC.*
+Support Tools
+SysInternals\pstools-eulaed
+aria2c.*
+CleanNew.exe
+DefragNT.exe
+xml.exe
+xml-README
+xmlstarlet-*
+xmlstarlet.*
