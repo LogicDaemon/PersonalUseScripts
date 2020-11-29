@@ -11,17 +11,17 @@ EnvSet dirDropbox, %dirDropbox%
 global hiddenPIDs := {}
 
 commands =
-    (LTrim
-    %SystemRoot%\System32\sc.exe config "Backupper Service" start= demand
-    "%LocalAppData%\Programs\Total Commander\PlugIns\wdx\TrID_Identifier\TrID\update.cmd"
-    "%A_AppData%\GHISLER\download pci.ids and convert to pci.db.ahk"
-    "%LocalAppData%\Scripts\WarframeCleanup.cmd"
-    "%A_ScriptDir%\compact_lzx_ProgramsDirs.cmd"
-    "%dirDropbox%\Config\scripts\call _link.cmd for HOSTNAME and GROUP.cmd"
-    "%dirDropbox%\Config\scripts\copy tasks.cmd"
-    "%dirDropbox%\Config\scripts\export registry settings.cmd"
-    %comspec% /C "DEL "D:\Games\Steam\SteamApps\common\Warframe\Tools\*.TMP""
-    )
+(
+%SystemRoot%\System32\sc.exe config "Backupper Service" start= demand
+"%LocalAppData%\Programs\Total Commander\PlugIns\wdx\TrID_Identifier\TrID\update.cmd"
+"%A_AppData%\GHISLER\download pci.ids and convert to pci.db.ahk"
+"%dirDropbox%\Config\scripts\call _link.cmd for HOSTNAME and GROUP.cmd"
+"%dirDropbox%\Config\scripts\copy tasks.cmd"
+"%dirDropbox%\Config\scripts\export registry settings.cmd"
+"%LocalAppData%\Scripts\WarframeCleanup.cmd"
+"%A_ScriptDir%\compact Chrome cache.cmd" /purgeCaches /purgeIndexedDB /chrome
+"%A_ScriptDir%\compact_lzx_ProgramsDirs.cmd"
+)
 
 DllCall("SetPriorityClass", "UInt", DllCall("GetCurrentProcess"), "UInt", 0x00100000) ; PROCESS_MODE_BACKGROUND_BEGIN=0x00100000 https://msdn.microsoft.com/en-us/library/ms686219.aspx
 Loop Parse, commands, `n
