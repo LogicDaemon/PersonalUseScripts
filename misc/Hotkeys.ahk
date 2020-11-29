@@ -93,22 +93,6 @@ DllCall("psapi.dll\EmptyWorkingSet", "Int", -1, "Int")
 #include *i %A_ScriptDir%\Hotkeys_Custom.ahk
 return
 
-;---
-
-; #If (!WinExist("ahk_exe Greenshot.exe"))
-; ^PrintScreen::
-;     If (!WinExist(ahk_exe SnippingTool.exe))
-;         RunDelayed(A_WinDir "\system32\SnippingTool.exe",,"")
-;     WinWait Snipping Tool ahk_class Microsoft-Windows-SnipperToolbar ahk_exe SnippingTool.exe
-;     Sleep 100
-;     WinActivate
-;     SendEvent !{vk4E} ; vk4E=N, !N
-;     ;ControlSend ToolbarWindow321, !{vk4E}
-;     ;ControlClick ToolbarWindow321, x30 y16
-; return
-; #If (GreenshotExe && !WinExist("ahk_exe Greenshot.exe"))
-; +PrintScreen::	RunDelayed(GreenshotExe,,"")
-
 #IfWinNotActive ahk_group ExcludedFromAutoReplace
     #Hotstring * ? C Z
     ;* (asterisk): An ending character (e.g. space, period, or enter) is not required to trigger the hotstring
@@ -206,7 +190,6 @@ FillDelayedRunGroups() {
                                             , "#+VK57":	 [A_ScriptDir "\Chromium.ahk"]						;vk57=w #+w
                                             , "+SC132":	 [A_ScriptDir "\Chromium.ahk"]						;SC132=Homepage +Homepage
                                             , "^!+Esc":  [procexpexe]								;^!+Esc
-                                            , "^SC132":  [A_ScriptDir "\opera.cmd",,,,7]                           		;^Homepage
                                             , "#SC132":  [A_ScriptDir "\ie.cmd",,,,7]						;#Homepage
                                             , "#^!VK57": [laPrograms "\Tor Browser\Browser\firefox.exe",,,,7]			;#^!w
                                             , "^!SC132": [laPrograms "\Tor Browser\Browser\firefox.exe",,,,7]			;^!Homepage
@@ -227,12 +210,12 @@ FillDelayedRunGroups() {
                                             , "#VK56":	 [vscode]						    		;vk56=v #v
                                             , "#!VK57":  [A_ScriptDir "\palemoon.cmd",,,,7]					;vk57=w #!w
                                             , "#!VK53":	 [A_ScriptDir "\EmailSelection.ahk",, ""] }				;vk53=s #!s
-                                , "#VK5A":  { "#VK44":	 [A_ScriptDir "\GoogleDrive.ahk"]				        ;vk5a=z #z vk44=d #d
-                                            , "#+VK44":	 [A_ScriptDir "\Dropbox.ahk"]					        ;vk44=d #+d
-                                            , "^VK45":	 [notepad2exe, """" A_ScriptFullPath """"]			        ;vk45=e ^e
+                                , "#VK5A":  { "^VK45":	 [notepad2exe, """" A_ScriptFullPath """"]			        ;vk45=e ^e
                                             , "^+VK45":	 [notepad2exe, """" A_ScriptDir "\Hotkeys_Custom.ahk"""]	        ;vk45=e ^+e
                                             , "#VK57":	 AU3_SpyExecArray			          	 	 	;vk57=w #w
                                             , "#VK52":	 [A_ScriptDir "\LiceCapResize.ahk",,""]	        			;vk52=r #r
+                                            , "#VK44":	 [A_ScriptDir "\GoogleDrive.ahk"]				        ;vk5a=z #z vk44=d #d
+                                            , "#+VK44":	 [A_ScriptDir "\Dropbox.ahk"]					        ;vk44=d #+d
                                             , "+F1": 	 [A_AhkDir "\AutoHotkey.chm",,""] } }
 
     For altKey, HotkeysRunDelayed in RunDelayedGroups {
@@ -368,12 +351,12 @@ MoveToCorner(HorizSplit, VertSplit, MonNum := -1) {
 	If (VertSplit < 0)
 	    newY := MonWATop - borderSize
 	else
-	    NewY := MonWABottom - NewH + borderSize
+            NewY := MonWABottom - NewH + borderSize
     }
 	
     WinMove,,, newX, newY, , 
     WinMove,,, , , newW, newH
-;    ToolTip newX: %newX% newY: %newY%`nnewW: %newW% newH: %newH%
+    ;    ToolTip newX: %newX% newY: %newY%`nnewW: %newW% newH: %newH%
 }
 
 PrepareAltMode(ByRef altMode) {
@@ -393,8 +376,9 @@ AlternateHotkeysOff() {
 lReload:
     ToolTip
     ToolTip Reloading
-    AlternateHotkeys:=0
-    Reload
+    AlternateHotkeysOff()
+    If (!(IsFunc("CustomReload") && Func("CustomReload").Call()))
+        Reload
     Sleep 300 ; if successful, the reload will close this instance during the Sleep, so the line below will never be reached.
     MsgBox 4,, The script could not be reloaded. Would you like to open it for editing?
     IfMsgBox, Yes

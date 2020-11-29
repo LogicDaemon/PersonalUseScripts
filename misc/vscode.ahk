@@ -18,27 +18,39 @@ If (vscodeRunning && !scriptcmdln) {
     EnvGet LocalAppData, LocalAppData
     vscodeexe := FirstExisting(LocalAppData "\Programs\Microsoft VS Code\Code.exe", LocalAppData "\Programs\VSCode\Code.exe")
     If (!vscodeRunning) {
+        curlerr := -1
         TrayTip,,Testing current environment connectivity (3s max)
-        RunWait curl --connect-timeout 3 http://clients3.google.com/generate_204, %A_Temp%, Hide UseErrorLevel
-        curlerr := %ErrorLevel%
+        SetTimer killCURL, -5000
+        RunWait curl --connect-timeout 3 http://clients3.google.com/generate_204, %A_Temp%, UseErrorLevel, curlPID ; Hide 
+        curlerr := ErrorLevel
+        SetTimer killCURL, Off
         TrayTip
-
+        
         If (curlerr) {
-            removehp := RegWriteUserEnv("http_proxy", "%http_proxy_%", true)
-            removehps := RegWriteUserEnv("https_proxy", "%https_proxy_%", true)
-            If (removehp || removehps)
-                EnvUpdate
+            ; removehp := RegWriteUserEnv("http_proxy", "%http_proxy_%", true)
+            ; removehps := RegWriteUserEnv("https_proxy", "%https_proxy_%", true)
+            ; If (removehp || removehps)
+            ;     EnvUpdate
+            ; EnvGet http_proxy, http_proxy_
+            ; EnvGet https_proxy, https_proxy_
+            Run %comspec% /C "%USERPROFILE%\Documents\Scripts\cntlm.cmd",,Min
+            http_proxy := https_proxy := "http://localhost:63128/"
+            EnvSet http_proxy, %http_proxy%
+            EnvSet https_proxy, %https_proxy%
         }
     }
 
-    ShellRun(vscodeexe, scriptcmdln)
+    Run "%vscodeexe%" %scriptcmdln%
     
-    If (!vscodeRunning && ((removehp && RegWriteUserEnv("http_proxy", "")) + (removehps && RegWriteUserEnv("https_proxy", "")))) ; + is like OR but with mandatory execution for both args
-        EnvUpdate    
+    ; If (!vscodeRunning && ((removehp && RegWriteUserEnv("http_proxy", "")) + (removehps && RegWriteUserEnv("https_proxy", "")))) ; + is like OR but with mandatory execution for both args
+    ;     EnvUpdate    
 }
 
 ExitApp
 
+killCURL:
+    Process Close, %curlPID%
+ExitApp
+
 #include <RegWriteUserEnv>
 #include <ParseScriptCommandLine>
-#include <ShellRun by Lexikos>

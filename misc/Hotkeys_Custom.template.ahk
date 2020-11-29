@@ -1,7 +1,7 @@
 ﻿If (ReadPassesFromFile(CmdlArgs(1)[1]))
     return
 
-Run "%A_AhkPath%" "%A_ScriptDir%\%A_UserName%_KeePass.ahk"
+Run "%A_AhkPath%" "%A_ScriptDir%\KeePass_%A_UserName%.ahk"
 
 Gui Add, Text, Section, Main pass:
 Gui Add, Edit, ys x80 vhot_password Password, %hot_password%

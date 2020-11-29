@@ -3,7 +3,7 @@
 
 GetDropboxDir(ByRef checkDropboxRunning := -1) {
     local
-    global LocalAppData
+    global LocalAppData, JSON
     If (LocalAppData)
         lLocalAppData := LocalAppData
     Else

@@ -49,12 +49,11 @@ EXIT /B 1
                 ECHO Cleaning up %%C
                 REM + "File System"
                 IF "%purgeIndexedDB%"=="1" RD /S /Q "%%~C\IndexedDB"
-                FOR /D %%D IN ("Application Cache" "Cache" "Code Cache" "GPUCache" "Service Worker" "def\Application Cache" "def\Cache" "def\Code Cache" "def\GPUCache") DO @(
-                    IF "%cleanup%"=="1" IF EXIST "%%~C\%%~D\." (
-                        RD /S /Q "%%~C\%%~D"
-                    ) ELSE (
-                        IF "%compactLZX%"=="1" COMPACT /C /S:"%%~C\%%~D" /F /EXE:LZX
+                IF "%cleanup%"=="1" (
+                    FOR /D %%D IN ("Application Cache" "Cache" "Code Cache" "GPUCache" "Service Worker" "def\Application Cache" "def\Cache" "def\Code Cache" "def\GPUCache") DO @(
+                        IF EXIST "%%~C\%%~D\." RD /S /Q "%%~C\%%~D"
                     )
+                    FOR /D %%D IN ("%%~C\old_*") DO RD /S /Q "%%~C\%%~D"
                 )
             )
             IF "%compactLZX%"=="1" COMPACT /Q /C /S:"%%~P\Extensions" /F /EXE:LZX

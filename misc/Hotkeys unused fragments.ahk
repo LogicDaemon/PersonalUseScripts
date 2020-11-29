@@ -13,3 +13,17 @@
     ControlSend ahk_class TV_CClientWindowClass, {ScrollLock}
     PostMessage 0x112, 0xF120,,, ahk_class TV_CClientWindowClass ; 0x112 = WM_SYSCOMMAND, 0xF120 = SC_RESTORE
 return
+
+#If (!WinExist("ahk_exe Greenshot.exe"))
+^PrintScreen::
+    If (!WinExist(ahk_exe SnippingTool.exe))
+        RunDelayed(A_WinDir "\system32\SnippingTool.exe",,"")
+    WinWait Snipping Tool ahk_class Microsoft-Windows-SnipperToolbar ahk_exe SnippingTool.exe
+    Sleep 100
+    WinActivate
+    SendEvent !{vk4E} ; vk4E=N, !N
+    ;ControlSend ToolbarWindow321, !{vk4E}
+    ;ControlClick ToolbarWindow321, x30 y16
+return
+#If (GreenshotExe && !WinExist("ahk_exe Greenshot.exe"))
++PrintScreen::	RunDelayed(GreenshotExe,,"")

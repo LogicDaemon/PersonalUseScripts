@@ -1,5 +1,6 @@
 CmdlArgs(argsLimit := 0, switchRegex := "^[/-]") {
     local ; Force-local mode
+    global A_Args
     switches := [], args := [], argc := 0
     
     For i, arg in A_Args {
