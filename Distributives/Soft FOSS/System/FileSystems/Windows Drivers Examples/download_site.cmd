@@ -6,7 +6,7 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
 IF NOT DEFINED PROGRAMDATA SET "PROGRAMDATA=%ALLUSERSPROFILE%\Application Data"
 IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%USERPROFILE%\Application Data"
 
-SET "noarchmasks=*.exe *.zip *.gz *.bz2 *.rar"
+SET "noarchmasks=*.exe *.zip *.gz *.bz2 *.rar *.iso"
 SET "moreDirs="
 )
-CALL "%ProgramData%\mobilmir.ru\Common_Scripts\wget_the_site.cmd" www.acc.umu.se http://www.acc.umu.se/~bosse/ -np
+CALL wget_the_site.cmd www.acc.umu.se http://www.acc.umu.se/~bosse/ -np
