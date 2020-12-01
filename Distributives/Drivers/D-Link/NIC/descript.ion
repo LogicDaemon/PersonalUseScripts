@@ -1,2 +1,0 @@
-DFE-520TX wget -m -nH --cut-dirs 2 -np http://ftp.dlink.ru/pub/Adapter/DFE-520TX/
-DGE-560T wget -m -nH --cut-dirs 2 -np http://ftp.dlink.ru/pub/Adapter/DGE-560T/

@@ -1,0 +1,3 @@
+wlx_pdfview_108.zip pdfview.wlx is a basic lister plugin for Total Commander 5.5x and above to display pdf-files (portable document format), ps-files (postscript) and eps-files (encapsulated postscript).
+wlx_listdoc_1_2.zip Views MS Words texts in Total Commander lister very fast without formatting. No need of Microsoft Word to be installed or any additional libraries.
+wlx_office_1.1.zip This plugin is intended for viewing MS Word, Excel, Write and other files for which a convertor into RTF format is installed and configured in the office.ini file. Convertors for Word, Excel, Write and HTML formats come with MS Office and can be found in \Program Files\Common Files\Microsoft Shared\TextConv directory.
