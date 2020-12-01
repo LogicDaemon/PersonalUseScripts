@@ -6,15 +6,14 @@ SET FVIInstOpt=%FVIInstOpt% /bmp=1 /gif=1 /jpg=1 /tif=1 /png=1 /pcx=1 /emf=1
 SET DistributiveMask=FreeVimager-*-Setup-Rus.exe
 FOR /F "usebackq delims=" %%I IN (`%SystemDrive%\SysUtils\UnxUtils\find "%srcpath:~,-1%" -name "%DistributiveMask%"`) DO (
     SET "Distributive=%%~I"
-    GOTO :found
 )
-FOR %%I IN ("%srcpath%%DistributiveMask%") DO (
+IF NOT DEFINED Distributive FOR %%I IN ("%srcpath%%DistributiveMask%") DO (
     SET Distributive=%%~I
     GOTO :found
 )
-(
-ECHO Distributive not found!
-EXIT /B 1
+IF NOT DEFINED Distributive (
+    ECHO Distributive not found!
+    EXIT /B 1
 )
 :found
 (

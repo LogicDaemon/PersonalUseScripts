@@ -1,13 +1,4 @@
-﻿SysInternals\autoruns.chm
-SysInternals\autoruns.exe
-SysInternals\procexp.chm
-SysInternals\procexp.exe
+﻿SysInternals\autoruns.cmd
+SysInternals\procexp.cmd
 SysInternals\procexp.reg
-SysInternals\procmon.chm
-SysInternals\Procmon.exe
-SysInternals\regjump.exe
-Terminal.exe
-USBOblivion ReadMe.txt
-USBOblivion32.exe
-uwe-sieber.de\AutoRunSettings.exe
-uwe-sieber.de\AutoRunSettings.txt
+SysInternals\procmon.cmd

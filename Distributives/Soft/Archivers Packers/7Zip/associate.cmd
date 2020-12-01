@@ -8,8 +8,8 @@ REM next line gets from 2nd character to the EOL
 SET skiplines=%skiplines:~1%
 
 IF NOT DEFINED dest7zinst CALL "%~dp0Find7zDir.cmd" || EXIT /B
-REG ADD "HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Applications\7zFM.exe\shell\Open\Command" /ve /t REG_EXPAND_SZ /d "\"%dest7zinst%\7zFM.exe\" \"%%1\"" /f /reg:64
 )
+REG ADD "HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Applications\7zFM.exe\shell\Open\Command" /ve /t REG_EXPAND_SZ /d "\"%dest7zinst%\7zFM.exe\" \"%%1\"" /f /reg:64
 FOR /F "usebackq skip=%skiplines% tokens=*" %%I IN ("%~0") DO (
   IF "%%I"=="" GOTO :exitfor
   CALL :registerExtension %%I

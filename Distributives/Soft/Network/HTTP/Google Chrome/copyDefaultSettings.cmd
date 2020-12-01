@@ -1,53 +1,52 @@
-(
-    @REM coding:OEM
-    SETLOCAL ENABLEEXTENSIONS
-    IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
-    IF NOT DEFINED DefaultsSource CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd" || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
-    SET ChromeInstSubpath=Google\Chrome\Application
+@(REM coding:CP866
+REM by LogicDaemon <www.logicdaemon.ru>
+REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <http://creativecommons.org/licenses/by-sa/4.0/deed.ru>.
+SETLOCAL ENABLEEXTENSIONS
+IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
+    IF NOT DEFINED DefaultsSource CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd" || EXIT /B
+    IF NOT DEFINED exe7z CALL :RunFromConfig "_Scripts\find7zexe.cmd" || CALL :SetFirstExistingExe exe7z "%~dp0..\..\PreInstalled\utils\7za.exe" || EXIT /B
+    IF NOT DEFINED sedexe SET "pathAppendSubpath=libs" & CALL :RunFromConfig "_Scripts\find_exe.cmd" sedexe "%SystemDrive%\SysUtils\sed.exe" || CALL :SetFirstExistingExe sedexe "%SystemDrive%\SysUtils\sed.exe" || EXIT /B
+    IF NOT DEFINED configDir CALL :findconfigDir
+
+    IF DEFINED ProgramFiles^(x86^) IF EXIST "%ProgramFiles(x86)%\Google\Chrome\Application\*" SET "progfilesChrome=%ProgramFiles(x86)%"
+    IF NOT DEFINED progfilesChrome SET "progfilesChrome=%ProgramFiles%"
 )
 (
-    IF NOT DEFINED DefaultsSource EXIT /B
-    SET lProgramFiles=%ProgramFiles%
-    IF DEFINED ProgramFiles^(x86^) IF EXIST "%ProgramFiles(x86)%\%ChromeInstSubpath%\*" SET "lProgramFiles=%ProgramFiles(x86)%"
-    CALL :findexe exe7z 7za.exe "%SystemDrive%\Arc\7-Zip\7za.exe" "%SystemDrive%\Arc\7-Zip\7z.exe" || CALL :findexe exe7z 7z.exe "%ProgramFiles%\7-Zip\7z.exe" "%ProgramFiles(x86)%\7-Zip\7z.exe" "%SystemDrive%\Program Files\7-Zip\7z.exe" || (ECHO  & EXIT /B 32767)
-    CALL :findexe sedexe sed.exe c:\SysUtils\UnxUtils\sed.exe
-)
-SET ChromeInstPath=%lProgramFiles%\%ChromeInstSubpath%
-(
-    IF NOT EXIST "%ChromeInstPath%\Chrome.exe" EXIT /B 2
-    FOR /D %%I IN ("%ChromeInstPath%\*") DO RD /S /Q "%%~I\default_apps"
-    %exe7z% x -aoa -y -o"%lProgramFiles%" -- "%DefaultsSource%" "%ChromeInstSubpath%"
-    PUSHD "%ChromeInstPath%" && (
-	%sedexe% -i "s/{ProgramFiles}/%lProgramFiles:\=\\\\%/" "%ChromeInstPath%\master_preferences"
+    IF NOT EXIST "%progfilesChrome%\Google\Chrome\Application\Chrome.exe" EXIT /B 2
+    FOR /D %%I IN ("%progfilesChrome%\Google\Chrome\Application\*") DO RD /S /Q "%%~I\default_apps"
+    %exe7z% x -aoa -y -o"%progfilesChrome%" -- "%DefaultsSource%" "Google\Chrome\Application"
+    IF DEFINED sedexe PUSHD "%progfilesChrome%\Google\Chrome\Application" && (
+	%sedexe% -i "s/{ProgramFiles}/%progfilesChrome:\=\\\\%/" "%progfilesChrome%\Google\Chrome\Application\master_preferences"
 	POPD
     )
+EXIT /B
 )
-
+:RunFromConfig
+IF NOT DEFINED configDir CALL :findconfigDir
+(
+    IF "%~x1"==".cmd" (
+        CALL "%configDir%"%*
+    ) ELSE "%configDir%"%*
+    EXIT /B
+)
+:SetFirstExistingExe <varname> <path1> <path2> <...>
+(
+    IF EXIST %2 (
+        SET %1=%2
+        EXIT /B
+    )
+    IF "%~3"=="" EXIT /B 1
+    SHIFT /2
+    GOTO :SetFirstExistingExe
+)
+:findconfigDir
+IF NOT DEFINED DefaultsSource CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd" || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
+(
+    CALL :GetDir configDir "%DefaultsSource%"
 EXIT /B
-
-:findexe
-    (
-    SET locvar=%1
-    SET seekforexecfname=%~2
-    )
-    (
-    CALL :testexe %locvar% %2 & ( IF NOT ERRORLEVEL 9009 EXIT /B & IF ERRORLEVEL 9010 EXIT /B )
-    IF DEFINED utilsdir CALL :testexe %locvar% "%utilsdir%%seekforexecfname%" & ( IF NOT ERRORLEVEL 9009 EXIT /B & IF ERRORLEVEL 9010 EXIT /B )
-    CALL :testexe %locvar% "%srcpath%..\..\..\PreInstalled\utils\%seekforexecfname%" & ( IF NOT ERRORLEVEL 9009 EXIT /B & IF ERRORLEVEL 9010 EXIT /B )
-    )
-    :findexeNextPath
-    (
-	IF "%~3"=="" GOTO :testexe
-	IF EXIST "%~3" FOR %%I IN ("%~3") DO CALL :testexe %locvar% "%%~I" & ( IF NOT ERRORLEVEL 9009 EXIT /B & IF ERRORLEVEL 9010 EXIT /B )
-	SHIFT /3
-    GOTO :findexeNextPath
-    )
-    :testexe
-    (
-	IF "%~2"=="" EXIT /B 9009
-	IF NOT EXIST "%~dp2" EXIT /B 9009
-	"%~2" >NUL 2>&1
-	IF ERRORLEVEL 9009 IF NOT ERRORLEVEL 9010 EXIT /B
-	SET %1=%2
-    )
+)
+:GetDir
+(
+    SET "%~1=%~dp2"
 EXIT /B
+)

@@ -10,7 +10,6 @@ HASHDEEP.txt
 hashdeep64.exe
 less.exe
 lesskey.exe
-ln.exe
 ln.html
 md5deep - CHANGES.txt
 md5deep - COPYING.txt
@@ -27,8 +26,6 @@ sha256deep.exe
 sha256deep64.exe
 tigerdeep.exe
 tigerdeep64.exe
-whirlpooldeep.exe
-whirlpooldeep64.exe
 UnxUtils\ansi2knr.exe
 UnxUtils\basename.exe
 UnxUtils\bash.cmd
@@ -54,8 +51,6 @@ UnxUtils\date.exe
 UnxUtils\dc.exe
 UnxUtils\dd.exe
 UnxUtils\df.exe
-UnxUtils\diff.exe
-UnxUtils\diff3.exe
 UnxUtils\dircolors.exe
 UnxUtils\dirname.exe
 UnxUtils\du.exe
@@ -175,6 +170,8 @@ UnxUtils\yes.exe
 UnxUtils\zcat.exe
 UnxUtils\zip.exe
 UnxUtils\zsh.exe
+whirlpooldeep.exe
+whirlpooldeep64.exe
 win-bash.exe
 win-bash.html
 wput.exe

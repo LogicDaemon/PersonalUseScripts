@@ -16,6 +16,9 @@ msiexec.exe /x {26A24AE4-039D-4CA4-87B4-2F03217076FF} /qn /norestart
 REM Uninstall Java 7 Update 67
 msiexec.exe /x {26A24AE4-039D-4CA4-87B4-2F03217067FF} /qn /norestart
 
+REM Uninstall Java 7 Update 65
+msiexec.exe /x {26A24AE4-039D-4CA4-87B4-2F03217065FF} /qn /norestart
+
 REM Uninstall Java 7 Update 60
 msiexec.exe /x {26A24AE4-039D-4CA4-87B4-2F03217060FF} /qn /norestart
 

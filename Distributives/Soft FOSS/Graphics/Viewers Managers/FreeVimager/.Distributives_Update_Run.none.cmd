@@ -1,0 +1,1 @@
+rem FreeVImager is now Donationware. Updated version in separate dir, cannot be used in company.

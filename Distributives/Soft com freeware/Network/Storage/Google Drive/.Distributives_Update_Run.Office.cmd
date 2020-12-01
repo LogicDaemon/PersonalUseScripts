@@ -1,8 +1,8 @@
-@REM coding:OEM
-SET srcpath=%~dp0
-
-IF NOT DEFINED baseScripts SET baseScripts=\Scripts
-CALL "%baseScripts%\_GetWorkPaths.cmd"
-IF NOT DEFINED logsDir SET "logsDir=%workdir%"
-
-CALL "%baseScripts%\_DistDownload.cmd" - *.msi --no-check-certificate -Ni "%~dp0GoogleDriveMSIurl.txt"
+@(REM coding:CP866
+    SETLOCAL ENABLEEXTENSIONS
+    IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
+    IF NOT DEFINED baseScripts SET "baseScripts=\Local_Scripts\software_update\Downloader"
+)
+(
+    CALL "%baseScripts%\_DistDownload.cmd" https://dl.google.com/drive/gsync_enterprise.msi *.msi --no-check-certificate -N
+)

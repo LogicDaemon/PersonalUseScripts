@@ -2,7 +2,7 @@
 
 SetWorkingDir %A_ScriptDir%
 
-RunWait %comspec% /C "%A_ScriptDir%\Update installed SysUtils.cmd"
+RunWait %comspec% /C "%A_ScriptDir%\wget SysInternals.cmd"
 
 tempArcDir=%A_Temp%\SysUtils-pack
 x7zipLZMA2BCJ2Switches=-mx=9 -m0=BCJ2 -m1=LZMA2:a=2:fb=273 -m2=LZMA2:d22 -m3=LZMA2:d22 -mb0:1 -mb0s1:2 -mb0s2:3 -mqs
@@ -36,7 +36,7 @@ Loop %UnlistedNumber%
 	}
     }
     
-    RunWait % "7zg.exe u " . x7zipLZMA2BCJ2Switches . InclExclCmdlArgs . " -- """ . ArcName%A_Index% . """", C:\SysUtils
+    RunWait % """c:\Program Files\7-Zip\7zG.exe"" u " . x7zipLZMA2BCJ2Switches . InclExclCmdlArgs . " -- """ . ArcName%A_Index% . """", C:\SysUtils
 ;    MsgBox %InclExclCmdlArgs%
 }
 
@@ -50,12 +50,17 @@ Run %comspec% /C ""%A_AppDataCommon%\mobilmir.ru\Common_Scripts\tc.cmd" "%tempAr
 CompareMoveDiff(src,dest) {
     IfExist %dest%
     {
-	RunWait C:\SysUtils\UnxUtils\cmp.exe -s "%src%" "%dest%",,Min UseErrorLevel
-	If (ErrorLevel==0)
+	FileGetSize sizeNewArc, %src%
+	If (sizeNewArc <= 32) {
 	    FileDelete %src%
-	Else If (ErrorLevel==1) {
-	    FileMove %src%,%dest%,1
-	    return !ErrorLevel
+	} Else {
+	    RunWait C:\SysUtils\UnxUtils\cmp.exe -s "%src%" "%dest%",,Min UseErrorLevel
+	    If (ErrorLevel==0) {
+		FileDelete %src%
+	    } Else If (ErrorLevel==1) {
+		FileMove %src%,%dest%,1
+		return !ErrorLevel
+	    }
 	}
     }
     

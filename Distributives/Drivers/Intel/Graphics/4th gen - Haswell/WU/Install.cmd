@@ -1,25 +1,28 @@
-(
-@REM coding:OEM
-@ECHO OFF
-SET "srcpath=%~dp0"
+@(REM coding:CP866
+REM by LogicDaemon <www.logicdaemon.ru>
+REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <http://creativecommons.org/licenses/by-sa/4.0/deed.ru>.
+SETLOCAL ENABLEEXTENSIONS
+IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
+IF NOT DEFINED PROGRAMDATA SET "PROGRAMDATA=%ALLUSERSPROFILE%\Application Data"
+IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%USERPROFILE%\Application Data"
+
 SET "tempdst=%TEMP%\%~n0 Intel Graphics"
 SET "localDistDrive=d:"
 rem does not work for UNC paths: SET "localdist=d:%~p0"
 IF NOT DEFINED ErrorCmd SET "ErrorCmd=PAUSE"
 IF NOT DEFINED exe7z CALL :find7zexe
 CALL :GetRelPath "%~dp0"
-)
-SET "localdist=%localDistDrive%%relpath%"
-ECHO Using Local Distributive Path: %localdist%
-IF EXIST "%localDistDrive%\" (
-    IF NOT EXIST "%localdist%" MKDIR "%localdist%"
-    XCOPY "%srcpath:~0,-1%" "%localdist%" /E /I /Y
-    IF NOT ERRORLEVEL 1 SET "srcpath=%localdist%\"
-)
-(
+
 SET "OSCapacity=32-bit"
 IF "%PROCESSOR_ARCHITECTURE%"=="AMD64" SET "OSCapacity=64-bit"
 IF "%PROCESSOR_ARCHITEW6432%"=="AMD64" SET "OSCapacity=64-bit"
+)
+SET "localdist=%localDistDrive%%relpath%"
+IF EXIST "%localDistDrive%\" (
+    ECHO Using Local Distributive Path: %localdist%
+    IF NOT EXIST "%localdist%" MKDIR "%localdist%"
+    XCOPY "%srcpath:~0,-1%" "%localdist%" /E /I /Y
+    IF NOT ERRORLEVEL 1 SET "srcpath=%localdist%"
 )
 (
 %exe7z% e -r -o"%tempdst%" -- "%srcpath%dpinst.7z"  "dpinst.xml" "%OSCapacity%\*"||%ErrorCmd%
@@ -52,9 +55,9 @@ SET "d=%~1"
 (
 ENDLOCAL
 IF "%d:~1,1%"=="$" (
-    SET "relpath=\%~2"
+    SET "relpath=\%~2\"
 ) ELSE (
-    SET "relpath=\%~1\%~2"
+    SET "relpath=\%~1\%~2\"
 )
 EXIT /B
 )

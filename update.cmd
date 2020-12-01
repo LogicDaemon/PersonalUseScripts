@@ -8,6 +8,7 @@ robocopy "%LocalAppData%\Scripts" "%~dp0misc" /MIR /XD Photo temp-backup-scripts
 robocopy "%LocalAppData%\Scripts\Photo" "%~dp0Photo" /MIR /XD old /XF *.lnk "Copy photos from flash cards.destinations.txt"
 robocopy "%USERPROFILE%\Dropbox\Projects\Setup\Win10" "%~dp0Setup\Win10" /MIR
 robocopy "%USERPROFILE%\Dropbox\Projects\Setup" "%~dp0Setup" "Logitech Gaming Software en-US.reg"
+robocopy "d:\Distributives" "%~dp0Distributives" *.cmd *.ahk *.list descript.ion
 git add .
 git commit -m "Autoupdate"
 )

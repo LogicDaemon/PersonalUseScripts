@@ -26,7 +26,7 @@ IfExist %NativeProgramFiles%\Microsoft Security Client\Setup.exe
 	WinWait ahk_group MSSEUninstaller, Готово, 300
 ;	ControlClick Готово
 	ControlClick Button1 ; Готово
-	WinWaitClose,,30 ; Waiting 5 minutes for that window to close
+	WinWaitClose,,,600 ; Waiting for that window to close
     }
 } Else {
     ; Less correct way, keeps Uninstall entry untouched, it must be removed before MSSE can be reinstalled
