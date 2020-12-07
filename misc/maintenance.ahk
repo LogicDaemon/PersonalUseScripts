@@ -12,7 +12,6 @@ global hiddenPIDs := {}
 
 commands =
 (
-"%USERPROFILE%\Projects\PersonalUseScripts\update.cmd"
 %SystemRoot%\System32\sc.exe config "Backupper Service" start= demand
 "%LocalAppData%\Programs\Total Commander\PlugIns\wdx\TrID_Identifier\TrID\update.cmd"
 "%A_AppData%\GHISLER\download pci.ids and convert to pci.db.ahk"

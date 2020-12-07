@@ -16,7 +16,7 @@ If (vscodeRunning && !scriptcmdln) {
         WinActivate
 } Else {
     EnvGet LocalAppData, LocalAppData
-    vscodeexe := FirstExisting(LocalAppData "\Programs\Microsoft VS Code\Code.exe", LocalAppData "\Programs\VSCode\Code.exe")
+    vscodeexe := FirstExisting(LocalAppData "\Programs\Microsoft VS Code\Code.exe", LocalAppData "\Programs\VSCode\Code.exe", ProgramFiles "\Microsoft VS Code\Code.exe")
     If (!vscodeRunning) {
         curlerr := -1
         TrayTip,,Testing current environment connectivity (3s max)

@@ -25,6 +25,7 @@ IF NOT DEFINED syncprog SET syncprog=%unisontext%
         %unisontext% Distributives192.168.36.1 -path config %unisonopt%
         ECHO Synchronizing remaining
     )
+    %syncprog% Local_Scripts192.168.36.1 %unisonopt%
     %syncprog% Distributives192.168.36.1 %unisonopt% -killserver
 
     ENDLOCAL

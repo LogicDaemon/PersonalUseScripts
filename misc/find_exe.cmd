@@ -5,7 +5,7 @@ REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 In
 GOTO :preserveEnv
 )
 :findexe
-    (
+(
     REM in:
     REM %1 variable which will get location
     REM %2 executable file name with optional suggested path
@@ -20,8 +20,8 @@ GOTO :preserveEnv
 
     SET "locvar=%~1"
     SET "seekforexecfname=%~nx2"
-    )
-    (
+)
+(
     REM checking simplest variant -- when suggested path exists or executable is in %PATH%
     FOR /D %%I IN ("%~dp2") DO IF EXIST "%%~I%seekforexecfname%" CALL :testexe %locvar% "%%~I%seekforexecfname%" & ( IF NOT ERRORLEVEL 9009 EXIT /B & IF ERRORLEVEL 9010 EXIT /B )
     CALL :testexe %locvar% %2 & ( IF NOT ERRORLEVEL 9009 EXIT /B & IF ERRORLEVEL 9010 EXIT /B )
@@ -31,38 +31,34 @@ GOTO :preserveEnv
     
     FOR /R "%SystemDrive%\SysUtils" %%I IN (.) DO IF EXIST "%%~I\%seekforexecfname%" CALL :testexe %locvar% "%%~I\%seekforexecfname%" & ( IF NOT ERRORLEVEL 9009 EXIT /B & IF ERRORLEVEL 9010 EXIT /B )
     
-    REM following is relative to script-dir. When copying inline to other scripts, replace %~dp0 with %srcpath% and correct paths
-    CALL :testexe %locvar% "%~dp0..\..\Soft\PreInstalled\utils\%seekforexecfname%" & ( IF NOT ERRORLEVEL 9009 EXIT /B & IF ERRORLEVEL 9010 EXIT /B )
-    CALL :testexe %locvar% "%~dp0..\..\..\Distributives\Soft\PreInstalled\utils\%seekforexecfname%" & ( IF NOT ERRORLEVEL 9009 EXIT /B & IF ERRORLEVEL 9010 EXIT /B )
-
-    REM only for a script running from \\miwifi.com\profiles$\Share\config\_Scripts
-    CALL :testexe %locvar% "%~dp0..\..\..\..\Distributives\Soft\PreInstalled\utils\%seekforexecfname%" & ( IF NOT ERRORLEVEL 9009 EXIT /B & IF ERRORLEVEL 9010 EXIT /B )
-    CALL :testexe %locvar% "%~dp0..\..\Programs\%seekforexecfname%" & ( IF NOT ERRORLEVEL 9009 EXIT /B & IF ERRORLEVEL 9010 EXIT /B )
-
     REM fallback options
     CALL :testexe %locvar% "\Distributives\Soft\PreInstalled\utils\%seekforexecfname%" & ( IF NOT ERRORLEVEL 9009 EXIT /B & IF ERRORLEVEL 9010 EXIT /B )
+    CALL :testexe %locvar% "\\127.0.0.1\Distributives\Soft\PreInstalled\utils\%seekforexecfname%" & ( IF NOT ERRORLEVEL 9009 EXIT /B & IF ERRORLEVEL 9010 EXIT /B )
     CALL :testexe %locvar% "\\localhost\Distributives\Soft\PreInstalled\utils\%seekforexecfname%" & ( IF NOT ERRORLEVEL 9009 EXIT /B & IF ERRORLEVEL 9010 EXIT /B )
     CALL :testexe %locvar% "\\miwifi.com\Distributives\Soft\PreInstalled\utils\%seekforexecfname%" & ( IF NOT ERRORLEVEL 9009 EXIT /B & IF ERRORLEVEL 9010 EXIT /B )
-    CALL :testexe %locvar% "\\miwifi.com\profiles$\Share\Programs\%seekforexecfname%" & ( IF NOT ERRORLEVEL 9009 EXIT /B & IF ERRORLEVEL 9010 EXIT /B )
-    )
-    :findexeNextPath
-    (
+
+    REM following is relative to script-dir. When copying to other scripts, replace %~dp0 with %srcpath% and correct paths
+    CALL :testexe %locvar% "%~dp0..\..\Soft\PreInstalled\utils\%seekforexecfname%" & ( IF NOT ERRORLEVEL 9009 EXIT /B & IF ERRORLEVEL 9010 EXIT /B )
+    CALL :testexe %locvar% "%~dp0..\..\..\Distributives\Soft\PreInstalled\utils\%seekforexecfname%" & ( IF NOT ERRORLEVEL 9009 EXIT /B & IF ERRORLEVEL 9010 EXIT /B )
+)
+:findexeNextPath
+(
 	IF "%~3"=="" GOTO :testexe
 	IF EXIST "%~3" FOR %%I IN ("%~3") DO CALL :testexe %locvar% "%%~I" & ( IF NOT ERRORLEVEL 9009 EXIT /B & IF ERRORLEVEL 9010 EXIT /B )
 	SHIFT /3
     GOTO :findexeNextPath
-    )
-    :testexe
-    (
-	IF "%~2"=="" EXIT /B 9009
-	IF NOT EXIST "%~2" EXIT /B 9009
-	SET "PATH=%PATH%;%~dp2%pathAppendSubpath%"
-	"%~2" %findExeTestExecutionOptions% <NUL >NUL 2>&1
-	REM SET "PATH=%PATH%" restores PATH to one which was at start of the block
-	IF ERRORLEVEL 9009 IF NOT ERRORLEVEL 9010 SET "PATH=%PATH%" & EXIT /B
-	SET %~1="%~2"
+)
+:testexe
+(
+    IF "%~2"=="" EXIT /B 9009
+    IF NOT EXIST "%~2" EXIT /B 9009
+    SET "PATH=%PATH%;%~dp2%pathAppendSubpath%"
+    "%~2" %findExeTestExecutionOptions% <NUL >NUL 2>&1
+    REM SET "PATH=%PATH%" restores PATH to one which was at start of the block
+    IF ERRORLEVEL 9009 IF NOT ERRORLEVEL 9010 SET "PATH=%PATH%" & EXIT /B
+    SET %~1="%~2"
 EXIT /B
-    )
+)
 
 :preserveEnv
 (
@@ -71,12 +67,12 @@ EXIT /B
     SETLOCAL ENABLEEXTENSIONS
 )
 :addanotherpath
-    IF NOT "%~3"=="" (
-	SET morePaths=%morePaths% %3
-	SHIFT /3
-	GOTO :addanotherpath
-    )
-    CALL :findexe outvar %2 %morePaths% || IF ERRORLEVEL 9009 IF NOT ERRORLEVEL 9010 EXIT /B
+IF NOT "%~3"=="" (
+    SET morePaths=%morePaths% %3
+    SHIFT /3
+    GOTO :addanotherpath
+)
+CALL :findexe outvar %2 %morePaths% || IF ERRORLEVEL 9009 IF NOT ERRORLEVEL 9010 EXIT /B
 (
     ENDLOCAL
     SET %~1=%outvar%

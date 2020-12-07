@@ -7,8 +7,9 @@ FileEncoding UTF-8
 
 SetTitleMatchMode RegEx
 
-GroupAdd Notepad2WithBatchFile, \.bat ahk_class Notepad2
-GroupAdd Notepad2WithBatchFile, \.cmd ahk_class Notepad2
+For i, ext in ["bat", "cmd"]
+    For j, classSuffix in ["", "U"]
+        GroupAdd Notepad2WithBatchFile, \.%ext%\b ahk_class \bNotepad2%classSuffix%\b
 
 IfWinActive ahk_group Notepad2WithBatchFile
 {
@@ -17,12 +18,12 @@ IfWinActive ahk_group Notepad2WithBatchFile
 	ClipBackup:=ClipboardAll
 	Clipboard=
 	( LTrim %
-	@(REM coding:CP866
-	REM by LogicDaemon <www.logicdaemon.ru>
-	REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode.ru>.
-	SETLOCAL ENABLEEXTENSIONS
-	`)
-	`n
+        @(REM coding:CP866
+        REM by LogicDaemon <www.logicdaemon.ru>
+        REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode.ru>.
+        SETLOCAL ENABLEEXTENSIONS
+        `)
+        `n
 	)
 	
 	ClipWait 3,1
@@ -30,7 +31,7 @@ IfWinActive ahk_group Notepad2WithBatchFile
 	Sleep 50
 	Send {F9}
 	WinWait Encoding ahk_class #32770
-;	PostMessage 0x185, 1, 2, SysListView321 ; Select all listbox items. 0x185 is LB_SETSEL
+	;PostMessage 0x185, 1, 2, SysListView321 ; Select all listbox items. 0x185 is LB_SETSEL
 	ControlSend SysListView321, {Home}{Down}{Enter}
 	Clipboard:=ClipBackup
 	ExitApp
@@ -44,14 +45,14 @@ IfWinActive ahk_group Notepad2WithBatchFile
 	ClipBackup:=ClipboardAll
 	Clipboard=
 	( LTrim %
-	;by LogicDaemon <www.logicdaemon.ru>
-	;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode.ru>.
-	#NoEnv
-	FileEncoding UTF-8
+        ;by LogicDaemon <www.logicdaemon.ru>
+        ;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode.ru>.
+        #NoEnv
+        FileEncoding UTF-8
 
-	EnvGet LocalAppData,LOCALAPPDATA
-	EnvGet SystemRoot,SystemRoot
-	`n
+        EnvGet LocalAppData,LOCALAPPDATA
+        EnvGet SystemRoot,SystemRoot
+        `n
 	)
 	
 	ClipWait 3,1
@@ -59,7 +60,7 @@ IfWinActive ahk_group Notepad2WithBatchFile
 	Sleep 50
 	Send {F9}
 	WinWait Encoding ahk_class #32770
-;	PostMessage 0x185, 1, 2, SysListView321 ; Select all listbox items. 0x185 is LB_SETSEL
+	;PostMessage 0x185, 1, 2, SysListView321 ; Select all listbox items. 0x185 is LB_SETSEL
 	ControlSend SysListView321, {Home}utf-8 sig{Enter}
 	Clipboard:=ClipBackup
 	ExitApp

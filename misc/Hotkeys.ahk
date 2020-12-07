@@ -77,7 +77,7 @@ notepad2exe := FirstExisting(laPrograms "\Total Commander\notepad2.exe"
                            , LocalAppData "\Programs\VSCode\Code.exe"
                            , SystemRoot "\System32\notepad.exe")
 
-AU3_SpyExecArray := [FileExist(AU3_SpyExe := A_AhkDir "\AU3_Spy.exe") ? AU3_SpyExe : A_AhkDir "\WindowSpy.ahk",,""]
+AU3_SpyExe := FileExist(AU3_SpyExe := A_AhkDir "\AU3_Spy.exe") ? AU3_SpyExe : A_AhkDir "\WindowSpy.ahk"
 
 keepassahk := FirstExisting(A_ScriptDir "\KeePass_" A_UserName ".ahk", A_ScriptDir "\KeePass.ahk")
 
@@ -212,7 +212,7 @@ FillDelayedRunGroups() {
                                             , "#!VK53":	 [A_ScriptDir "\EmailSelection.ahk",, ""] }				;vk53=s #!s
                                 , "#VK5A":  { "^VK45":	 [notepad2exe, """" A_ScriptFullPath """"]			        ;vk45=e ^e
                                             , "^+VK45":	 [notepad2exe, """" A_ScriptDir "\Hotkeys_Custom.ahk"""]	        ;vk45=e ^+e
-                                            , "#VK57":	 AU3_SpyExecArray			          	 	 	;vk57=w #w
+                                            , "#VK57":	 [AU3_SpyExe,,""]			          	 	 	;vk57=w #w
                                             , "#VK52":	 [A_ScriptDir "\LiceCapResize.ahk",,""]	        			;vk52=r #r
                                             , "#VK44":	 [A_ScriptDir "\GoogleDrive.ahk"]				        ;vk5a=z #z vk44=d #d
                                             , "#+VK44":	 [A_ScriptDir "\Dropbox.ahk"]					        ;vk44=d #+d
