@@ -93,6 +93,65 @@ DllCall("psapi.dll\EmptyWorkingSet", "Int", -1, "Int")
 #include *i %A_ScriptDir%\Hotkeys_Custom.ahk
 return
 
+#^,::		        Send «									;Win+Ctrl+< #^<
+#^.::		    	Send »									;Win+Ctrl+> #^>
+#+,::		    	Send ≤									;Win+Shift+< #+<
+#+.::		    	Send ≥									;Win+Shift+> #+>
+#!,::			Send ←									;Win+Alt+< #!<
+#!.::		    	Send →									;Win+Alt+> #!>
+#+VK44::	    	Send %A_YYYY%-%A_MM%-%A_DD%						;vk44=d	#+d
+#+VK54::   	    	Send %A_Hour%%A_Min%							;vk54=t #+t
+#NumpadSub::		Send –
+#NumPadMult::		Send ×
+#+NumPadMult::		Send ⋆
+#!NumPadMult::		Send ☆
+#!+NumPadMult::		Send ★
+#!Insert::              SendRaw %Clipboard%
+
+#VK43:: return                                                                                     ;VK43=c #c // by default that's Cortana
+#^!+VK5A::              GoTo lReload								                            ;vk5a=z #^!+z
+#^VK43::                Run "%A_AhkPath%" "%A_ScriptDir%\ClipboardMonitor.ahk",, Min	;vk43=c #^c
+
+#^F1::                  Run % "*RunAs " comspec " /K CD /D ""%TEMP%"""
+#Enter::                GoTo lMaximizeWindow
+#+Enter::               GoTo lMaximizeOnNextMonitor
+
+#^!NumPad0::	        WinSet AlwaysOnTop, Toggle, A
+#^Delete::		WinKill A
+#+Down::		PostMessage 0x112, 0xF020,,, A ; 0x112 = WM_SYSCOMMAND, 0xF020 = SC_MINIMIZE, see https://msdn.microsoft.com/ru-ru/library/windows/desktop/ms646360.aspx
+
+#+/::		    	Send ¿									;Win+Shift+/ #+/
+#,::														;Win+< #<
+    clipBak := ClipboardAll
+    Clipboard=
+    SendEvent +{Delete}
+    ClipWait 0
+    SendRaw «»
+    SendEvent {Left}+{Insert}
+    Sleep 50
+    Clipboard := clipBak
+    clipBak=
+return
+
+#!Numpad1::
+#!Numpad2::
+#!Numpad3::
+#!Numpad4::
+#!Numpad6::
+#!Numpad7::
+#!Numpad8::
+#!Numpad9::
+    If ( A_TimeSincePriorHotkey < 1000) {
+	If (A_PriorHotkey == A_ThisHotkey)
+	    magnitudeSeq += magnitudeSeq < WindowSplitSize.MaxIndex()
+    } else {
+	magnitudeSeq := WindowSplitSize.MinIndex()
+    }
+    Tooltip % "Magnitude #" . magnitudeSeq . " = " . WindowSplitSize[magnitudeSeq]
+    SetTimer RemoveToolTip, 1000
+    MoveToCornerNum(SubStr(A_ThisLabel,0), WindowSplitSize[magnitudeSeq])
+return
+
 #IfWinNotActive ahk_group ExcludedFromAutoReplace
     #Hotstring * ? C Z
     ;* (asterisk): An ending character (e.g. space, period, or enter) is not required to trigger the hotstring
@@ -119,63 +178,6 @@ return
     #Hotstring *0 ?0 C0 Z0
 #IfWinActive
 
-#+/::		    	Send ¿									;Win+Shift+/ #+/
-#,::														;Win+< #<
-    clipBak := ClipboardAll
-    Clipboard=
-    SendEvent +{Delete}
-    ClipWait 0
-    SendRaw «»
-    SendEvent {Left}+{Insert}
-    Sleep 50
-    Clipboard := clipBak
-    clipBak=
-return
-#^,::		        Send «									;Win+Ctrl+< #^<
-#^.::		    	Send »									;Win+Ctrl+> #^>
-#+,::		    	Send ≤									;Win+Shift+< #+<
-#+.::		    	Send ≥									;Win+Shift+> #+>
-#!,::			    Send ←									;Win+Alt+< #!<
-#!.::		    	Send →									;Win+Alt+> #!>
-#+VK44::	    	Send %A_YYYY%-%A_MM%-%A_DD%						;vk44=d	#+d
-#+VK54::   	    	Send %A_Hour%%A_Min%							;vk54=t #+t
-#NumpadSub::		Send –
-#NumPadMult::		Send ×
-#+NumPadMult::		Send ⋆
-#!NumPadMult::		Send ☆
-#!+NumPadMult::		Send ★
-#!Insert::              SendRaw %Clipboard%
-
-#^!+VK5A::              GoTo lReload								                            ;vk5a=z #^!+z
-#^VK43::                Run "%A_AhkPath%" "%A_ScriptDir%\ClipboardMonitor.ahk",, Min	;vk43=c #^c
-
-#^F1::                  Run % "*RunAs " comspec " /K CD /D ""%TEMP%"""
-#Enter::                GoTo lMaximizeWindow
-#+Enter::               GoTo lMaximizeOnNextMonitor
-
-#^!NumPad0::	        WinSet AlwaysOnTop, Toggle, A
-#^Delete::		WinKill A
-#+Down::		PostMessage 0x112, 0xF020,,, A ; 0x112 = WM_SYSCOMMAND, 0xF020 = SC_MINIMIZE
-;https://msdn.microsoft.com/ru-ru/library/windows/desktop/ms646360%28v=vs.85%29.aspx?f=255&MSPPError=-2147217396
-#!Numpad1::
-#!Numpad2::
-#!Numpad3::
-#!Numpad4::
-#!Numpad6::
-#!Numpad7::
-#!Numpad8::
-#!Numpad9::
-    If ( A_TimeSincePriorHotkey < 1000) {
-	If (A_PriorHotkey == A_ThisHotkey)
-	    magnitudeSeq += magnitudeSeq < WindowSplitSize.MaxIndex()
-    } else {
-	magnitudeSeq := WindowSplitSize.MinIndex()
-    }
-    Tooltip % "Magnitude #" . magnitudeSeq . " = " . WindowSplitSize[magnitudeSeq]
-    SetTimer RemoveToolTip, 1000
-    MoveToCornerNum(SubStr(A_ThisLabel,0), WindowSplitSize[magnitudeSeq])
-return
-
 FillDelayedRunGroups() {
     ;Error:  Parameter #2 must match an existing #If expression.
     ;--->	087: Hotkey,If,("AlternateHotkeys==" altMode)
@@ -184,7 +186,7 @@ FillDelayedRunGroups() {
     #If
     local altKey, HotkeysRunDelayed, altMode, altFunc, key, args, hotkeyFunc, OutExtension
     ; {key: [File, Arguments, Directory, Operation, Show], ...} ; Show is as in ShellRun or -1 to run as ahk script (w/o ShellRun)
-        , RunDelayedGroups :=   { "":       { "#!VK43":	 [calcexe,, ""]								;#!c
+        , RunDelayedGroups :=   { "":       { "#!VK43":	 [calcexe,, ""]								;VK43=c #!c
                                             , "SC132":   [A_ScriptDir "\Vivaldi.ahk"]						;SC132=Homepage
                                             , "#VK57":   [A_ScriptDir "\Vivaldi.ahk"]						;vk57=w #w
                                             , "#+VK57":	 [A_ScriptDir "\Chromium.ahk"]						;vk57=w #+w

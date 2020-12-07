@@ -6,7 +6,7 @@
 ;IfNotExist O:\
 ;    RunWait %comspec% /C RestartO.cmd
 
-config := ProcessCLArgs( {"localisok": ["l", "localisok"]} )
+config := ProcessCLArgs( {"needADrive": "d"} )
 
 EnvGet LOCALAPPDATA,LOCALAPPDATA
 EnvSet syncprog, "%LOCALAPPDATA%\Programs\unison\unison 2.48.3 GTK.exe"
@@ -17,10 +17,10 @@ DriveGet DrivesF, List, FIXED
 DriveGet DrivesR, List, REMOVABLE
 Drives=%DrivesR%%DrivesF%
 
-drivessynced := 0
+drivessynced := false
 Loop Parse, Drives
-    Try RunScript(A_LoopField ":\Local_Scripts\sync_" A_ComputerName ".cmd"), synced++
-If (!(drivessynced || (config.localisok && localSynced))) {
+    Try RunScript(A_LoopField ":\Local_Scripts\sync_" A_ComputerName ".cmd"), synced++, drivessynced := true
+If (config.needADrive && !drivessynced) {
     icon := localSynced ? 0x30 : 0x10
     msgAppend := localSynced ? "`, but local computer sync script is started." : ""
     timeout := localSynced ? 15 : 0
