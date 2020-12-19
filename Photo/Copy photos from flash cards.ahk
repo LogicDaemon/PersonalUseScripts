@@ -9,7 +9,7 @@ EnvGet SystemRoot,SystemRoot
 Loop Read, %A_ScriptDir%\Copy photos from flash cards.destinations.txt
 {
     destBase := ExpandEnvVars(A_LoopReadLine)
-    SplitPath destPath,, destBaseDir
+    SplitPath destBase,, destBaseDir
     If (FileExist(destBaseDir)) {
         FileCreateDir %destBase%
         If (ErrorLevel)
