@@ -1,0 +1,11 @@
+-OneDrive
++Dropbox
++AOMEI Backupper
++CrystalDiskInfo
++OpenHardwareMonitor
++ProtonVPN
++d:\Users\LogicDaemon\Dropbox\Projects\Setup\taskschd\add_all_tasks.cmd
+
+
+d:\Users\LogicDaemon\AppData\Local\Corel\
+d:\Users\LogicDaemon\AppData\Roaming\Corel\
