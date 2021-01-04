@@ -37,7 +37,7 @@ GOTO :preserveEnv
     CALL :testexe %locvar% "\\localhost\Distributives\Soft\PreInstalled\utils\%seekforexecfname%" & ( IF NOT ERRORLEVEL 9009 EXIT /B & IF ERRORLEVEL 9010 EXIT /B )
     CALL :testexe %locvar% "\\miwifi.com\Distributives\Soft\PreInstalled\utils\%seekforexecfname%" & ( IF NOT ERRORLEVEL 9009 EXIT /B & IF ERRORLEVEL 9010 EXIT /B )
 
-    REM following is relative to script-dir. When copying to other scripts, replace %~dp0 with %srcpath% and correct paths
+    REM following is relative to script-dir. When copying inline to other scripts, replace %~dp0 with %srcpath% and correct paths
     CALL :testexe %locvar% "%~dp0..\..\Soft\PreInstalled\utils\%seekforexecfname%" & ( IF NOT ERRORLEVEL 9009 EXIT /B & IF ERRORLEVEL 9010 EXIT /B )
     CALL :testexe %locvar% "%~dp0..\..\..\Distributives\Soft\PreInstalled\utils\%seekforexecfname%" & ( IF NOT ERRORLEVEL 9009 EXIT /B & IF ERRORLEVEL 9010 EXIT /B )
 )
