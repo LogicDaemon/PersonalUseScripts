@@ -2,6 +2,7 @@
 ;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode.ru>.
 
 HTTPReq(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef response:=0, ByRef reqmoreHeaders:=0) {
+    local
     If (method = "POST") {
         If (reqmoreHeaders==0) {
             moreHeaders := {"Content-Type": "application/x-www-form-urlencoded"}
@@ -19,6 +20,7 @@ HTTPReq(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef response:=0, ByRef re
 }
 
 WinHTTPReqWithProxies(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef response:=0, ByRef moreHeaders:=0, ByRef TryProxies := "") {
+    local
     static proxies := ""
     ;URLprotoInURL := RegexMatch(URL, "([^:]{3,6})://", URLproto)
     
@@ -52,6 +54,7 @@ WinHTTPReqWithProxies(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef respons
 }
 
 HTTPReq_PushMissingItems(ByRef listToAppendTo, listToAppendFrom, ByRef newSetOfAllItems := 0) {
+    local
     static setOfAllItems
     If (IsByRef(newSetOfAllItems))
         setOfAllItems := newSetOfAllItems
@@ -64,11 +67,14 @@ HTTPReq_PushMissingItems(ByRef listToAppendTo, listToAppendFrom, ByRef newSetOfA
 }
 
 HTTPReq_ReadProxy(ProxySettingsRegRoot) {
+    local
     static ProxySettingsIEKey:="Software\Microsoft\Windows\CurrentVersion\Internet Settings"
-    RegRead ProxyEnable, %ProxySettingsRegRoot%, %ProxySettingsIEKey%, ProxyEnable
-    If ProxyEnable
-	RegRead ProxyServer, %ProxySettingsRegRoot%, %ProxySettingsIEKey%, ProxyServer
-    return ProxyServer
+    Try {
+        RegRead ProxyEnable, %ProxySettingsRegRoot%, %ProxySettingsIEKey%, ProxyEnable
+        If ProxyEnable
+            RegRead ProxyServer, %ProxySettingsRegRoot%, %ProxySettingsIEKey%, ProxyServer
+        return ProxyServer
+    }
 }
 
 #include %A_LineFile%\..\XMLHTTP_Request.ahk
