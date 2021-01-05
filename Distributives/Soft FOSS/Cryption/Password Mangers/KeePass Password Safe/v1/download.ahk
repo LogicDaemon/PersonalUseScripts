@@ -28,18 +28,34 @@ Loop Parse, versions, `n, `r
     }
 }
 
-URLs := { "KeePass-" ver "-Setup.exe": "https://sourceforge.net/projects/keepass/files/KeePass%201.x/" ver "/KeePass-" ver "-Setup.exe/download"
-        , "KeePass-" ver ".zip": "https://sourceforge.net/projects/keepass/files/KeePass%201.x/" ver "/KeePass-" ver ".zip/download" }
+URLs := { "KeePass-*-Setup.exe": "https://sourceforge.net/projects/keepass/files/KeePass%201.x/*/KeePass-*-Setup.exe/download"
+        , "KeePass-*.zip":       "https://sourceforge.net/projects/keepass/files/KeePass%201.x/*/KeePass-*.zip/download" }
 
-EnvSet distcleanup, 1
-EnvSet srcpath, %A_ScriptDir%\
-For filename, URL in URLs {
-    SplitPath filename,,,ext
-    EnvSet dstrename, %filename%
-    RunWait %comspec% /C "PUSHD "`%srcpath`%" & CALL "\Local_Scripts\software_update\Downloader\_DistDownload.cmd" "%URL%" "%filename%@viasf=1" -m -l 1 -nd -H -D downloads.sourceforge.net -e "robots=off" -p "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64)" > "%A_ScriptDir%\temp\%filename%.log" 2>&1", %A_Temp%, Min UseErrorLevel
+EnvSetIfUnset("srcpath", A_ScriptDir "\")
+EnvSetIfUnset("baseScripts", "\Local_Scripts\software_update\Downloader")
+EnvGet baseWorkdir, baseWorkdir
+If (!baseWorkdir) {
+    baseWorkdir := A_ScriptDir "\temp"
+    EnvSet baseWorkdir, %baseWorkdir%
+}
+FileCreateDir %baseWorkdir%
+For filename, url in URLs {
+    url := StrReplace(url, "*", ver)
+    EnvSet dstrename, % StrReplace(filename, "*", ver)
+    RunWait %comspec% /C "PUSHD "`%srcpath`%" & CALL "`%baseScripts`%\_DistDownload.cmd" "%url%" "%filename%" -m -l 1 -nd -H -D downloads.sourceforge.net -e "robots=off" -p "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64)" >"`%baseWorkdir`%\`%dstrename`%.log" 2>&1", %A_Temp%, Min UseErrorLevel
+    RunWait %comspec% /C "PUSHD "`%srcpath`%" & CALL "`%baseScripts`%\_DistDownload.cmd" "%url%" "%filename%@viasf=1" -m -l 1 -nd -H -D downloads.sourceforge.net -e "robots=off" -p "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64)" >"`%baseWorkdir`%\`%dstrename`%.log" 2>&1", %A_Temp%, Min UseErrorLevel
     ;RunWait %comspec% /C "MKLINK /H "%A_ScriptDir%\%filename%" "%A_ScriptDir%\temp\%filename%@viasf=1"", %A_Temp%, Min UseErrorLevel
     ;If (ErrorLevel)
     ;    FileCopy %A_ScriptDir%\temp\%filename%@viasf=1, %A_ScriptDir%\%filename%
+}
+
+ExitApp
+
+EnvSetIfUnset(ByRef name, ByRef val) {
+    local
+    EnvGet current, %name%
+    If (!current)
+        EnvSet %name%, %val%
 }
 
 ;GET /project/keepass/KeePass%201.x/1.38/KeePass-1.38-Setup.exe?r=https%3A%2F%2Fsourceforge.net%2Fprojects%2Fkeepass%2Ffiles%2FKeePass%25201.x%2F1.38%2FKeePass-1.38-Setup.exe%2Fdownload&ts=1606576112&use_mirror=deac-riga HTTP/1.1
