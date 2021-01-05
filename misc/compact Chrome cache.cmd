@@ -42,7 +42,7 @@ EXIT /B 1
 (
     SET "LastCleanupMask=%~1"
     FOR /D %%B IN (%1) DO @IF EXIST "%%~B\." (
-        IF "%compactLZX%"=="1" COMPACT /C /S:"%%~B\Application" /F /EXE:LZX
+        IF "%compactLZX%"=="1" COMPACT /C /S:"%%~B\Application" /EXE:LZX
         FOR /D %%P IN ("%%~B\User Data\*") DO @IF EXIST "%%~P\Preferences" (
             SET "LastProfileFound=%%~P"
             FOR /D %%C IN ("%%~P" "%%~P\Storage\ext\*") DO @(
@@ -56,7 +56,7 @@ EXIT /B 1
                     FOR /D %%D IN ("%%~C\old_*") DO RD /S /Q "%%~C\%%~D"
                 )
             )
-            IF "%compactLZX%"=="1" COMPACT /Q /C /S:"%%~P\Extensions" /F /EXE:LZX
+            IF "%compactLZX%"=="1" COMPACT /Q /C /S:"%%~P\Extensions" /EXE:LZX
         )
         IF "%markDirCompact%"=="1" COMPACT /Q /C /S:"%%~B"
     )

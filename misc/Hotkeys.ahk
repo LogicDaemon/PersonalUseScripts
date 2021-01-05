@@ -74,7 +74,7 @@ notepad2exe := FirstExisting(laPrograms "\Total Commander\notepad2.exe"
                            , ProgramFiles "\notepad2\notepad2.exe"
                            , ProgramFilesx86 "\notepad2\notepad2.exe"
                            , ProgramFilesx86 "\Notepad++\notepad++.exe"
-                           , LocalAppData "\Programs\VSCode\Code.exe"
+                           , LocalAppData "\Programs\VS Code\Code.exe"
                            , SystemRoot "\System32\notepad.exe")
 
 AU3_SpyExe := FileExist(AU3_SpyExe := A_AhkDir "\AU3_Spy.exe") ? AU3_SpyExe : A_AhkDir "\WindowSpy.ahk"
