@@ -21,9 +21,8 @@ lookDirsLAD := { "Scripts":    { "cmd": "", "ahk": ""}
                                , ".": 0           ; "": subdir depth initial limit
                                , "*\" : { "exe": 0, "cmd": "", "ahk": 0, "lnk": 0
                                         , ".": 3    ; "": subdir depth initial limit
-                                        , "1C\": 0 ; "\": directory exclusions
                                         , "Tor Browser\": 0
-                                        , "Chromium"\: 0 } } }
+                                        , "Chromium\": 0 } } }
 
 For dir, params in lookDirsLAD {
     CreateDirShortcuts(A_Programs "\LocalAppData\" dir, LocalAppData "\" dir, params)
