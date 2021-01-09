@@ -2,8 +2,9 @@
 ;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode.ru>.
 
 WinHttpRequest(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef response:=0, ByRef moreHeaders:=0, ByRef proxy:="") {
+    local
     global debug
-    static WinHttpRequestObjectName
+    static WinHttpRequestObjectName := ""
     If (WinHttpRequestObjectName) {
         WebRequest := ComObjCreate(WinHttpRequestObjectName)
     } Else {

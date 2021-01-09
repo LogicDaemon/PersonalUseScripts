@@ -2,6 +2,7 @@
 ;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <http://creativecommons.org/licenses/by-sa/4.0/deed.ru>.
 
 XMLHTTP_Request(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef response:=0, ByRef moreHeaders:=0) {
+    local
     global debug
 
     If (IsObject(debug))
@@ -11,9 +12,8 @@ XMLHTTP_Request(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef response:=0, 
     xhr.open(method, URL, false)
     ;xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
     
-    If (IsObject(moreHeaders))
-	For hName, hVal in moreHeaders
-	    xhr.setRequestHeader(hName, hVal)
+    For hName, hVal in moreHeaders
+        xhr.setRequestHeader(hName, hVal)
     
     Try {
 	xhr.send(POSTDATA)
@@ -42,6 +42,7 @@ XMLHTTP_Request(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef response:=0, 
 }
 
 XMLHTTP_Request_CreateXHRObject() {
+    local
     global debug
     static useObjName:=""
 
@@ -72,6 +73,7 @@ XMLHTTP_Request_CreateXHRObject() {
 }
 
 XMLHTTP_Request_DebugMsg(ByRef text) {
+    local
     static outMethod := -1, outf
     If (outMethod == -1) {
 	For i, fname in [A_Temp "\" A_ScriptName ".debug." A_Now ".log", "**", "*"]
@@ -87,6 +89,7 @@ XMLHTTP_Request_DebugMsg(ByRef text) {
 }
 
 XMLHTTP_Request_ahk_ObjectToText(obj) {
+    local
     out := ""
     For i,v in obj
 	out .= i ": " ( IsObject(v) ? "(" XMLHTTP_Request_ahk_ObjectToText(v) ")" : (InStr(v, ",") ? """" v """" : v) ) ", "

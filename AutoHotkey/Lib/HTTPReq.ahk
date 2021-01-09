@@ -55,7 +55,7 @@ WinHTTPReqWithProxies(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef respons
 
 HTTPReq_PushMissingItems(ByRef listToAppendTo, listToAppendFrom, ByRef newSetOfAllItems := 0) {
     local
-    static setOfAllItems
+    static setOfAllItems := ""
     If (IsByRef(newSetOfAllItems))
         setOfAllItems := newSetOfAllItems
     If (!IsObject(setOfAllItems))
@@ -71,9 +71,10 @@ HTTPReq_ReadProxy(ProxySettingsRegRoot) {
     static ProxySettingsIEKey:="Software\Microsoft\Windows\CurrentVersion\Internet Settings"
     Try {
         RegRead ProxyEnable, %ProxySettingsRegRoot%, %ProxySettingsIEKey%, ProxyEnable
-        If ProxyEnable
+        If (ProxyEnable) {
             RegRead ProxyServer, %ProxySettingsRegRoot%, %ProxySettingsIEKey%, ProxyServer
-        return ProxyServer
+            return ProxyServer
+        }
     }
 }
 
