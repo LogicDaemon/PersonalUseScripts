@@ -4,14 +4,5 @@
 
 ; compare versions by components
 VersionAtLeast(verTest, verMin) {
-    For i, min in verMin {
-        test := verTest[i]
-        If (test < min)
-            return false
-        Else If (test > min)
-            return true
-    }
-    
-    ;equal
-    return true
+    return VersionCompare(verTest, verMin, true)
 }

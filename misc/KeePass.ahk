@@ -4,37 +4,35 @@
 #SingleInstance force
 SetTitleMatchMode RegEx
 
-EnvGet lProgramFiles,ProgramFiles(x86)
-EnvGet LocalAppData,LOCALAPPDATA
-If Not lProgramFiles
-    lProgramFiles=%A_ProgramFiles%
-KeePassExeName := "KeePass.exe"
-If (!(KeePassExePath := FirstExisting(lProgramFiles . "\KeePass Password Safe\" . KeePassExeName
-			      , A_ProgramFiles . "\KeePass Password Safe\" . KeePassExeName
-			      , LocalAppData . "\Programs\KeePass\" . KeePassExeName
-			      , LocalAppData . "\Programs\KeePass Password Safe\" . KeePassExeName)))
-    Throw Exception("KeePass.exe not found")
-KeePassExePath = "%KeePassExePath%"
-preseltxt := "-preselect:"
-preseltxtlen := StrLen(preseltxt)
-
 If (A_ScriptFullPath == A_LineFile) {
     foundKdb := 0
-    Loop %0%
-    {
+    If (FileExist(A_ScriptDir "\Dropbox.ahk")) {
+        Process Exist, Dropbox.exe
+        If (!ErrorLevel)
+            RunWait "%A_AhkPath%" "%A_ScriptDir%\Dropbox.ahk"
+    }
+    preseltxt := "-preselect:"
+    preseltxtlen := StrLen(preseltxt)
+    For i, arg in A_Args {
 	If(!foundKdb) {
-	    SplitPath %A_Index%, nameDB, dirDB, extDB
+	    SplitPath arg, nameDB, dirDB, extDB
 	    foundKdb := extDB="kdb"
 	}
 	
-	If (SubStr(%A_Index%, 1, preseltxtlen) = preseltxt)
-	    key := SubStr(%A_Index%, preseltxtlen+1)
+	If (SubStr(arg, 1, preseltxtlen) = preseltxt)
+	    key := SubStr(arg, preseltxtlen+1)
     }
-    Process Exist, Dropbox.exe
-    If (!ErrorLevel)
-        RunWait "%A_AhkPath%" "%A_ScriptDir%\Dropbox.ahk"
     
     commandLineParam := ParseScriptCommandLine()
+}
+
+KeePassExePath := Find_KeePass_exe()
+SplitPath KeePassExePath, KeePassExeName
+
+RegRead lastUpdateCheck, HKEY_CURRENT_USER\SOFTWARE\LogicDaemon\KeePassLauncher, LastUpdateCheckYYYYMMDDHH
+If (!lastUpdateCheck || DaysSince(lastUpdateCheck) >= 1) {
+    RunWait "%A_AhkPath%" "%A_ScriptDir%\KeePass_update.ahk"
+    RegWrite REG_DWORD, HKEY_CURRENT_USER\SOFTWARE\LogicDaemon\KeePassLauncher, LastUpdateCheckYYYYMMDDHH, % SubStr(A_Now, 1, 10) ;REG_DWORD max is 4294967295
 }
 
 If (WinExist("ahk_exe " KeePassExeName)) {
@@ -46,7 +44,7 @@ If (WinExist("ahk_exe " KeePassExeName)) {
     If (KeePassTitle = nameDB . " [Locked] - Keepass"
 	    || KeePassTitle = "KeePass" ; no db open
 	    || KeePassTitle = "Open Database - " . nameDB) { ; database opening window
-        ;RunWait %KeePassExePath% --exit-all
+        ;RunWait "%KeePassExePath%" --exit-all
         Loop
         {
             If (A_Index == 1) {
@@ -78,7 +76,7 @@ Loop Files, %dirDB%\*.lock
     }
 }
 
-Run %KeePassExePath% %commandLineParam%,,,rPID
+Run "%KeePassExePath%" %commandLineParam%,,,rPID
 WinWait ahk_pid %rPID%
 WinActivate
 
@@ -145,6 +143,12 @@ ReadKeePassLockFile(path) {
 	}
     }
     return readLockFile
+}
+
+DaysSince(ByRef yyyymmdd) {
+    daysSince=
+    daysSince -= yyyymmdd, Days
+    return daysSince
 }
 
 FirstExisting(paths*) {
