@@ -32,18 +32,20 @@ WinHTTPReqWithProxies(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef respons
             Loop Parse, TryProxies, `n`r`,
                 HTTPReq_PushMissingItems(proxies, [A_LoopField])
         }
-            
+        
+        For i, v in ["http_proxy", "https_proxy"] {
+            EnvGet env_proxy, %v%
+            If (env_proxy)
+                HTTPReq_PushMissingItems(proxies, env_proxy)
+        }
         HTTPReq_PushMissingItems(proxies, [ ""
                                           , cuProxy := HTTPReq_ReadProxy("HKEY_CURRENT_USER")
                                           , lmProxy := HTTPReq_ReadProxy("HKEY_LOCAL_MACHINE")
-                                          , "192.168.127.1:3128" ] )
                                           ; Очень странно: в Windows 7 префикс протокола ("https://") нужен для отправки через HTTPS, в Windows 10 – наоборот мешает :(
-        HTTPReq_PushMissingItems(proxies, [ "https://" cuProxy
+                                          , "https://" cuProxy
                                           , "http://" cuProxy
                                           , "https://" lmProxy
-                                          , "http://" lmProxy
-                                          , "https://192.168.127.1:3128"
-                                          , "http://192.168.127.1:3128"] )
+                                          , "http://" lmProxy ] )
     }
     
     For i,proxy in proxies
