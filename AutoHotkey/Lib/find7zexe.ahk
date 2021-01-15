@@ -24,29 +24,34 @@ find7zexe(exename:="7z.exe", paths*) {
                        ,["HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\7-Zip", "UninstallString", true] ]
     
     bakRegView := A_RegView
+    SetRegView 64
     For i,regpath in regPaths {
-	SetRegView 64
-	RegRead currpath, % regpath[1], % regpath[2]
-	SetRegView %bakRegView%
-	If (regpath[3]) 
-	    SplitPath currpath,,currpath
-	Try return Check7zDir(Trim(currpath,""""), exename)
+        Try {
+            RegRead currpath, % regpath[1], % regpath[2]
+            If (currpath) {
+                If (regpath[3]) 
+                    SplitPath currpath,,currpath
+                SetRegView %bakRegView%
+                return Check7zDir(Trim(currpath,""""), exename)
+            }
+        }
     }
+    SetRegView %bakRegView%
     
-    If(IsFunc(("findexe"))) {
-	EnvGet ProgramFilesx86,ProgramFiles(x86)
-	EnvGet SystemDrive,SystemDrive
-	Try return Func("findexe").Call(exename, ProgramFiles . "\7-Zip", ProgramFilesx86 . "\7-Zip", SystemDrive . "\Program Files\7-Zip", SystemDrive . "\Arc\7-Zip")
-	Try return Func("findexe").Call("7za.exe", SystemDrive . "\Arc\7-Zip")
+    If (IsFunc("findexe")) {
+        EnvGet ProgramFilesx86,ProgramFiles(x86)
+        EnvGet SystemDrive,SystemDrive
+        Try return Func("findexe").Call(exename, ProgramFiles . "\7-Zip", ProgramFilesx86 . "\7-Zip", SystemDrive . "\Program Files\7-Zip", SystemDrive . "\Arc\7-Zip")
+        Try return Func("findexe").Call("7za.exe", SystemDrive . "\Arc\7-Zip")
     }
     
     For i,path in paths {
-	Loop Files, %path%, D
-	{
-	    fullpath=%A_LoopFileLongPath%\%exename%
-	    If (FileExist(fullpath))
-		return fullpath
-	}
+        Loop Files, %path%, D
+        {
+            fullpath=%A_LoopFileLongPath%\%exename%
+            If (FileExist(fullpath))
+                return fullpath
+        }
     }
     
     Throw Exception("7-Zip not found",, exename)
@@ -54,20 +59,21 @@ find7zexe(exename:="7z.exe", paths*) {
 
 Check7zDir(dir7z, exename := "7z.exe") {
     local ; Force-local mode
-    If(SubStr(dir7z,0)=="\")
-	dir7z:=SubStr(dir7z,1,-1)
+    dir7z:=RTrim(dir7z,"\")
+    If (!dir7z)
+        Throw Exception("Null path specified as directory")
     If (!FileExist(exe7z := dir7z "\" exename))
-	Throw Exception("File not found in dir",, """" exename """ in """ dir7z """")
+        Throw Exception("File not found in dir",, """" exename """ in """ dir7z """")
     return exe7z
 }
 
 find7zaexe(paths*) {
     paths.push(	  "\Distributives\Soft\PreInstalled\utils"
-		, "D:\Distributives\Soft\PreInstalled\utils"
-		, "\\localhost\Distributives\Soft\PreInstalled\utils"
-		, "\\Srv1S-B.office0.mobilmir\Distributives\Soft\PreInstalled\utils"
-		, "\\Srv0.office0.mobilmir\Distributives\Soft\PreInstalled\utils"
-		, A_LineFile "\..\..\..\..\Soft\PreInstalled\utils")
+                , "D:\Distributives\Soft\PreInstalled\utils"
+                , "\\localhost\Distributives\Soft\PreInstalled\utils"
+                , "\\Srv1S-B.office0.mobilmir\Distributives\Soft\PreInstalled\utils"
+                , "\\Srv0.office0.mobilmir\Distributives\Soft\PreInstalled\utils"
+                , A_LineFile "\..\..\..\..\Soft\PreInstalled\utils")
     If (A_Is64bitOS)
         Try return find7zexe("7za64.exe", paths*)
     return find7zexe("7za.exe", paths*)
