@@ -169,12 +169,24 @@ return
     ;::ЭБ::«
     ;:?:">::»
     ;::ЭЮ::»
+    #Hotstring * ?0 C Z
     ::--- ::– `
     ::... ::… `
     ::>= ::≥ `
     ::<= ::≤ `
     ::<- ::← `
     ::-> ::→ `
+    ::[ ] ::☐ ` ; U+2610 e2 98 90 	BALLOT BOX
+    ::[v] ::☑ ` ; U+2611 e2 98 91 	BALLOT BOX WITH CHECK
+    ::[X] ::☒ ` ; U+2612 e2 98 92 	BALLOT BOX WITH X
+    ::_x_ ::✗ ` ; U+2717 e2 9c 97 	BALLOT X
+    ::*X* ::✘ ` ; U+2718 e2 9c 98 	HEAVY BALLOT X
+    ::[x] ::⮽ ` ; U+2BBD e2 ae bd 	BALLOT BOX WITH LIGHT X
+    ::_x_ ::🗴 ` ; U+1F5F4 f0 9f 97 b4 	BALLOT SCRIPT X
+    ::[_x_] ::🗵 ` ; U+1F5F5 f0 9f 97 b5 	BALLOT BOX WITH SCRIPT X
+    ::_*x*_ ::🗶 ` ; U+1F5F6 f0 9f 97 b6 	BALLOT BOLD SCRIPT X
+    ::[_*x*_] ::🗷 ` ; U+1F5F7 f0 9f 97 b7 	BALLOT BOX WITH BOLD SCRIPT X
+    ::[V] ::🗹 ` ; U+1F5F9 f0 9f 97 b9 	BALLOT BOX WITH BOLD CHECK
     #Hotstring *0 ?0 C0 Z0
 #IfWinActive
 
