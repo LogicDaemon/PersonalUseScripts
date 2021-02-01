@@ -10,20 +10,22 @@ EnvSet dirDropbox, %dirDropbox%
 
 global hiddenPIDs := {}
 
+cmds := [ [A_AppData "\GHISLER\download pci.ids and convert to pci.db.ahk"]
+        , [LocalAppData "\Programs\Total Commander\PlugIns\wdx\TrID_Identifier\TrID\update.cmd"]
+        , [dirDropbox "\Config\scripts\call _link.cmd for HOSTNAME and GROUP.cmd"]
+        , [dirDropbox "\Config\scripts\copy tasks.cmd"]
+        , [dirDropbox "\Config\scripts\export registry settings.cmd"]
+        , [LocalAppData "\Scripts\WarframeCleanup.cmd"]
+        , [A_ScriptDir "\compact Chrome cache.cmd", "/purgeCaches /purgeIndexedDB /chrome"]
+        , [A_ScriptDir "\compact_lzx_ProgramsDirs.cmd"] ]
 commands =
 (
 %SystemRoot%\System32\sc.exe config "Backupper Service" start= demand
-"%LocalAppData%\Programs\Total Commander\PlugIns\wdx\TrID_Identifier\TrID\update.cmd"
-"%A_AppData%\GHISLER\download pci.ids and convert to pci.db.ahk"
-"%dirDropbox%\Config\scripts\call _link.cmd for HOSTNAME and GROUP.cmd"
-"%dirDropbox%\Config\scripts\copy tasks.cmd"
-"%dirDropbox%\Config\scripts\export registry settings.cmd"
-"%LocalAppData%\Scripts\WarframeCleanup.cmd"
-"%A_ScriptDir%\compact Chrome cache.cmd" /purgeCaches /purgeIndexedDB /chrome
-"%A_ScriptDir%\compact_lzx_ProgramsDirs.cmd"
 )
 
 DllCall("SetPriorityClass", "UInt", DllCall("GetCurrentProcess"), "UInt", 0x00100000) ; PROCESS_MODE_BACKGROUND_BEGIN=0x00100000 https://msdn.microsoft.com/en-us/library/ms686219.aspx
+For i, cmd in cmds
+    RunScript(cmd)
 Loop Parse, commands, `n
     RunScript(A_LoopField)
 
@@ -39,6 +41,7 @@ Loop
     }
     Menu Tray, Tip, %c% processes still running
 } Until !c
+Menu Tray, Tip, All maintenance processes finished
 
 extToCompact={"exe": "", "dll": "", "sys": "", "mui": "", "eml": "", "qml": "", "js": "", "pyd": "", "py": "", "qmltypes": "", "rcc": "", "inf": "", "manifest": ""}
 dirs := {}
@@ -50,6 +53,7 @@ For envvar in {"UserProfile": "", "ProgramFiles": "", "ProgramFiles(x86)": "", "
 If (InStr(FileExist("w:\Temp"), "D"))
     dirs["w:\Temp"] := ""
 For dir in dirs {
+    Menu Tray, Tip, Compacting %dir%
     Loop Files, %dir%, RF
     {
         
@@ -69,18 +73,27 @@ DllCall("SetPriorityClass", "UInt", DllCall("GetCurrentProcess"), "UInt", 0x0020
 ExitApp
 
 RunScript(ByRef cmdline) {
+    ; either command line string
+    ; or [executable, arguments, dir, mode]
     global hiddenPIDs
-    executable := Trim(ParseCommandLine(A_LoopField)[0], """")
+    executable := IsObject(cmdline) ? cmdline[1] : Trim(ParseCommandLine(A_LoopField)[0], """")
     SplitPath executable,,dir,ext
     
-    
-    If (ext="cmd" || ext="bat")
-        runcmdline=%comspec% /C "%cmdline%"
-    Else If (ext=="ahk")
-        runcmdline="%A_AhkPath%" %cmdline%
-    Else
-        runcmdline:=cmdline
-    Run %runcmdline%, %dir%, UseErrorLevel Hide, rpid
+    If (IsObject(cmdline)) {
+        runcmdline := """" Trim(cmdline[1], """") """ " cmdline[2]
+        If (cmdline[3])
+            dir := cmdline[3]
+        mode := cmdline[4] ? cmdline[4] : "Hide"
+    } Else {
+        mode := "Hide"
+        If (ext="cmd" || ext="bat")
+            runcmdline=%comspec% /C "%cmdline%"
+        Else If (ext=="ahk")
+            runcmdline="%A_AhkPath%" %cmdline%
+        Else
+            runcmdline:=cmdline
+    }
+    Run %runcmdline%, %dir%, UseErrorLevel %mode%, rpid
     hiddenPIDs[rpid] := cmdline
 }
 

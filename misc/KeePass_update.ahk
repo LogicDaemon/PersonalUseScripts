@@ -1,31 +1,43 @@
 ﻿#NoEnv
 
-keePassExePath := Find_KeePass_exe()
-FileGetVersion KeePassExeVer, %keePassExePath%
+Try {
+    keePassExePath := Find_KeePass_exe()
+    FileGetVersion KeePassExeVer, %keePassExePath%
+} Catch {
+    EnvGet LocalAppData,LocalAppData
+    keePassExePath := LocalAppData "\Programs\KeePass\KeePass.exe" 
+    KeePassExeVer := 1
+}
 distPathM := Find_Distributives_subpath("Soft FOSS\Cryption\Password Mangers\KeePass Password Safe\v1\KeePass-1.*.zip")
 SplitPath distPathM,,distDir
 
 webNewVer := GetKeepassUpdateVer(distDir)
-
 If (VersionAtLeast(KeePassExeVer, webNewVer))
     Exit 1 ; current version is installed
 
-distNewVer := [1,0,0]
-Loop Files, %distPathM%
-    If (RegexMatch(A_LoopFileName, "^KeePass-(?P<ver>1(?:\.\d+)*).zip$", m)
-        && VersionCompare(mver, distNewVer, false)) {
+Loop 2
+{
+    distNewVer := [1,0,0]
+    Loop Files, %distPathM%
+        If (RegexMatch(A_LoopFileName, "^KeePass-(?P<ver>1(?:\.\d+)*).zip$", m)
+            && VersionCompare(mver, distNewVer, false)) {
 
-        distNewVer := mver
-        distLatest := A_LoopFileLongPath
-    }
+            distNewVer := mver
+            distLatest := A_LoopFileLongPath
+        }
 
-If (VersionCompare(distNewVer, webNewVer, false))
-    RunWait "%A_AhkPath%" "%updaterPath%"
-
+    If (A_Index == 1 && VersionCompare(distNewVer, webNewVer, false))
+        RunWait "%A_AhkPath%" "%updaterPath%"
+    Else
+        break
+}
 #include <find7zexe>
 SplitPath keePassExePath,, keePassExeDir
-RunWait "%exe7z%" x -y -aoa -o"%keePassExeDir%" "%distLatest%",, Min
-Exit 0 ; Updated
+RunWait "%exe7z%" x -y -aoa -o"%keePassExeDir%.%distNewVer%" "%distLatest%",, Min
+RunWait %comspec% /C "MKLINK /J "%keePassExeDir%.tmp" "%keePassExeDir%.%distNewVer%""
+FileRemoveDir %keePassExeDir%
+FileMoveDir %keePassExeDir%.tmp, %keePassExeDir%, R
+Exit ErrorLevel
 
 GetKeepassUpdateVer(ByRef distDir := "") {
     local
