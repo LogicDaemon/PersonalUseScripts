@@ -159,14 +159,19 @@ EXIT /B
     SET "CurrentFile=%~2"
     SET "CurrentDate=%~t2"
 )
-(
+IF "%CurrentDate:~2,1%"=="." IF "%CurrentDate:~5,1%"=="." (
     @rem     01.12.2011 21:29
     SET "CurrentDate=%CurrentDate:~6,4%%CurrentDate:~3,2%%CurrentDate:~0,2%%CurrentDate:~11%"
+) ELSE IF "%CurrentDate:~4,1%"=="-" IF "%CurrentDate:~7,1%"=="-" (
+    @rem     2021-03-18 20:38:10.32
+    SET "CurrentDate=%CurrentDate:~0,4%%CurrentDate:~5,2%%CurrentDate:~8,2%%CurrentDate:~11%"
+) ELSE (
+    ECHO Unknown date format: %CurrentDate%
 )
-    IF "%CurrentDate%" GEQ "%LatestDate%" (
-	SET "LatestFile=%CurrentFile%"
-	SET "LatestDate=%CurrentDate%"
-    )
+IF "%CurrentDate%" GEQ "%LatestDate%" (
+    SET "LatestFile=%CurrentFile%"
+    SET "LatestDate=%CurrentDate%"
+)
 (
     SET "%~1=%LatestFile%"
 EXIT /B

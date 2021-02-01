@@ -26,14 +26,27 @@ If (A_ScriptFullPath == A_LineFile) {
     commandLineParam := ParseScriptCommandLine()
 }
 
-KeePassExePath := Find_KeePass_exe()
-SplitPath KeePassExePath, KeePassExeName
+Loop 2
+{
+    Try {
+        KeePassExePath := Find_KeePass_exe()
+        SplitPath KeePassExePath, KeePassExeName
+        
+        RegRead lastUpdateCheck, HKEY_CURRENT_USER\SOFTWARE\LogicDaemon\KeePassLauncher, LastUpdateCheckYYYYMMDDHH
+    }
 
-RegRead lastUpdateCheck, HKEY_CURRENT_USER\SOFTWARE\LogicDaemon\KeePassLauncher, LastUpdateCheckYYYYMMDDHH
-If (!lastUpdateCheck || DaysSince(lastUpdateCheck) >= 1) {
-    RunWait "%A_AhkPath%" "%A_ScriptDir%\KeePass_update.ahk"
-    RegWrite REG_DWORD, HKEY_CURRENT_USER\SOFTWARE\LogicDaemon\KeePassLauncher, LastUpdateCheckYYYYMMDDHH, % SubStr(A_Now, 1, 10) ;REG_DWORD max is 4294967295
+    If (!lastUpdateCheck || DaysSince(lastUpdateCheck) >= 1) {
+        mode := lastUpdateCheck ? "background " : ""
+        TrayTip Starting %mode%autoupdate...
+        If (lastUpdateCheck) {
+            Run "%A_AhkPath%" "%A_ScriptDir%\KeePass_update.ahk"
+        } Else {
+            RunWait "%A_AhkPath%" "%A_ScriptDir%\KeePass_update.ahk"
+            break
+        }
+    }
 }
+RegWrite REG_DWORD, HKEY_CURRENT_USER\SOFTWARE\LogicDaemon\KeePassLauncher, LastUpdateCheckYYYYMMDDHH, % SubStr(A_Now, 1, 10) ;REG_DWORD max is 4294967295
 
 If (WinExist("ahk_exe " KeePassExeName)) {
     WinGetTitle KeePassTitle

@@ -16,7 +16,8 @@ IF EXIST %rd%\ (
     imdisk -d -m %rd%
 )
 imdisk -a -m %rd% -t file -f "%ProgramData%\imdisk\imdisk_ramdisk.img" -s 4G -o rem,hd -p "/q /y /FS:NTFS /C /V:RAMdisk" || PAUSE
-rem format %rd% /q /FS:NTFS /C /V:RAMdisk
+format %rd% /q /FS:NTFS /C /V:RAMdisk
+rem "%ProgramFiles%\ImDisk\RamDyn.exe" "R:" 8388608 -1 0 12 "-p \"/fs:ntfs /q /y /V:RAMdisk\""
 chkdsk %rd% /L
 chkdsk %rd% /L:2048
 chkdsk %rd% /L

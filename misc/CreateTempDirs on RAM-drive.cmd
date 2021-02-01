@@ -6,10 +6,11 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
 IF NOT DEFINED PROGRAMDATA SET "PROGRAMDATA=%ALLUSERSPROFILE%\Application Data"
 
 IF NOT EXIST R:\ EXIT /B
-COMPACT /C "R:"
-MKDIR R:\Temp\NVIDIA Corporation
-COMPACT /U "R:\Temp\NVIDIA Corporation"
 ATTRIB +I R:\*.* /S /D /L
+
+COMPACT /U "R:"
+MKDIR "R:\Temp\NVIDIA Corporation\NV_Cache"
+COMPACT /U "R:\Temp\NVIDIA Corporation"
 
 SET "USERPROFILE=d:\Users\LogicDaemon"
 )
@@ -30,8 +31,11 @@ rem CALL :LinkBack "%LOCALAPPDATA%\Chromium\User Data\Default\Cache" "r:\AppData
 rem CALL :LinkBack "%LOCALAPPDATA%\Mozilla\Firefox\Profiles\ka3nrsws.default\Cache" "r:\AppData\Local\Mozilla\Firefox\Cache"
 rem CALL :LinkBack "%LOCALAPPDATA%\Mozilla\Firefox\Profiles\ka3nrsws.default\cache2" "r:\AppData\Local\Mozilla\Firefox\Cache2"
 
+REM if it's a link, it will be removed and re-created as an empty dir;
+REM if it's a dir without contents, same
+REM but if it's non-empty dir, it will stay as is
 RD /Q "%LOCALAPPDATA%\Temp"
-MKDIR "%LOCALAPPDATA%\Temp"
+REM this is needed because now the directory will be moved to R:, and if it's a link to R:, that might break MOVE which will move files to themselves and then remove from source (but as it's linked to dest, remove that single copy altogether)
 CALL :LinkBack "%LOCALAPPDATA%\Temp" "r:\Temp"
 
 EXIT /B
@@ -44,9 +48,11 @@ EXIT /B
     )
     IF NOT EXIST "%~2" MKDIR "%~2"
     IF NOT EXIST "%~2" EXIT /B
-    
-    xln.exe -n "%~2" "%~1"
-    IF ERRORLEVEL 1 RD /S /Q "%~1" & xln.exe -n "%~2" "%~1"
+    RD /Q %1
+    MKLINK /D %1 %2 || xln.exe -n %2 %1 || (
+        RD /S /Q %1
+        xln.exe -n %2 %1
+    )
 EXIT /B
 
 :ReplaceDrive <var> <prefix> <path>

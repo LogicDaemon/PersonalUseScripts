@@ -5,8 +5,6 @@
 #NoTrayIcon
 #SingleInstance force
 
-#Include <nprivRun>
-
 SetTitleMatchMode RegEx
 VivaldiWinTitleRegex := ".+ - Vivaldi$ ahk_exe vivaldi\.exe"
 
@@ -99,3 +97,4 @@ ParseCmdShellOpen(ByRef cmdShellOpen) {
 
 #include <ForceWinActivate>
 #include <ForceWinActivateBottom>
+#Include <nprivRun>

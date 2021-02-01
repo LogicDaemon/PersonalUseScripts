@@ -11,17 +11,18 @@ If ( !ErrorLevel ) { ; ErrorLevel = PID
         Exit
     }
     SplitPath exeDropbox,, dirDropbox
+    ; /systemstartup
     If (ShellRunWithBackgroundPriority("""" exeDropbox """", dirDropbox, "starting Dropbox")) {
         Sleep 3000
         ;Affinity_Set(1, pid)
         
         ;Process Priority, ahk_pid %pid%, B
-        Process Priority, DropboxUpdate.exe, L
+        Process Priority, DropboxUpdate.exe, Low
         
         For procpid, procpath in ProcessList() {
             SplitPath procpath, procexename
             If (procexename = "dropbox.exe")
-                Process Priority, ahk_pid %procpid%, BelowNormal
+                Process Priority, ahk_pid %procpid%, Low
             Else If (EndsWith(procexename, "\Dropbox\bin\QtWebEngineProcess.exe"))
                 Process Priority, ahk_pid %procpid%, Normal
         }
