@@ -17,17 +17,24 @@ If LargeDisplay
     ;Initializing GUI
     ;modded func originated from http://www.autohotkey.com/board/topic/8190-osd-function/
     
+    ;80 SM_CMONITORS: Number of display monitors on the desktop (not including "non-display pseudo-monitors"). 
+    ;SysGet monCount, 80
+    ;Loop % monCount
+    ;{
+    ;    
+    ;}
     SysGet Monitor, Monitor
-
+    
     GUIx := MonitorLeft
+    GUIy := MonitorTop
     GUIw := MonitorRight - MonitorLeft
     GUIh := (MonitorBottom - MonitorTop) * GUIw * 0.00003
     If (GUIh > ((MonitorBottom - MonitorTop) * 0.3))
 	GUIh := (MonitorBottom - MonitorTop) * 0.3
-
+    
     opacity=230
     fname="Tahoma"
-    fsize:=GUIh * 0.65 ; really, pixel = 0.75 point, but with 0.75 lowercase letter with lower part (like "g") get cut
+    fsize:=GUIh * 0.65 ; really, pixel = 0.75 point, but with 0.75 lowercase letter with lower part (like "g") will get cut
     fcolor=cccccc
     bcolor=222222
     fformat="600"
@@ -51,7 +58,7 @@ TrayTip %A_ScriptName%, To Exit`, press the Right Windows logo key.
     
 Loop
 {
-    Input SingleKey, L1 V M I B, {LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{Capslock}{Numlock}{PrintScreen}{Pause}
+    Input SingleKey, L1 V M I B, {LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{Capslock}{Numlock}{PrintScreen}{Pause}{Tab}
     GetKeyStates()
     
 ;    IfInString ErrorLevel, EndKey
@@ -66,7 +73,7 @@ Loop
 
 	If (GetKeyState("LControl", "P") || GetKeyState("RControl", "P"))
 	{
-	    If (SingleKey==Chr(10) && EnterPressed)
+            If (SingleKey==Chr(10) && EnterPressed)
 		SingleKeyText=Enter
 	    Else If (SingleKey >= Chr(1) && SingleKey <= Chr(26)) ; With "M" in Input, Ctrl-A through Ctrl-Z correspond to Chr(1) through Chr(26)
 		SingleKeyText := Chr(Asc("A")-1+Asc(SingleKey))
@@ -184,6 +191,7 @@ GetKeyStates() {
 	. ( GetKeyState("Numlock", "P") ? "Numlock + " : "" )
 	. ( GetKeyState("PrintScreen", "P") ? "PrintScreen + " : "" )
 	. ( GetKeyState("Pause", "P") ? "Pause + " : "" )
+	. ( GetKeyState("Tab", "P") ? "Tab + " : "" )
 }
 
 ShowKeys(text) {
