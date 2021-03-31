@@ -10,8 +10,10 @@ EnvGet workdir,workdir
 If (!workdir)
     workdir := A_ScriptDir "\temp"
 
-For i, asset in JSON.Load(GetUrl("https://api.github.com/repos/aria2/aria2/releases/latest")).assets
-    If (asset.name ~= "aria2-(?P<ver>.+)-win-(?P<arch>\d\dbit)-build(?P<buildNo>\d*)\.zip") {
+For i, asset in JSON.Load(GetUrl("https://api.github.com/repos/bcpierce00/unison/releases/latest")).assets
+    If (asset.name ~= "unison-v.+\.windows\.zip") {
+;unison-v2.51.4_rc2+ocaml-4.12.0+x86_64.windows.zip
+;unison-v2.51.4_rc2+ocaml-4.10.1+i386.windows.zip
         FileCreateDir %workdir%
         If (FileExist(A_ScriptDir "\" asset.name))
             timeCond := " -z """ A_ScriptDir "\" asset.name """"
