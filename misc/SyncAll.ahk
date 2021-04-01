@@ -9,7 +9,7 @@
 config := ProcessCLArgs( {"needADrive": "d"} )
 
 EnvGet LOCALAPPDATA,LOCALAPPDATA
-EnvSet syncprog, "%LOCALAPPDATA%\Programs\unison\unison 2.48.3 GTK.exe"
+EnvSet syncprog, "%LOCALAPPDATA%\Programs\unison\bin\unison-gtk2.exe"
 
 Try RunScript(A_ScriptDir "\sync_" A_ComputerName ".cmd"), localSynced := true
 

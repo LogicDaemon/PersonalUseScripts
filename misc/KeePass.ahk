@@ -54,7 +54,8 @@ If (WinExist("ahk_exe " KeePassExeName)) {
 	WinActivate
 	Exit
     }
-    If (KeePassTitle = nameDB . " [Locked] - Keepass"
+    If (       KeePassTitle = " [Locked] - Keepass"
+            || KeePassTitle = nameDB . " [Locked] - Keepass"
 	    || KeePassTitle = "KeePass" ; no db open
 	    || KeePassTitle = "Open Database - " . nameDB) { ; database opening window
         ;RunWait "%KeePassExePath%" --exit-all
