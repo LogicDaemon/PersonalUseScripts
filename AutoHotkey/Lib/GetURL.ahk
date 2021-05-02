@@ -3,13 +3,16 @@
 
 GetURL(ByRef URL, tries := 20, delay := 3000) {
     local
-    While (!HTTPReq("GET", URL,, resp))
-	If (A_Index > tries)
-	    Throw Exception("Error downloading URL", A_ThisFunc, resp.status)
-	Else
-	    sleep delay
-    
-    return resp
+    While (A_Index <= tries) {
+        st := HTTPReq("GET", URL,, resp := "")
+	If (st < 500) { ; only repeat on server errors (≥ 500)
+            If (st < 400)
+                return resp
+            break ; errors 400…500 are fatal
+        }
+        sleep delay
+    }
+    Throw Exception("Error downloading URL", A_ThisFunc, st)
 }
 
 If (A_LineFile==A_ScriptFullPath) {

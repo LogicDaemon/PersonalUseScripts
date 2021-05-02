@@ -5,5 +5,6 @@
     SET "distcleanup=1"
 )
 (
-    CALL "%baseScripts%\_DistDownload.cmd" https://rufus.akeo.ie/ *.exe -ml1 -A.exe
+rem     CALL "%baseScripts%\_DistDownload.cmd" https://rufus.akeo.ie/ *.exe -ml1 -A.exe
+    CALL FindAutohotkeyExe.cmd "%~dp0download_latest.ahk"
 )

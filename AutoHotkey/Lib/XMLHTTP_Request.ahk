@@ -1,7 +1,7 @@
 ﻿;by LogicDaemon <www.logicdaemon.ru>
 ;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <http://creativecommons.org/licenses/by-sa/4.0/deed.ru>.
 
-XMLHTTP_Request(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef response:=0, ByRef moreHeaders:=0) {
+XMLHTTP_Request(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=0, ByRef moreHeaders:=0) {
     local
     global debug
 
@@ -17,14 +17,17 @@ XMLHTTP_Request(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef response:=0, 
     
     Try {
 	xhr.send(POSTDATA)
-	If (IsObject(response))
-	    response := {status: xhr.status, headers: xhr.getAllResponseHeaders, responseText: xhr.responseText}
-	Else If (IsByRef(response))
-	    response := xhr.responseText
 	If (IsObject(debug))
 	    For debugField, xhrField in {Headers: "getAllResponseHeaders", Response: "responseText", Status: "status"} ; status can be 200, 404 etc., including proxy responses
 		debug[debugField] := xhr[xhrField]
-	return xhr.Status >= 200 && xhr.Status < 300
+	resp := {status: xhr.status, headers: xhr.getAllResponseHeaders, responseText: xhr.responseText}
+	xhr := ""
+	If (IsObject(rv_response)) {
+            rv_response := resp
+            return resp.Status >= 200 && resp.Status < 300
+	} Else If (IsByRef(rv_response))
+	    rv_response := resp.responseText
+        return resp.status
     } catch e {
 	If (IsObject(debug))
 	    debug.e := e

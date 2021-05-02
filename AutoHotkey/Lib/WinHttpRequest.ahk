@@ -1,7 +1,7 @@
 ﻿;by LogicDaemon <www.logicdaemon.ru>
 ;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode.ru>.
 
-WinHttpRequest(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef response:=0, ByRef moreHeaders:=0, ByRef proxy:="") {
+WinHttpRequest(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=0, ByRef moreHeaders:=0, ByRef proxy:="") {
     local
     global debug
     static WinHttpRequestObjectName := ""
@@ -23,23 +23,26 @@ WinHttpRequest(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef response:=0, B
     
     Try {
 	WebRequest.Send(POSTDATA)
-	st := WebRequest.Status
-        If (IsByRef(response)) {
-	    response := IsObject(response)
-                        ? {status: st, headers: WebRequest.getAllResponseHeaders, responseText: WebRequest.responseText}
-                        : WebRequest.ResponseText
-	}
+	resp := {status: WebRequest.Status, headers: WebRequest.getAllResponseHeaders, responseText: WebRequest.responseText}
+	WebRequest := ""
+	
 	If (IsObject(debug)) {
-	    debug.Headers := WebRequest.GetAllResponseHeaders
-	    debug.Status := st	;can be 200, 404 etc., including proxy responses
+	    debug.Headers := resp.headers
+	    debug.Status := resp.status	;can be 200, 404 etc., including proxy responses
 	    
 	    If (IsFunc(debug.cbStatus))
                 Func(debug.cbStatus).Call( "`nStatus: " debug.Status "`n"
                                          . "Headers: " debug.Headers "`n"
-                                         . response "`n")
+                                         . resp.responseText "`n")
 	}
-	
-	return st >= 200 && st < 300
+
+	If (IsObject(rv_response)) {
+	    rv_response := resp
+	    return resp.Status >= 200 && resp.Status < 300
+	} Else If (IsByRef(rv_response)) {
+            rv_response := resp.responseText
+	}
+        return resp.status
     } catch e {
 	If (IsObject(debug)) {
 	    debug.What := e.What
