@@ -1,7 +1,7 @@
 ﻿;by LogicDaemon <www.logicdaemon.ru>
 ;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode.ru>.
 
-HTTPReq(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef response:=0, ByRef reqmoreHeaders:=0) {
+HTTPReq(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=0, ByRef reqmoreHeaders:=0) {
     local
     If (method = "POST") {
         If (reqmoreHeaders==0) {
@@ -15,11 +15,19 @@ HTTPReq(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef response:=0, ByRef re
             }
         }
     }
-    ;ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef response:=0, ByRef moreHeaders:=0
-    return XMLHTTP_Request(method, URL, POSTDATA, response, moreHeaders) || WinHTTPReqWithProxies(method, URL, POSTDATA, response, moreHeaders)
+    ;ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=0, ByRef moreHeaders:=0
+    If (IsObject(rv_response)) {
+        return XMLHTTP_Request(method, URL, POSTDATA, rv_response, moreHeaders) || WinHTTPReqWithProxies(method, URL, POSTDATA, rv_response, moreHeaders)
+    } Else {
+        If ((rv := XMLHTTP_Request(method, URL, POSTDATA, rv_response, moreHeaders)) < 500) {
+            return rv
+        } Else {
+            return WinHTTPReqWithProxies(method, URL, POSTDATA, rv_response, moreHeaders)
+        }
+    }
 }
 
-WinHTTPReqWithProxies(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef response:=0, ByRef moreHeaders:=0, ByRef TryProxies := "") {
+WinHTTPReqWithProxies(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=0, ByRef moreHeaders:=0, ByRef TryProxies := "") {
     local
     static proxies := ""
     ;URLprotoInURL := RegexMatch(URL, "([^:]{3,6})://", URLproto)
@@ -49,8 +57,8 @@ WinHTTPReqWithProxies(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef respons
     }
     
     For i,proxy in proxies
-        Try If (success := WinHttpRequest(method, URL, POSTDATA, response, moreHeaders, proxy))
-            return success
+        Try If ((res := WinHttpRequest(method, URL, POSTDATA, rv_response, moreHeaders, proxy)) < 400)
+            return res
     
     return 0
 }
