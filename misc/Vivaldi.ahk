@@ -23,8 +23,8 @@ If (A_Args.Length()) {
 For i, classMask in ["VivaldiHTM", "Applications\vivaldi.exe", ["^VivaldiHTM\..*"]] {
     If (aShellOpen := FindShellOpenByClass(classMask)) {
         CmdlArgs .= A_Space StrReplace( aShellOpen[2], """%1""" ) ; remove "%1" from args
-        For check, addArg in 	{ "--profile-directory=": "--profile-directory=""Default""" }
-                                ;, "--process-per-site":   "--process-per-site" }
+        For check, addArg in 	{ "--profile-directory=": "--profile-directory=""Default"""
+                                , "--process-per-site":   "--process-per-site" }
             If (!InStr(CmdlArgs, check))
                 CmdlArgs := addArg A_Space CmdlArgs
         nprivRun(aShellOpen[1], CmdlArgs)
