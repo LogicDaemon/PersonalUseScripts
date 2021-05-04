@@ -5,12 +5,18 @@ SETLOCAL ENABLEEXTENSIONS
 IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
 IF NOT DEFINED PROGRAMDATA SET "PROGRAMDATA=%ALLUSERSPROFILE%\Application Data"
 
-IF NOT EXIST R:\ EXIT /B
-ATTRIB +I R:\*.* /S /D /L
+IF NOT EXIST r:\ EXIT /B
+ATTRIB +I r:\*.* /S /D /L
 
-COMPACT /U "R:"
-MKDIR "R:\Temp\NVIDIA Corporation\NV_Cache"
-COMPACT /U "R:\Temp\NVIDIA Corporation"
+MKDIR "r:\Temp\NVIDIA Corporation\NV_Cache"
+COMPACT /U "r:\Temp\NVIDIA Corporation"
+
+MKDIR "r:\Temp\obs-studio\crashes"
+MKDIR "r:\Temp\obs-studio\plugin_config\obs-browsers"
+MKDIR "r:\Temp\discord\Cache"
+MKDIR "r:\Temp\discord\Code Cache"
+MKDIR "r:\Temp\npm-cache"
+MKDIR "r:\Temp\Steam\htmlcache"
 
 SET "USERPROFILE=d:\Users\LogicDaemon"
 )

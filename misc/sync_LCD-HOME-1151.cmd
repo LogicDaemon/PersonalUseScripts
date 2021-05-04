@@ -27,6 +27,8 @@ IF NOT DEFINED syncprog SET syncprog=%unisontext%
     )
     %syncprog% Local_Scripts192.168.36.1 %unisonopt%
     %syncprog% Distributives192.168.36.1 %unisonopt% -killserver
+    
+    %syncprog% "%TEMP%" "socket://localhost:10355/%TEMP:\=/%" -testserver -killserver
 
     ENDLOCAL
 EXIT /B

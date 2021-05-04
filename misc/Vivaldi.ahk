@@ -2,33 +2,40 @@
 ;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <http://creativecommons.org/licenses/by-sa/4.0/deed.ru>.
 
 #NoEnv
-#NoTrayIcon
 #SingleInstance force
 
 SetTitleMatchMode RegEx
 VivaldiWinTitleRegex := ".+ - Vivaldi$ ahk_exe vivaldi\.exe"
 
+Run "%A_AhkPath%" "%A_ScriptDir%\Vivaldi_prefs_backup.ahk"
+
 If (A_Args.Length()) {
-    CmdlArgs := ParseScriptCommandLine()
-} else {
-    If (WinExist(VivaldiWinTitleRegex)) {
-        If (WinActive())
-            ForceWinActivateBottom(VivaldiWinTitleRegex)
-        Else
-            ForceWinActivate(VivaldiWinTitleRegex)
-	ExitApp
-    }
+    cmdlArgs := ParseScriptCommandLine()
+} else If (WinExist(VivaldiWinTitleRegex)) {
+    If (WinActive())
+        ForceWinActivateBottom(VivaldiWinTitleRegex)
+    Else
+        ForceWinActivate(VivaldiWinTitleRegex)
+    ExitApp
 }
 
-For i, classMask in ["VivaldiHTM", "Applications\vivaldi.exe", ["^VivaldiHTM\..*"]] {
+; HKEY_CURRENT_USER\SOFTWARE\Clients\StartMenuInternet\Vivaldi.TMQETQK6ARTJHNK4EKWDEFN3NM\shell\open\command
+For i, classMask in [ "VivaldiHTM"
+                    , "Applications\vivaldi.exe"
+                    , ["^VivaldiHTM\..*"]
+                    , ["Vivaldi\..*"]] {
     If (aShellOpen := FindShellOpenByClass(classMask)) {
-        CmdlArgs .= A_Space StrReplace( aShellOpen[2], """%1""" ) ; remove "%1" from args
+        If (InStr(aShellOpen[2], "%1")) {
+            cmdlArgs := StrReplace( StrReplace( aShellOpen[2], """%1""", cmdlArgs ), "%1", cmdlArgs ) . cmdlArgs ; replace "%1" or %1 in args
+        } Else {
+            cmdlArgs := aShellOpen[2] A_Space cmdlArgs
+        }
         For check, addArg in 	{ "--profile-directory=": "--profile-directory=""Default"""
                                 , "--process-per-site":   "--process-per-site" }
-            If (!InStr(CmdlArgs, check))
-                CmdlArgs := addArg A_Space CmdlArgs
-        nprivRun(aShellOpen[1], CmdlArgs)
-        WinWait %VivaldiWinTitleRegex%,,3
+            If (!InStr(cmdlArgs, check))
+                cmdlArgs := addArg A_Space cmdlArgs
+        nprivRun(aShellOpen[1], cmdlArgs)
+        WinWait %VivaldiWinTitleRegex%,,5
         If (!ErrorLevel) {
             ForceWinActivate(VivaldiWinTitleRegex)
             break
@@ -42,22 +49,27 @@ If (!aShellOpen)
 ExitApp
 
 FindShellOpenByClass(ByRef classRegexArrayOrName) {
-    For i, classRoot in ["HKEY_CURRENT_USER\SOFTWARE\Classes", "HKEY_CLASSES_ROOT"] {
+    local
+    For i, classRoot in [ "HKEY_CURRENT_USER\SOFTWARE\Classes"
+                        , "HKEY_CLASSES_ROOT"
+                        , "HKEY_CURRENT_USER\SOFTWARE\Clients\StartMenuInternet" ] {
         If (IsObject(classRegexArrayOrName)) {
             If (lastbs := InStr(classRegexArrayOrName[1], "\\", false, 0))
-                classRoot .= "\" SubStr(classRegexArrayOrName[1], 1, lastbs-1), classRegexArrayOrName := SubStr(classRegexArrayOrName[1], lastbs+2)
-            For className in RegQuery(classRoot, classRegexArrayOrName[1])
-                If (IsObject(v := RegClassShellCmdApp(classRoot "\" className "\shell\open\command")))
+                classRoot .= "\" SubStr(classRegexArrayOrName[1], 1, lastbs-1)
+            For className in RegQuery(classRoot, SubStr(classRegexArrayOrName[1], lastbs+2))
+                If (IsObject(v := RegClassShellCmdApp(classRoot "\" className)))
                     return v
         } Else {
-            If (IsObject(v := RegClassShellCmdApp(classRoot "\" classRegexArrayOrName "\shell\open\command")))
+            If (IsObject(v := RegClassShellCmdApp(classRoot "\" classRegexArrayOrName)))
                 return v
         }
     }
 }
 
 RegClassShellCmdApp(regPath, regKey := "") {
-    RegRead cmd, %regPath%, %regKey%
+    local
+    RegRead cmd, %regPath%\shell\open\command, %regKey%
+    ;MsgBox % regPath "`n" regKey "`n" cmd
     If (cmd) {
         qapp := ParseCmdShellOpen(cmd)
         args := Trim(SubStr(cmd, StrLen(qapp)+1))
@@ -67,6 +79,7 @@ RegClassShellCmdApp(regPath, regKey := "") {
 }
 
 RegQuery(regBasePath, regex, mode := "K") {
+    local
     out := {}
     
     Loop Reg, %regBasePath%, %mode%
@@ -76,20 +89,22 @@ RegQuery(regBasePath, regex, mode := "K") {
 }
 
 ParseCmdShellOpen(ByRef cmdShellOpen) {
+    local
     flagInsideQuote:=0
     Loop Parse, cmdShellOpen, %A_Space%
     {
-	pathExec .= A_LoopField
-	; there may be several quotes w/o spaces in single argument -- IfInString A_LoopField, "
-	;    flagInsideQuote:=!flagInsideQuote
-	Loop Parse, A_LoopField, "
-	    flagInsideQuote:=!flagInsideQuote
-	If (flagInsideQuote) { ; since Loop ran (<number of «"»> + 1) times, currently flag in inverted
-	    break
-	} Else {
-	    flagInsideQuote:=!flagInsideQuote ; invert flag to restore meaning, because above Loop ran (<number of «"»> + 1) times (it counted quotes + 1)
-	    pathExec .= A_Space
-	}
+        pathExec .= A_LoopField
+        ; there may be several quotes w/o spaces in single argument -- IfInString A_LoopField, "
+        ;    flagInsideQuote:=!flagInsideQuote
+        Loop Parse, A_LoopField, "
+            flagInsideQuote:=!flagInsideQuote
+        If (flagInsideQuote) { ; since Loop ran (<number of «"»> + 1) times, currently flag in inverted, the substring is not in the quote, and the path is parsed completely
+            break
+        } Else {
+            flagInsideQuote:=!flagInsideQuote ; invert flag to restore meaning, because above Loop ran (<number of «"»> + 1) times (it counted quotes + 1)
+            ; path is not yet parsed completely, keep appending it (with space delimeter)
+            pathExec .= A_Space
+        }
     }
     
     return pathExec

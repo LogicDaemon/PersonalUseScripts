@@ -1,3 +1,3 @@
 @(REM coding:CP866
-CALL FindAutoHotkeyExe.cmd download_latest.ahk
+CALL FindAutoHotkeyExe.cmd "%~dp0download_latest.ahk"
 )

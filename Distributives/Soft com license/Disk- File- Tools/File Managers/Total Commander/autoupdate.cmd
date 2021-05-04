@@ -29,14 +29,15 @@ IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%U
 	SET "verComponent5=%%~E"
     )
 )
+SET "fullVer=%verComponent2%%verComponent3%%verComponent4%"
 (
     MKDIR "%dirDlTmp%"
-    rem %dlcmdPrefix% http://totalcommander.ch/win/tcmd%verComponent2%%verComponent3%x32.exe %dlcmdSuffix%
-    rem %dlcmdPrefix% http://totalcommander.ch/win/tcmd%verComponent2%%verComponent3%x64.exe %dlcmdSuffix%
-    START "" /B /WAIT /D "%dirDlTmp%" %dlcmdPrefix% http://totalcommander.ch/win/tcmd%verComponent2%%verComponent3%x32_64.exe %dlcmdSuffix%
+    START "" /B /WAIT /D "%dirDlTmp%" %dlcmdPrefix% http://totalcommander.ch/win/tcmd%fullVer%x32.exe %dlcmdSuffix%
+    START "" /B /WAIT /D "%dirDlTmp%" %dlcmdPrefix% http://totalcommander.ch/win/tcmd%fullVer%x64.exe %dlcmdSuffix%
+    START "" /B /WAIT /D "%dirDlTmp%" %dlcmdPrefix% http://totalcommander.ch/win/tcmd%fullVer%x32_64.exe %dlcmdSuffix%
     FOR %%A IN ("%dirDlTmp%\*.*") DO (
 	MOVE /Y "%%~A" "%dirDist%"
-	"%dirDist%\%%~nxA" %installOptns%
+	"%dirDist%%%~nxA" %installOptns%
     )
     
     MOVE "%dirData%newver.txt" "%dirData%oldver.txt"

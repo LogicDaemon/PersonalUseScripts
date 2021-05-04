@@ -10,6 +10,6 @@ robocopy "%LocalAppData%\Scripts" "%~dp0misc" /MIR /XD Photo temp-backup-scripts
 robocopy "%LocalAppData%\Scripts\Photo" "%~dp0Photo" /MIR /XD old /XF *.lnk "Copy photos from flash cards.destinations.txt"
 robocopy "%USERPROFILE%\Dropbox\Projects\Setup\Win10" "%~dp0Setup\Win10" /MIR
 robocopy "%USERPROFILE%\Dropbox\Projects\Setup" "%~dp0Setup" "Logitech Gaming Software en-US.reg"
-ATTRIB -R -S -H /S "%~dp0."
+ATTRIB -R -S -H /S "%~dp0"
 ATTRIB +H "%~dp0.git"
 )

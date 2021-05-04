@@ -11,6 +11,7 @@ EnvSet dirDropbox, %dirDropbox%
 global hiddenPIDs := {}
 
 cmds := [ [A_AppData "\GHISLER\download pci.ids and convert to pci.db.ahk"]
+        , [A_ScriptDir "\Vivaldi_prefs_backup.ahk"]
         , [LocalAppData "\Programs\Total Commander\PlugIns\wdx\TrID_Identifier\TrID\update.cmd"]
         , [dirDropbox "\Config\scripts\call _link.cmd for HOSTNAME and GROUP.cmd"]
         , [dirDropbox "\Config\scripts\copy tasks.cmd"]
@@ -21,7 +22,24 @@ cmds := [ [A_AppData "\GHISLER\download pci.ids and convert to pci.db.ahk"]
 commands =
 (
 %SystemRoot%\System32\sc.exe config "Backupper Service" start= demand
+%SystemRoot%\System32\sc.exe config "SBIS3Plugin" start= demand
 )
+
+killProcesses =
+(
+update_notifier.exe
+DropboxUpdate.exe
+)
+
+yesterday := ""
+yesterday += -1, Day
+Loop Files, %A_Temp%\*.*, D
+{
+    If (FileExist(A_LoopFileFullPath "\DismHost.exe")
+        && A_LoopFileTimeModified < yesterday) {
+        FileRemoveDir %A_LoopFileFullPath%, 1
+    }
+}
 
 DllCall("SetPriorityClass", "UInt", DllCall("GetCurrentProcess"), "UInt", 0x00100000) ; PROCESS_MODE_BACKGROUND_BEGIN=0x00100000 https://msdn.microsoft.com/en-us/library/ms686219.aspx
 For i, cmd in cmds
@@ -42,6 +60,22 @@ Loop
     Menu Tray, Tip, %c% processes still running
 } Until !c
 Menu Tray, Tip, All maintenance processes finished
+
+For i, procName in killProcesses {
+    WinKill ahk_exe %procName%,,5
+    While true {
+        Process Exist, %procName%
+        If (!ErrorLevel)
+            break
+        If (prevPID == ErrorLevel) {
+            RunWait taskkill.exe /IM %procName% /F
+            break
+        } Else {
+            prevPID := ErrorLevel
+            Process Close, %procName%
+        }
+    }
+}
 
 extToCompact={"exe": "", "dll": "", "sys": "", "mui": "", "eml": "", "qml": "", "js": "", "pyd": "", "py": "", "qmltypes": "", "rcc": "", "inf": "", "manifest": ""}
 dirs := {}

@@ -41,7 +41,8 @@ Loop Parse, disks
         }
         
         nextDate := IncDate(filedate)
-        destDir = %destBase%\%A_LoopFileExt%\%filedate%
+        FormatTime dirName, %filedate%, yyyy-MM-dd
+        destDir = destBase "\" A_LoopFileExt "\" dirName
         ;MsgBox nextDate: %nextDate%`nfiledate: %filedate%`ndestDir: %destDir%`ndestBase: %destBase%`n%A_LoopFileLongPath%`n%A_LoopFileFullPath%
         FileCreateDir %destDir%
         RunWait robocopy.exe "%baseDir%" . "*.%A_LoopFileExt%" /S /DCOPY:DAT /MINAGE:%nextDate% /MAXAGE:%filedate%, %destDir%, Min
