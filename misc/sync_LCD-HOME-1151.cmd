@@ -13,24 +13,15 @@ SETLOCAL ENABLEEXTENSIONS
         SET skipPresyncs=1
     )
 )
-IF NOT DEFINED syncprog SET syncprog=%unisontext%
 (
-    PUSHD "%TEMP%" || EXIT /B
-    START "Distributives Unison server" /B %unisontext% -socket 10355
-    PING -n 2 127.0.0.1 >NUL
-    IF NOT DEFINED skipPresyncs (
-        ECHO Synchronizing Soft and drivers
-        %unisontext% Distributives192.168.36.1 -path Soft -path Drivers -path "Soft com freeware" -path "Soft com license" -path "Soft FOSS" -path "Soft private use only" %unisonopt%
-        ECHO Synchronizing config
-        %unisontext% Distributives192.168.36.1 -path config %unisonopt%
-        ECHO Synchronizing remaining
-    )
-    %syncprog% Local_Scripts192.168.36.1 %unisonopt%
-    %syncprog% Distributives192.168.36.1 %unisonopt% -killserver
-    
-    %syncprog% "%TEMP%" "socket://localhost:10355/%TEMP:\=/%" -testserver -killserver
+IF NOT DEFINED syncprog SET "syncprog=%unisontext%"
+PUSHD "%TEMP%" || EXIT /B
+START "Distributives Unison server" /B %unisontext% -socket 10355
+PING -n 2 127.0.0.1 >NUL
 
-    ENDLOCAL
+START "" /B /WAIT %comspec% /C "%~dp0sync_LCD-HOME-1151_execsyncs.cmd"
+
+%syncprog% "%TEMP%" "socket://localhost:10355/%TEMP:\=/%" -testserver -killserver
 EXIT /B
 )
 
