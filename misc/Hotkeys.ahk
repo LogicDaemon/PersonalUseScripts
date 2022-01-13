@@ -15,8 +15,6 @@ SetFormat FloatFast, 0.3
 SetFormat IntegerFast, Dec
 
 SetTitleMatchMode RegEx
-; For foobar2000 detection
-DetectHiddenWindows On
 
 ;Defining some constants
 WM_MENUSELECT:=0x011F
@@ -28,12 +26,14 @@ SplitPath A_AhkPath,, A_AhkDir
 EnvGet ProgramFilesx86, ProgramFiles(x86)
 If Not ProgramFilesx86
     ProgramFilesx86:=ProgramFiles
-Envget LocalAppData, LOCALAPPDATA
+EnvGet LocalAppData, LOCALAPPDATA
 EnvGet SystemDrive, SystemDrive
 EnvGet SystemRoot, SystemRoot
 laPrograms := LocalAppData "\Programs"
 
-GreenshotExe := FirstExisting(A_ProgramFiles "\Greenshot\Greenshot.exe")
+autohotkeyChm := FirstExisting( A_AhkDir "\AutoHotkey.chm"
+                              , laPrograms "\AutoHotkey\AutoHotkey.chm"
+                              , A_ProgramFiles "\AutoHotkey\AutoHotkey.chm" )
 
 GroupAdd ExcludedFromAutoReplace, ahk_class ^SALFRAME
 ;GroupAdd ExcludedFromAutoReplace, ahk_class ^OperaWindowClass
@@ -41,9 +41,9 @@ GroupAdd ExcludedFromAutoReplace, ahk_class ^{E7076D1C-A7BF-4f39-B771-BCBE88F2A2
 GroupAdd ExcludedFromAutoReplace, ahk_class ^TMsgWindow
 GroupAdd ExcludedFromAutoReplace, ahk_class ^ConsoleWindowClass
 ;GroupAdd ExcludedFromAutoReplace, ahk_class ^Notepad2, ANSI
-GroupAdd ExcludedFromAutoReplace, \.(bat|cmd) ahk_class ^Notepad2
+GroupAdd ExcludedFromAutoReplace, \.(bat|cmd|py|go|js|yaml|yml) ahk_class ^Notepad2
 ;GroupAdd ExcludedFromAutoReplace, \.ahk ahk_class ^Notepad2
-GroupAdd ExcludedFromAutoReplace, \.(bat|cmd)\b.* - Visual Studio Code ahk_exe \bCode\.exe\b
+GroupAdd ExcludedFromAutoReplace, \.(bat|cmd|py|go|js|yaml|yml)\b.* - Visual Studio Code ahk_exe \bCode\.exe\b
 
 GroupAdd NonStandardLayoutSwitching, ahk_exe \iexplore\.exe\b
 GroupAdd NonStandardLayoutSwitching, ahk_exe \boutlook\.exe\b
@@ -77,7 +77,10 @@ notepad2exe := FirstExisting(laPrograms "\Total Commander\notepad2.exe"
                            , LocalAppData "\Programs\VS Code\Code.exe"
                            , SystemRoot "\System32\notepad.exe")
 
-AU3_SpyExe := FileExist(AU3_SpyExe := A_AhkDir "\AU3_Spy.exe") ? AU3_SpyExe : A_AhkDir "\WindowSpy.ahk"
+AU3_SpyExecArray := [ FirstExisting( A_AhkDir "\AU3_Spy.exe"
+                                   , laPrograms "\AutoHotkey\AU3_Spy.exe"
+                                   , A_AhkDir "\WindowSpy.ahk"
+                                   , laPrograms "\AutoHotkey\WindowSpy.ahk" ) ]
 
 keepassahk := FirstExisting(A_ScriptDir "\KeePass_" A_UserName ".ahk", A_ScriptDir "\KeePass.ahk")
 
@@ -91,65 +94,9 @@ FillDelayedRunGroups()
 DllCall("psapi.dll\EmptyWorkingSet", "Int", -1, "Int")
 
 #include *i %A_ScriptDir%\Hotkeys_Custom.ahk
-return
-
-#^,::		        Send «									;Win+Ctrl+< #^<
-#^.::		    	Send »									;Win+Ctrl+> #^>
-#+,::		    	Send ≤									;Win+Shift+< #+<
-#+.::		    	Send ≥									;Win+Shift+> #+>
-#!,::			Send ←									;Win+Alt+< #!<
-#!.::		    	Send →									;Win+Alt+> #!>
-#+VK44::	    	Send %A_YYYY%-%A_MM%-%A_DD%						;vk44=d	#+d
-#+VK54::   	    	Send %A_Hour%%A_Min%							;vk54=t #+t
-#NumpadSub::		Send –
-#NumPadMult::		Send ×
-#+NumPadMult::		Send ⋆
-#!NumPadMult::		Send ☆
-#!+NumPadMult::		Send ★
-#!Insert::              SendRaw %Clipboard%
-
-#VK43:: return                                                                                     ;VK43=c #c // by default that's Cortana
-#^!+VK5A::              GoTo lReload								                            ;vk5a=z #^!+z
-#^VK43::                Run "%A_AhkPath%" "%A_ScriptDir%\ClipboardMonitor.ahk",, Min	;vk43=c #^c
-
-#^F1::                  Run % "*RunAs " comspec " /K CD /D ""%TEMP%"""
-#Enter::                GoTo lMaximizeWindow
-#+Enter::               GoTo lMaximizeOnNextMonitor
-
-#^!NumPad0::	        WinSet AlwaysOnTop, Toggle, A
-#^Delete::		WinKill A
-#+Down::		PostMessage 0x112, 0xF020,,, A ; 0x112 = WM_SYSCOMMAND, 0xF020 = SC_MINIMIZE, see https://msdn.microsoft.com/ru-ru/library/windows/desktop/ms646360.aspx
-
-#+/::		    	Send ¿									;Win+Shift+/ #+/
-#,::														;Win+< #<
-    clipBak := ClipboardAll
-    Clipboard=
-    SendEvent +{Delete}
-    ClipWait 0
-    SendRaw «»
-    SendEvent {Left}+{Insert}
-    Sleep 50
-    Clipboard := clipBak
-    clipBak=
-return
-
-#!Numpad1::
-#!Numpad2::
-#!Numpad3::
-#!Numpad4::
-#!Numpad6::
-#!Numpad7::
-#!Numpad8::
-#!Numpad9::
-    If ( A_TimeSincePriorHotkey < 1000) {
-	If (A_PriorHotkey == A_ThisHotkey)
-	    magnitudeSeq += magnitudeSeq < WindowSplitSize.MaxIndex()
-    } else {
-	magnitudeSeq := WindowSplitSize.MinIndex()
-    }
-    Tooltip % "Magnitude #" . magnitudeSeq . " = " . WindowSplitSize[magnitudeSeq]
-    SetTimer RemoveToolTip, 1000
-    MoveToCornerNum(SubStr(A_ThisLabel,0), WindowSplitSize[magnitudeSeq])
+#include *i %A_ScriptDir%\Hotkeys_Custom.%A_USERNAME%.ahk
+#include *i %A_ScriptDir%\Hotkeys_Custom.%A_COMPUTERNAME%.ahk
+#include *i %A_ScriptDir%\Hotkeys_Custom.%A_USERNAME%@%A_COMPUTERNAME%.ahk
 return
 
 #IfWinNotActive ahk_group ExcludedFromAutoReplace
@@ -169,7 +116,7 @@ return
     ;::ЭБ::«
     ;:?:">::»
     ;::ЭЮ::»
-    #Hotstring * ?0 C Z
+    #Hotstring * ?0 C
     ::--- ::– `
     ::... ::… `
     ::>= ::≥ `
@@ -190,6 +137,63 @@ return
     #Hotstring *0 ?0 C0 Z0
 #IfWinActive
 
+#,::                                                          ;Win+< #<
+    clipBak := ClipboardAll
+    Clipboard=
+    SendEvent +{Delete}
+    ClipWait 0
+    SendRaw «»
+    SendEvent {Left}+{Insert}
+    Sleep 50
+    Clipboard := clipBak
+    clipBak=
+return
+#+/::               Send ¿                                    ;Win+Shift+/ #+/
+#^,::               Send «                                    ;Win+Ctrl+<  #^<
+#^.::               Send »                                    ;Win+Ctrl+>  #^>
+#+,::               Send ≤                                    ;Win+Shift+< #+<
+#+.::               Send ≥                                    ;Win+Shift+> #+>
+#!,::               Send ←                                    ;Win+Alt+<   #!<
+#!.::               Send →                                    ;Win+Alt+>   #!>
+#+VK44::            Send %A_YYYY%-%A_MM%-%A_DD%               ;vk44=d      #+d
+#+VK54::            Send %A_Hour%%A_Min%                      ;vk54=t      #+t
+#NumpadSub::        Send –
+#NumPadMult::       Send ×
+#+NumPadMult::      Send ⋆
+#!NumPadMult::      Send ☆
+#!+NumPadMult::     Send ★
+#!Insert::          SendRaw %Clipboard%
+
+#^!+VK5A::          GoTo lReload                                                    ;vk5a=z #^!+z
+#^VK43::            Run "%A_AhkPath%" "%A_ScriptDir%\ClipboardMonitor.ahk",, Min    ;vk43=c #^c
+
+#^F1::              Run % "*RunAs " comspec " /K CD /D ""%TEMP%"""
+#Enter::            GoTo lMaximizeWindow
+#+Enter::           GoTo lMaximizeOnNextMonitor
+
+#^!NumPad0::        WinSet AlwaysOnTop, Toggle, A
+#^Delete::          WinKill A
+#+Down::            PostMessage 0x112, 0xF020,,, A ; 0x112 = WM_SYSCOMMAND, 0xF020 = SC_MINIMIZE, see https://msdn.microsoft.com/ru-ru/library/windows/desktop/ms646360.aspx
+
+#!Numpad1::
+#!Numpad2::
+#!Numpad3::
+#!Numpad4::
+#!Numpad6::
+#!Numpad7::
+#!Numpad8::
+#!Numpad9::
+    If ( A_TimeSincePriorHotkey < 1000) {
+	If (A_PriorHotkey == A_ThisHotkey)
+	    magnitudeSeq += magnitudeSeq < WindowSplitSize.MaxIndex()
+    } else {
+	magnitudeSeq := WindowSplitSize.MinIndex()
+    }
+    Tooltip % "Magnitude #" . magnitudeSeq . " = " . WindowSplitSize[magnitudeSeq]
+    SetTimer RemoveToolTip, 1000
+    MoveToCornerNum(SubStr(A_ThisLabel,0), WindowSplitSize[magnitudeSeq])
+return
+
 FillDelayedRunGroups() {
     ;Error:  Parameter #2 must match an existing #If expression.
     ;--->	087: Hotkey,If,("AlternateHotkeys==" altMode)
@@ -198,39 +202,49 @@ FillDelayedRunGroups() {
     #If
     local altKey, HotkeysRunDelayed, altMode, altFunc, key, args, hotkeyFunc, OutExtension
     ; {key: [File, Arguments, Directory, Operation, Show], ...} ; Show is as in ShellRun or -1 to run as ahk script (w/o ShellRun)
-        , RunDelayedGroups :=   { "":       { "#!VK43":	 [calcexe,, ""]								;VK43=c #!c
-                                            , "SC132":   [A_ScriptDir "\Vivaldi.ahk"]						;SC132=Homepage
-                                            , "#VK57":   [A_ScriptDir "\Vivaldi.ahk"]						;vk57=w #w
-                                            , "#+VK57":	 [A_ScriptDir "\Chromium.ahk"]						;vk57=w #+w
-                                            , "+SC132":	 [A_ScriptDir "\Chromium.ahk"]						;SC132=Homepage +Homepage
-                                            , "^!+Esc":  [procexpexe]								;^!+Esc
-                                            , "#SC132":  [A_ScriptDir "\ie.cmd",,,,7]						;#Homepage
-                                            , "#^!VK57": [laPrograms "\Tor Browser\Browser\firefox.exe",,,,7]			;#^!w
-                                            , "^!SC132": [laPrograms "\Tor Browser\Browser\firefox.exe",,,,7]			;^!Homepage
-                                            , "Browser_Favorites": [A_ScriptDir "\Skype.cmd",,,,7]				;
-                                            , "Launch_Mail": [A_ScriptDir "\email_button.ahk",,""]				;
-                                            , "#F1":     [comspec, " /K ""CD /D """ A_ScriptDir """ & PUSHD ""%TEMP%"" & ECHO POPD to go to " A_ScriptDir """"]		;/U https://twitter.com/LogicDaemon/status/936259452617060354
-                                            , "#VK45":   [totalcmdexe,,""]	                                                ;vk45=e #e
-                                            , "#+VK45":  [totalcmdexe,,,,-1]							;vk45=e #+e
-                                            , "#!VK45":  ["shell:MyComputerFolder"]						;vk45=e #!e
-                                            , "#^VK45":  [A_ScriptDir "\RemoveDrive.ahk"]					;vk45=e #^e
-                                            , "#^+VK45": [eject_all.cmd]							;vk45=e #^+e
-                                            , "#!VK4B":  [keepassahk,,""]							;vk4B=k #!k
-                                            , "#!+VK4B": [laPrograms "\WinAuth\WinAuth.exe",,""]				;vk4C=l, #!+k
-                                            , "#VK50":   [notepad2exe]							        ;vk50=p #p
-                                            , "#+VK50":  [notepad2exe,"/c /b"]						        ;vk50=p	#+p
-                                            , "#!VK50":  [A_ScriptDir "\QuickText.ahk"]				                ;vk50=p #!p
-                                            , "#VK54":   [A_ScriptDir "\tombo.cmd",,,,7]				        ;vk54=t #t
-                                            , "#VK56":	 [vscode]						    		;vk56=v #v
-                                            , "#!VK57":  [A_ScriptDir "\palemoon.cmd",,,,7]					;vk57=w #!w
-                                            , "#!VK53":	 [A_ScriptDir "\EmailSelection.ahk",, ""] }				;vk53=s #!s
-                                , "#VK5A":  { "^VK45":	 [notepad2exe, """" A_ScriptFullPath """"]			        ;vk45=e ^e
-                                            , "^+VK45":	 [notepad2exe, """" A_ScriptDir "\Hotkeys_Custom.ahk"""]	        ;vk45=e ^+e
-                                            , "#VK57":	 [AU3_SpyExe,,""]			          	 	 	;vk57=w #w
-                                            , "#VK52":	 [A_ScriptDir "\LiceCapResize.ahk",,""]	        			;vk52=r #r
-                                            , "#VK44":	 [A_ScriptDir "\GoogleDrive.ahk"]				        ;vk5a=z #z vk44=d #d
-                                            , "#+VK44":	 [A_ScriptDir "\Dropbox.ahk"]					        ;vk44=d #+d
-                                            , "+F1": 	 [A_AhkDir "\AutoHotkey.chm",,""] } }
+    ;Show = args[5]:
+    ;0 Open the application with a hidden window.
+    ;1 Open the application with a normal window. If the window is minimized or maximized, the system restores it to its original size and position.
+    ;2 Open the application with a minimized window.
+    ;3 Open the application with a maximized window.
+    ;4 Open the application with its window at its most recent size and position. The active window remains active.
+    ;5 Open the application with its window at its current size and position.
+    ;7 Open the application with a minimized window. The active window remains active.
+    ;10 Open the application with its window in the default state specified by the application.
+        , RunDelayedGroups :=   { "":       { "#!VK43":  [calcexe,, ""]                                          ;VK43=c #!c
+                                            , "SC132":   [A_ScriptDir "\default_browser.ahk"]                    ;SC132=Homepage
+                                            , "#VK57":   [A_ScriptDir "\default_browser.ahk"]                    ;vk57=w #w
+                                            , "#+VK57":  [A_ScriptDir "\alt_browser.ahk"]                        ;vk57=w #+w
+                                            , "+SC132":  [A_ScriptDir "\alt_browser.ahk"]                        ;SC132=Homepage +Homepage
+                                            , "^!+Esc":  [procexpexe]                                            ;^!+Esc
+                                            , "#SC132":  [A_ScriptDir "\ie.cmd",,,,7]                            ;#Homepage
+                                            , "#^!VK57": [A_ScriptDir "\WinActivateOrExec.ahk", """" laPrograms "\Tor Browser\Browser\firefox.exe"""]         ;#^!w
+                                            , "^!SC132": [A_ScriptDir "\WinActivateOrExec.ahk", """" laPrograms "\Tor Browser\Browser\firefox.exe"""]         ;^!Homepage
+                                            , "Browser_Favorites": [A_ScriptDir "\Skype.cmd",,,,7]
+                                            , "#F1":     [comspec, " /K ""CD /D """ A_ScriptDir """ & PUSHD ""%TEMP%"" & ECHO POPD to go to " A_ScriptDir """"] ;/U https://twitter.com/LogicDaemon/status/936259452617060354
+                                            , "#VK45":   [A_ScriptDir "\WinActivateOrExec.ahk", """" totalcmdexe """",,""]                                       ;vk45=e #e
+                                            , "#+VK45":  [totalcmdexe,,,,-1]                                     ;vk45=e #+e
+                                            , "#!VK45":  ["shell:MyComputerFolder"]                              ;vk45=e #!e
+                                            , "#^VK45":  [A_ScriptDir "\RemoveDrive.ahk"]                        ;vk45=e #^e
+                                            , "#^+VK45": [eject_all.cmd]                                         ;vk45=e #^+e
+                                            , "#!VK4B":  [keepassahk,,""]                                        ;vk4B=k #!k
+                                            , "#!+VK4B": [laPrograms "\WinAuth\WinAuth.exe",,""]                 ;vk4C=l #!+k
+                                            , "#VK50":   [notepad2exe]                                           ;vk50=p #p
+                                            , "#+VK50":  [notepad2exe,"/c /b"]                                   ;vk50=p #+p
+                                            , "#!VK50":  [A_ScriptDir "\QuickText.ahk"]                          ;vk50=p #!p
+                                            , "#VK54":   [A_ScriptDir "\tombo.cmd",,,,7]                         ;vk54=t #t
+                                            ;, "#VK55":   [A_AhkPath, A_ScriptDir "\putty_smartact.ahk"]         ;vk55=u #u
+                                            , "#VK56":   [vscode]                                                ;vk56=v #v
+                                            , "#!VK53":  [A_ScriptDir "\EmailSelection.ahk",, ""]                ;vk53=s #!s
+                                            , "Launch_Mail": [A_ScriptDir "\EmailButton.ahk"] }
+                                , "#VK5A":  { "^VK45":   [notepad2exe, """" A_ScriptFullPath """"]               ;vk45=e ^e
+                                            , "^+VK45":  [notepad2exe, """" A_ScriptDir "\Hotkeys_Custom.ahk"""] ;vk45=e ^+e
+                                            , "#VK57":   AU3_SpyExecArray                                        ;vk57=w #w
+                                            , "#VK52":   [A_ScriptDir "\LiceCapResize.ahk",,""]                  ;vk52=r #r
+                                            , "#VK50":   [A_AhkPath, A_ScriptDir "\putty_smartact.ahk"]          ;vk50=p #p
+                                            , "#+VK44":  [A_ScriptDir "\Dropbox.ahk"]                            ;vk44=d #+d
+                                            , "F1":      [A_ScriptDir "\F1.ahk",,,,7]
+                                            , "+F1":     [autohotkeyChm,,""] } }
 
     For altKey, HotkeysRunDelayed in RunDelayedGroups {
         If (altKey) {
@@ -286,7 +300,7 @@ SwtichLang(newLocale) {
                     ; INPUTLANGCHANGE_BACKWARD 0x0004 A hot key was used to choose the previous input locale in the installed list of input locales. This flag cannot be used with the INPUTLANGCHANGE_FORWARD flag.
                     ; INPUTLANGCHANGE_FORWARD 0x0002 A hot key was used to choose the next input locale in the installed list of input locales. This flag cannot be used with the INPUTLANGCHANGE_BACKWARD flag.
                     ; INPUTLANGCHANGE_SYSCHARSET 0x0001 The new input locale's keyboard layout can be used with the system character set.
-                }		
+                }
 	    }
 	}
     }
@@ -452,6 +466,7 @@ RunDelayed(ByRef params*) { ; File [, Arguments, Directory, Operation, Show]; Sh
             } Else { ; only executable name, with no parameters or workdir
                 If (FileExist(cmd)) {
                     SplitPath cmd,exename,wd,ext
+                    ; this does not find any window running under other user / non-admin :: UniqueID := WinExist("ahk_exe" exename)
                     If (ext = "exe" && (UniqueID := WinExist("ahk_exe " exename)) && !WinActive("ahk_id " UniqueID)) {
                         WinGet state, MinMax, ahk_exe %exename%
                         If (state == -1)
@@ -507,60 +522,6 @@ PasteViaClip(t) {
     clipBak=
 }
 
-#include <ShellRun by Lexikos>
-nprivRun(args*) { ; args for ShellRun: File [, Arguments, Directory, Operation, Show]
-    ;Show = args[5]:
-    ;0 Open the application with a hidden window.
-    ;1 Open the application with a normal window. If the window is minimized or maximized, the system restores it to its original size and position.
-    ;2 Open the application with a minimized window.
-    ;3 Open the application with a maximized window.
-    ;4 Open the application with its window at its most recent size and position. The active window remains active.
-    ;5 Open the application with its window at its current size and position.
-    ;7 Open the application with a minimized window. The active window remains active.
-    ;10 Open the application with its window in the default state specified by the application.
-
-    ;    XP
-    ;	RunString:="""" . args[1] . """ " . args[2]
-    ;	Dir := args[3]
-    ;	Verb := "*" . args[4]
-    ;	If (args[5]!="") {
-    ;	    ShowModes := ["Hide","", "Min", "Max", "", "", "Min", ""]
-    ;	    ShowMode := ShowModes[args[5]+1]
-    ;	}
-    ;	Run %Verb% %RunString%, %Dir%, %ShowMode%
-    If (args[5]=="") {
-	args[5]:=""
-    }
-    If (args[3]=="") {
-	SplitPath % args[3],, dir
-	args[3] := dir
-    }
-    skipPaths := {"autohotkey.exe": "", "cmd.exe": ""}
-    For i, path in args {
-        path := Trim(path, """ ")
-        SplitPath path, OutFileName, OutDir, OutExtension, OutNameNoExt, OutDrive
-        If (!skipPaths.HasKey(Format("{:L}", OutFileName))) {
-            ToolTip % "Starting " OutFileName " via shell and activating the window"
-            SetTimer RemoveToolTip, 1000
-            break
-        }
-    }
-    retval := ShellRun(args*)
-
-    If (args[5] >= 1 && args[5] <= 3) {
-	exepath:=args[1]
-	WinWait ahk_exe %exepath%, , 3
-	Sleep 50
-	IfWinNotActive 
-	{
-	    WinSet AlwaysOnTop, Toggle
-	    Sleep 5
-	    WinSet AlwaysOnTop, Toggle
-	    WinActivate
-	}
-    }
-}
-
 StrJoin(separator := "", strings*) {
     o := ""
     For i, str in strings
@@ -579,3 +540,5 @@ FirstExisting(paths*) {
             return path
     return ""
 }
+
+#include <nprivRun>

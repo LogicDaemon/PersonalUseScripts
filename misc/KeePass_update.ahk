@@ -1,4 +1,5 @@
 ﻿#NoEnv
+#Warn
 
 Try {
     keePassExePath := Find_KeePass_exe()
@@ -25,9 +26,8 @@ Loop 2
             distNewVer := mver
             distLatest := A_LoopFileLongPath
         }
-
-    If (A_Index == 1 && VersionCompare(distNewVer, webNewVer, false))
-        RunWait "%A_AhkPath%" "%updaterPath%"
+    If (A_Index == 1 && VersionCompare(webNewVer, distNewVer, false))
+        RunWait "%A_AhkPath%" "%distDir%\download.ahk"
     Else
         break
 }
@@ -57,3 +57,9 @@ GetKeepassUpdateVer(ByRef distDir := "") {
         }
     }
 }
+
+#Warn Unreachable, Off
+
+#include <find_KeePass_exe>
+#include <GetURL>
+#include <VersionCompare>
