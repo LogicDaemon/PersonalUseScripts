@@ -4,20 +4,27 @@ Try {
     distDir := Find_Distributives_subpath("Soft FOSS\Office Text Publishing\Text Documents\Visual Studio Code")
     updInfo := DownloadVSCode(distDir)
     #include <find7zexe>
-    UpdateVSCode(distDir, ExpandEnvVars("%LocalAppData%\Programs") "\VS Code", updInfo, [distDir "\VSCode_dark_theme.7z"])
+    vsCodeDest := ExpandEnvVars("%LocalAppData%\Programs") "\VS Code"
+    If (IsObject(updDirOrErrors := UpdateVSCode(distDir, vsCodeDest, updInfo, [distDir "\VSCode_dark_theme.7z"]))) {
+        FileAppend % JSON.Dump(updDirOrErrors) "`n", %A_Temp%\%A_ScriptName%.log
+        Throw Exception("Update errors",, ObjectToText(updDirOrErrors))
+    } Else {
+        CleanOldInstallations(updDirOrErrors, vsCodeDest)
+    }
+    
 } catch e {
     Throw e
 }
 Exit 0
 
 DownloadVSCode(ByRef distDir) {
-    local
     global JSON
     verDistFile = %distDir%\lastID.txt
     Try {
         lastupdInfo := LoadJSON(verDistFile)
         lastDistID := lastupdInfo.version
     }
+    ;ToDo: try downloading from https://update.code.visualstudio.com/latest/win32-x64-user/stable
     updInfoRaw := GetURL("https://update.code.visualstudio.com/api/update/win32-x64-archive/stable/" (lastDistID ? lastDistID : "8795a9889db74563ddd43eb0a897a2384129a619")) ; 1.40.1
     ;"ea3859d4ba2f3e577a159bc91e3074c5d85c0523" ; 1.52.1
     If (updInfoRaw) {
@@ -39,9 +46,8 @@ DownloadVSCode(ByRef distDir) {
 }
 
 UpdateVSCode(ByRef distDir, ByRef destDir, ByRef updInfo, additionalArchives) {
-    local
     global exe7z, JSON
-    errors := []
+    errors := {}
     
     If (IsObject(additionalArchives))
         paths := additionalArchives.Clone()
@@ -51,18 +57,36 @@ UpdateVSCode(ByRef distDir, ByRef destDir, ByRef updInfo, additionalArchives) {
     If (!newVerName := updInfo.name)
         Throw Exception("No version defined")
     For i, v in paths {
+        destDirWithVer := destDir "-" newVerName
         If (FileExist(v)) {
-            RunWait "%exe7z%" x -aoa -o"%destDir%.%newVerName%" -- "%v%",, Min
+            If (FileExist(destDirWithVer "\Code.exe")) {
+                continue
+            }
+            RunWait "%exe7z%" x -aoa -o"%destDirWithVer%" -- "%v%",, Min UseErrorLevel
             If (ErrorLevel)
                 errors[v] := ErrorLevel
         } Else If (i<1) {
             errors[v] := "Does not exist"
         }
     }
-    RunWait %comspec% /C "RD "%destDir%" & MKLINK /J "%destDir%" "%destDir%.%newVerName%"",, Min
+    RunWait %comspec% /C "RD "%destDir%" & MKLINK /J "%destDir%" "%destDirWithVer%"",, Min
     If (ErrorLevel)
         errors["MKLINK"] := ErrorLevel
-    return errors.Count() ? errors : true
+    return errors.Count() ? errors : destDirWithVer
+}
+
+CleanOldInstallations(ByRef newVerDir, ByRef destDir) {
+    Loop Files, %destDir%-*, D
+    {
+        If ( A_LoopFileFullPath <> newVerDir
+            && FileExist(mainexe := A_LoopFileFullPath "\Code.exe")) {
+            Try {
+                FileDelete %mainexe%
+                ; continues only if main exe was successfully deleted
+                FileRemoveDir %A_LoopFileFullPath%, 1
+            }
+        }
+    }
 }
 
 SplitFileNameInUpdInfo(updInfo) {
