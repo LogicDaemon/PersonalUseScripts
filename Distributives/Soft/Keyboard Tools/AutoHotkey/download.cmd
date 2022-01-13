@@ -49,18 +49,23 @@ FOR /F "usebackq delims=" %%A IN (`DIR /B /O-D "%srcpath%%distfmask%"`) DO (
     rem without -o for CURL and -O for wget, filename is unknown
     FOR %%A IN ("%workdir%new.tmp\*.exe") DO (	
         ECHO Checking %%~nxA
-	SET "dlfname=%%~nxA"
-	CALL :GetFileVer ver "%%~A" || SET "ver="
-        
-        IF "%%~nxA"=="%urlfname%" (
-            IF NOT DEFINED ver (
-                ECHO Could not determine version of "%%~nxA", and it's used to define filename
-            ) ELSE (
-                FOR /F "usebackq tokens=2 delims=_" %%B IN ("%%~nA") DO SET "dstfname=AutoHotkey_%%~B_setup.exe"
+        IF "%%~zA"=="0" (
+            ECHO Zero size, removing.
+            DEL "%%~A"
+        ) ELSE (
+            SET "dlfname=%%~nxA"
+            CALL :GetFileVer ver "%%~A" || SET "ver="
+            
+            IF "%%~nxA"=="%urlfname%" (
+                IF NOT DEFINED ver (
+                    ECHO Could not determine version of "%%~nxA", and it's used to define filename
+                ) ELSE (
+                    FOR /F "usebackq tokens=2 delims=_" %%B IN ("%%~nA") DO SET "dstfname=AutoHotkey_%%~B_setup.exe"
+                )
             )
+            IF NOT DEFINED dstfname SET "dstfname=%%~nxA"
+            IF DEFINED ver GOTO :ExitGetVerLoop
         )
-        IF NOT DEFINED dstfname SET "dstfname=%%~nxA"
-	IF DEFINED ver GOTO :ExitGetVerLoop
     )
     IF NOT DEFINED dlfname CALL :ExitWithError Nothing downloaded & EXIT /B 1
 )
