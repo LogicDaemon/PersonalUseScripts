@@ -2,17 +2,18 @@
 ;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <http://creativecommons.org/licenses/by-sa/4.0/deed.ru>.
 
 #NoEnv
-#NoTrayIcon
 #SingleInstance force
 
 ;#Include <GetKnownFolder>
 ;#Include <nprivRun>
 
+LocalAppData = GetKnownFolder("LocalAppData")
+
 SetTitleMatchMode RegEx
 ChromiumWinTitleRegex := ".+ - Chromium$ ahk_exe chrome.exe"
 If %0%
 {
-    CmdlArgs := ParseCommandLine()
+    cmdl_args := ParseCommandLine()
 } else {
     If (WinExist(ChromiumWinTitleRegex)) {
 ;	GetKeyState ShiftState, Shift, P
@@ -26,17 +27,19 @@ If %0%
 set_cmds := ""
 EnvGet LocalAppData, LOCALAPPDATA
 For i, varname in ["GOOGLE_DEFAULT_CLIENT_ID", "GOOGLE_DEFAULT_CLIENT_SECRET", "GOOGLE_API_KEY"] {
-    IniRead value, %LocalAppData%\Secure\Chromium Google API keys.ini,Chromium-local-build,%varname%,%A_Space%
+    IniRead value, %LocalAppData%\_sec\Chromium Google API keys.ini,Chromium-local-build,%varname%,%A_Space%
     EnvSet %varname%, % value
     set_cmds .= "SET """ varname "=" value """ & "
 }
 
-AppPath:=GetKnownFolder("LocalAppData") . "\Programs\Chromium\RunLatest.ahk"
-nprivRun(comspec, "/C """ set_cmds . """" . AppPath . """ --process-per-site " . CmdlArgs . """")
-;nprivRun, alternate is does not pass environment, so alternate is Run "%AppPath%" --process-per-site %CmdlArgs%
+app_path:=FirstExisting(LocalAppData "\Programs\Chromium\RunLatest.ahk", LocalAppData "\Programs\Chromium\current\chrome.exe")
+If (!app_path)
+    Throw Exception("Chromium executable not found")
+nprivRun(comspec, "/C """ set_cmds . """" . app_path . """ --process-per-site " . cmdl_args . """")
+;nprivRun does not pass environment, so alternate is Run "%AppPath%" --process-per-site %cmdl_args%
 
 WinWait %ChromiumWinTitleRegex%,,3
-If (!ErrorLevel)
+If (!ErrorLevel && !WinActive())
     ForceWinActivate()
 
 Sleep 10000
