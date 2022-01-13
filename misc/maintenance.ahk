@@ -1,29 +1,30 @@
 ﻿;by LogicDaemon <www.logicdaemon.ru>
 ;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode.ru>.
 #NoEnv
+#SingleInstance ignore
 FileEncoding UTF-8
 
 EnvGet LocalAppData,LOCALAPPDATA
 EnvGet SystemRoot,SystemRoot
-dirDropbox := GetDropboxDir()
-EnvSet dirDropbox, %dirDropbox%
 
 global hiddenPIDs := {}
 
 cmds := [ [A_AppData "\GHISLER\download pci.ids and convert to pci.db.ahk"]
-        , [A_ScriptDir "\Vivaldi_prefs_backup.ahk"]
         , [LocalAppData "\Programs\Total Commander\PlugIns\wdx\TrID_Identifier\TrID\update.cmd"]
-        , [dirDropbox "\Config\scripts\call _link.cmd for HOSTNAME and GROUP.cmd"]
-        , [dirDropbox "\Config\scripts\copy tasks.cmd"]
-        , [dirDropbox "\Config\scripts\export registry settings.cmd"]
         , [LocalAppData "\Scripts\WarframeCleanup.cmd"]
         , [A_ScriptDir "\compact Chrome cache.cmd", "/purgeCaches /purgeIndexedDB /chrome"]
-        , [A_ScriptDir "\compact_lzx_ProgramsDirs.cmd"] ]
-commands =
-(
-%SystemRoot%\System32\sc.exe config "Backupper Service" start= demand
-%SystemRoot%\System32\sc.exe config "SBIS3Plugin" start= demand
-)
+        , [A_ScriptDir "\compact_lzx_ProgramsDirs.cmd"]
+        , [SystemRoot "\System32\sc.exe", "config ""Backupper Service"" start= demand"]
+        , [SystemRoot "\System32\sc.exe", "config ""SBIS3Plugin"" start= demand"] ]
+
+Try {
+    dirDropbox := GetDropboxDir()
+    
+    cmds.Push([dirDropbox "\Config\scripts\call _link.cmd for HOSTNAME and GROUP.cmd"]
+            , [dirDropbox "\Config\scripts\copy tasks.cmd"]
+            , [dirDropbox "\Config\scripts\export registry settings.cmd"]
+            , [A_ScriptDir "\Vivaldi_prefs_backup.ahk"] )
+} Catch {}
 
 killProcesses =
 (
@@ -41,26 +42,6 @@ Loop Files, %A_Temp%\*.*, D
     }
 }
 
-DllCall("SetPriorityClass", "UInt", DllCall("GetCurrentProcess"), "UInt", 0x00100000) ; PROCESS_MODE_BACKGROUND_BEGIN=0x00100000 https://msdn.microsoft.com/en-us/library/ms686219.aspx
-For i, cmd in cmds
-    RunScript(cmd)
-Loop Parse, commands, `n
-    RunScript(A_LoopField)
-
-Loop
-{
-    c := 0
-    For rpid, title in hiddenPIDs {
-        Process WaitClose, %rpid%, 3
-        If (!ErrorLevel)
-            hiddenPIDs.Delete(rpid)
-        Else
-            c++
-    }
-    Menu Tray, Tip, %c% processes still running
-} Until !c
-Menu Tray, Tip, All maintenance processes finished
-
 For i, procName in killProcesses {
     WinKill ahk_exe %procName%,,5
     While true {
@@ -77,6 +58,27 @@ For i, procName in killProcesses {
     }
 }
 
+DllCall("SetPriorityClass", "UInt", DllCall("GetCurrentProcess"), "UInt", 0x00100000) ; PROCESS_MODE_BACKGROUND_BEGIN=0x00100000 https://msdn.microsoft.com/en-us/library/ms686219.aspx
+For i, cmd in cmds
+    RunScript(cmd)
+
+Loop
+{
+    c := 0
+    For rpid, title in hiddenPIDs {
+        Process WaitClose, %rpid%, 3
+        If (!ErrorLevel)
+            hiddenPIDs.Delete(rpid)
+        Else
+            c++
+    }
+    Menu Tray, Tip, %c% processes still running
+} Until !c
+Menu Tray, Tip, All maintenance processes finished
+DllCall("SetPriorityClass", "UInt", DllCall("GetCurrentProcess"), "UInt", 0x00200000) ; PROCESS_MODE_BACKGROUND_END=0x00200000 https://msdn.microsoft.com/en-us/library/ms686219.aspx
+
+Process Priority,, Low
+
 extToCompact={"exe": "", "dll": "", "sys": "", "mui": "", "eml": "", "qml": "", "js": "", "pyd": "", "py": "", "qmltypes": "", "rcc": "", "inf": "", "manifest": ""}
 dirs := {}
 For envvar in {"UserProfile": "", "ProgramFiles": "", "ProgramFiles(x86)": "", "ProgramW6432": ""} {
@@ -87,11 +89,16 @@ For envvar in {"UserProfile": "", "ProgramFiles": "", "ProgramFiles(x86)": "", "
 If (InStr(FileExist("w:\Temp"), "D"))
     dirs["w:\Temp"] := ""
 For dir in dirs {
-    Menu Tray, Tip, Compacting %dir%
-    Loop Files, %dir%, RF
+    Menu Tray, Tip, Listing all subdirs in %dir%
+    Loop Files, %dir%\*.*, RF
     {
-        
-        If (A_LoopFileSize > 4095 && extToCompact.HasKey(A_LoopFileExt)) {
+        If (A_LoopFileDir != lastFileDir) {
+            lastFileDir := A_LoopFileDir
+            Menu Tray, Tip, Compacting %lastFileDir%
+            Sleep -1
+        }
+        If (A_LoopFileSize > 4095 && extToCompact.HasKey(A_LoopFileExt) && !InStr(A_LoopFileAttrib, "C")) {
+            MsgBox % A_LoopFileFullPath "`n" A_LoopFileAttrib
             If (rPID)
                 Process WaitClose, %rPID%, 30000
             If (ErrorLevel)
@@ -103,31 +110,35 @@ For dir in dirs {
     }
 }
 
-DllCall("SetPriorityClass", "UInt", DllCall("GetCurrentProcess"), "UInt", 0x00200000) ; PROCESS_MODE_BACKGROUND_END=0x00200000 https://msdn.microsoft.com/en-us/library/ms686219.aspx
 ExitApp
 
-RunScript(ByRef cmdline) {
+RunScript(cmdline) {
     ; either command line string
     ; or [executable, arguments, dir, mode]
     global hiddenPIDs
-    executable := IsObject(cmdline) ? cmdline[1] : Trim(ParseCommandLine(A_LoopField)[0], """")
-    SplitPath executable,,dir,ext
+    mode := "Hide"
     
     If (IsObject(cmdline)) {
-        runcmdline := """" Trim(cmdline[1], """") """ " cmdline[2]
-        If (cmdline[3])
+        executable := cmdline[1]
+        If (cmdline[3]) {
             dir := cmdline[3]
-        mode := cmdline[4] ? cmdline[4] : "Hide"
+            SplitPath executable,,,ext
+        } Else {
+            SplitPath executable,,dir,ext
+        }
+        mode := cmdline[4] ? cmdline[4] : mode
+        cmdline := """" Trim(cmdline[1], """") """ " cmdline[2]
     } Else {
-        mode := "Hide"
-        If (ext="cmd" || ext="bat")
-            runcmdline=%comspec% /C "%cmdline%"
-        Else If (ext=="ahk")
-            runcmdline="%A_AhkPath%" %cmdline%
-        Else
-            runcmdline:=cmdline
+        executable := Trim(ParseCommandLine(A_LoopField)[0], """")
+        SplitPath executable,,dir,ext
     }
-    Run %runcmdline%, %dir%, UseErrorLevel %mode%, rpid
+
+    If (ext="cmd" || ext="bat")
+        cmdline=%comspec% /C "%cmdline%"
+    Else If (ext=="ahk")
+        cmdline="%A_AhkPath%" %cmdline%
+
+    Run %cmdline%, %dir%, UseErrorLevel %mode%, rpid
     hiddenPIDs[rpid] := cmdline
 }
 
