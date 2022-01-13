@@ -3,32 +3,33 @@
 #NoEnv
 #SingleInstance ignore
 
-exe7z := A_ProgramFiles . "\7-Zip\7zG.exe"
+#include *i <find7zexe>
 
-VarSetCapacity(LocalAppData,(A_IsUnicode ? 2 : 1)*1025) 
+If (!exe7z)
+    exe7z := A_ProgramFiles . "\7-Zip\7zG.exe"
 
-LocalAppDataID:=28
-r := DllCall("Shell32\SHGetFolderPath", "int", 0 , "uint", LocalAppDataID, "int", 0 , "uint", 0 , "str" , LocalAppData) 
-If (r || ErrorLevel) {
-    MsgBox r: %r%; ErrorLevel: %ErrorLevel%
-    Exit
-}
+;VarSetCapacity(LocalAppData,(A_IsUnicode ? 2 : 1)*1025) 
 
+;LocalAppDataID:=28
+;r := DllCall("Shell32\SHGetFolderPath", "int", 0 , "uint", LocalAppDataID, "int", 0 , "uint", 0 , "str" , LocalAppData) 
+;If (r || ErrorLevel) {
+;    MsgBox r: %r%; ErrorLevel: %ErrorLevel%
+;    Exit
+;}
+
+EnvGet LocalAppData,LocalAppData
 ChromiumPath=%LocalAppData%\Programs\Chromium
 ;%ChromiumPath%\chrome-win is temporary directory, it must not exist usually
 If (FileExist(ChromiumPath . "\chrome-win"))
     FileRemoveDir %ChromiumPath%\chrome-win, 1
 
 DistrRelDir=Distributives\Soft FOSS\Network\HTTP\Chromium
-CheckDistRoots=X:,"\\miwifi.com\x$",D:,W:,X:,O:
+CheckDistRoots=D:,\\miwifi.com
 Loop Parse, CheckDistRoots,CSV
-{
-    IfExist %A_LoopField%\%DistrRelDir%
-    {
+    If FileExist(A_LoopField "\" DistrRelDir) {
 	DistributivePathToDir=%A_LoopField%\%DistrRelDir%
 	break
     }
-}
 If (!DistributivePathToDir) {
     MsgBox %DistrRelDir% not found in %CheckDistRoots%. Fix the script.
     Exit
@@ -37,6 +38,7 @@ If (!DistributivePathToDir) {
 For i, osSuffix in (A_Is64bitOS ? ["64", ""] : [""]) {
     DistributivePathToArchive=%DistributivePathToDir%\chrome-win%osSuffix%.zip
 } Until found := FileExist(DistributivePathToArchive)
+
 If (!found)
     TrayMsgAndExit("Distributive Path not accessible:`n" . DistributivePathToArchive, 3)
 TrayTip Updating chromium, DistributivePathToArchive: %DistributivePathToArchive%`nRunning distributive downloader…,3
@@ -46,7 +48,12 @@ RunWait %comspec% /C "%DistributivePathToDir%\download.cmd", %DistributivePathTo
 
 TrayTip Updating chromium, Extracting file to check version…
 testfile=chrome.exe
-RunWait "%exe7z%" x -y "%DistributivePathToArchive%" "chrome-win\%testfile%", %ChromiumPath%, Min
+FileCreateDir %ChromiumPath%
+SetWorkingDir %ChromiumPath%
+If (ErrorLevel)
+    Throw Exception("Could not change current directory",, ChromiumPath)
+RunWait "%exe7z%" x -y "%DistributivePathToArchive%" "chrome-win\%testfile%", %ChromiumPath%, Min UseErrorLevel
+
 FileGetTime NewChromeBuildTime, %ChromiumPath%\chrome-win\%testfile%
 If (!NewChromeBuildTime)
     Throw Exception("Can't get time of """ ChromiumPath "\chrome-win\" testfile """")
@@ -70,7 +77,8 @@ If (!ErrorLevel) {
 	latestpath=%ChromiumPath%\current
 	;ChromiumStartCommand="%A_AhkPath%" %A_ScriptDir%\Chromium.ahk
 	ChromiumStartCommand="%latestpath%\chrome.exe"
-	RunWait C:\SysUtils\xln.exe -n "%DestVerFullPath%" "%latestpath%",,Min
+	FileRemoveDir %latestpath%
+	RunWait %comspec% /C "MKLINK /J "%latestpath%" "%DestVerFullPath%"",,Min
 	; using %ChromiumPath%\Google-Chrome-Google-Chrome-Chromium.ico instead of original "%latestpath%\chrome.exe"
 	RegWrite REG_SZ, HKEY_LOCAL_MACHINE\SOFTWARE\Clients\StartMenuInternet\Chromium\Capabilities, ApplicationIcon, %ChromiumPath%\Google-Chrome-Google-Chrome-Chromium.ico`,0
 	RegWrite REG_SZ, HKEY_LOCAL_MACHINE\SOFTWARE\Clients\StartMenuInternet\Chromium\DefaultIcon, , %ChromiumPath%\Google-Chrome-Google-Chrome-Chromium.ico`,0
