@@ -11,5 +11,5 @@ SETLOCAL ENABLEEXTENSIONS
         ECHO Synchronizing remaining
     )
     %syncprog% Local_Scripts192.168.36.1 %unisonopt%
-    %syncprog% Distributives192.168.36.1 %unisonopt% -killserver
+    %syncprog% Distributives192.168.36.1 %unisonopt%
 )

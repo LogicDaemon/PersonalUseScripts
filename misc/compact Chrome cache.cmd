@@ -5,7 +5,7 @@
     SET cleanup=1
     SET compactLZX=1
     SET markDirCompact=
-    SET purgeIndexedDB=1
+    SET purgeIndexedDB=
 )
 :nextArg
 (

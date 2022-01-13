@@ -23,3 +23,5 @@ VersionCompare(verTest, verMin, ByRef rvalIfVersionEqual) {
     ;equal
     return rvalIfVersionEqual
 }
+
+#include <VersionStringToArray>

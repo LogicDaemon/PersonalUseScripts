@@ -4,7 +4,7 @@
 XMLHTTP_Request(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=0, ByRef moreHeaders:=0) {
     local
     global debug
-
+    #Warn UseUnsetGlobal, Off
     If (IsObject(debug))
 	debug.url := URL, debug.method := method, XMLHTTP_Request_DebugMsg(method " " URL . (POSTDATA ? " ← " POSTDATA : "") . ( moreHeaders ? "`n`tHeaders:`n" XMLHTTP_Request_ahk_ObjectToText(moreHeaders) : ""))
     xhr := XMLHTTP_Request_CreateXHRObject()
@@ -12,6 +12,7 @@ XMLHTTP_Request(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=
     xhr.open(method, URL, false)
     ;xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
     
+    #Warn UseUnsetLocal, Off
     For hName, hVal in moreHeaders
         xhr.setRequestHeader(hName, hVal)
     

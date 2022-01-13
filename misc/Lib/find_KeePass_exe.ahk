@@ -1,6 +1,6 @@
-Find_KeePass_exe(KeePassExeName := "KeePass.exe", keepassPaths := "") {
+﻿Find_KeePass_exe(KeePassExeName := "KeePass.exe", keepassPaths := "") {
     local
-    static KeePassExePath
+    static KeePassExePath := ""
     If (KeePassExePath)
         return KeePassExePath
     EnvGet LocalAppData,LOCALAPPDATA

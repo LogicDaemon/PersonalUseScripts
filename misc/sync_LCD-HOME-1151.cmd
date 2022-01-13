@@ -13,8 +13,8 @@ SETLOCAL ENABLEEXTENSIONS
         SET skipPresyncs=1
     )
 )
-(
 IF NOT DEFINED syncprog SET "syncprog=%unisontext%"
+(
 PUSHD "%TEMP%" || EXIT /B
 START "Distributives Unison server" /B %unisontext% -socket 10355
 PING -n 2 127.0.0.1 >NUL

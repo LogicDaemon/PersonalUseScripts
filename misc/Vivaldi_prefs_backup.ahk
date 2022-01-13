@@ -14,8 +14,10 @@ FilesToCopy := {  "Bookmarks": ""
 
 ExceptionDirs := { "System Profile": ""
          , "Guest Profile": "" }
-
-destDir := GetDropboxDir(false) "\Config\@" hostname "\Vivaldi\User Data\"
+Try destDir := GetDropboxDir(false) "\Config\@" hostname "\Vivaldi\User Data\"
+Catch {
+    ExitApp 1
+}
 
 Try SetWorkingDir % LocalAppData "\Vivaldi\User Data"
 Catch e {
