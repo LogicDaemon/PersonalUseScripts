@@ -4,49 +4,27 @@
 #SingleInstance force
 SetTitleMatchMode RegEx
 
-If (A_ScriptFullPath == A_LineFile) {
+If (A_ScriptFullPath == A_LineFile || !nameDB || !dirDB || !commandLineParam) {
     foundKdb := 0
-    If (FileExist(A_ScriptDir "\Dropbox.ahk")) {
-        Process Exist, Dropbox.exe
-        If (!ErrorLevel)
-            RunWait "%A_AhkPath%" "%A_ScriptDir%\Dropbox.ahk"
-    }
+    If (!skipDropbox)
+        CheckLaunchDropbox()
+
     preseltxt := "-preselect:"
     preseltxtlen := StrLen(preseltxt)
     For i, arg in A_Args {
-	If(!foundKdb) {
+	If (SubStr(arg, 1, preseltxtlen) = preseltxt) {
+	    key := SubStr(arg, preseltxtlen+1)
+        } Else If (!foundKdb) {
 	    SplitPath arg, nameDB, dirDB, extDB
 	    foundKdb := extDB="kdb"
 	}
-	
-	If (SubStr(arg, 1, preseltxtlen) = preseltxt)
-	    key := SubStr(arg, preseltxtlen+1)
     }
     
     commandLineParam := ParseScriptCommandLine()
 }
 
-Loop 2
-{
-    Try {
-        KeePassExePath := Find_KeePass_exe()
-        SplitPath KeePassExePath, KeePassExeName
-        
-        RegRead lastUpdateCheck, HKEY_CURRENT_USER\SOFTWARE\LogicDaemon\KeePassLauncher, LastUpdateCheckYYYYMMDDHH
-    }
-
-    If (!lastUpdateCheck || DaysSince(lastUpdateCheck) >= 1) {
-        mode := lastUpdateCheck ? "background " : ""
-        TrayTip Starting %mode%autoupdate...
-        If (lastUpdateCheck) {
-            Run "%A_AhkPath%" "%A_ScriptDir%\KeePass_update.ahk"
-        } Else {
-            RunWait "%A_AhkPath%" "%A_ScriptDir%\KeePass_update.ahk"
-            break
-        }
-    }
-}
-RegWrite REG_DWORD, HKEY_CURRENT_USER\SOFTWARE\LogicDaemon\KeePassLauncher, LastUpdateCheckYYYYMMDDHH, % SubStr(A_Now, 1, 10) ;REG_DWORD max is 4294967295
+KeePassExePath := KeepassExeUpdated()
+SplitPath KeePassExePath, KeePassExeName
 
 If (WinExist("ahk_exe " KeePassExeName)) {
     WinGetTitle KeePassTitle
@@ -58,8 +36,7 @@ If (WinExist("ahk_exe " KeePassExeName)) {
             || KeePassTitle = nameDB . " [Locked] - Keepass"
 	    || KeePassTitle = "KeePass" ; no db open
 	    || KeePassTitle = "Open Database - " . nameDB) { ; database opening window
-        ;RunWait "%KeePassExePath%" --exit-all
-        Loop
+        Loop 20
         {
             If (A_Index == 1) {
                 GroupAdd keepass, ahk_exe %KeePassExeName%
@@ -71,9 +48,13 @@ If (WinExist("ahk_exe " KeePassExeName)) {
                 closed := ErrorLevel
             }
             Process Exist, %KeePassExeName%
-            closed := !ErrorLevel
+            If (closed := !ErrorLevel)
+                break
+            RunWait "%KeePassExePath%" --exit-all
+            ToolTip Cloudn't close KeePass, retrying
+            Sleep % A_Index * 50
             TrayTip
-        } Until closed
+        }
     } Else {
 	WinActivate
 	Exit
@@ -90,9 +71,26 @@ Loop Files, %dirDB%\*.lock
     }
 }
 
-Run "%KeePassExePath%" %commandLineParam%,,,rPID
-WinWait ahk_pid %rPID%
+Loop 3
+{
+    While WinExist("ahk_exe " KeePassExeName) {
+        ToolTip Another KeePass is active. Waiting for it to close.
+        WinWaitClose
+    }
+    Loop
+    {
+        Process Exist, %KeePassExeName%
+        If (!ErrorLevel)
+            break
+        ToolTip There is a %KeePassExeName% process but no window. Killing it.
+        Process Close, %KeePassExeName%
+    }
+    ToolTip Starting %KeePassExePath%
+    Run "%KeePassExePath%" %commandLineParam%,,,rPID
+    WinWait ahk_pid %rPID%,,1
+} Until !ErrorLevel
 WinActivate
+ToolTip
 
 ;dropbox desktop: *(*'s conflicted copy *).kdb
 ;dropsync android: * (conflict *).kdb
@@ -101,6 +99,42 @@ Loop Files, %dirDB%\*.kdb
 	resolveSuccess := ResolveConflict(A_LoopFileName)
 
 Exit
+
+CheckLaunchDropbox() {
+    RegRead dropboxClientVer, HKEY_CURRENT_USER\SOFTWARE\Dropbox\Client, Version
+    If ( dropboxClientVer
+      && FileExist(A_ScriptDir "\Dropbox.ahk")
+      && FileExist(A_AppData "\Dropbox\*.*") ) {
+        Process Exist, Dropbox.exe
+        If (!ErrorLevel)
+            RunWait "%A_AhkPath%" "%A_ScriptDir%\Dropbox.ahk"
+    }
+}
+
+KeepassExeUpdated() {
+    Loop 2
+    {
+        Try {
+            KeePassExePath := Find_KeePass_exe()
+            
+            RegRead lastUpdateCheck, HKEY_CURRENT_USER\SOFTWARE\LogicDaemon\KeePassLauncher, LastUpdateCheckYYYYMMDDHH
+        }
+
+        If (!lastUpdateCheck || DaysSince(lastUpdateCheck) >= 1) {
+            mode := lastUpdateCheck ? "background " : ""
+            TrayTip Starting %mode%autoupdate...
+            If (lastUpdateCheck) {
+                Run "%A_AhkPath%" "%A_ScriptDir%\KeePass_update.ahk"
+            } Else {
+                RunWait "%A_AhkPath%" "%A_ScriptDir%\KeePass_update.ahk"
+                break
+            }
+        }
+    }
+    RegWrite REG_DWORD, HKEY_CURRENT_USER\SOFTWARE\LogicDaemon\KeePassLauncher, LastUpdateCheckYYYYMMDDHH, % SubStr(A_Now, 1, 10) ;REG_DWORD max is 4294967295
+    
+    return KeePassExePath
+}
 
 ResolveConflict(conflictedDBPath) {
     global KeePassExeName,key
@@ -172,3 +206,5 @@ FirstExisting(paths*) {
     }
     return ""
 }
+
+#include <find_KeePass_exe>
