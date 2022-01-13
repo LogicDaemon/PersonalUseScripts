@@ -44,6 +44,19 @@ RD /Q "%LOCALAPPDATA%\Temp"
 REM this is needed because now the directory will be moved to R:, and if it's a link to R:, that might break MOVE which will move files to themselves and then remove from source (but as it's linked to dest, remove that single copy altogether)
 CALL :LinkBack "%LOCALAPPDATA%\Temp" "r:\Temp"
 
+CALL :LinkBack "%USERPROFILE%\.cache" "r:\.cache"
+CALL :LinkBack "%LOCALAPPDATA%\cache" "r:\AppData\Local\cache"
+CALL :LinkBack "%LOCALAPPDATA%\Battle.net\BrowserCache" "r:\AppData\Local\Battle.net\BrowserCache"
+CALL :LinkBack "%LOCALAPPDATA%\Battle.net\Cache" "r:\AppData\Local\Battle.net\Cache"
+CALL :LinkBack "%LOCALAPPDATA%\CD Projekt Red\Cyberpunk 2077\cache" "r:\AppData\Local\CD Projekt Red\Cyberpunk 2077\cache"
+CALL :LinkBack "%LOCALAPPDATA%\MusicMaker" "r:\AppData\Local\MusicMaker"
+
+CALL :LinkBack "%LOCALAPPDATA%\NVIDIA Corporation\NVIDIA Share\CefCache\Cache" "r:\NVIDIA Corporation\NVIDIA Share\CefCache\Cache"
+CALL :LinkBack "%LOCALAPPDATA%\NVIDIA Corporation\NVIDIA Share\CefCache\Code Cache" "r:\NVIDIA Corporation\NVIDIA Share\CefCache\Code Cache"
+CALL :LinkBack "%LOCALAPPDATA%\NVIDIA Corporation\NVIDIA Share\CefCache\GPUCache" "r:\NVIDIA Corporation\NVIDIA Share\CefCache\GPUCache"
+
+rem d:\\Users\\LogicDaemon\\AppData\\Local\\(.*)\\  CALL :LinkBack "%LOCALAPPDATA%\\\1" "r:\\\1"
+
 EXIT /B
 
 :LinkBack <source> <destination>
