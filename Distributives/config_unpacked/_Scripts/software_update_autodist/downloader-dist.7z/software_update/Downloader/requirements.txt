@@ -1,0 +1,4 @@
+requests
+stubs
+xmltodict
+werkzeug
