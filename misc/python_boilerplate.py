@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # import modules used here -- sys is a very standard one
 import sys
