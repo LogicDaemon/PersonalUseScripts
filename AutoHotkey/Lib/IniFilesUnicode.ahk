@@ -2,7 +2,8 @@
 ;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <http://creativecommons.org/licenses/by-sa/4.0/deed.ru>.
 
 IniReadUnicode(Filename, IniSection, Key){
-    sectionFound=0
+    local
+    sectionFound:=False
     
     IfNotExist %Filename%
 	Throw Exception("File not exist", 0, Filename)
@@ -18,7 +19,7 @@ IniReadUnicode(Filename, IniSection, Key){
 	    }
 	} Else {
 	    If A_LoopReadLine = [%IniSection%]
-		sectionFound=1
+		sectionFound:=True
 	}
     }
 
@@ -29,7 +30,8 @@ IniReadUnicode(Filename, IniSection, Key){
 }
 
 IniReadSectionUnicode(Filename, IniSection){
-    sectionFound=0
+    local
+    sectionFound:=False
     
     IfNotExist %Filename%
 	Throw Exception("File not exist", 0, Filename)
@@ -44,7 +46,7 @@ IniReadSectionUnicode(Filename, IniSection){
 		SectionContents .= A_LoopReadLine . "`n"
 	} Else {
 	    If A_LoopReadLine = [%IniSection%]
-		sectionFound=1
+		sectionFound:=True
 	}
     }
     
@@ -54,19 +56,21 @@ IniReadSectionUnicode(Filename, IniSection){
     return SectionContents
 }
 
-IniWriteUnicode(Filename, IniSection, Key, Value){
+IniWriteUnicode(Filename, IniSection, Key, Value) {
     Return IniModifyUnicode(Filename, IniSection, Key, Value)
 }
 
-;IniWriteSectionUnicode(Filename, IniSection, SectionContents){
-;}
+IniWriteSectionUnicode(Filename, IniSection, SectionContents) {
+    IniDeleteSectionUnicode(Filename, IniSection)
+    FileAppend [%IniSection%]`n%SectionContents%`n, %Filename%
+}
 
-IniDeleteKeyUnicode(Filename, IniSection, Key){
-    Return IniModifyUnicode(Filename, IniSection, Key,, 1)
+IniDeleteKeyUnicode(Filename, IniSection, Key) {
+    Return IniModifyUnicode(Filename, IniSection, Key,, True)
 }
 
 IniDeleteSectionUnicode(Filename, IniSection){
-    Return IniModifyUnicode(Filename, IniSection,,, 1)
+    Return IniModifyUnicode(Filename, IniSection,,, True)
 }
 
 ;IniEnumSectionsUnicode(Filename){
@@ -75,8 +79,9 @@ IniDeleteSectionUnicode(Filename, IniSection){
 ;IniEnumKeysUnicode(Filename, IniSection){
 ;}
 
-IniModifyUnicode(ByRef Filename, ByRef IniSection, ByRef Key:="", ByRef Value:="", Remove:=false){
-    sectionFound := false, keyPending := true
+IniModifyUnicode(ByRef Filename, ByRef IniSection, ByRef Key:="", ByRef Value:="", Remove:=False){
+    local
+    sectionFound := False, keyPending := True
     
     IfNotExist %Filename%
 	Throw Exception("File not exist", 0, Filename)
@@ -94,19 +99,19 @@ IniModifyUnicode(ByRef Filename, ByRef IniSection, ByRef Key:="", ByRef Value:="
 			    ; it must be deleted, but it's not there already
 			    Throw Exception("Key not found", 0, Key)
 			}
-			; Else Key not specified section must removed, it is, and next has begun
+			; Else Key not specified, section must be removed, and it already is, and next has begun
 		    } Else { ; Not Remove
 			OutputLine := Key . "=" . Value . "`n" . OutputLine
 		    }
-		    sectionFound := false
-		    keyPending := false
+		    sectionFound := False
+                    keyPending := False
 		} Else { ; Not a section header, must be name=value
 		    If ( Remove && Key=="" ) ; key not specified, removing section
 			Continue ; skip to next, Key will never match, keyPending will become 0 only at end of section
 		    
 		    currentKey := Trim(SubStr(A_LoopReadLine, 1, InStr(A_LoopReadLine, "=")-1))
 		    If (currentKey = Key) {
-			keyPending := false
+			keyPending := False
 			If (Remove)
 			    Continue ; to skip FileAppend
 			Else
@@ -116,13 +121,13 @@ IniModifyUnicode(ByRef Filename, ByRef IniSection, ByRef Key:="", ByRef Value:="
 		}
 	    } Else {
 		If (A_LoopReadLine = "[" IniSection "]") {
-		    sectionFound := true
+		    sectionFound := True
 		    If ( Remove && Key=="" ) ; Removing section, because key not specified
 			Continue
 		}
 	    }
 	}
-	FileAppend %OutputLine%`n, %Filename%.new
+	FileAppend %OutputLine%`n
     }
     
     If (keyPending) ; Section not found
