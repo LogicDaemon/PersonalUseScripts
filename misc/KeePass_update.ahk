@@ -34,7 +34,7 @@ Loop 2
 #include <find7zexe>
 SplitPath keePassExePath,, keePassExeDir
 RunWait "%exe7z%" x -y -aoa -o"%keePassExeDir%.%distNewVer%" "%distLatest%",, Min
-RunWait %comspec% /C "MKLINK /J "%keePassExeDir%.tmp" "%keePassExeDir%.%distNewVer%""
+RunWait %comspec% /C "MKLINK /J "%keePassExeDir%.tmp" "%keePassExeDir%-%distNewVer%""
 FileRemoveDir %keePassExeDir%
 FileMoveDir %keePassExeDir%.tmp, %keePassExeDir%, R
 Exit ErrorLevel

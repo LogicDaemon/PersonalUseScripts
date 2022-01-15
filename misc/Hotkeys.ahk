@@ -30,6 +30,7 @@ EnvGet LocalAppData, LOCALAPPDATA
 EnvGet SystemDrive, SystemDrive
 EnvGet SystemRoot, SystemRoot
 laPrograms := LocalAppData "\Programs"
+hotkeys_custom_ahk = %A_ScriptDir%\Hotkeys_Custom.ahk ; to be redefined in the custom script, if other path is included
 
 autohotkeyChm := FirstExisting( A_AhkDir "\AutoHotkey.chm"
                               , laPrograms "\AutoHotkey\AutoHotkey.chm"
@@ -238,7 +239,7 @@ FillDelayedRunGroups() {
                                             , "#!VK53":  [A_ScriptDir "\EmailSelection.ahk",, ""]                ;vk53=s #!s
                                             , "Launch_Mail": [A_ScriptDir "\EmailButton.ahk"] }
                                 , "#VK5A":  { "^VK45":   [notepad2exe, """" A_ScriptFullPath """"]               ;vk45=e ^e
-                                            , "^+VK45":  [notepad2exe, """" A_ScriptDir "\Hotkeys_Custom.ahk"""] ;vk45=e ^+e
+                                            , "^+VK45":  [notepad2exe, """" hotkeys_custom_ahk """"]             ;vk45=e ^+e
                                             , "#VK57":   AU3_SpyExecArray                                        ;vk57=w #w
                                             , "#VK52":   [A_ScriptDir "\LiceCapResize.ahk",,""]                  ;vk52=r #r
                                             , "#VK50":   [A_AhkPath, A_ScriptDir "\putty_smartact.ahk"]          ;vk50=p #p
