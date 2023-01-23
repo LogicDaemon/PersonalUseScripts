@@ -4,16 +4,18 @@ RegRead hostname, HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Par
 EnvGet LocalAppData, LocalAppData
 
 FilesToCopy := {  "Bookmarks": ""
-        , "Preferences": ""
-        , "Notes": ""
-        , "Calendar": ""
-        , "Contacts": ""
-        , "contextmenu.json": ""
-        , "Custom Dictionary.txt": ""
-        , "Shortcuts": "" }
+                , "Calendar": ""
+                , "Contacts": ""
+                , "contextmenu.json": ""
+                , "Custom Dictionary.txt": ""
+                , "Notes": ""
+                , "Preferences": ""
+                , "Secure Preferences": ""
+                , "Shortcuts": ""
+                , "Web Data": "" }
 
 ExceptionDirs := { "System Profile": ""
-         , "Guest Profile": "" }
+                , "Guest Profile": "" }
 Try destDir := GetDropboxDir(false) "\Config\@" hostname "\Vivaldi\User Data\"
 Catch {
     ExitApp 1

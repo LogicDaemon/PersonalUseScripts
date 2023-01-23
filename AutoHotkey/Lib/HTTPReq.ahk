@@ -17,14 +17,18 @@ HTTPReq(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=0, ByRef
     }
     ;ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=0, ByRef moreHeaders:=0
     If (IsObject(rv_response)) {
-        return XMLHTTP_Request(method, URL, POSTDATA, rv_response, moreHeaders) || WinHTTPReqWithProxies(method, URL, POSTDATA, rv_response, moreHeaders)
+        rv := XMLHTTP_Request(method, URL, POSTDATA, rv_response, moreHeaders) || WinHTTPReqWithProxies(method, URL, POSTDATA, rv_response, moreHeaders)
     } Else {
-        If ((rv := XMLHTTP_Request(method, URL, POSTDATA, rv_response, moreHeaders)) < 500) {
-            return rv
-        } Else {
-            return WinHTTPReqWithProxies(method, URL, POSTDATA, rv_response, moreHeaders)
+        Try {
+            rv := XMLHTTP_Request(method, URL, POSTDATA, rv_response, moreHeaders)
+            retry := rv >= 500
+        } Catch e {
+            retry := True
         }
+        If (retry)
+            rv := WinHTTPReqWithProxies(method, URL, POSTDATA, rv_response, moreHeaders)
     }
+    return rv
 }
 
 WinHTTPReqWithProxies(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=0, ByRef moreHeaders:=0, ByRef TryProxies := "") {

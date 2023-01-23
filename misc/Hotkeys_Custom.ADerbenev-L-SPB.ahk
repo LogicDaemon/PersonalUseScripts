@@ -1,5 +1,4 @@
-﻿hotkeys_custom_ahk := A_LineFile
-If (ReadPassesFromFile(CmdlArgs(1)[1]))
+﻿If (ReadPassesFromFile(CmdlArgs(1)[1]))
     return
 
 Run "%A_AhkPath%" "%A_ScriptDir%\KeePass_%A_UserName%.ahk"
@@ -49,6 +48,6 @@ CustomReload() {
 
 #!VK4C::        SendRaw %hot_password1% ;vk4C=l #!l
 #!+VK4C::       SendRaw %hot_password2% ;vk4C=l #!+l
-#^!+VK4C::      SendRaw %hot_password3% ;vk4C=l #^!+l
+#!^VK4C::       SendRaw %hot_password3% ;vk4C=l #!^l
 
 #VK55:: Run "%A_AhkPath%" "%A_ScriptDir%\Unite.ahk" ; #u

@@ -30,11 +30,16 @@ EnvGet LocalAppData, LOCALAPPDATA
 EnvGet SystemDrive, SystemDrive
 EnvGet SystemRoot, SystemRoot
 laPrograms := LocalAppData "\Programs"
-hotkeys_custom_ahk = %A_ScriptDir%\Hotkeys_Custom.ahk ; to be redefined in the custom script, if other path is included
+hotkeys_custom_ahk := FirstExisting( A_ScriptDir "\Hotkeys_Custom." A_USERNAME "@" A_COMPUTERNAME ".ahk"
+                                   , A_ScriptDir "\Hotkeys_Custom." A_COMPUTERNAME ".ahk"
+                                   , A_ScriptDir "\Hotkeys_Custom." A_USERNAME ".ahk"
+                                   , A_ScriptDir "\Hotkeys_Custom.ahk" ) ; same order as includes
 
 autohotkeyChm := FirstExisting( A_AhkDir "\AutoHotkey.chm"
                               , laPrograms "\AutoHotkey\AutoHotkey.chm"
                               , A_ProgramFiles "\AutoHotkey\AutoHotkey.chm" )
+
+GroupAdd WindowsActionCenter, Action center ahk_class Windows.UI.Core.CoreWindow ahk_exe ShellExperienceHost.exe
 
 GroupAdd ExcludedFromAutoReplace, ahk_class ^SALFRAME
 ;GroupAdd ExcludedFromAutoReplace, ahk_class ^OperaWindowClass
@@ -89,15 +94,16 @@ FileAppend Found executables:`ncalc: %calcexe%`nnotepad2: %notepad2exe%`ntc: %to
 
 layouts := GetLayoutList()
 
+
 FillDelayedRunGroups()
 
 ;save a bit on memory if Windows 5 or newer - MilesAhead
 DllCall("psapi.dll\EmptyWorkingSet", "Int", -1, "Int")
 
-#include *i %A_ScriptDir%\Hotkeys_Custom.ahk
-#include *i %A_ScriptDir%\Hotkeys_Custom.%A_USERNAME%.ahk
-#include *i %A_ScriptDir%\Hotkeys_Custom.%A_COMPUTERNAME%.ahk
 #include *i %A_ScriptDir%\Hotkeys_Custom.%A_USERNAME%@%A_COMPUTERNAME%.ahk
+#include *i %A_ScriptDir%\Hotkeys_Custom.%A_COMPUTERNAME%.ahk
+#include *i %A_ScriptDir%\Hotkeys_Custom.%A_USERNAME%.ahk
+#include *i %A_ScriptDir%\Hotkeys_Custom.ahk
 return
 
 #IfWinNotActive ahk_group ExcludedFromAutoReplace
@@ -170,7 +176,7 @@ return
 
 #^F1::              Run % "*RunAs " comspec " /K CD /D ""%TEMP%"""
 #Enter::            GoTo lMaximizeWindow
-#+Enter::           GoTo lMaximizeOnNextMonitor
+#+Enter::           GoTo lToggleWindowMonitor
 
 #^!NumPad0::        WinSet AlwaysOnTop, Toggle, A
 #^Delete::          WinKill A
@@ -184,16 +190,90 @@ return
 #!Numpad7::
 #!Numpad8::
 #!Numpad9::
+    If (WinActive("ahk_group WindowsActionCenter")) {
+        MoveActionCenter(SubStr(A_ThisLabel,0))
+        return
+    }    
     If ( A_TimeSincePriorHotkey < 1000) {
-	If (A_PriorHotkey == A_ThisHotkey)
-	    magnitudeSeq += magnitudeSeq < WindowSplitSize.MaxIndex()
+        If (A_PriorHotkey == A_ThisHotkey)
+            magnitudeSeq += magnitudeSeq < WindowSplitSize.MaxIndex()
     } else {
-	magnitudeSeq := WindowSplitSize.MinIndex()
+        magnitudeSeq := WindowSplitSize.MinIndex()
     }
     Tooltip % "Magnitude #" . magnitudeSeq . " = " . WindowSplitSize[magnitudeSeq]
     SetTimer RemoveToolTip, 1000
     MoveToCornerNum(SubStr(A_ThisLabel,0), WindowSplitSize[magnitudeSeq])
 return
+
+FindWindowMonitorIndex(winX, winY, winW, winH) {
+    local
+    winCenterX := winX + winW/2, winCenterY := winY + winH/2
+
+    Loop {
+        SysGet MonDim, Monitor, %A_Index%
+        If ( MonDimLeft <= winCenterX && MonDimRight >= winCenterX && MonDimTop <= winCenterY && MonDimBottom >= winCenterY )
+            return A_Index
+        ; check for partial overlap
+        If ( MonDimLeft < winX+winW && MonDimRight > winX && MonDimTop < winY+winH && MonDimBottom > winY )
+            partiallyOnMon := A_Index
+    } until !(MonDimLeft || MonDimRight || MonDimTop || MonDimBottom)
+    If (partiallyOnMon)
+        return partiallyOnMon
+    return ""
+}
+
+Max(a,b) {
+    return a > b ? a : b
+}
+
+MoveActionCenter(corner := 0) {
+    local
+    If (!WinActive("ahk_group WindowsActionCenter"))
+        return
+    WinGetPos winX, winY, winW, winH
+    
+    ;curMon := FindWindowMonitorIndex(winX, winY, winW, winH)
+    monCentralPoints := []
+    Loop {
+        SysGet MonDim, Monitor, %A_Index%
+        If (!(MonDimLeft || MonDimRight || MonDimTop || MonDimBottom))
+            Break
+        If ( MonDimLeft <= winX && MonDimRight >= winX && MonDimTop <= winY && MonDimBottom >= winY )
+            curMon := A_Index
+        monCentralPoints[A_Index] := [MonDimLeft + (MonDimRight - MonDimLeft)/2, MonDimTop + (MonDimBottom - MonDimTop)/2]
+        , monCount := A_Index
+        , monMaxWidth := Max(monMaxWidth, MonDimRight - MonDimLeft)
+        , monMaxHeight := Max(monMaxHeight, MonDimBottom - MonDimTop)
+    }
+
+    If (corner) {
+        ; Find the best matching monitor
+        ;                 1  2  3  4 5 6  7 8 9
+        scoreXmult   := [-1, 0, 1,-3,0,3,-1,0,1][corner]
+        , scoreYmult := [-1,-3,-1, 0,0,0, 1,3,1][corner]
+        , curMonCenter := monCentralPoints[curMon]
+        , bestScore := -1
+        For i, mon in monCentralPoints {
+            curScoreX := scoreXmult * monMaxWidth / (mon[1] - curMonCenter[1])
+            , curScoreY := scoreYmult * monMaxHeight / (mon[2] - curMonCenter[2])
+            If (curScoreX < 0 || curScoreY < 0)
+                Continue
+            curScore := curScoreX*curScoreX + curScoreY*curScoreY
+            If (curScore > bestScore)
+                bestScore := curScore, newMon := i
+        }
+    } Else { ; just a next monitor
+        newMon := curMon < monCount ? curMon + 1 : 1
+    }
+
+    SysGet MonWA, MonitorWorkArea, %newMon%
+    newW := winW
+    newH := MonWAHeight
+    newX := MonWARight - newW
+    newY := MonWATop
+    ;ToolTip % winX "," winY "," winW "," winH " -> " newX "," newY "," newW "," newH
+    WinMove,,, newX, newY, newW, newH
+}
 
 FillDelayedRunGroups() {
     ;Error:  Parameter #2 must match an existing #If expression.
@@ -219,17 +299,17 @@ FillDelayedRunGroups() {
                                             , "+SC132":  [A_ScriptDir "\alt_browser.ahk"]                        ;SC132=Homepage +Homepage
                                             , "^!+Esc":  [procexpexe]                                            ;^!+Esc
                                             , "#SC132":  [A_ScriptDir "\ie.cmd",,,,7]                            ;#Homepage
-                                            , "#^!VK57": [A_ScriptDir "\WinActivateOrExec.ahk", """" laPrograms "\Tor Browser\Browser\firefox.exe"""]         ;#^!w
-                                            , "^!SC132": [A_ScriptDir "\WinActivateOrExec.ahk", """" laPrograms "\Tor Browser\Browser\firefox.exe"""]         ;^!Homepage
-                                            , "Browser_Favorites": [A_ScriptDir "\Skype.cmd",,,,7]
+                                            , "#^!VK57": [A_ScriptDir "\WinActivateOrExec.ahk", """" laPrograms "\Tor Browser\Browser\firefox.exe"""] ;#^!w
+                                            , "^!SC132": [A_ScriptDir "\WinActivateOrExec.ahk", """" laPrograms "\Tor Browser\Browser\firefox.exe"""] ;^!Homepage
                                             , "#F1":     [comspec, " /K ""CD /D """ A_ScriptDir """ & PUSHD ""%TEMP%"" & ECHO POPD to go to " A_ScriptDir """"] ;/U https://twitter.com/LogicDaemon/status/936259452617060354
-                                            , "#VK45":   [A_ScriptDir "\WinActivateOrExec.ahk", """" totalcmdexe """",,""]                                       ;vk45=e #e
+                                            , "#VK45":   [A_ScriptDir "\WinActivateOrExec.ahk", """" totalcmdexe """",,""] ;vk45=e #e
                                             , "#+VK45":  [totalcmdexe,,,,-1]                                     ;vk45=e #+e
                                             , "#!VK45":  ["shell:MyComputerFolder"]                              ;vk45=e #!e
                                             , "#^VK45":  [A_ScriptDir "\RemoveDrive.ahk"]                        ;vk45=e #^e
                                             , "#^+VK45": [eject_all.cmd]                                         ;vk45=e #^+e
+                                            , "#VK4A":   [A_ScriptDir "\JDownloader.ahk"]                        ;vk4A=j #j
                                             , "#!VK4B":  [keepassahk,,""]                                        ;vk4B=k #!k
-                                            , "#!+VK4B": [laPrograms "\WinAuth\WinAuth.exe",,""]                 ;vk4C=l #!+k
+                                            , "#!+VK4B": [laPrograms "\WinAuth\WinAuth.exe",,""]                 ;vk4B=k #!+k
                                             , "#VK50":   [notepad2exe]                                           ;vk50=p #p
                                             , "#+VK50":  [notepad2exe,"/c /b"]                                   ;vk50=p #+p
                                             , "#!VK50":  [A_ScriptDir "\QuickText.ahk"]                          ;vk50=p #!p
@@ -237,6 +317,7 @@ FillDelayedRunGroups() {
                                             ;, "#VK55":   [A_AhkPath, A_ScriptDir "\putty_smartact.ahk"]         ;vk55=u #u
                                             , "#VK56":   [vscode]                                                ;vk56=v #v
                                             , "#!VK53":  [A_ScriptDir "\EmailSelection.ahk",, ""]                ;vk53=s #!s
+                                            , "Browser_Favorites": [A_ScriptDir "\Skype.cmd",,,,7]
                                             , "Launch_Mail": [A_ScriptDir "\EmailButton.ahk"] }
                                 , "#VK5A":  { "^VK45":   [notepad2exe, """" A_ScriptFullPath """"]               ;vk45=e ^e
                                             , "^+VK45":  [notepad2exe, """" hotkeys_custom_ahk """"]             ;vk45=e ^+e
@@ -282,7 +363,7 @@ return
 SwtichLang(newLocale) {
     Thread Priority, 1 ; No re-entrance
     If (A_ThisHotkey == "~" A_PriorKey " Up" && !WinActive("ahk_group NoLayoutSwitching")) {
-	If ( InputLocaleID := DllCall("GetKeyboardLayout", "UInt", ThreadID := DllCall("GetWindowThreadProcessId", "UInt", WinExist("A"), "UInt", 0), "UInt") ) {
+        If ( InputLocaleID := DllCall("GetKeyboardLayout", "UInt", ThreadID := DllCall("GetWindowThreadProcessId", "UInt", WinExist("A"), "UInt", 0), "UInt") ) {
             If (InputLocaleID != newLocale) { ; if language is not english XOR requested non-english
                 ; WinGet ProcessName, ProcessName, A
                 ; WinGetClass WinClass, A
@@ -302,8 +383,8 @@ SwtichLang(newLocale) {
                     ; INPUTLANGCHANGE_FORWARD 0x0002 A hot key was used to choose the next input locale in the installed list of input locales. This flag cannot be used with the INPUTLANGCHANGE_BACKWARD flag.
                     ; INPUTLANGCHANGE_SYSCHARSET 0x0001 The new input locale's keyboard layout can be used with the system character set.
                 }
-	    }
-	}
+            }
+        }
     }
 }
 
@@ -313,12 +394,12 @@ GetLayoutList() { ; List of system loaded layouts, from Lyt.ahk / https://autoho
     VarSetCapacity(list, A_PtrSize*size)
     size := DllCall("GetKeyboardLayoutList", Int, size, Str, list)
     Loop % size {
-	aLayouts[A_Index] := NumGet(list, A_PtrSize*(A_Index - 1))
-	;aLayouts[A_Index].hkl := NumGet(List, A_PtrSize*(A_Index - 1))
-	;aLayouts[A_Index].LocName := this.GetLocaleName(, aLayouts[A_Index].hkl)
-	;aLayouts[A_Index].LocFullName := this.GetLocaleName(, aLayouts[A_Index].hkl, true)
-	;aLayouts[A_Index].LayoutName := this.GetLayoutName(, aLayouts[A_Index].hkl)
-	;aLayouts[A_Index].KLID := this.GetKLIDfromHKL(aLayouts[A_Index].hkl)
+        aLayouts[A_Index] := NumGet(list, A_PtrSize*(A_Index - 1))
+        ;aLayouts[A_Index].hkl := NumGet(List, A_PtrSize*(A_Index - 1))
+        ;aLayouts[A_Index].LocName := this.GetLocaleName(, aLayouts[A_Index].hkl)
+        ;aLayouts[A_Index].LocFullName := this.GetLocaleName(, aLayouts[A_Index].hkl, true)
+        ;aLayouts[A_Index].LayoutName := this.GetLayoutName(, aLayouts[A_Index].hkl)
+        ;aLayouts[A_Index].KLID := this.GetKLIDfromHKL(aLayouts[A_Index].hkl)
     }
     Return aLayouts
 }
@@ -344,45 +425,34 @@ MoveToCorner(HorizSplit, VertSplit, MonNum := -1) {
     ; -1 for monitor of current window, "" for primary monitor
     
     IfWinNotExist A
-	return
+        return
     
     ;Now get window position
     WinGetPos newX, newY, newW, newH
-    WinCentralPointX := newX + newW/2
-    WinCentralPointY := newY + newH/2
 
     If (MonNum == -1) { ; If current window' monitor should be used, find it
-        Loop {
-            SysGet MonDim, Monitor, %A_Index%
-            If ( MonDimLeft < WinCentralPointX && MonDimRight > WinCentralPointX && MonDimTop < WinCentralPointY && MonDimBottom > WinCentralPointY ) {
-                MonNum := A_Index
-                break
-            }
-            ;~ MsgBox %MonDimLeft% < %WinCentralPointX% && %MonDimRight% > %WinCentralPointX% && %MonDimTop% < %WinCentralPointY% && %MonDimBottom% > %WinCentralPointY%
-        } until !(MonDimLeft || MonDimRight || MonDimTop || MonDimBottom)
-    }
-    If (MonNum == -1) { ; If monitor number isn't found with previous loop
-        MonNum = ; Primary monitor will be used instead
-        TrayTip Cannot find current monitor,WinCentralPointX = %WinCentralPointX%`nWinCentralPointY = %WinCentralPointY%,,0x22
+        MonNum := FindWindowMonitorIndex(newX, newY, newW, newH)
+        If (MonNum == "") ; Primary monitor will be used instead
+            TrayTip window @ (x%newX% y%newY% w%newW% h%newH%) is out of bounds,Cannot find current monitor,,0x22
     }
     
     SysGet MonWA, MonitorWorkArea, %MonNum%
     borderSize := 8
     If (HorizSplit) {
-	newW := Abs((MonWARight - MonWALeft) / HorizSplit) + borderSize + borderSize
-	If (HorizSplit<0)
-	    newX := MonWALeft - borderSize
-	else
-	    newX := MonWARight - newW + borderSize
+        newW := Abs((MonWARight - MonWALeft) / HorizSplit) + borderSize + borderSize
+        If (HorizSplit<0)
+            newX := MonWALeft - borderSize
+        else
+            newX := MonWARight - newW + borderSize
     }
     If (VertSplit) {
-	newH := Abs((MonWABottom - MonWATop) / VertSplit) + borderSize + borderSize
-	If (VertSplit < 0)
-	    newY := MonWATop - borderSize
-	else
+        newH := Abs((MonWABottom - MonWATop) / VertSplit) + borderSize + borderSize
+        If (VertSplit < 0)
+            newY := MonWATop - borderSize
+        else
             NewY := MonWABottom - NewH + borderSize
     }
-	
+        
     WinMove,,, newX, newY, , 
     WinMove,,, , , newW, newH
     ;    ToolTip newX: %newX% newY: %newY%`nnewW: %newW% newH: %newH%
@@ -414,9 +484,13 @@ lReload:
         RunDelayed(notepad2exe " """ A_ScriptFullPath """")
 return
     
-lMaximizeOnNextMonitor:
+lToggleWindowMonitor:
+    If (WinActive("ahk_group WindowsActionCenter")) {
+        MoveActionCenter()
+        return
+    }
     IfWinNotExist A
-	return
+        return
     KeyWait LWin, L
     KeyWait RWin, L
     ;~ Send {LWin Up}{RWin Up}
@@ -425,13 +499,12 @@ lMaximizeOnNextMonitor:
     WinCentralPointY := Y + H/2
     
 ;	ToDo: find current monitor, select next (get it from resizing func.)
-    
     SysGet Monitor1Dimensions, Monitor, 1
     SysGet Monitor2Dimensions, Monitor, 2
     If ( ( WinCentralPointX > Monitor1DimensionsLeft ) && ( WinCentralPointX < Monitor2DimensionsLeft ) )
-	X := X - Monitor1DimensionsLeft + Monitor2DimensionsLeft
+        X := X - Monitor1DimensionsLeft + Monitor2DimensionsLeft
     else
-	X := X - Monitor2DimensionsLeft + Monitor1DimensionsLeft
+        X := X - Monitor2DimensionsLeft + Monitor1DimensionsLeft
     
     PostMessage, 0x112, 0xF120,,, A  ; 0x112 = WM_SYSCOMMAND, 0xF120 = SC_RESTORE
     Sleep 0
@@ -441,9 +514,9 @@ lMaximizeOnNextMonitor:
 lMaximizeWindow:
     WinGet WinMinMaxState, MinMax, A
     If WinMinMaxState
-	PostMessage, 0x112, 0xF120,,, A  ; 0x112 = WM_SYSCOMMAND, 0xF120 = SC_RESTORE
+        PostMessage, 0x112, 0xF120,,, A  ; 0x112 = WM_SYSCOMMAND, 0xF120 = SC_RESTORE
     Else
-	PostMessage 0x112, 0xF030,,, A ; 0x112 = WM_SYSCOMMAND, 0xF030 = SC_MAXIMIZE
+        PostMessage 0x112, 0xF030,,, A ; 0x112 = WM_SYSCOMMAND, 0xF030 = SC_MAXIMIZE
 ;    TODO: restore window original position
     return
 
@@ -497,24 +570,24 @@ ObjectToText(ByRef obj) {
 ObjectToText_nocheck(obj) {
     out := ""
     For i,v in obj
-	out .= i ": " ( IsObject(v) ? "(" ObjectToText_nocheck(v) ")" : (InStr(v, ",") ? """" v """" : v) ) ", "
+        out .= i ": " ( IsObject(v) ? "(" ObjectToText_nocheck(v) ")" : (InStr(v, ",") ? """" v """" : v) ) ", "
     return SubStr(out, 1, -2)
 }
 
 RunAndActivate(ByRef tgt, ByRef wd:="", ByRef options:="") {
     If (!wd)
-	wd := A_Temp
+        wd := A_Temp
     Run %tgt%, %wd%, %options%, r_PID
     WinWait ahk_PID %r_PID%,,3
     If (!ErrorLevel)
-	WinActivate
+        WinActivate
     Tooltip Started and activated %tgt%
     SetTimer RemoveToolTip, 1000
 }
 
 PasteViaClip(t) {
     If (!clipBak)
-	clipBak:=ClipboardAll
+        clipBak:=ClipboardAll
     Clipboard:=t
     Sleep 100
     Send +{Ins}
@@ -527,7 +600,7 @@ StrJoin(separator := "", strings*) {
     o := ""
     For i, str in strings
         o .= str . separator
-    return StrLen(separator) ? SubStr(o, 1, -StrLen(separator)) : o
+    Return StrLen(separator) ? SubStr(o, 1, -StrLen(separator)) : o
 }
 
 GetOSVersion() {
@@ -539,7 +612,7 @@ FirstExisting(paths*) {
     For i, path in paths
         If (FileExist(path))
             return path
-    return ""
+    Return ""
 }
 
 #include <nprivRun>

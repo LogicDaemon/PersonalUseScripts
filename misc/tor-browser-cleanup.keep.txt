@@ -1,0 +1,17 @@
+extensions\
+jetpack\
+weave\
+AlternateServices.txt
+blocklist.xml
+bookmarks.html
+broadcast-listeners.json
+cert_override.txt
+cert8.db
+cert9.db
+compatibility.ini
+containers.json
+extension-preferences.json
+extensions.json
+extension-settings.json
+places.sqlite
+signedInUser.json

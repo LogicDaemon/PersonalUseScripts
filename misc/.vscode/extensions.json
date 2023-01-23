@@ -1,0 +1,19 @@
+{
+        "recommendations": [
+                "mark-wiemer.vscode-autohotkey-plus-plus",
+                "alefragnani.bookmarks",
+                "pustelto.bracketeer",
+                "oliversturm.fix-json",
+                "github.copilot",
+                "jeff-hykin.macro-commander",
+                "wraith13.multi-encode",
+                "ibm.output-colorizer",
+                "ms-python.python",
+                "dbankier.vscode-quick-select",
+                "tabnine.tabnine-vscode",
+                "tobias-faller.vt100-syntax-highlighting",
+                "sryze.uridecode",
+                "mechatroner.rainbow-csv",
+                "donjayamanne.python-environment-manager"
+        ]
+}

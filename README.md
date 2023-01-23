@@ -1,4 +1,5 @@
 PersonalUseScripts
 ==================
 
-scripts for my personal use. Nothing private, but barely useful for others
+Scripts for my personal use.
+Some scripts are described in blog at www.logicdaemon.ru

@@ -6,21 +6,27 @@ Find_Distributives_subpath(ByRef subpath) {
     If (!baseDirsList) {
         baseDirsList := [], baseDirsSet := {}
         distBaseDirsListFile := ExpandEnvVars("%LocalAppData%\Scripts\_Distributives.base_dirs.txt")
-        If (FileExist(distBaseDirsListFile)) {
+        If (FileExist(distBaseDirsListFile))
             FileRead distBaseDirsList, %distBaseDirsListFile%
-        }
-        distBaseDirsList =
-        ( LTrim
-            %distBaseDirsList%
-            D:
-            X:
-            %A_MyDocuments%
-        )
+        Else
+            distBaseDirsList =
+            ( LTrim
+                %distBaseDirsList%
+                D:
+                X:
+                V:
+                W:
+                %A_MyDocuments%
+            )
         Loop Parse, distBaseDirsList, `n, `r
             If (s := Trim(A_LoopField)) {
                 basePath := ExpandEnvVars(s)
+                ; baseDirsSet is only needed to avoid checking same dir multiple times
                 If (!baseDirsSet.HasKey(basePath))
                     baseDirsSet[basePath] := baseDirsList.Push(basePath)
+                ; baseDirsList is used to cache _Distributives.base_dirs.txt and avoid reading it multiple times
+                ; baseDirsList must be filled in here, so not checking yet for existence of requested path
+                ; this is only executed first time function is called
             }
     }
     
@@ -30,3 +36,5 @@ Find_Distributives_subpath(ByRef subpath) {
     }
     Throw Exception("Distributives with subpath not found",, subpath)
 }
+
+#include <ExpandEnvVars>

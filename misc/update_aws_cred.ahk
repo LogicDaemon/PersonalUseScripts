@@ -7,6 +7,8 @@
 EnvGet LocalAppData,LOCALAPPDATA
 EnvGet SystemRoot,SystemRoot
 
+awsDevAccId:="572304703581_AdministratorAccess"
+
 cred := ParseClipCred(Clipboard)
 If (cred) {
     Try {
@@ -18,11 +20,16 @@ OnClipboardChange(Func("ClipChange"))
 MsgBox Waiting for credentials
 ExitApp
 
-ParseClipCred(data) {
+ParseClipCred(data) { ; returns ["Section Title", "Section Data", "Full Section"]
     local
-    credFiltered := RegexMatch(data, "s)^\s*\[(?P<title>.+)\]\s*[\r]?[\n](.*)", m)
-    If (credFiltered && ContainAWSCred(m2))
-        return [mtitle, m2, data]
+    credINISection := ""
+    Loop Parse, data, `n, `r
+        credINISection .= A_LoopField "`n"
+    credINISection := SubStr(credINISection, 1, -1)
+    credFiltered := RegexMatch(credINISection, "s)^\s*\[(?P<title>.+)\][\s\n]*(.*)", m)
+    If (credFiltered && ContainAWSCred(m2)) {
+        return [mtitle, m2, credINISection]
+    }
 }
 
 ClipChange(type) {
@@ -32,6 +39,7 @@ ClipChange(type) {
     v := ParseClipCred(Clipboard)
     If (!IsObject(v)) {
         ToolTip Clip didn't match aws cred template
+        SetTimer ClearTooltip, -3000
         return
     }
     SaveCredFromClip(v)
@@ -42,6 +50,7 @@ SaveCredFromClip(data) {
     ; data[2]: section contents without title
     ; data[3]: full section text including title. Optional.
     local
+    global awsDevAccId
 
     If (!ContainAWSCred(data[2])) {
         Throw Exception("No AWS cred in data",,data[2])
@@ -50,29 +59,36 @@ SaveCredFromClip(data) {
     EnvGet UserProfile, USERPROFILE
     credPath := UserProfile "\.aws\credentials"
     Try {
-        If (data[1] = "572304703581_AdministratorAccess") {
+        If (data[1] = awsDevAccId) {
             IniWriteSectionUnicode(credPath, ["default", data[2]], "UTF-8-RAW")
             exitAfter := true
         }
         IniWriteSectionUnicode(credPath, data, "UTF-8-RAW")
-        If (exitAfter) {
-            ExitApp
-        }
-        ToolTip % "Wrote Prod AWS cred to profile " data[1] " (see ""%UserProfile%\.aws\credentials"")"
     } Catch e {
         Throw e
     }
+    If (FileExist(A_ScriptDir "\update_aws_cred_post_actions.cmd")) {
+        ToolTip % "Running update_aws_cred_post_actions.cmd"
+        RunWait "%A_ScriptDir%\update_aws_cred_post_actions.cmd",, Min UseErrorLevel
+    }
+    If (exitAfter)
+        ExitApp
+    ToolTip % "Wrote Prod AWS cred to profile " data[1] " (see ""%UserProfile%\.aws\credentials""), copying to DEV-FS-05"
 }
 
 ContainAWSCred(ByRef data) {
     If (!data)
         return false
-    If ( data ~= "m)^aws_access_key_id="
-      && data ~= "m)^aws_secret_access_key="
-      && data ~= "m)^aws_session_token=" ) {
+    If ( data ~= "i)(^|\n)aws_access_key_id="
+      && data ~= "i)(^|\n)aws_secret_access_key="
+      && data ~= "i)(^|\n)aws_session_token=" ) {
         return true
     }
     return false
+}
+
+ClearTooltip() {
+    Tooltip
 }
 
 IniWriteSectionUnicode(path, data, encoding="UTF-8") {

@@ -1,1 +1,1 @@
-py -m mypy --install-types
+python3 -m mypy --install-types %*

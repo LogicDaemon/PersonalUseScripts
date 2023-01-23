@@ -1,0 +1,27 @@
+see Installer.ahk
+
+
+
+    try {
+        req := ComObjCreate("Msxml2.XMLHTTP")
+        req.open("GET", "https://www.autohotkey.com/download/1.1/version.txt?" SubStr(A_Now,1,8), true)
+        req.onreadystatechange := Func("VersionReceived").Bind(req)
+        req.send()
+    }
+
+VersionReceived(req) {
+    local w := getWindow(), latestVersion := ""
+    if req.readyState != 4
+        return
+    latestVersion := req.responseText
+    if RegExMatch(latestVersion, "^(\d+\.){3}\d+") {
+        if (latestVersion = ProductVersion)
+            w.opt1.firstChild.innerText := "Reinstall (download required)"
+        else
+            w.opt1.firstChild.innerText := "Download v" latestVersion
+        w.opt1.href := "#"
+        w.opt1.onclick := Func("DownloadAHK")
+    } else
+        w.opt1.innerText := "An error occurred while checking for updates."
+}
+

@@ -25,13 +25,10 @@ For i, classMask in [ "VivaldiHTM"
                     , ["^VivaldiHTM\..*"]
                     , ["Vivaldi\..*"]] {
     If (aShellOpen := FindShellOpenByClass(classMask)) {
-        If (InStr(aShellOpen[2], "%1")) {
-            cmdlArgs := StrReplace( StrReplace( aShellOpen[2], """%1""", cmdlArgs ), "%1", cmdlArgs ) . cmdlArgs ; replace "%1" or %1 in args
-        } Else {
-            cmdlArgs := aShellOpen[2] A_Space cmdlArgs
-        }
-        For check, addArg in 	{ "--profile-directory=": "--profile-directory=""Default"""
-                                , "--process-per-site":   "--process-per-site" }
+        cmdlArgs := InStr(aShellOpen[2], "%1") ? StrReplace( StrReplace( aShellOpen[2], """%1""", cmdlArgs ), "%1", cmdlArgs ) : aShellOpen[2] A_Space cmdlArgs ; replace "%1" or %1 in args
+        For check, addArg in 	{ "--profile-directory=":         "--profile-directory=""Default"""
+                                , "--process-per-site":           "--process-per-site" }
+                                ;, "--disable-direct-composition": "--disable-direct-composition" }
             If (!InStr(cmdlArgs, check))
                 cmdlArgs := addArg A_Space cmdlArgs
         nprivRun(aShellOpen[1], cmdlArgs)

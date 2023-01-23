@@ -6,17 +6,15 @@ SendMode InputThenPlay
 cmdlArgs := ParseCommandLine()
 EnvGet LocalAppData, LOCALAPPDATA
 
-pathSUMoDist := FirstExisting(           "d:\Distributives\Soft com freeware\Trackers Updaters Catalogs\SUMo\sumo.7z"
-                             ,  "\\localhost\Distributives\Soft com freeware\Trackers Updaters Catalogs\SUMo\sumo.7z"
-                             , "\\miwifi.com\Distributives\Soft com freeware\Trackers Updaters Catalogs\SUMo\sumo.7z")
-If (!pathSUMoDist)
-    Throw Exception("SUMO Distributive path not found")
+pathSUMoDist := Find_Distributives_subpath("Soft com freeware\Trackers Updaters Catalogs\SUMo\sumo.7z")
+SplitPath pathSUMoDist,, dirSUMoDist
 
 EnvGet LocalAppData,LOCALAPPDATA
 SUMoInstPath := FirstExisting(LocalAppData . "\Programs\SUMo", LocalAppData . "\Programs\SUMo")
 If (!SUMoInstPath)
     SUMoInstPath := LocalAppData . "\Programs\SUMo"
 
+RunWait %comspec% /C "%dirSUMoDist%\.Distributives_Update_Run.Office.cmd", %dirSUMoDist%, Min
 RunWait "%A_ProgramFiles%\7-Zip\7zG.exe" x -aoa -o"%SUMoInstPath%\.." "%pathSUMoDist%", %A_Temp%, Min
 Run "%SUMoInstPath%\SUMo.exe" %params%, %SUMoInstPath%
 
@@ -25,6 +23,7 @@ Run "%SUMoInstPath%\SUMo.exe" %params%, %SUMoInstPath%
 ;    WinWaitActive SUMo ahk_class TMessageForm
 ;    ControlSend,, {Enter}
 ;}
+Exit
 
 FirstExisting(params*) {
     for index,param in params

@@ -12,7 +12,7 @@ global hiddenPIDs := {}
 cmds := [ [A_AppData "\GHISLER\download pci.ids and convert to pci.db.ahk"]
         , [LocalAppData "\Programs\Total Commander\PlugIns\wdx\TrID_Identifier\TrID\update.cmd"]
         , [LocalAppData "\Scripts\WarframeCleanup.cmd"]
-        , [A_ScriptDir "\compact Chrome cache.cmd", "/purgeCaches /purgeIndexedDB /chrome"]
+        , [A_ScriptDir "\compact Chrome cache.cmd", "/purgeCaches /purgeIndexedDB /chrome /chromium"]
         , [A_ScriptDir "\compact_lzx_ProgramsDirs.cmd"]
         , [SystemRoot "\System32\sc.exe", "config ""Backupper Service"" start= demand"]
         , [SystemRoot "\System32\sc.exe", "config ""SBIS3Plugin"" start= demand"] ]
@@ -26,11 +26,8 @@ Try {
             , [A_ScriptDir "\Vivaldi_prefs_backup.ahk"] )
 } Catch {}
 
-killProcesses =
-(
-update_notifier.exe
-DropboxUpdate.exe
-)
+killProcesses = [ "update_notifier.exe"
+                , "DropboxUpdate.exe" ]
 
 yesterday := ""
 yesterday += -1, Day

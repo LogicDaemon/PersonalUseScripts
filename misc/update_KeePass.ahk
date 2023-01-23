@@ -33,9 +33,13 @@ Loop 2
 }
 #include <find7zexe>
 SplitPath keePassExePath,, keePassExeDir
-RunWait "%exe7z%" x -y -aoa -o"%keePassExeDir%.%distNewVer%" "%distLatest%",, Min
+RunWait "%exe7z%" x -y -aoa -o"%keePassExeDir%-%distNewVer%" "%distLatest%",, Min
+FileMove %keePassExeDir%\*.ini, %keePassExeDir%-%distNewVer%\*.*, 1
+If (ErrorLevel)
+    MsgBox Failed to move some of ini files from "%keePassExeDir%" to "%keePassExeDir%-%distNewVer%". They will remain in the previous version directory.
 RunWait %comspec% /C "MKLINK /J "%keePassExeDir%.tmp" "%keePassExeDir%-%distNewVer%""
 FileRemoveDir %keePassExeDir%
+; ToDo: remove old versions (except 1)
 FileMoveDir %keePassExeDir%.tmp, %keePassExeDir%, R
 Exit ErrorLevel
 
@@ -63,3 +67,4 @@ GetKeepassUpdateVer(ByRef distDir := "") {
 #include <find_KeePass_exe>
 #include <GetURL>
 #include <VersionCompare>
+#include <Find_Distributives_subpath>

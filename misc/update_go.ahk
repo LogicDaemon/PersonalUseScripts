@@ -1,8 +1,13 @@
 #NoEnv
+#SingleInstance
 
 Try {
     distDir := Find_Distributives_subpath("Developement\go")
     goVer := GetURL("https://golang.org/VERSION?m=text")
+    If (!goVer) {
+        MsgBox Go version is not retrieved from https://golang.org/VERSION?m=text, instead got "%goVer%"
+        ExitApp 1
+    }
     goDistFName := goVer ".windows-amd64.zip"
     dlURL := "https://golang.org/dl/" goDistFName
     timeCond := FileExist(distDir "\" goDistFName) ? "-z """ goDistFName """" : ""

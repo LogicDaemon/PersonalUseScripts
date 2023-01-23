@@ -99,57 +99,52 @@ IfWinActive ahk_group Notepad2WithBatchFile
 ;GuiEscape:
 ;    ExitApp
 
-/*
 ; ---------------------------------------------------------------------
 ; Name:  			Search&Paste
 ; Author:           Boskoop           
 ; Datum:            23.3.06
 ; Modified 2012-07-01 by LogicDaemon for its own sake
 ; ---------------------------------------------------------------------
-Kollektor sammelt Textbausteine. Text markieren, CTRL-CapsLock drücken. Der Text wird 
-an die Liste Collection.txt angehängt.
-Zeilenumbrüche werden durch das Zeichen ¤ ersetzt. ¤ ist gleichzeitig Trennzeichen
-für Tabellenspalten. Mit dem ViewMode 1-2-3-4... werden die Zeilenumbrüche wieder restauriert.
-
-KURZANLEITUNG:
-Programm starten. Kollektor wartet jetzt im Hintergrund darauf, daß er aufgerufen wird. 
- 
-Text markieren. CTRL-CapsLock. Der markierte Text wird der Liste angefügt.
-Die Taste CapsLock ruft Kollektor auf. 
-Man tippt das gesuchte Wort ein. In der Liste werden nur die Treffer angezeigt. 
-Mit den Pfeiltasten "rauf" und "runter" kann durch die Liste navigieren. 
-Im Vorschaufenster wird ein größerer Ausschnitt des Textes angezeigt
-Mit dem Druck auf die Enter-Taste wird der Inhalt des Vorschau-Fensters an Cursorposition eingefügt. 
-Das Kollektor-Fenster verschwindet automatisch. 
-Kollektor wird mit ALT-F4 oder per Rechtsklick auf das Icon und Klicken auf den Menüpunkt 
-Exit beendet. 
-
+; Kollektor sammelt Textbausteine. Text markieren, CTRL-CapsLock drücken. Der Text wird 
+; an die Liste Collection.txt angehängt.
+; Zeilenumbrüche werden durch das Zeichen ¤ ersetzt. ¤ ist gleichzeitig Trennzeichen
+; für Tabellenspalten. Mit dem ViewMode 1-2-3-4... werden die Zeilenumbrüche wieder restauriert.
+; 
+; KURZANLEITUNG:
+; Programm starten. Kollektor wartet jetzt im Hintergrund darauf, daß er aufgerufen wird. 
+;  
+; Text markieren. CTRL-CapsLock. Der markierte Text wird der Liste angefügt.
+; Die Taste CapsLock ruft Kollektor auf. 
+; Man tippt das gesuchte Wort ein. In der Liste werden nur die Treffer angezeigt. 
+; Mit den Pfeiltasten "rauf" und "runter" kann durch die Liste navigieren. 
+; Im Vorschaufenster wird ein größerer Ausschnitt des Textes angezeigt
+; Mit dem Druck auf die Enter-Taste wird der Inhalt des Vorschau-Fensters an Cursorposition eingefügt. 
+; Das Kollektor-Fenster verschwindet automatisch. 
+; Kollektor wird mit ALT-F4 oder per Rechtsklick auf das Icon und Klicken auf den Menüpunkt 
+; Exit beendet. 
 ; ---------------------------------------------------------------------
 
-
-
-VARIABLEN
-
-Hitlist: Suchen in der Datenbank: Liste der Zeilen mit Treffern. Wird von der Funktion SearchDB() erzeugt
-Hitlist_N: Array. An der N-ten Position der Trefferliste steht die Zeile X. Z. B. Hitlist=1|4|8 Hitlist_3=8. Wird von der Subroutine Eingabe: erzeugt
-
-Word: Inhalt der 1. Zelle einer Trefferzeile. Von Subroutine Eingabe: erzeugt
-Wordlist: Liste von Wörtern der 1. Zelle aller Trefferzeilen .Z. B. rot|grün|blau. Von Subroutine Eingabe: erzeugt
-
-Choice: Position des augewählten Items in der Listbox bzw. in der Hitlist. Von der Listbox in der GUI erzeugt (vChoice) oder von der Subroutine Eingabe auf 1 gesetzt.
-Treffer: ist die Datenbankzeile des ausgewählten Listenitems. Lokale Variable der Funktion ShowDBLine()
-
-LineCount: Zeilenzahl in der Liste/ Tabelle. Von ReadDBFile(DatabaseFile) erzeugt.
-
-ViewOrder: Die anzuzeigenden Datenbankzellen mit der Syntax 1-2-3, Trenner zwischen Anzeigemodi: | Return: 1-2, Leerzeichen, kein Return: 1_-2 Leerzeichen Komma, kein Return 1,_-2
-ModeNr: Die Nummer eines Anzeigemodus
-Direction: Nächster/ Letzter Anzeigemodus
-
-CursorIn :Die Control, in der sich beim GUI-Start der Cursor befindet
-ActiveWindow :Das beim GUI-Start aktive Fenster
-
-GUIStartKey: Hotkey, mit dem die GUI gestartet wird. Wird in der INI definiert. Default: Capslock
-*/
+; VARIABLEN
+; 
+; Hitlist: Suchen in der Datenbank: Liste der Zeilen mit Treffern. Wird von der Funktion SearchDB() erzeugt
+; Hitlist_N: Array. An der N-ten Position der Trefferliste steht die Zeile X. Z. B. Hitlist=1|4|8 Hitlist_3=8. Wird von der Subroutine Eingabe: erzeugt
+; 
+; Word: Inhalt der 1. Zelle einer Trefferzeile. Von Subroutine Eingabe: erzeugt
+; Wordlist: Liste von Wörtern der 1. Zelle aller Trefferzeilen .Z. B. rot|grün|blau. Von Subroutine Eingabe: erzeugt
+; 
+; Choice: Position des augewählten Items in der Listbox bzw. in der Hitlist. Von der Listbox in der GUI erzeugt (vChoice) oder von der Subroutine Eingabe auf 1 gesetzt.
+; Treffer: ist die Datenbankzeile des ausgewählten Listenitems. Lokale Variable der Funktion ShowDBLine()
+; 
+; LineCount: Zeilenzahl in der Liste/ Tabelle. Von ReadDBFile(DatabaseFile) erzeugt.
+; 
+; ViewOrder: Die anzuzeigenden Datenbankzellen mit der Syntax 1-2-3, Trenner zwischen Anzeigemodi: | Return: 1-2, Leerzeichen, kein Return: 1_-2 Leerzeichen Komma, kein Return 1,_-2
+; ModeNr: Die Nummer eines Anzeigemodus
+; Direction: Nächster/ Letzter Anzeigemodus
+; 
+; CursorIn :Die Control, in der sich beim GUI-Start der Cursor befindet
+; ActiveWindow :Das beim GUI-Start aktive Fenster
+; 
+; GUIStartKey: Hotkey, mit dem die GUI gestartet wird. Wird in der INI definiert. Default: Capslock
 
 ;****************************************************
 ;*                                                  *
@@ -161,16 +156,13 @@ GUIStartKey: Hotkey, mit dem die GUI gestartet wird. Wird in der INI definiert. 
 ;Initialisierung
 SetTitleMatchMode, 3
 #KeyHistory 0
-global IniFile
-IniFile=%A_ScriptFullPath%.ini
 
-;MakeIni()					;Überprüft ob eine .ini existiert. Wenn nicht, wird sie erstellt
 ReadIni()					;Liest die .ini-Datei mit den Optionen ein
 	
 
 GUITitle=QuickText			;Vorsicht, wenn das geändert wird, funktionieren die Hotkeys <- und -> nicht mehr!
 Separator=¤
-DBFile=QuickText.txt
+DBFile=%A_MyDocuments%\QuickText.txt
 Editor=notepad.exe
 ModeNr=1
 Direction=0
@@ -193,40 +185,34 @@ CursorIn := GetActiveControl()
 ActiveWindow := GetActiveWindow()
 
 ;Verhindert Fehlermeldung, wenn das Fenster im Hintergrund schon aktiv ist
-IfWinExist, %GUITitle%
-{
-	IfWinNotActive, %GUITitle%
-
-	{
-		WinMinimize , %GUITitle%
-		WinActivate , %GUITitle%
+If (WinExist(GUITitle)) {
+	If (!WinActive(GUITitle)) {
+		WinMinimize
+		WinActivate
 	}
 	;Gui destroy
-}
+} else {
+    Gui, Add, Edit, gEingabe vEingabe x50 y5 w115 h20  +Left, 
+    Gui, Add, ListBox, x5 y35 w160 h260 gChoice vChoice altsubmit ,%StartList%
+    Gui, Add, Edit, x5 y315 w160 h90 ReadOnly, 
+    Gui, Add, Button, x5 y410 w40 h20 Default, &OK
+    Gui, Add, Button, x15 y290 w60 h20 , &Edit List
+    Gui, Add, Text, x5 y8 w45 h15, &Search:
 
-else
-{
-Gui, Add, Edit, gEingabe vEingabe x50 y5 w115 h20  +Left, 
-Gui, Add, ListBox, x5 y35 w160 h260 gChoice vChoice altsubmit ,%StartList%
-Gui, Add, Edit, x5 y315 w160 h90 ReadOnly, 
-Gui, Add, Button, x5 y410 w40 h20 Default, &OK
-Gui, Add, Button, x15 y290 w60 h20 , &Edit List
-Gui, Add, Text, x5 y8 w45 h15, &Search:
+    Gui, Show, x353 y211 h435 w171,QuickText 
 
-Gui, Show, x353 y211 h435 w171,QuickText 
+    ; Erstellt eine Hitlist und einen Hitlist-Array, damit bereits beim GUI-Start die Datenbankfelder in der Edit 2 angezeigt werden können.
+    Choice=1
+    loop, %LineCount%
+    {
+            Hitlist=%Hitlist%|%A_Index%
+            Hitlist_%A_Index%=%A_Index%
+    }
 
-; Erstellt eine Hitlist und einen Hitlist-Array, damit bereits beim GUI-Start die Datenbankfelder in der Edit 2 angezeigt werden können.
-Choice=1
-		loop, %LineCount%
-		{
-			Hitlist=%Hitlist%|%A_Index%
-			Hitlist_%A_Index%=%A_Index%
-		}
-
-ModeNr=1
-Direction=0
-	;Anzeige(ViewOrder,ModeNr,Direction)
-Show()
+    ModeNr=1
+    Direction=0
+    ;Anzeige(ViewOrder,ModeNr,Direction)
+    Show()
 }
 Return
 
@@ -253,12 +239,12 @@ return
 #IfWinActive
 
 ;Mit CTRL-Capslock werden markierte Texte in den File Collection.txt geschrieben
-#!Ins::
-ClipText := Clipboard
-;StringReplace ClipText, ClipText, `r`n,¤, All ;Replaces CR LF by ¤
-FileAppend %ClipText%`n, Collection.txt
-ClipText=
-Return	
+;#!Ins::
+;ClipText := Clipboard
+;;StringReplace ClipText, ClipText, `r`n,¤, All ;Replaces CR LF by ¤
+;FileAppend %ClipText%`n, Collection.txt
+;ClipText=
+;Return	
 
 
 ;****************************************************
@@ -710,24 +696,6 @@ GetActiveWindow()
 {
 WinGet, Active_Window_ID, ID, A					
 return, Active_Window_ID
-}
-
-; --------------------------------------------------------
-
-MakeIni()
-;Überprüft, ob es eine .ini gibt. Wenn nicht, wird sie erstellt.
-{
-	IfNotExist, %IniFile%
-		{
-		;IniWrite, "",%IniFile%, FILE, File
-		IniWrite, 0,%IniFile%, SEARCH, CaseSensitive
-		IniWrite, OFF,%IniFile%, SEARCH, WholeWordCheck
-		IniWrite, OFF,%IniFile%, SEARCH, WordStart
-		IniWrite, 1,%IniFile%, SEARCH, WhichColumn
-		IniWrite, CAPSLOCK,%IniFile%, MISC, GUIStartKey
-		;IniWrite, `;,%IniFile%, MISC, Separator
-		IniWrite, 1-2-3-4-5,%IniFile%, VIEW, ViewOrder 
-		}
 }
 
 ; --------------------------------------------------------

@@ -1,0 +1,7 @@
+./misc/.mypy_cache/**
+./temp-backup-scripts/**
+./software_update/**
+./misc/_Distributives.base_dirs.txt
+./misc/Hotkeys_Custom.ahk
+./misc/Hotkeys_Custom.*.ahk
+./misc/KeePass_*.ahk

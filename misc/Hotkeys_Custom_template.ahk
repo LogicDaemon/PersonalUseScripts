@@ -1,5 +1,4 @@
-﻿hotkeys_custom_ahk := A_LineFile
-If (ReadPassesFromFile(CmdlArgs(1)[1]))
+﻿If (ReadPassesFromFile(CmdlArgs(1)[1]))
     return
 
 Run "%A_AhkPath%" "%A_ScriptDir%\KeePass_%A_UserName%.ahk"

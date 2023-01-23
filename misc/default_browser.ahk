@@ -3,9 +3,9 @@
 #NoEnv
 FileEncoding UTF-8
 
-If (!FileExist(A_ScriptDir "\default_browser." A_COMPUTERNAME ".ahk")) {
-    Run https://
+If (!FileExist(A_ScriptDir "\default_browser@" A_ComputerName ".ahk")) {
+    Run https:
     ExitApp
 }
 
-#include *i %A_ScriptDir%\default_browser.%A_COMPUTERNAME%.ahk
+#include *i %A_ScriptDir%\default_browser@%A_ComputerName%.ahk

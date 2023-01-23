@@ -9,6 +9,7 @@ IF NOT DEFINED srcpath (
     ECHO Без указания srcpath скрипт не работает. srcpath --- это расположение папки для загрузки, она же папка с архивом
     EXIT /B 1
 )
+IF NOT DEFINED workdir SET "workdir=%srcpath%\temp"
 IF DEFINED RARopts ECHO Переменная RARopts определена, но не работает в этой версии скрипта! Используйте %%noarchmasks%% чтобы указать маски файлов для исключения их архива.>&2 & EXIT /B 1
 IF DEFINED RARmoredirs ECHO Переменная RARmoredirs определена, но не работает в этой версии скрипта! Используйте %%moreDirs%%.>&2 & EXIT /B 1
 
@@ -35,19 +36,19 @@ REM -H - host spanning
 REM -D%* hosts to span across; when host spanning (-H) off, -D is meaningless
 
 IF NOT DEFINED exe7z CALL find7zexe.cmd
-IF NOT DEFINED wgetexe CALL findexe.cmd wgetexe wget.exe "%SystemDrive%\SysUtils\wget.exe"
+IF NOT DEFINED wgetexe CALL findexe.cmd wgetexe wget.exe "%LOCALAPPDATA%\Programs\SysUtils\wget.exe"
 
 CALL :parseMasks %noarchmasks%
 )
 (
     IF EXIST "%srcpath%%sitename%.7z" (
-	%exe7z% x -aoa -o"%srcpath%" -- "%srcpath%%sitename%.7z"
-    ) ELSE IF EXIST "%srcpath%%sitename%.rar" %exe7z% x -aoa -o"%srcpath%" -- "%srcpath%%sitename%.rar"
+	%exe7z% x -aoa -o"%workdir%" -- "%srcpath%%sitename%.7z"
+    ) ELSE IF EXIST "%srcpath%%sitename%.rar" %exe7z% x -aoa -o"%workdir%" -- "%srcpath%%sitename%.rar"
 
     SHIFT
     SHIFT
-    START "" /b /wait /D"%srcpath%" wget.exe %wgetcommonopt% %URL% %1 %2 %3 %4 %5 %6 %7 %8 %9
-    START "" /b /wait /D"%srcpath%" %exe7z% a -sdel -r %opts7z% -- "%sitename%.7z" "%sitename%" %moreDirs%
+    START "" /b /wait /D"%workdir%" wget.exe %wgetcommonopt% %URL% %1 %2 %3 %4 %5 %6 %7 %8 %9
+    START "" /b /wait /D"%workdir%" %exe7z% a -sdel -r %opts7z% -- "%srcpath%%sitename%.7z" "%sitename%" %moreDirs%
 
 EXIT /B
 )

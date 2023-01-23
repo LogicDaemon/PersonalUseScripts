@@ -124,9 +124,9 @@ KeepassExeUpdated() {
             mode := lastUpdateCheck ? "background " : ""
             TrayTip Starting %mode%autoupdate...
             If (lastUpdateCheck) {
-                Run "%A_AhkPath%" "%A_ScriptDir%\KeePass_update.ahk"
+                Run "%A_AhkPath%" "%A_ScriptDir%\update_KeePass.ahk"
             } Else {
-                RunWait "%A_AhkPath%" "%A_ScriptDir%\KeePass_update.ahk"
+                RunWait "%A_AhkPath%" "%A_ScriptDir%\update_KeePass.ahk"
                 break
             }
         }

@@ -1,5 +1,5 @@
 @(REM coding:CP866
-rem CALL "%~dp0CreateTempDirs on RAM-drive.cmd"
+rem CALL "%~dp0Move Dirs to RAMdisk.cmd"
 
 REM start "SynTP" /MIN /D"C:\Program Files\Synaptics\SynTP" "C:\Program Files\Synaptics\SynTP\SynTPEnh.exe"
 REM start "SynTP" /MIN /D"C:\Program Files\Synaptics\SynTP" "C:\Program Files\Synaptics\SynTP\SynTPLpr.exe"

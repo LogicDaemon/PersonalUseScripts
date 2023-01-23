@@ -6,7 +6,10 @@ XMLHTTP_Request(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=
     global debug
     #Warn UseUnsetGlobal, Off
     If (IsObject(debug))
-	debug.url := URL, debug.method := method, XMLHTTP_Request_DebugMsg(method " " URL . (POSTDATA ? " ← " POSTDATA : "") . ( moreHeaders ? "`n`tHeaders:`n" XMLHTTP_Request_ahk_ObjectToText(moreHeaders) : ""))
+	debug.url := URL
+	, debug.method := method
+	, XMLHTTP_Request_DebugMsg(method " " URL . (POSTDATA ? " ← " POSTDATA : "")
+                                   . ( moreHeaders ? "`n`tHeaders:`n" XMLHTTP_Request_ahk_ObjectToText(moreHeaders) : ""))
     xhr := XMLHTTP_Request_CreateXHRObject()
     ;xhr.open(bstrMethod, bstrUrl, varAsync, varUser, varPassword);
     xhr.open(method, URL, false)
@@ -15,7 +18,6 @@ XMLHTTP_Request(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=
     #Warn UseUnsetLocal, Off
     For hName, hVal in moreHeaders
         xhr.setRequestHeader(hName, hVal)
-    
     Try {
 	xhr.send(POSTDATA)
 	If (IsObject(debug))
@@ -32,7 +34,7 @@ XMLHTTP_Request(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=
     } catch e {
 	If (IsObject(debug))
 	    debug.e := e
-	return
+	Throw e
     } Finally {
 	xhr := ""
 	If (IsObject(debug)) {
@@ -54,8 +56,7 @@ XMLHTTP_Request_CreateXHRObject() {
 	return ComObjCreate(useObjName)
     } Else {
 	errLog=
-	For i, objName in ["Microsoft.XMLHTTP", "Msxml2.XMLHTTP", "Msxml2.XMLHTTP.6.0", "Msxml2.XMLHTTP.3.0"] {
-	    ;xhr=XMLHttpRequest
+	For i, objName in ["Msxml2.XMLHTTP", "Microsoft.XMLHTTP", "Msxml2.XMLHTTP.6.0", "Msxml2.XMLHTTP.3.0"] {
 	    If (IsObject(debug))
 		debug.XMLHTTPObjectName := objName, XMLHTTP_Request_DebugMsg("`tTrying to create object " objName "…")
 		

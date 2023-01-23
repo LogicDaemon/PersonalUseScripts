@@ -3,6 +3,7 @@
 
 WinHttpRequest(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=0, ByRef moreHeaders:=0, ByRef proxy:="") {
     local
+    #Warn UseUnsetGlobal, Off
     global debug
     static WinHttpRequestObjectName := ""
     If (WinHttpRequestObjectName) {
