@@ -17,12 +17,16 @@
         SET purgeIndexedDB=
     ) ELSE IF /I "%~1"=="/purgeIndexedDB" (
         SET purgeIndexedDB=1
+    ) ELSE IF /I "%~1"=="/compactLZX" (
+        SET compactLZX=1
     ) ELSE IF /I "%~1"=="/skipLZX" (
         SET compactLZX=
     ) ELSE IF /I "%~1"=="/markDirCompact" (
         SET markDirCompact=1
     ) ELSE IF /I "%~1"=="/chrome" (
         CALL :CleanProfilesIn "%LocalAppData%\Google\Chrome*"
+    ) ELSE IF /I "%~1"=="/chromium" (
+        CALL :CleanProfilesIn "%LocalAppData%\Chromium*"
     ) ELSE IF /I "%~1"=="/vivaldi" (
         CALL :CleanProfilesIn "%LocalAppData%\Vivaldi*"
     ) ELSE (
@@ -50,15 +54,21 @@ EXIT /B 1
                 REM + "File System"
                 IF "%purgeIndexedDB%"=="1" RD /S /Q "%%~C\IndexedDB"
                 IF "%cleanup%"=="1" (
-                    FOR /D %%D IN ("Application Cache" "Cache" "Code Cache" "GPUCache" "Service Worker" "def\Application Cache" "def\Cache" "def\Code Cache" "def\GPUCache") DO @(
-                        IF EXIST "%%~C\%%~D\." RD /S /Q "%%~C\%%~D"
+                    FOR /F "usebackq delims=" %%D IN ("%~dp0Chrome_Profile_Temporary.txt") DO @(
+                        IF "%%~D" NEQ "" IF EXIST "%%~C\%%~D\." RD /S /Q "%%~C\%%~D"
                     )
                     FOR /D %%D IN ("%%~C\old_*") DO RD /S /Q "%%~C\%%~D"
                 )
             )
-            IF "%compactLZX%"=="1" COMPACT /Q /C /S:"%%~P\Extensions" /EXE:LZX
+            IF NOT "%compactLZX%"=="1" IF NOT "%markDirCompact%"=="1" (
+                ECHO Skipping compaction
+            ) ELSE (
+                FOR /F "usebackq delims=" %%D IN ("%~dp0Chrome_Profile_Compactable.txt") DO @(
+                    IF "%compactLZX%"=="1" COMPACT /Q /C /S:"%%~P\%%~D" /EXE:LZX
+                    IF "%markDirCompact%"=="1" COMPACT /Q /C /S:"%%~P\%%~D"
+                )
+            )
         )
-        IF "%markDirCompact%"=="1" COMPACT /Q /C /S:"%%~B"
     )
     EXIT /B
 )
@@ -73,10 +83,11 @@ EXIT /B 1
     ECHO /keepIndexedDB         * keep Chrome\User Data\profile\IndexedDB
     ECHO /purgeIndexedDB          remove Chrome\User Data\profile\IndexedDB. Only works when purging caches.
     ECHO /skipLZX                 don't call COMPACT /EXE:LZX for program files, extensions and cache files if not purged. LZX appeared in Windows 10 NTFS.
-    ECHO /markDirCompact          call COMPACT for remaining files and directories with default method, so new files will also get autocompacted
+    ECHO /markDirCompact          call COMPACT for compressed directories with default method, so new files will also get autocompacted
     ECHO.
     ECHO Locations to look profiles in:
     ECHO /chrome                  %%LocalAppData%%\Google\Chrome*
+    ECHO /chromium                %%LocalAppData%%\Chromium*
     ECHO /vivaldi                 %%LocalAppData%%\Vivaldi*
     ECHO path                     specified explicitly
     EXIT /B

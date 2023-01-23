@@ -1,0 +1,27 @@
+def\Application Cache
+def\Cache
+def\Code Cache
+def\GPUCache
+
+AdBlockRules
+Application Cache
+AutofillStrikeDatabase
+BudgetDatabase
+Cache
+Code Cache
+data_reduction_proxy_leveldb
+Download Service
+Feature Engagement Tracker
+GCM Store
+GPUCache
+Local App Settings
+Local Extension Settings
+Media Cache
+optimization_guide_hint_cache_store
+optimization_guide_model_and_features_store
+Safe Browsing Network
+Service Worker\CacheStorage
+Service Worker\ScriptCache
+Session Storage
+VideoDecodeStats
+WebRTC Logs
