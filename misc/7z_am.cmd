@@ -21,7 +21,7 @@ IF DEFINED PROCESSOR_ARCHITEW6432 SET "OS64Bit=1"
 REM Setting defaults
 IF NOT DEFINED leaveSmallestOnly SET "leaveSmallestOnly=1"
 IF NOT DEFINED deleteAfter SET "deleteAfter=0"
-IF NOT DEFINED smallestNoSuffix SET "smallestNoSuffix=0"
+IF NOT DEFINED leastNoSuffix SET "leastNoSuffix=0"
 REM 82 bytes is size of 7z archive containing 1 empty folder
 IF NOT DEFINED minArcSize SET "minArcSize=82"
 REM   compression parameters and methods defaults
@@ -74,22 +74,24 @@ IF NOT DEFINED curSwitch (
     )
 )
 (
-    FOR /F "usebackq delims== tokens=1" %%I IN (`set z7zusedeflt`) DO (
-	REM then list and check 7zusedeflt* variables and change them if argument is appropriate
-	IF /I "z7zusedeflt%curSwitch%" EQU "%%I" (
-	    SET "z7zusedeflt%curSwitch%=%switchMeaning%"
-	    GOTO :readSwitches
-	)
-    )
     IF /I "%curSwitch%"=="DELETEAFTER" (		SET "switchVarName=deleteAfter"
     ) ELSE IF /I "%curSwitch%"=="DA" (			SET "switchVarName=deleteAfter"
-    ) ELSE IF /I "%curSwitch%"=="SMALLESTNOSUFFIX" (	SET "switchVarName=smallestNoSuffix"
-    ) ELSE IF /I "%curSwitch%"=="SNS" (			SET "switchVarName=smallestNoSuffix"
-    ) ELSE (
-	REM Checking inverted swtiches
-	SET /A "switchMeaning=1-%switchMeaning%"
-	IF /I "%curSwitch%"=="LEAVEALL" (		SET "switchVarName=leaveSmallestOnly"
-	) ELSE IF /I "%curSwitch%"=="LA" (		SET "switchVarName=leaveSmallestOnly" )
+    ) ELSE IF /I "%curSwitch%"=="LEASTNOSUFFIX" (	SET "switchVarName=leastNoSuffix"
+    ) ELSE IF /I "%curSwitch%"=="SMALLESTNOSUFFIX" (	SET "switchVarName=leastNoSuffix"
+    ) ELSE IF /I "%curSwitch%"=="SNS" (			SET "switchVarName=leastNoSuffix"
+    ) ELSE IF /I "%curSwitch%"=="LEAVEALL" (
+        SET "switchVarName=leaveSmallestOnly"
+        SET /A "switchMeaning=1-%switchMeaning%"
+    ) ELSE IF /I "%curSwitch%"=="LA" (
+        SET "switchVarName=leaveSmallestOnly"
+        SET /A "switchMeaning=1-%switchMeaning%"
+    )
+    FOR /F "usebackq delims== tokens=1" %%I IN (`set z7zusedeflt`) DO (
+        REM then list and check 7zusedeflt* variables and change them if argument is appropriate
+        IF /I "z7zusedeflt%curSwitch%" EQU "%%I" (
+            SET "z7zusedeflt%curSwitch%=%switchMeaning%"
+            GOTO :readSwitches
+        )
     )
 )
 (
@@ -136,7 +138,7 @@ PUSHD "%~1" && (
 IF "%leaveSmallestOnly%"=="1" CALL :leaveSmallestOnlyTestsmallest %archiveslist%
 (
     REM "%smallest%" modified in :leaveSmallestOnlyTestsmallest
-    IF "%smallestNoSuffix%"=="1" CALL :renameNoSuffix "%smallest%"
+    IF "%leastNoSuffix%"=="1" CALL :renameNoSuffix "%smallest%"
     EXIT /B
 )
 :SetArchivingParameters
