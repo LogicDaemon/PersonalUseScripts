@@ -34,6 +34,13 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     MKDIR "%RAMDrive%\Steam\htmlcache"
     MKDIR "%RAMDrive%\Temp\RivetNetworks\ImageCache"
     MKDIR "%RAMDrive%\Temp\RivetNetworks\Killer\ActivityLog"
+    
+    MKDIR "%RAMDrive%\Temp\OEM\AcerLogs"
+    MKDIR "%RAMDrive%\Temp\OEM\CareCenter"
+    MKDIR "%RAMDrive%\Temp\OEM\Preload"
+    rem CALL :MoveToRAMDrive "c:\OEM\AcerLogs"
+    rem CALL :MoveToRAMDrive "c:\OEM\CareCenter"
+    rem CALL :MoveToRAMDrive "c:\OEM\Preload"
 
     CALL :MoveToRAMDrive "%APPDATA%\discord\Cache"
     CALL :MoveToRAMDrive "%APPDATA%\discord\Code Cache"
