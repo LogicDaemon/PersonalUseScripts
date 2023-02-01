@@ -1,7 +1,10 @@
 #NoEnv
 
 cleanupScriptsBaseDir := A_ScriptDir
-cleanupScripts := {"gobuild": "", "Chrome": "compact Chrome cache.cmd", "Firefox": "compact Firefox cache.cmd"}
+cleanupScripts :=   { "gobuild": ""
+                    , "Chrome": "compact Chrome cache.cmd"
+                    , "Firefox": "compact Firefox cache.cmd"
+                    , "python": "compact_python_in_localappdata_programs.cmd" }
 cleanupSet := {}, cleanupSetUndefined := true
 
 For i, arg in A_Args {
