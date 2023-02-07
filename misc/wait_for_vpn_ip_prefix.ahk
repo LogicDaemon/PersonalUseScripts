@@ -1,63 +1,68 @@
 ﻿#NoEnv
 
-; see https://wiki.intermedia.net/x/FZA-Bg (https://wiki.intermedia.net/display/NETENG/Corporate+VPN+subnets)
-prefixes_txt =
-(
-    ACSPB	10.9.18.0/23
-    ACLO	10.32.18.0/24
-    ACVA	10.216.18.0/24
-    ACCO	10.232.18.0/24
-    ACCA	10.248.18.0/24
-    ACWA	172.16.18.0/24
-    ACSPB	10.8.18.0/23
-    10.9.218.0/23
-    ACLO	10.32.218.0/24
-    ACVA	10.217.218.0/24
-    ACCO	10.232.218.0/24
-    ACCA	10.248.218.0/24
-    ACWA	172.16.218.0/24
-)
+addr=WaitForSubnet(IMVPNSubnets())
 
-subnets := []
-Loop Parse, prefixes_txt, `n, `r
-{
-    If (RegexMatch(A_LoopField, "((?:\d+\.){3}\d+)/(\d+)", m)) {
-        ; m: full match
-        ; m1: ip
-        ; m2: mask
-        subnets.Push([m1, m2])
-    }
-}
+FileAppend % addr, *, CP1
+If (cmdl := ParseScriptCommandLine())
+    Run %cmdl%
 
-Loop
-{
-    For i, addr in JEE_SysGetIPAddresses() {
-;        If (SubStr(addr, 1, StrLen(prefix)) == prefix) {
-        For _, subnet in subnets {
-            If (IPAddressIsInSubnet(addr, subnet[1], subnet[2])) {
-                FileAppend % addr, *, CP1
-                If (cmdl := ParseScriptCommandLine())
-                    Run %cmdl%
-                Exit 0
-            }
+ExitApp 0
+
+IMVPNSubnets() {
+    ; see https://wiki.intermedia.net/x/FZA-Bg (https://wiki.intermedia.net/display/NETENG/Corporate+VPN+subnets)
+    prefixes_txt =
+    (
+        ACSPB	10.9.18.0/23
+        ACLO	10.32.18.0/24
+        ACVA	10.216.18.0/24
+        ACCO	10.232.18.0/24
+        ACCA	10.248.18.0/24
+        ACWA	172.16.18.0/24
+        ACSPB	10.8.18.0/23
+        10.9.218.0/23
+        ACLO	10.32.218.0/24
+        ACVA	10.217.218.0/24
+        ACCO	10.232.218.0/24
+        ACCA	10.248.218.0/24
+        ACWA	172.16.218.0/24
+    )
+
+
+    subnets := []
+    Loop Parse, prefixes_txt, `n, `r
+    {
+        If (RegexMatch(A_LoopField, "((?:\d+\.){3}\d+)/(\d+)", m)) {
+            ; m: full match
+            ; m1: ip
+            ; m2: mask
+            subnets.Push([m1, m2])
         }
     }
-    
-    Sleep 1000
+    return subnets
+}
+
+WaitForSubnet(subnets) {
+    local
+    Loop
+    {
+        For i, addr in JEE_SysGetIPAddresses()
+            For _, subnet in subnets
+                If (IPAddressIsInSubnet(addr, subnet[1], subnet[2]))
+                    return addr
+        
+        Sleep 1000
+    }
 }
 
 IPAddressIsInSubnet(addr, prefix, mask) {
+    local
     static lastAddr, lastPrefix, lastMask
          , addrParts, prefixParts, maskParts
          
-    if (lastAddr != addr) {
-        lastAddr := addr
-        addrParts := StrSplit(addr, ".")
-    }
-    if (lastPrefix != prefix) {
-        lastPrefix := prefix
-        prefixParts := StrSplit(prefix, ".")
-    }
+    if (lastAddr != addr)
+        lastAddr := addr, addrParts := StrSplit(addr, ".")
+    if (lastPrefix != prefix)
+        lastPrefix := prefix, prefixParts := StrSplit(prefix, ".")
     if (lastMask != mask) {
         lastMask := mask
         if (mask ~= "(\d+\.){3}\d+") {
@@ -68,8 +73,8 @@ IPAddressIsInSubnet(addr, prefix, mask) {
             {
                 if (mask < 8) {
                     maskParts[A_Index] := (255 << mask) & 255
-                    If (addr == "10.32.218.57" && prefix == "10.32.218.0")
-                        MsgBox % mask "`n" ObjectToText(maskParts)
+                    ; If (addr == "10.32.218.57" && prefix == "10.32.218.0")
+                    ;     MsgBox % mask "`n" ObjectToText(maskParts)
                     break
                 }
                 maskParts[A_Index] := 255
