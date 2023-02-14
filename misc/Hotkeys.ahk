@@ -293,6 +293,7 @@ FillDelayedRunGroups() {
     ;7 Open the application with a minimized window. The active window remains active.
     ;10 Open the application with its window in the default state specified by the application.
         , RunDelayedGroups :=   { "":       { "#!VK43":  [calcexe,, ""]                                          ;VK43=c #!c
+                                            , "#VK43":   [A_ScriptDir "\Select audio device.ahk"]                ;VK43=c #c
                                             , "SC132":   [A_ScriptDir "\default_browser.ahk"]                    ;SC132=Homepage
                                             , "#VK57":   [A_ScriptDir "\default_browser.ahk"]                    ;vk57=w #w
                                             , "#+VK57":  [A_ScriptDir "\alt_browser.ahk"]                        ;vk57=w #+w

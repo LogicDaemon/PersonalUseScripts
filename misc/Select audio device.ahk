@@ -1,3 +1,10 @@
+﻿;reworked from https://www.autohotkey.com/boards/viewtopic.php?t=49980
+;by LogicDaemon <www.logicdaemon.ru>
+;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode.ru>.
+#NoEnv
+#SingleInstance force
+FileEncoding UTF-8
+
 ; http://www.daveamenta.com/2011-05/programmatically-or-command-line-change-the-default-sound-playback-device-in-windows-7/
 Devices := {}
 IMMDeviceEnumerator := ComObjCreate("{BCDE0395-E52F-467C-8E3D-C4579291692E}", "{A95664D2-9614-4F35-A746-DE8DB63617E6}")
