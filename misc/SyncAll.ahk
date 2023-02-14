@@ -11,7 +11,9 @@ config := ProcessCLArgs( {"needADrive": "d"} )
 EnvGet LOCALAPPDATA,LOCALAPPDATA
 EnvSet syncprog, "%LOCALAPPDATA%\Programs\unison\bin\unison-gtk2.exe"
 
-Try RunScript(A_ScriptDir "\sync_" A_ComputerName ".cmd"), localSynced := true
+RegRead hostname, HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters, Hostname
+syncScriptPath := A_ScriptDir "\sync_" hostname ".cmd"
+Try RunScript(syncScriptPath), localSynced := true
 
 DriveGet DrivesF, List, FIXED
 DriveGet DrivesR, List, REMOVABLE
@@ -19,11 +21,11 @@ Drives=%DrivesR%%DrivesF%
 
 drivessynced := false
 Loop Parse, Drives
-    Try RunScript(A_LoopField ":\Local_Scripts\sync_" A_ComputerName ".cmd"), synced++, drivessynced := true
+    Try RunScript(A_LoopField ":\Local_Scripts\sync_" hostname ".cmd"), synced++, drivessynced := true
 If (config.needADrive && !drivessynced) {
     icon := localSynced ? 0x30 : 0x10
-    msgAppend := localSynced ? "`, but local computer sync script is started." : ""
-    timeout := localSynced ? 15 : 0
+    , msgAppend := localSynced ? "`, but local computer sync script is started." : ""
+    , timeout := localSynced ? 15 : 0
     
     MsgBox % icon, % A_ScriptName, Sync scripts not found on any drives%msgAppend%, % timeout
 }

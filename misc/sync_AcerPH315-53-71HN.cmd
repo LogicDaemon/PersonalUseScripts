@@ -24,7 +24,3 @@ START "" /B /WAIT %comspec% /C "%~dpn0_execsyncs.cmd"
 %syncprog% "%TEMP%" "socket://localhost:10355/%TEMP:\=/%" -testserver -killserver
 EXIT /B
 )
-
-rem %syncprog% Distributives -root \\192.168.36.1\Distributives %unisonopt% -killserver
-
-rem     %unisontext% Distributives192.168.36.1 -killserver -testserver -silent
