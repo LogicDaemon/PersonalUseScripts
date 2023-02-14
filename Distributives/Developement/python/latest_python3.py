@@ -132,7 +132,7 @@ class ChDir:
 
 def build_source(pyver: str, path: str, install: bool = False) -> None:
     # 'curl https://www.python.org/ftp/python/$pyver/Python-$pyver.tar.xz | xz -d | tar -xf -',
-    errorcode = os.system(f'''bash -c "xz -d '{path}' | tar -xf -"''')
+    errorcode = os.system(f'''bash -c "xz -dkc '{path}' | tar -xf -"''')
     if errorcode != 0:
         logging.error('Failed to extract source')
         sys.exit(1)
