@@ -1,19 +1,21 @@
 {
         "recommendations": [
-                "mark-wiemer.vscode-autohotkey-plus-plus",
                 "alefragnani.bookmarks",
-                "pustelto.bracketeer",
-                "oliversturm.fix-json",
-                "github.copilot",
-                "jeff-hykin.macro-commander",
-                "wraith13.multi-encode",
-                "ibm.output-colorizer",
-                "ms-python.python",
                 "dbankier.vscode-quick-select",
+                "eamodio.gitlens",
+                "github.copilot",
+                "hediet.debug-visualizer",
+                "ibm.output-colorizer",
+                "jeff-hykin.macro-commander",
+                "kevinrose.vsc-python-indent",
+                "mark-wiemer.vscode-autohotkey-plus-plus",
+                "ms-python.isort",
+                "ms-python.python",
+                "oliversturm.fix-json",
+                "pustelto.bracketeer",
+                "sryze.uridecode",
                 "tabnine.tabnine-vscode",
                 "tobias-faller.vt100-syntax-highlighting",
-                "sryze.uridecode",
-                "mechatroner.rainbow-csv",
-                "donjayamanne.python-environment-manager"
+                "wraith13.multi-encode",
         ]
 }
