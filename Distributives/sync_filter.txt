@@ -1,0 +1,1 @@
+*.*|**\temp\**\**;*.zip;*.7z;*.msi;*.bz2;*.exe;*.rar;*.msu;*.??_;*.gz;*.iso;*.ttf;*.fb2k-component;*.pdf;*.tar;*.cab;*.vbox-extpack;*.tc;*.u3p;*.jar;*.tgz;*.wim;*.xps;*.apk;*.xpi;*.mht;*.mhtml;*.lin;*.inx;*.bin;*.cpl;*.efi;*.sdi;*.chm;*.jpg;*.odt;*.png;*.torrent;latest_assets.json
