@@ -28,6 +28,6 @@ REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 In
     CURL -RL -o %1 %2
     SET "TorrentsList=%TorrentsList% "
     rem --file-allocation=falloc requires Admin
-    START "" /B aria2c --file-allocation=trunc --enable-dht6 --seed-time=0 --bt-detach-seed-only --bt-hash-check-seed=false -T %1
+    START "" /B aria2c --file-allocation=trunc --enable-dht6 --seed-time=0 --bt-detach-seed-only --bt-hash-check-seed=false --check-integrity=true -T %1
     EXIT /B
 )
