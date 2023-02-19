@@ -1,0 +1,17 @@
+http://www.fastpictureviewer.com/faq/
+
+How FastPictureViewer is licensed?
+FastPictureViewer Home Basic Edition (which supports JPEG and Microsoft HD Photo) is available free of charge for personal, non-profit or educational uses (freeware license).
+
+FastPictureViewer Professional extends upon the Home Basic Edition and features PNG, GIF, BMP, RLE, DIB, ICO, TIFF, Multipage TIFF, and Adobe DNG support as well as RAW formats for more than 380 camera models, industry-standard XMP rating, batch file processing, batch IPTC editing, tethered shooting with PTP/MTP compliant digital camera, persistent bookmarks, plus support for any 3rd-party format if the appropriate WIC-enabled image decoder is installed on your computer, for example multipage support for the DjVu format can be added by installing the appropriate DjVu codec and shell extension pack, available separately from Caminova/Celartem. 3rd party codecs also exists for special image formats such as DICOM. (See the image file formats compatibility chart). 
+
+The software is licensed on a per-user basis. Users can install and activate the program on up to three different computers belonging to them (say, for example, a desktop machine and a laptop). 
+<…>
+
+Volume discounts and site licensing can also be arranged upon request.
+Can I obtain a FastPictureViewer Professional trial license to evaluate the pro features?
+Yes. The standard installer comes with a trial license if you are a first time user. 
+
+The trial license transforms an installed FastPictureViewer Home Basic edition into a temporary (but fully functional) Professional Edition. At the end of the evaluation period the program simply reverts to the Home Basic edition and continues to work with the Professional features disabled. You can install updates during the evaluation period without affecting the status of your evaluation.
+
+Shall you decide to purchase a full license, you can upgrade to the regular Professional version at any time during or after the evaluation period, simply visit the purchase page to acquire a regular license and enter it in the program's registration form. The electronic store is entirely automated and stays open 7/24, licenses keys are delivered by email.
