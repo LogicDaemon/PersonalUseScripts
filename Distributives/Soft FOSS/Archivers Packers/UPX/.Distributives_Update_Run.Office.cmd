@@ -4,5 +4,5 @@
     IF NOT DEFINED baseScripts SET "baseScripts=\Local_Scripts\software_update\Downloader"
 )
 (
-    CALL "%baseScripts%\_DistDownload_github.cmd" https://github.com/upx/upx/releases/latest upx w.zip
+    CALL "%baseScripts%\_DistDownload_github.cmd" https://github.com/upx/upx/releases/latest "upx-" "-win64.zip"
 )

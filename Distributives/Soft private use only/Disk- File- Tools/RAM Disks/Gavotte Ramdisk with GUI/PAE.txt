@@ -1,0 +1,10 @@
+In Windows 7 and Windows Vista, enable Physical Address Extension (PAE), a memory management feature for allowing supported CPUs to enable NX bit (No-eXecute) and access a physical address space larger than 4 gigabytes. To enable PAE, run a Command Prompt as Administrator, and run the following command:
+bcdedit /set pae ForceEnable
+Restart the computer to make the change effective. Verify the PAE status by running bdcedit, and the PAE should have the status of ForceEnable.
+
+After enabling PAE, execute the ram4g.reg registry registration file to tell Gavotte Ramdisk program to use RAM space beyond what Windows can use.The content of the REG file should look like this:
+
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\RRamdisk\Parameters]
+"UsePAE"=dword:00000001

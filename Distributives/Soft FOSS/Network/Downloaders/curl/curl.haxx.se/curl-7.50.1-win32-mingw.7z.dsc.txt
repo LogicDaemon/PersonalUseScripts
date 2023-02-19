@@ -1,0 +1,8 @@
+curl-7.50.1-win32-mingw.7z
+
+Win32 7zip 	7.50.1 	binary 	SSL 	SSH 	Viktor Szakáts <https://bintray.com/vszakats/generic/curl/> 	1.56 MB
+
+This file has been downloaded from:
+https://akamai.bintray.com/e6/e6283459894dbd27a768436fb1c5f339bc4a009ef545df6930ffdc350898d080?__gda__=exp=1472470488~hmac=bf9e3f6b94e4c5f3c9169e41c7b80dd3f628f7cd94908102003d4d497d88316e&response-content-disposition=attachment%3Bfilename%3D%22curl-7.50.1-win32-mingw.7z%22&response-content-type=application%2Fx-www-form-urlencoded&requestInfo=U2FsdGVkX19dEjurhzzMscYuuczU3jdKMGwveexcIxGHbi_NUnpl0OFaz84ABso1gBKV-ZkdhWrCX0MzqVeDLaglqUEFAbrJp6Uc9PVqR0oL8OOgNjqZMtniiEROrumIIufsIn8VLas_n5hY2LRnABsP7mfvC7z9q9S39NgTKdahsgVtkH4wkStTCOM7PB8X
+
+Date: 29.08.2016, 14:22

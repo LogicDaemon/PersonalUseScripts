@@ -1,0 +1,35 @@
+WhoOpenDoc 0.2
+
+ WhoOpenDoc plugin for TotalCommander v 0.2
+
+ This is a Total Commander plugin that allows to view ~$*.doc file, 
+ creating Microsoft Word when open file.
+ That allow view, who open file. Usefull for the multiusers work with the document.
+
+ -- = = Capability = = --
+ - Show information about ~$*.doc,~$*.dot,~$*.docx,~$*.rtf file 
+Category: TC Lister Plugins
+Status: freeware
+Size: 23 KB
+Author: Alexander Afonin
+Added: 5.03.2009
+Updated: 18.04.2013
+Downloaded: 7332 times
+
+-- = = Changes history = = --
+ v 0.2 - 20.05.2008	
++ Open file docx, rtf
++ Fixed bag
+
+ v 0.1.1 - 12.11.2007
+* Change name fild "Computer name" to "Company name"
++ Handling data if don't company name
++ Show data opening document
+
+ v 0.1 - 09.11.2007
+! First release
+
+This file has been downloaded from:
+http://wincmd.ru/files/wlx_WhoOpenDoc-0.2_.rar
+
+Date: 18.04.2013, 11:15

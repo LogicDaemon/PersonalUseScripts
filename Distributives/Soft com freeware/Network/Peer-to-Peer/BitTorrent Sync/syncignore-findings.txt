@@ -1,0 +1,23 @@
+﻿from http://forum.bittorrent.com/topic/14260-syncignore-is-great-but/
+
+abc		  # Ignores ALL dirs
+/abc		 # Ignores ONLY root
+/*/abc	   # Ignores ALL EXCEPT root
+/*/*/abc	 # Ignores ALL AFTER 2 dir levels
+/*/*/*/abc   # Ignores ALL AFTER 3 dir levels
+
+/**/abc	  # Ignores ALL EXCEPT root
+*/abc	    # Ignores ALL EXCEPT root
+**/abc	   # Ignores ALL EXCEPT root
+.*		   # Ignores ALL HIDDEN files & dirs
+abc.ext	  # Ignores ALL files of type .ext
+abc.*	    # Ignores ALL files named of ANY type
+abc*		 # Ignores ALL files & dirs begining with "abc"
+
+			  # FiLeS seem to be CaSe sensitive
+*xyz/abc.ext  # Ignores ALL "abc.ext" files in ANY "xyz" dir
+*xyz/*abc*.*  # Ignores ALL files containing "abc" in any "xyz" dir
+*xyz/*abc*    # Ignores ALL files & dirs containing "abc" in any "xyz" dir
+
+
+you need to use backslashes in windows

@@ -5,4 +5,6 @@
 )
 (
     CALL "%baseScripts%\_DistDownload_sf.cmd" qbittorrent *.exe
+    SET "dstrename=*.exe"
+    CALL "%baseScripts%\_DistDownload_sf.cmd" qbittorrent *.exe*
 )

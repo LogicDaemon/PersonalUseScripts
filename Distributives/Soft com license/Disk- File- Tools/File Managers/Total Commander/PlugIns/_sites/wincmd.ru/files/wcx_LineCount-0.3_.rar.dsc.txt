@@ -1,0 +1,35 @@
+LineCount 0.3
+
+ LineCount plugin for TotalCommander v 0.3
+
+ Handled project's C, C++. 
+
+ This is a Total Commander plugin that allows to calculate lines of source files.
+ Sample result file:
+ Files Total Lines Code Lines Comments Empty Lines Ratio % Name
+ 5 928 495 299 177 53 LineCount 
+Category: TC Packer Plugins
+Status: freeware
+Size: 29 KB
+Author: Alexander Afonin
+Added: 5.03.2009
+Updated: 18.04.2013
+Downloaded: 3120 times
+
+http://www.totalcmd.net/plugring/LineCount.html
+
+-- = = Changes history = = --
+  v 0.3 - 05.03.2009
++ Handling files with extensions in upper case
+
+  v 0.2 - 05.03.2009
++ Calculate empty lines, comments lines
++ Calculate ratio code lines by total lines count
+
+ v 0.1 - 05.03.2009
+! First release
+
+This file has been downloaded from:
+http://wincmd.ru/files/wcx_LineCount-0.3_.rar
+
+Date: 18.04.2013, 11:14

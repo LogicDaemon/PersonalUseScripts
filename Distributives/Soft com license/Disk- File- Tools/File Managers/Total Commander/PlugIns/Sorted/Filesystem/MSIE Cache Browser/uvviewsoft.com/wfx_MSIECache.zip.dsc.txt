@@ -1,0 +1,15 @@
+MSIE Cache Browser 1.4.4.1c
+
+ This file-system plugin allows to browse Microsoft Internet Explorer cache ("Temporary Internet Files" folder contents). Unlike Windows Explorer, plugin shows cache contents in structured form: domains list, sites list for every domain, URLs list for every site. 
+Category: TC File System Plugins
+Status: freeware
+Size: 1300 KB
+Author: Alexey Torgashin
+Added: 7.10.2005
+Updated: 10.10.2012
+Downloaded: 45712 times
+
+This file has been downloaded from:
+http://uvviewsoft.com/files_tc/wfx_MSIECache.zip
+
+Date: 11.10.2012, 15:00

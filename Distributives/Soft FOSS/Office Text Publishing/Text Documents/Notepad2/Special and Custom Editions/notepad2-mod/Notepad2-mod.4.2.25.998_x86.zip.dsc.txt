@@ -1,0 +1,6 @@
+Notepad2-mod.4.2.25.998_x86.zip
+
+This file has been downloaded from:
+https://github-production-release-asset-2e65be.s3.amazonaws.com/5568579/1fa0626a-7a9c-11e7-8f94-0eab642b4021?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20180621%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20180621T083507Z&X-Amz-Expires=300&X-Amz-Signature=eb5d9aa95e3d1b4007a3df2a7bffd27a48b8f5b748b92aa619b27ff4ab91c94f&X-Amz-SignedHeaders=host&actor_id=0&response-content-disposition=attachment%3B%20filename%3DNotepad2-mod.4.2.25.998_x86.zip&response-content-type=application%2Foctet-stream
+
+Date: 21.06.2018, 11:35

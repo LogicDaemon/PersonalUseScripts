@@ -7,4 +7,5 @@
 )
 (
     CALL "%baseScripts%\_DistDownload.cmd" "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-archive" VSCode-win32-x64-*.zip
+    FOR %%A IN (*.zip) DO @IF NOT EXIST "%%~dpnA.7z" IF NOT EXIST "%%~dpnA.LZMA2.7z" IF NOT EXIST "%%~dpnA.LZMA2BCJ2.7z" CALL repack_to_7z.cmd "%%~fA"
 )

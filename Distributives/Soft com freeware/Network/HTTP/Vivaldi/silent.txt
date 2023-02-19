@@ -1,0 +1,10 @@
+Silent mode for scripting
+--vivaldi-update
+Standalone mode
+--vivaldi-standalone
+Path to installation directory
+--vivaldi-install-dir="Where to install"
+
+setup.exe --vivaldi-silent --do-not-launch-chrome --vivaldi-update
+
+https://forum.vivaldi.net/topic/20023/unattended-silent-installation-switches/3

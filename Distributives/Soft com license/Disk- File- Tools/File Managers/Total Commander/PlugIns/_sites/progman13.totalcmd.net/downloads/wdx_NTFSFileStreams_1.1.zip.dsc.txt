@@ -1,0 +1,28 @@
+NTFSFileStreams.wdx 1.1
+
+NTFSFileStreams.wdx 1.1
+
+Content plugin for show file streams names in files on NTFS.
+This is new independet version of NTFS Stream plugin (wdx only!) (http://www.totalcmd.net/plugring/ntfs_stream.html).
+Category: Content plugins
+Status: Freeware
+Author: Progman13
+Added: 23.06.2014
+Updated: 17.05.2017
+Downloaded: 2571 times
+Download (x32, x64)   (797 Kb)
+ 	
+
+What's new
+
+Ver 1.1:
+ * some fixes and changes.
+
+Ver 1.0:
+ * initial release.
+
+
+This file has been downloaded from:
+http://progman13.totalcmd.net/downloads/wdx_NTFSFileStreams_1.1.zip
+
+Date: 22.05.2017, 9:32

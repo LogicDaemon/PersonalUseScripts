@@ -1,0 +1,47 @@
+EMLView 1.2.1
+
+EMLView 1.2.1
+
+Lister plugin for view e-mail messages files (*.eml).
+This is new independed version of EML Viewer plugin (http://totalcmd.net/plugring/wlx_msg.html).
+Category: TC Lister Plugins
+Status: Freeware
+Author: Progman13
+Added: 20.04.2017
+Updated: 8.05.2017
+Downloaded: 1232 times
+Download (x32, x64)   (2103 Kb)
+ 	
+
+What's new
+
+Ver 1.2.1:
+ * DetectString added;
+ + EMLView.ini for manual setup:
+   [EMLView]
+   ShowAttachmentsTab=0 - show tab with attached files (view graphics, other as first 50k text (in browser));
+   PageViewTabStyle=2 - tab type (0 - tabs, 1 - buttons, 2 - flat buttons);
+ * more options in setup dialog;
+ * some fixes and changes.
+
+Ver 1.2:
+ * updated eml parsing library;
+ + EMLView.ini for manual setup:
+   [EMLView]
+   ShowStatusBar=1 - status bar visibility;
+   StatusBarPanelsAutoSize=0 - status bar panels autosize;
+   ExtendedHTMLasTextTrim=0 - delete superfluous spaces when convert text from HTML (affected to tab 'HTML as Text').
+ * some fixes and changes.
+
+Ver 1.1.2.2:
+ * public version;
+ + EMLView.ini for manual setup:
+   [EMLView]
+   CheckEmbeddedHTMLImages=0 - show embedded images (they will save to temp folder);
+ * some fixes.
+
+
+This file has been downloaded from:
+http://progman13.totalcmd.net/downloads/wlx_EMLView_1.2.1.zip
+
+Date: 22.05.2017, 9:32

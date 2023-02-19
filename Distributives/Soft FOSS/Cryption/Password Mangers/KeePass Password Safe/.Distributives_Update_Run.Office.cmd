@@ -4,7 +4,7 @@
     SET "distcleanup=1"
 
     SET "srcpath=%~dp0v1\"
-    ahk "%~dp0v1\download.ahk"
+    CALL ahk.cmd "%~dp0v1\download.ahk"
     SET "srcpath=%~dp0v2\"
     CALL "%~dp0v2\download_latest.cmd"
     EXIT /B

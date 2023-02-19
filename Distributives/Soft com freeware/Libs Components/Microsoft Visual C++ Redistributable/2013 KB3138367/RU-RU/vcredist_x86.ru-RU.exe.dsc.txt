@@ -1,0 +1,6 @@
+Russian - Russia vcredist_x86.exe
+
+This file has been downloaded from:
+http://download.microsoft.com/download/f/1/7/f17b06dd-cc21-40ed-b62a-b390516e90db/vcredist_x86.exe
+
+Date: 26.06.2019, 10:05

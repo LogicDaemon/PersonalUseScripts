@@ -1,0 +1,6 @@
+pyspread-1.0.2-win32-setup.exe
+
+This file has been downloaded from:
+http://download.gna.org/pyspread/pyspread-1.0.2-win32-setup.exe
+
+Date: 15.03.2017, 19:25

@@ -1,0 +1,6 @@
+curl-7.56.1.cab
+
+This file has been downloaded from:
+https://skanthak.homepage.t-online.de/download/curl-7.56.1.cab
+
+Date: 07.11.2017, 19:32

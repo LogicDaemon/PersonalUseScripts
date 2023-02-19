@@ -1,0 +1,22 @@
+http://wincmd.ru/plugring/diskinternals_reader.html
+
+DiskInternals Reader читает
+ - Ext2/3/4
+ - ReiserFS
+ - HFS/HFS+
+ - NTFS
+ - Fat/exFAT
+
+В том числе на рейд массивах
+ - Windows and Linux software raid arrays
+ - Adaptec, nVidia, Intel, Via, Silicon raid arrays
+
+С использованием MBR, GPT или Apple таблиц разделов.
+
+Умеет открывать диски виртуальных машин 
+VMWare, VirtualPC и Parallels
+
+This file has been downloaded from:
+http://www.diskinternals.com/files/DiskInternals_reader.zip
+
+Date: 22.08.2014, 9:27

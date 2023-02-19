@@ -1,0 +1,12 @@
+Full TC changelog history to the best of our knowledge. Reasons for having such a file can be many. From purely emotional and historical to having some development details not documented within the help file of TC which can help you understand some features better or help you master "hidden" secrets of some features. 
+
+ We are lucky to have missing extensive changelog details down to minimum. On the other hand there are a couple of inconsistencies either based on typos (dates and/or version numbers), or based purely on human errors while gathering up all the necessary information. 
+
+ You will also find a great number of historical references throughout the development period of TC (and WC).
+
+ Feel free to contact me if you locate any errors or if you have additional information so than I can have the file updated. Thanks!
+
+This file has been downloaded from:
+http://www.totalcmd.net/files/FullTCHistory8_01.zip
+
+Date: 20.08.2012, 11:52

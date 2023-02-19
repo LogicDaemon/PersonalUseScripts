@@ -5,7 +5,7 @@
     SET "distcleanup=1"
 )
 (
-    CALL "%baseScripts%\_DistDownload.cmd" http://sourceforge.net/projects/keepass/files/latest/download "*.exe@viasf=1" -N -A "exe@viasf=1"
+    CALL "%baseScripts%\_DistDownload.cmd" http://sourceforge.net/projects/keepass/files/latest/download "*.exe" -N --trust-server-names --unlink
     FOR %%A IN ("%~dp0*.exe@viasf=1") DO REN "%%~A" *.exe
     FOR %%A IN ("%~dp0*.zip@viasf=1") DO REN "%%~A" *.zip
 )

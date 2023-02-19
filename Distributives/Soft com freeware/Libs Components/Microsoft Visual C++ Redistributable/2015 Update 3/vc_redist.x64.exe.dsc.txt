@@ -1,0 +1,6 @@
+vc_redist.x64.exe
+
+This file has been downloaded from:
+https://download.microsoft.com/download/6/D/F/6DF3FF94-F7F9-4F0B-838C-A328D1A7D0EE/vc_redist.x64.exe
+
+Date: 10.01.2018, 17:08

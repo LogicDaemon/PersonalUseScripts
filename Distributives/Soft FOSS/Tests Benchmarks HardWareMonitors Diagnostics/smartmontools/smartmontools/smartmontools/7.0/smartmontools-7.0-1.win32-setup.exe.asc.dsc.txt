@@ -1,0 +1,6 @@
+smartmontools-7.0-1.win32-setup.exe.asc
+
+This file has been downloaded from:
+https://netcologne.dl.sourceforge.net/project/smartmontools/smartmontools/7.0/smartmontools-7.0-1.win32-setup.exe.asc
+
+Date: 25.01.2019, 15:03

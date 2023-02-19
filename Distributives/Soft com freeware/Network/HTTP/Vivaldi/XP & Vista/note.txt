@@ -1,0 +1,3 @@
+Windows XP/Vista*
+Vivaldi 1.0 32bit https://downloads.vivaldi.com/stable/Vivaldi.1.0.435.46.exe
+*Last version for Windows XP/Vista, no longer updated.

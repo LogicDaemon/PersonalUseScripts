@@ -1,0 +1,81 @@
+
+
+RMAA suite is designed for testing quality of analog and digital paths of any 
+audio devices, be it a sound card, an MP3 player, a consumer CD/DVD player or an 
+acoustic set. The results are obtained by playing and recording test signals 
+passed through the tested audio path by means of frequency analysis algorithms. 
+A more common mark is also provided for those unfamiliar with measured technical 
+parameters. 
+
+[ more ]   
+
+
+
+D3DRightMark is an independent non-commercial open-source graphics card 
+benchmarking project developed by iXBT.com. It's called to help users estimate 
+graphics cards performance and quality in synthetic tests and real apps, e.g. 
+games. Synthetic tests allow estimating performance and capabilities of separate 
+graphics cards subsystems in order to forecast their behavior in either 
+applications, both existing (that is overall estimation of suitability and 
+prospects for an entire application range) and developing, provided that a given 
+accelerator demonstrates peculiar behavior under such applications.
+
+[ more ]  
+
+
+
+RMClock (formerly known as AMD64CLK) is a simple GUI utility designed for 
+realtime CPU frequency monitoring and realtime adjustment of the CPU multiplier 
+(FID) and voltage level (VID) of the supported CPUs via processor's power 
+management model specific registers (MSRs). In auto-management mode it 
+continuously monitors the CPU usage level (reported by CPU itself) and adjusts 
+the CPU frequency and/or voltage level as required
+
+[ more ]  
+
+
+
+RM Gotcha helps CPU and mainboard testers determine CPU clock at any moment. RM 
+Gotcha has only this particular purpose and is not a part of any monster suites. 
+It's just an 120KB executable that needs no installation. Supports result 
+logging. The "Start delay" feature enables users to conduct operations required 
+to be done before the clock check. The Check period feature minimizes CPU load 
+created by the utility.
+
+[ more ]  
+
+
+
+Before this test packet was created there was no proper software for measuring 
+vital system parameters such as CPU/Chipset/RAM providing steady and reliable (reproducible) 
+test results and allowing for changing test parameters in a wide range. Vital 
+low-level system characteristics include latency and real RAM bandwidth, average/minimal 
+latency of different cache levels and its associativity, real L1-L2 cache 
+bandwidth and TLB levels specs. Besides, these aspects are usually not paid 
+sufficient attention in product technical documentation (CPU or chipset). Such 
+test suite, which combines a good deal of subsets aimed at measuring objective 
+system characteristics, is a must have for estimating crucial objective platform 
+parameters.
+
+[ more ]  
+
+
+
+The CPU RightMark suite is meant for objective measurement of performance of 
+modern and future processors in different computational tasks such as numerical 
+modeling of physical processes and solving of 3D graphic problems. It focuses on 
+testing the loaded FPU/SIMD units and the CPU/RAM tandem. As a result, we get 
+pure CPU performance, an objective parameter obtained without the influence of 
+other subsystems, like video and disc systems, except the memory one. It allows 
+us to compare the true performance of different processors irrespective of a 
+type of other system components. It's obtained by dealing only with the CPU and 
+measuring the CPU time spent for execution of computational tasks.
+
+[ more ]  
+
+
+
+
+
+© 2002-2007, RightMark Gathering. All rights reserved.
+Design by Explosion

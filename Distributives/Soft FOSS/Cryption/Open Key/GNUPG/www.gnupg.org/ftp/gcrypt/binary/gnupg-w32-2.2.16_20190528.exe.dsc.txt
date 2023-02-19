@@ -1,0 +1,6 @@
+gnupg-w32-2.2.16_20190528.exe
+
+This file has been downloaded from:
+https://www.gnupg.org/ftp/gcrypt/binary/gnupg-w32-2.2.16_20190528.exe
+
+Date: 05.07.2019, 14:34

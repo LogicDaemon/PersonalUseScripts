@@ -1,0 +1,6 @@
+install_flash_player_27_plugin.exe
+
+This file has been downloaded from:
+https://fpdownload.macromedia.com/get/flashplayer/distyfp/current/win/install_flash_player_27_plugin.exe?adobedist=1511970827_9e3fc6d038e897650d884b17768bae99
+
+Date: 29.11.2017, 17:54

@@ -1,0 +1,6 @@
+transmission-2.94+-ra53bae2849-x64.msi
+
+This file has been downloaded from:
+https://build.transmissionbt.com/job/trunk-win32/lastStableBuild/arch=x64,label=pepito-win10/artifact/build-x64/dist/msi/transmission-2.94+-ra53bae2849-x64.msi
+
+Date: 04.09.2018, 16:09

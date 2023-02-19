@@ -1,0 +1,6 @@
+libjpeg-turbo-1.3.0-gcc64.exe
+
+This file has been downloaded from:
+http://skylink.dl.sourceforge.net/project/libjpeg-turbo/1.3.0/libjpeg-turbo-1.3.0-gcc64.exe
+
+Date: 17.01.2014, 10:58

@@ -1,0 +1,9 @@
+curl-7.50.1.cab
+
+Win32 CAB 	7.50.1 	binary 	SSL 	  	Stefan Kanthak
+http://home.arcor.de/skanthak/curl.html
+
+This file has been downloaded from:
+https://skanthak.homepage.t-online.de/download/curl-7.50.1.cab
+
+Date: 29.08.2016, 14:21

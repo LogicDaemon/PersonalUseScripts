@@ -1,0 +1,33 @@
+tthGen 0.2
+
+ This is a Total Commander plugin that allows to generate TTH checksum for files.
+
+ -- = = Installation = = --
+ 1. Copy "tthGen.wcx" into "TotalCommander \ Plugins" directory.
+ 2. Go to Configuration -> Options... -> Packer -> Additional packers -> Configure packer extension WCX's
+ 3. Enter "tth" into the edit box
+ 4. Press "New type", browse for plugin, then press "Open"
+ 5. Press all "OK" buttons
+
+ This plugin is compatible with TC's automatic installation procedure. 
+Category: TC Packer Plugins
+Status: freeware
+Size: 35 KB
+Author: Alexander Afonin
+Added: 20.02.2009
+Updated: 18.04.2013
+Downloaded: 2539 times
+» Download (x32, x64) | x64 version
+
+-- = = Changes history = = --
+ v 0.2 - 17.02.2009
++ Add progress bar
++ Handling size more 4Gb files
+
+ v 0.1 - 14.02.2009
+! First release
+
+This file has been downloaded from:
+http://wincmd.ru/files/wcx_tthGen-0.2_.rar
+
+Date: 18.04.2013, 11:14

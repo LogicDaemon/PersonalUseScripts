@@ -1,0 +1,6 @@
+putty.cnt
+
+This file has been downloaded from:
+https://the.earth.li/~sgtatham/putty/0.70/putty.cnt
+
+Date: 26.02.2018, 10:22

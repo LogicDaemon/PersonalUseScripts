@@ -1,0 +1,6 @@
+libmp3lame-win-3.99.3.zip
+
+This file has been downloaded from:
+http://lame.buanzo.org/libmp3lame-win-3.99.3.zip
+
+Date: 25.07.2017, 10:22

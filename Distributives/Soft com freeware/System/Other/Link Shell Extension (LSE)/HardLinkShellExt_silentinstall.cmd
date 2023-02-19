@@ -10,8 +10,8 @@ IF /I "%PROCESSOR_ARCHITECTURE%"=="AMD64" SET "OS64Bit=1"
 IF DEFINED PROCESSOR_ARCHITEW6432 SET "OS64Bit=1"
 
 IF DEFINED OS64Bit (
-    "%~dp0schinagl.priv.at\nt\hardlinkshellext\HardLinkShellExt_X64.exe" /S /Language=English
+    "%~dp0nt\hardlinkshellext\HardLinkShellExt_X64.exe" /S /Language=English
 ) ELSE (
-    "%~dp0schinagl.priv.at\nt\hardlinkshellext\HardLinkShellExt_win32.exe" /S /Language=English
+    "%~dp0nt\hardlinkshellext\HardLinkShellExt_win32.exe" /S /Language=English
 )
 )

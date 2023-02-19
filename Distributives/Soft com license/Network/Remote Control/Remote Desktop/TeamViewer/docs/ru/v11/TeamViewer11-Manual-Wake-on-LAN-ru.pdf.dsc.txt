@@ -1,0 +1,6 @@
+Руководство к функции Wake-on-Lan v11
+
+This file has been downloaded from:
+https://dl.tvcdn.de/docs/ru/v11/TeamViewer11-Manual-Wake-on-LAN-ru.pdf
+
+Date: 25.10.2017, 14:57

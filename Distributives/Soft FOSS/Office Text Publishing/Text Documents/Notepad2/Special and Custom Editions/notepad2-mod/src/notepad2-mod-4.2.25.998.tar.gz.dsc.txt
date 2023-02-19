@@ -1,0 +1,6 @@
+notepad2-mod-4.2.25.998.tar.gz
+
+This file has been downloaded from:
+https://codeload.github.com/XhmikosR/notepad2-mod/tar.gz/4.2.25.998
+
+Date: 21.06.2018, 11:35

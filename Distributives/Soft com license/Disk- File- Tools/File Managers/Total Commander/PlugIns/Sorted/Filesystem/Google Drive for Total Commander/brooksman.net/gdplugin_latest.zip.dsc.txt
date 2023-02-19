@@ -1,0 +1,35 @@
+Google Drive for Total Commander 0.10
+
+ This free Total Commander plugin will access your Google Drive without any additional software (except Total Commander of course). With this plugin you can login to several Google Drive accounts without logging out each time.
+
+ More information can be found here http://brooksman.net/google-drive-for-total-commander/
+
+Version 0.10
+
+Critical bug were detected in version 0.9 (part of available files in Google Drive were not listed)
+Please update
+
+Version 0.9 (Beta)
+
+What's new
+
+* Better handling of existing files overwrite
+* Trashed files are not shown anymore (will consider implementing custom columns to show them again in future)
+* File attributes are displayed correctly
+* Logout confirmation message shows account name
+* File copy support
+* Fixed: "Token empty" message bug
+* NOT YET FIXED: compatibility bug with sftp plugin!
+
+This version might be considered as Beta (I think that the next one will be 1.0)
+
+Version 0.8 contains file rename bug fix
+
+Version 0.7 contains the following improvements:
+* File/dir rename capability
+* File/dir move between directories inside the same Google Drive account
+
+This file has been downloaded from:
+http://brooksman.net/downloads/files/gdplugin_latest.zip
+
+Date: 16.01.2013, 10:44

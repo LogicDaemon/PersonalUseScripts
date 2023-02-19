@@ -1,5 +1,6 @@
 #NoEnv
 
+wget_args = -m -l 1 -nd -H -D downloads.sourceforge.net -e "robots=off" --no-check-certificate -p "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
 versions := GetUrl("https://www.dominik-reichl.de/update/version1x.txt")
 ;KeePass#1.38.0.0
 ;Another Backup Plugin for KeePass#1.12.0.0
@@ -27,7 +28,6 @@ Loop Parse, versions, `n, `r
         break
     }
 }
-
 URLs := { "KeePass-*-Setup.exe": "https://sourceforge.net/projects/keepass/files/KeePass%201.x/*/KeePass-*-Setup.exe/download"
         , "KeePass-*.zip":       "https://sourceforge.net/projects/keepass/files/KeePass%201.x/*/KeePass-*.zip/download" }
 
@@ -39,15 +39,23 @@ If (!baseWorkdir) {
     EnvSet baseWorkdir, %baseWorkdir%
 }
 FileCreateDir %baseWorkdir%
+FileDelete %baseWorkdir%\new_version.log
+pids := {}
 For filename, url in URLs {
     url := StrReplace(url, "*", ver)
     EnvSet dstrename, % StrReplace(filename, "*", ver)
-    RunWait %comspec% /C "PUSHD "`%srcpath`%" & CALL "`%baseScripts`%\_DistDownload.cmd" "%url%" "%filename%" -m -l 1 -nd -H -D downloads.sourceforge.net -e "robots=off" -p "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64)" >"`%baseWorkdir`%\`%dstrename`%.log" 2>&1", %A_Temp%, Min UseErrorLevel
-    RunWait %comspec% /C "PUSHD "`%srcpath`%" & CALL "`%baseScripts`%\_DistDownload.cmd" "%url%" "%filename%@viasf=1" -m -l 1 -nd -H -D downloads.sourceforge.net -e "robots=off" -p "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64)" >"`%baseWorkdir`%\`%dstrename`%.log" 2>&1", %A_Temp%, Min UseErrorLevel
-    ;RunWait %comspec% /C "MKLINK /H "%A_ScriptDir%\%filename%" "%A_ScriptDir%\temp\%filename%@viasf=1"", %A_Temp%, Min UseErrorLevel
-    ;If (ErrorLevel)
-    ;    FileCopy %A_ScriptDir%\temp\%filename%@viasf=1, %A_ScriptDir%\%filename%
+    Run %comspec% /C "PUSHD "`%srcpath`%" && CALL "`%baseScripts`%\_DistDownload.cmd" "%url%" "%filename%" %wget_args% >"`%baseWorkdir`%\`%dstrename`%.log" 2>&1", %A_Temp%, Min UseErrorLevel, rPID
+    pids[rPID] := ""
+    FileAppend %ver%`tDistDownload %url%`tPID %rPID%`n, %baseWorkdir%\download.log
 }
+Loop {
+    Sleep 100
+    For rPID in pids {
+        Process Exist, rPID
+        If (!ErrorLevel)
+            pids.Delete(rPID)
+    }
+} Until !pids.Count()
 
 ExitApp
 

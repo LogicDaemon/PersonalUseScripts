@@ -1,0 +1,6 @@
+DriverStore.Explorer.v0.8.3.zip
+
+This file has been downloaded from:
+https://github-cloud.s3.amazonaws.com/releases/61176492/afb4c318-1404-11e7-90c0-a324e19bec5c.zip?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAISTNZFOVBIJMK3TQ%2F20170420%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20170420T124923Z&X-Amz-Expires=300&X-Amz-Signature=155615f591ef7049fc05a44ca8f54105fad82b4d163ea2e2d3fa7440bf673d55&X-Amz-SignedHeaders=host&actor_id=0&response-content-disposition=attachment%3B%20filename%3DDriverStore.Explorer.v0.8.3.zip&response-content-type=application%2Foctet-stream
+
+Date: 20.04.2017, 15:49

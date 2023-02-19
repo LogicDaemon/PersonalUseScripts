@@ -1,0 +1,43 @@
+wlx_fb2_2.0.zip
+
+This file has been downloaded from:
+http://progman13.totalcmd.net/downloads/wlx_fb2_2.0.zip
+
+Date: 27.04.2017, 10:54
+
+http://totalcmd.net/plugring/wlx_fb2_v2.html
+ wlx_fb2 2.0
+
+Plugin for view cover of FictionBook (FB2) files in thumbnail view mode.
+
+Initial developer and sources - Dmitriy Roshka aka bookmist (http://totalcmd.net/plugring/wlx_fb2.html).
+
+Only view cover of FictionBook (FB2) files in TC thumbnail view mode.
+Don't show anything in Lister.
+Supports fb2 extension and compressed fb2.zip (zip extension need add manually).
+
+Category: TC Lister Plugins
+Status: Freeware
+Author: Progman13
+Added: 5.01.2017
+Updated: 5.01.2017
+Downloaded: 1038 times
+
+    Download (x32, x64, sources)   (1566 Kb)
+
+	  	
+
+What's new
+2.0
+ + Unicode, 64 bit version, support very long file names;
+ * no need external libraries.
+
+1.11
+[+] Manual set path to lib's.
+
+1.10
+[+] fb2.zip support.
+
+1.0
+First release.
+

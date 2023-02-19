@@ -1,0 +1,6 @@
+transmission-2.94-x64.msi
+
+This file has been downloaded from:
+https://raw.githubusercontent.com/transmission/transmission-releases/master/transmission-2.94-x64.msi
+
+Date: 04.09.2018, 16:08

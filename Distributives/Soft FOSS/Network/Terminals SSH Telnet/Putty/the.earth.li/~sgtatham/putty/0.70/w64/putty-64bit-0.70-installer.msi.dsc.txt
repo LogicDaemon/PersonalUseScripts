@@ -1,0 +1,6 @@
+putty-64bit-0.70-installer.msi
+
+This file has been downloaded from:
+https://the.earth.li/~sgtatham/putty/0.70/w64/putty-64bit-0.70-installer.msi
+
+Date: 26.02.2018, 10:21

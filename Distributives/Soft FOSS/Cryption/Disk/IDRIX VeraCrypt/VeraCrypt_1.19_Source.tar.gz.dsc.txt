@@ -1,0 +1,6 @@
+VeraCrypt_1.19_Source.tar.gz
+
+This file has been downloaded from:
+https://download-codeplex.sec.s-msft.com/Download/Release?ProjectName=veracrypt&DownloadId=1614088&FileTime=131212015504170000&Build=21031
+
+Date: 07.12.2016, 14:21

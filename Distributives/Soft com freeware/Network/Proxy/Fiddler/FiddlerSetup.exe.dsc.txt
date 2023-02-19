@@ -1,0 +1,6 @@
+FiddlerSetup.exe
+
+This file has been downloaded from:
+https://telerik-fiddler.s3.amazonaws.com/fiddler/FiddlerSetup.exe
+
+Date: 24.07.2018, 9:56

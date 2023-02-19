@@ -1,0 +1,6 @@
+libjpeg-turbo-1.2.90-gcc.exe
+
+This file has been downloaded from:
+http://kaz.dl.sourceforge.net/project/libjpeg-turbo/1.2.90%20%281.3beta1%29/libjpeg-turbo-1.2.90-gcc.exe
+
+Date: 17.01.2014, 10:59

@@ -5,5 +5,9 @@ SETLOCAL ENABLEEXTENSIONS
 CALL find7zexe.cmd
 )
 FOR /F "usebackq delims=" %%A IN (`DIR /B /O-D "%~dp0KeePass-1.*.zip"`) DO (
-    %exe7z% x -aoa -o"%LocalAppData%\Programs\KeePass" -- "%%A" && EXIT /B
+    %exe7z% x -aoa -y -o"%LocalAppData%\Programs\%%~nA" -- "%%A" || EXIT /B
+    MKLINK /J "%LocalAppData%\Programs\KeePass" "%LocalAppData%\Programs\%%~nA" || (
+        RD "%LocalAppData%\Programs\KeePass" && MKLINK /J "%LocalAppData%\Programs\KeePass" "%LocalAppData%\Programs\%%~nA"
+    )
+    EXIT /B
 )

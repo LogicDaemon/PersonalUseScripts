@@ -1,0 +1,37 @@
+http://www.totalcmd.net/plugring/similarity.html
+
+Similarity 0.02
+
+ Content plugin for showing strings similarity.
+
+ (original author is fenixproductions) 
+Category: Content plugins
+Status: freeware
+Size: 447 KB
+Author: Konstantin Vlasov
+Added: 16.12.2009
+Updated: 18.04.2013
+Downloaded: 2223 times
+
+0.02 (by Konstantin Vlasov):
+- Rebuilt for 64-bit architecture.
+- Placing leven.ini into the first of the following locations where writing is permitted:
+  * plugin's directory;
+  * Total Commander installation directory;
+  * wincmd.ini location.
+- Minor optimizations.
+
+0.01 (by fenixproductions):
+Added supported fields:
+- distanceLev - Levenshtein distance between filename and phrase,
+- similarityLev - similarity computed using values from above,
+- simil1 - using Rui A. Rebelo's method (see links in Credits),
+- simil2 - same as above but arguments are switched,
+- similRO - using Ratcliff/Obershelp pattern recognition,
+- average - average value for methods from above with "50" added if "contains" is true,
+- contains - returns 1 if filename contains phrase (0 otherwise),
+
+This file has been downloaded from:
+http://flint.wincmd.ru/files/wdx_similarity_0.02.rar
+
+Date: 19.04.2013, 11:07

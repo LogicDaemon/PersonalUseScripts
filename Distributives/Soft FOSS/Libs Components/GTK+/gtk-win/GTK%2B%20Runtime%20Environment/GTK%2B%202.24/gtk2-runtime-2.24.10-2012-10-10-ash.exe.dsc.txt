@@ -1,0 +1,6 @@
+gtk2-runtime-2.24.10-2012-10-10-ash.exe
+
+This file has been downloaded from:
+http://heanet.dl.sourceforge.net/project/gtk-win/GTK%2B%20Runtime%20Environment/GTK%2B%202.24/gtk2-runtime-2.24.10-2012-10-10-ash.exe
+
+Date: 30.01.2015, 19:54

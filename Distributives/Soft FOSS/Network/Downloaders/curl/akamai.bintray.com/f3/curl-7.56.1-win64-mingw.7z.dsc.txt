@@ -1,0 +1,6 @@
+curl-7.56.1-win64-mingw.7z
+
+This file has been downloaded from:
+https://akamai.bintray.com/f3/f33707b3d1125570029d422bda1023fbe5f4a3eb1cba6aab07d7a9e5b8eec343?__gda__=exp=1510073093~hmac=74879cde395b67347ba46b3011592df45005716966457d5fb3d8375233a2ace7&response-content-disposition=attachment%3Bfilename%3D%22curl-7.56.1-win64-mingw.7z%22&response-content-type=application%2Fx-www-form-urlencoded&requestInfo=U2FsdGVkX1_EmlUR2iBt3JWKkHW8qQ5y50xSIv5h3iPeangaOVVTxHMwLm6plf55HFCBGhNJJ2fNdHj0TMqTRo3_T312iOpaU6wQ6OeofrUbOkom76sYPQS2PZj6QXLN9eQ9QxrU_enT7-KXmPY7dwlzvmrX9LMR4PwIPlM3mqRcvD0StfrKg80KqNg7o7O8&response-X-Checksum-Sha1=c8fa6c1e624e64681f2e2364b8b1c20152948869&response-X-Checksum-Sha2=f33707b3d1125570029d422bda1023fbe5f4a3eb1cba6aab07d7a9e5b8eec343
+
+Date: 07.11.2017, 19:32

@@ -1,0 +1,6 @@
+puttydoc.zip
+
+This file has been downloaded from:
+https://the.earth.li/~sgtatham/putty/0.70/puttydoc.zip
+
+Date: 26.02.2018, 10:21

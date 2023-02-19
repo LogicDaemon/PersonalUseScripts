@@ -1,0 +1,6 @@
+FFmpeg_v0.6.2_for_Audacity_on_Windows.exe
+
+This file has been downloaded from:
+http://lame3.buanzo.com.ar/FFmpeg_v0.6.2_for_Audacity_on_Windows.exe
+
+Date: 25.07.2017, 10:25

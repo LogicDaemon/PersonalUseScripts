@@ -1,0 +1,6 @@
+VeraCrypt Setup 1.19.exe.sig
+
+This file has been downloaded from:
+https://download-codeplex.sec.s-msft.com/Download/Release?ProjectName=veracrypt&DownloadId=1614081&FileTime=131212015498570000&Build=21031
+
+Date: 07.12.2016, 14:22
