@@ -1,0 +1,25 @@
+License Agreement and Disclaimer
+
+This software is copyrighted by Runtime Software.
+
+The following are the conditions under which DriveImage XML may be used. By using DriveImage XML, you are agreeing to these terms. 
+
+Neither the author(s) nor Runtime Software assume responsibility for any expense, damage or loss caused by your use of this software, however it occurs. All the registered trademarks used herein are registered to whoever it is that owns them. This notification is given in lieu of any specific list of trademarks and their owners. 
+
+No portion of the documentation for this software or any of its included files may be reproduced in whole or in part in any medium or form of transmission exclusive of the archive file for the software without the express written permission of Runtime Software. You may not modify or patch the software's executable files in any way, including but not limited to decompiling, disassembling, or otherwise reverse engineering the program.
+
+Private Edition:
+
+Private home users are allowed to use the Private Edition of DriveImage XML without charge. This means you are allowed to use this software at no charge as long as you comply with all provisions of this agreement. You are allowed to install DriveImage XML on your home PC as long as you install the program using our official distribution (dixmlsetup.exe). You must not use DriveImage XML commercially. If you are a business or organization you must purchase the commercial edition.
+
+Future versions of DriveImage XML might come with a different license agreement, terminating your right to use DriveImage XML without charge.
+
+You are not entitled to updates. You are not allowed to integrate DriveImage XML into other software packages and distribute them with or without charge. Please contact us if you have plans to do so.
+
+No support is provided for the Private Edition.
+
+You may distribute the software (on CD-ROMs, Books, Catalogs, Internet etc.) as long as you follow each and every one of the following:
+
+1. You distribute only exact, unmodified copies of the original version of the software incl. the DISCLAIMER.
+2. You do not monetarily charge or otherwise request any compensation for any copy, however made, without prior permission from Runtime Software.
+3. You include the phrase "Copyright by Runtime Software" with any copy of the software. 
