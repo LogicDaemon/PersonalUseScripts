@@ -1,0 +1,30 @@
+{
+        // Use IntelliSense to learn about possible attributes.
+        // Hover to view descriptions of existing attributes.
+        // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+        "version": "0.2.0",
+        "configurations": [
+                {
+                        "name": "Python: Current File",
+                        "type": "python",
+                        "request": "launch",
+                        "program": "${file}",
+                        "console": "integratedTerminal",
+                        "justMyCode": true
+                },
+                {
+                        "name": "set_older_datetimes_for_same_files.py",
+                        "type": "python",
+                        "request": "launch",
+                        "program": "set_older_datetimes_for_same_files/set_older_datetimes_for_same_files.py",
+                        "args": [
+                                "v:\\Distributives\\",
+                                "D:\\Users\\LogicDaemon\\Documents\\github.com\\logicdaemon\\PersonalUseScripts\\Distributives\\",
+                                "--dry-run",
+                                "--debug",
+                        ],
+                        "console": "integratedTerminal",
+                        "justMyCode": true
+                },
+        ]
+}

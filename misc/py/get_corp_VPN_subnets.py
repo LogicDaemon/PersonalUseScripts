@@ -17,7 +17,7 @@ def main():
     # sys.argv[0] is the script name itself and can be ignored
     r = requests.get(f'{wiki_base_URL}/confluence/rest/api/content',
                      params={'title': config['DEFAULT']['page_title']}, # 'Corporate+VPN+subnets'
-                     auth=(config['DEFAULT']['username'], config['DEFAULT']['password']))
+                     auth=(config['DEFAULT']['username'], config['DEFAULT']['password']), timeout=30)
     printResponse(r)
     # parentPage = r.json()['results'][0]
     # pageData = {
@@ -51,7 +51,7 @@ def readConfig() -> configparser.ConfigParser:
         os.path.join(appdirs.user_config_dir(appname=__file__),
                       'wiki_parser.ini'))
     if os.name == 'nt':
-        secretPath = os.path.join(os.getenv('LOCALAPPDATA'), '_sec',
+        secretPath = os.path.join(os.getenv('LOCALAPPDATA', '.'), '_sec',
                                    'wiki.txt')
     else:
         secretPath = os.path.join(appdirs.user_config_dir(appname=__file__),

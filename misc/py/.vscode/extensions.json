@@ -1,0 +1,25 @@
+{
+        "recommendations": [
+                "alefragnani.bookmarks",
+                "pustelto.bracketeer",
+                "oliversturm.fix-json",
+                "jeff-hykin.macro-commander",
+                "ibm.output-colorizer",
+                "ms-python.python",
+                "dbankier.vscode-quick-select",
+                "tabnine.tabnine-vscode",
+                "tobias-faller.vt100-syntax-highlighting",
+                "kevinrose.vsc-python-indent",
+                "samuelcolvin.jinjahtml",
+                "hediet.debug-visualizer",
+                "aykutsarac.jsoncrack-vscode",
+                "joshwong.vscode-jmespath",
+                "janisdd.vscode-edit-csv",
+                "nidu.copy-json-path",
+                "weijunyu.vscode-json-path",
+                "wraith13.multi-encode",
+                "donjayamanne.python-environment-manager",
+                "mechatroner.rainbow-csv",
+                "msrvida.vscode-sanddance"
+        ]
+}
