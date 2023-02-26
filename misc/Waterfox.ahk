@@ -17,5 +17,5 @@ If (!A_Args.Length() && WinExist("ahk_group waterfox")) {
 
 ExitApp
 
-#include <ShellRun by Lexikos>
+#include <ShellRun from Installer>
 #include <GetScriptCommandLine>

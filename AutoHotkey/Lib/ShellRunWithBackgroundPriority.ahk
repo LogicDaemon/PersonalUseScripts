@@ -36,5 +36,5 @@ ShellRunWithBackgroundPriority(ByRef cmdLine, ByRef dir := "", ByRef trayTipTitl
     return ErrorLevel
 }
 
-#include %A_LineFile%\..\ShellRun by Lexikos.ahk
+#include %A_LineFile%\..\ShellRun from Installer.ahk
 #include <ParseCommandLine>

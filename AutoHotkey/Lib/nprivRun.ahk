@@ -1,4 +1,4 @@
-﻿#Include <ShellRun by Lexikos>
+﻿#Include <ShellRun from Installer>
 
 ; Shell.ShellExecute( _
 ;   ByVal sFile As BSTR, _
