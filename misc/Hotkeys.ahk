@@ -228,9 +228,7 @@ Max(a,b) {
 
 MoveActionCenter(corner := 0) {
     local
-    If (!WinActive("ahk_group WindowsActionCenter"))
-        return
-    WinGetPos winX, winY, winW, winH
+    WinGetPos winX, winY, winW, winH, ahk_group WindowsActionCenter
     
     ;curMon := FindWindowMonitorIndex(winX, winY, winW, winH)
     monCentralPoints := []

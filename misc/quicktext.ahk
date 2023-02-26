@@ -7,79 +7,13 @@ FileEncoding UTF-8
 
 SetTitleMatchMode RegEx
 
-For i, ext in ["bat", "cmd"]
-    For j, classSuffix in ["", "U"]
-        GroupAdd Notepad2WithBatchFile, \.%ext%\b ahk_class \bNotepad2%classSuffix%\b
+GroupAdd Notepad2Boilerplates, ahk_class \bNotepad2\b
+GroupAdd Notepad2Boilerplates, ahk_class \bNotepad2U\b
+;For i, ext in ["bat", "cmd", "ahk", "url"]
+;GroupAdd Notepad2Boilerplates, \.%ext%\b ahk_class \bNotepad2%classSuffix%\b
 
-IfWinActive ahk_group Notepad2WithBatchFile
-{
-    StatusBarGetText FileSize, 2
-    If ( FileSize ~= "0 (bytes|байт)" ) {
-	ClipBackup:=ClipboardAll
-	Clipboard=
-	( LTrim %
-        @(REM coding:CP866
-        REM by LogicDaemon <www.logicdaemon.ru>
-        REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode.ru>.
-        SETLOCAL ENABLEEXTENSIONS
-        `)
-        `n
-	)
-	
-	ClipWait 3,1
-	Send ^v
-	Sleep 50
-	Send {F9}
-	WinWait Encoding ahk_class #32770
-	;PostMessage 0x185, 1, 2, SysListView321 ; Select all listbox items. 0x185 is LB_SETSEL
-	ControlSend SysListView321, {Home}{Down}{Enter}
-	Clipboard:=ClipBackup
-	ExitApp
-    } Else {
-	TrayTip Ignoring notepad2 .bat/.cmd sequence,Size = %FileSize%`, should be 0.,2
-    }
-} Else IfWinActive \.ahk ahk_class Notepad2
-{
-    StatusBarGetText FileSize, 2
-    If ( FileSize == "0 bytes" ) {
-	ClipBackup:=ClipboardAll
-	Clipboard=
-	( LTrim %
-        ;by LogicDaemon <www.logicdaemon.ru>
-        ;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode.ru>.
-        #NoEnv
-        FileEncoding UTF-8
-
-        EnvGet LocalAppData,LOCALAPPDATA
-        EnvGet SystemRoot,SystemRoot
-        `n
-	)
-	
-	ClipWait 3,1
-	Send ^v
-	Sleep 50
-	Send {F9}
-	WinWait Encoding ahk_class #32770
-	;PostMessage 0x185, 1, 2, SysListView321 ; Select all listbox items. 0x185 is LB_SETSEL
-	ControlSend SysListView321, {Home}utf-8 sig{Enter}
-	Clipboard:=ClipBackup
-	ExitApp
-    } Else {
-	TrayTip Ignoring notepad2 ahk sequence,Size = %FileSize%`, should be 0.,2
-    }
-} Else IfWinActive \.url ahk_class Notepad2
-{
-    StatusBarGetText FileSize, 2
-    If ( FileSize == "0 bytes" ) {
-	ClipBackup:=ClipboardAll
-	Clipboard=[InternetShortcut]`nURL=
-	Send ^v
-	Sleep 50
-	Clipboard:=ClipBackup
-	ExitApp
-    } Else {
-	TrayTip Ignoring notepad2 url sequence,Size = %FileSize%`, should be 0.,2
-    }
+If (WinActive("ahk_group Notepad2Boilerplates")) {
+    PasteNotepad2Boilerplate()
 }
 
 ;FileRead QuickText, QuickText.txt
@@ -718,4 +652,83 @@ ReadIni()
 	GUIStartKey=CAPSLOCK
 	Separator=`;
 	ViewOrder=1-2-3-4-5
+}
+
+PasteNotepad2Boilerplate() {
+    StatusBarGetText FileSize, 2
+    If ( FileSize != "0 bytes" && FileSize != "0 байт" ) {
+	TrayTip Ignoring boilerplating,Size = %FileSize%`, should be 0.,2
+	return
+    }
+    
+    WinGetTitle winTitle
+    extPos := RegexMatch(winTitle, "\.(...)\s", mExt)
+    If (!extPos) {
+	TrayTip No extension found in title,Size = %FileSize%`, should be 0.,2
+        return
+    }
+    bp := GetBoilerplate(mExt1)
+    If (!bp) {
+	TrayTip No boilerplate for %mExt%,Size = %FileSize%`, should be 0.,2
+        return
+    }
+    PasteViaClipboard(bp)
+
+    Send {F9}
+    WinWait Encoding ahk_class #32770
+    ;PostMessage 0x185, 1, 2, SysListView321 ; Select all listbox items. 0x185 is LB_SETSEL
+    If ext in cmd,bat
+    {
+        ;Control ChooseString, OEM (866)
+        ControlSend SysListView321, {Home}{Down}{Enter}
+    } Else If (ext = "url") {
+        Control ChooseString, Unicode (UTF-16 LE BOM)
+    } Else {
+        ; fails to select actually this: Control ChooseString, UTF-8 Signature
+        ControlSend SysListView321, {Home}utf-8 sig
+    }
+    Sleep 50
+    ControlSend SysListView321, {Enter}
+    ExitApp
+}
+
+PasteViaClipboard(ByRef data) {
+    clipBackup:=ClipboardAll
+    Clipboard := data
+    
+    ClipWait 3,1
+    Send ^v
+    Sleep 100
+    Clipboard:=clipBackup
+}
+
+GetBoilerplate(ext) {
+    authorship=by LogicDaemon <www.logicdaemon.ru>
+    license=This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+    ext := Format("{:L}", ext)
+    If (ext == "url")
+        v = [InternetShortcut]`nURL=`n
+    Else If (ext == "ahk")
+        v =
+	( LTrim
+        ;%authorship%
+        ;%license%
+        #NoEnv
+        FileEncoding UTF-8
+
+        EnvGet LocalAppData,LOCALAPPDATA
+        EnvGet SystemRoot,SystemRoot
+        `n
+	)
+    Else If ext in cmd,bat
+        v =
+        ( LTrim
+        @(REM coding:CP866
+        REM %authorship%
+        REM %license%
+        SETLOCAL ENABLEEXTENSIONS
+        `)
+        `n
+	)    
+    return v
 }

@@ -9,9 +9,16 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     rem SET "APPDATA=%USERPROFILE%\AppData\Roaming"
     rem SET "LOCALAPPDATA=%USERPROFILE%\AppData\Local"
     IF EXIST "%LocalAppData%\Programs\bin\xln.exe" SET xlnexe="%LocalAppData%\Programs\bin\xln.exe"
+    SET "retries=30"
 )
+:again
 @(
-    IF NOT EXIST "%RAMDrive%\" EXIT /B
+    IF NOT EXIST "%RAMDrive%\" (
+        IF %retries% LSS 0 EXIT /B 1
+        SET /A "retries-=1"
+        PING -n 2 127.0.0.1 >NUL
+        GOTO :again
+    )
     ATTRIB +I "%RAMDrive%\*.*" /S /D /L
 
     REM if it's a link, it will be removed and re-created as an empty dir;

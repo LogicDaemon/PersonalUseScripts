@@ -2,13 +2,14 @@
 ;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <http://creativecommons.org/licenses/by-sa/4.0/deed.ru>.
 
 IniReadUnicode(Filename, IniSection, Key){
-    SectionFound=0
+    local
+    sectionFound:=False
     
     IfNotExist %Filename%
 	Throw Exception("File not exist", 0, Filename)
     Loop Read, %Filename%
     {
-	If SectionFound {
+	If sectionFound {
 	    If (RegExMatch(A_LoopReadLine,"^\[.+\]$")) { ; Next section begin
 		Break
 	    } Else {
@@ -18,18 +19,19 @@ IniReadUnicode(Filename, IniSection, Key){
 	    }
 	} Else {
 	    If A_LoopReadLine = [%IniSection%]
-		SectionFound=1
+		sectionFound:=True
 	}
     }
 
-    If SectionFound
+    If sectionFound
         Throw Exception("Corresponding key not found inside section", 0, Key)
     Else
 	Throw Exception("section not found", -1, IniSection)
 }
 
 IniReadSectionUnicode(Filename, IniSection){
-    SectionFound=0
+    local
+    sectionFound:=False
     
     IfNotExist %Filename%
 	Throw Exception("File not exist", 0, Filename)
@@ -37,14 +39,14 @@ IniReadSectionUnicode(Filename, IniSection){
     {
 	OutputLine := A_LoopReadLine
 
-	If SectionFound {
+	If sectionFound {
 	    If (RegExMatch(A_LoopReadLine,"^\[.+\]$")) ; Next section begin
 		break
 	    Else ; Not a section header, section contents
 		SectionContents .= A_LoopReadLine . "`n"
 	} Else {
 	    If A_LoopReadLine = [%IniSection%]
-		SectionFound=1
+		sectionFound:=True
 	}
     }
     
@@ -54,19 +56,21 @@ IniReadSectionUnicode(Filename, IniSection){
     return SectionContents
 }
 
-IniWriteUnicode(Filename, IniSection, Key, Value){
+IniWriteUnicode(Filename, IniSection, Key, Value) {
     Return IniModifyUnicode(Filename, IniSection, Key, Value)
 }
 
-;IniWriteSectionUnicode(Filename, IniSection, SectionContents){
-;}
+IniWriteSectionUnicode(Filename, IniSection, SectionContents) {
+    IniDeleteSectionUnicode(Filename, IniSection)
+    FileAppend [%IniSection%]`n%SectionContents%`n, %Filename%
+}
 
-IniDeleteKeyUnicode(Filename, IniSection, Key){
-    Return IniModifyUnicode(Filename, IniSection, Key,, 1)
+IniDeleteKeyUnicode(Filename, IniSection, Key) {
+    Return IniModifyUnicode(Filename, IniSection, Key,, True)
 }
 
 IniDeleteSectionUnicode(Filename, IniSection){
-    Return IniModifyUnicode(Filename, IniSection,,, 1)
+    Return IniModifyUnicode(Filename, IniSection,,, True)
 }
 
 ;IniEnumSectionsUnicode(Filename){
@@ -75,9 +79,9 @@ IniDeleteSectionUnicode(Filename, IniSection){
 ;IniEnumKeysUnicode(Filename, IniSection){
 ;}
 
-IniModifyUnicode(Filename, IniSection, Key="", Value="", Remove=0){
-    SectionFound=0
-    KeyWaiting=1
+IniModifyUnicode(ByRef Filename, ByRef IniSection, ByRef Key:="", ByRef Value:="", Remove:=False){
+    local
+    sectionFound := False, keyPending := True
     
     IfNotExist %Filename%
 	Throw Exception("File not exist", 0, Filename)
@@ -87,30 +91,28 @@ IniModifyUnicode(Filename, IniSection, Key="", Value="", Remove=0){
     {
 	OutputLine := A_LoopReadLine
 
-	If KeyWaiting {
-	    If SectionFound {
-		If (RegExMatch(A_LoopReadLine,"^\[.+\]$")) { ; Next section begin
-		    If Remove {
-			If Key
-			{
+	If (keyPending) {
+	    If (sectionFound) {
+		If (RegExMatch(A_LoopReadLine,"^\[.+\][\s]*$")) { ; section header
+		    If (Remove) {
+			If (Key) {
 			    ; it must be deleted, but it's not there already
-			    Throw Exception("Corresponding key not found inside section", 0, Key)
+			    Throw Exception("Key not found", 0, Key)
 			}
-			; Else Key not specified section must removed, it is, and next has begun
+			; Else Key not specified, section must be removed, and it already is, and next has begun
 		    } Else { ; Not Remove
 			OutputLine := Key . "=" . Value . "`n" . OutputLine
 		    }
-		    SectionFound=0
-		    KeyWaiting=0
+		    sectionFound := False
+                    keyPending := False
 		} Else { ; Not a section header, must be name=value
-		    If ( Remove && Key=="") ; Removing section, because key not specified
-			Continue ; skip to next, Key will never match, KeyWaiting will become 0 only at end of section
+		    If ( Remove && Key=="" ) ; key not specified, removing section
+			Continue ; skip to next, Key will never match, keyPending will become 0 only at end of section
 		    
-		    FoundKey := Trim(SubStr(A_LoopReadLine, 1, InStr(A_LoopReadLine, "=")-1))
-		    If FoundKey = %Key%
-		    {
-			KeyWaiting=0
-			If Remove
+		    currentKey := Trim(SubStr(A_LoopReadLine, 1, InStr(A_LoopReadLine, "=")-1))
+		    If (currentKey = Key) {
+			keyPending := False
+			If (Remove)
 			    Continue ; to skip FileAppend
 			Else
 			    OutputLine = %Key%=%Value%
@@ -118,20 +120,18 @@ IniModifyUnicode(Filename, IniSection, Key="", Value="", Remove=0){
 		    }
 		}
 	    } Else {
-		If A_LoopReadLine = [%IniSection%]
-		{
-		    SectionFound=1
-		    If ( Remove && Key=="") ; Removing section, because key not specified
+		If (A_LoopReadLine = "[" IniSection "]") {
+		    sectionFound := True
+		    If ( Remove && Key=="" ) ; Removing section, because key not specified
 			Continue
 		}
 	    }
 	}
-	FileAppend %OutputLine%`n, %Filename%.new
+	FileAppend %OutputLine%`n
     }
     
-    If KeyWaiting ; Section not found
-	FileAppend [%IniSection%]`n%Key%=%Value%, %Filename%.new
-	; ToDo: Add section, write key&val
+    If (keyPending) ; Section not found
+	FileAppend [%IniSection%]`n%Key%=%Value%`n, %Filename%.new
     
     FileMove %Filename%,%Filename%.%A_Now%.bak
     FileMove %Filename%.new,%Filename%,1
