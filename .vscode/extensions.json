@@ -1,5 +1,14 @@
 {
         "recommendations": [
-                "mark-wiemer.vscode-autohotkey-plus-plus"
+                "alefragnani.bookmarks",
+                "dbankier.vscode-quick-select",
+                "eamodio.gitlens",
+                "jeff-hykin.macro-commander",
+                "mark-wiemer.vscode-autohotkey-plus-plus",
+                "oliversturm.fix-json",
+                "pustelto.bracketeer",
+                "sryze.uridecode",
+                "tabnine.tabnine-vscode",
+                "wraith13.multi-encode",
         ]
 }
