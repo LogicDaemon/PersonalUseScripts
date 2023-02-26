@@ -1,1 +1,1 @@
-*.*|**\temp\**\**;**\bat\**\**;**\sf.net\**\**;*.??_;*.7z;*.apk;*.asc;*.bin;*.bz2;*.cab;*.chm;*.cnt;*.cpl;*.efi;*.exe;*.fb2k-component;*.gz;*.hdr;*.inx;*.iso;*.jar;*.jpg;*.key;*.lin;*.lnk;*.log;*.md5;*.mht;*.mhtml;*.msi;*.msu;*.odt;*.oxt;*.pdf;*.plgx;*.png;*.ppmp;*.rar;*.sdi;*.sha1;*.sha256;*.sig;*.tar;*.tbz2;*.tc;*.tgz;*.torrent;*.ttf;*.u3p;*.vbox-extpack;*.wim;*.xpi;*.xps;*.xz;*.zip;latest_assets.json
+*.*|**\temp\**\**;**\bat\**\**;**\sf.net\**\**;**\.mypy_cache\**\**;*.??_;*.inx;*.jpg;*.lin;*.log;*.png;*.torrent;*.key

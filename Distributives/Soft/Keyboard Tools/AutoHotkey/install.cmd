@@ -30,11 +30,8 @@ REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 In
     REM Hiding shortcuts
     %AutohotkeyExe% /ErrorStdOut "%~dp0HideStartMenuShortcuts.ahk"
     REM unpacking Lib
-    IF NOT DEFINED AutoHotkey_Lib_reentrance (
-        SET /A "AutoHotkey_Lib_reentrance=1"
-        CALL "%~dp0..\..\PreInstalled\auto\AutoHotkey_Lib.cmd"
-)
-EXIT /B
+    CALL "%~dp0..\..\PreInstalled\auto\AutoHotkey_Lib.cmd"
+    EXIT /B
 )
 :FindAutohotkeyExe
 (

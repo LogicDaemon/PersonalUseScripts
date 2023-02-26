@@ -33,7 +33,7 @@ rem     IF NOT DEFINED curlexe IF EXIST "%SystemDrive%\SysUtils\curl.exe" SET cu
 )
 (
     FOR %%A IN ("%workdir%%distMask%") DO IF /I "%%~nxA"=="%curDst%" (ECHO Found %%A) ELSE (ECHO.|DEL "%%~A"||EXIT /B)
-    START "" /B /WAIT /D"%workdir%" "C:\SysUtils\wget.exe" -o "%logsDir%wget.log" --progress=dot:giga -nc --no-timestamping https://go.skype.com/windows.desktop.download
+    START "" /B /WAIT /D"%workdir%" wget.exe -o "%logsDir%wget.log" --progress=dot:giga -nc --no-timestamping https://go.skype.com/windows.desktop.download
     REM -nc causes stop downloading if file exists, but wget does not return an error in that case
 )    
 (
