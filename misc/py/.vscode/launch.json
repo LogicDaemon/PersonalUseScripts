@@ -10,7 +10,10 @@
                         "request": "launch",
                         "program": "${file}",
                         "console": "integratedTerminal",
-                        "justMyCode": true
+                        "justMyCode": true,
+                        "env": {
+                                "GEVENT_SUPPORT": "True"
+                        },
                 },
                 {
                         "name": "set_older_datetimes_for_same_files.py",
@@ -24,7 +27,11 @@
                                 "--debug",
                         ],
                         "console": "integratedTerminal",
-                        "justMyCode": true
+                        "justMyCode": true,
+                        "env": {
+                                "GEVENT_SUPPORT": "True"
+                        },
+ 
                 },
         ]
 }

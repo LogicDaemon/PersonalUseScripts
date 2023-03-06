@@ -1,2 +1,10 @@
 appdirs
 requests
+
+#gevent
+#rich
+
+# https://pypi.org/project/boto3-stubs/
+# boto3 type annotations
+# for ec2, s3, rds, lambda, sqs, dynamo and cloudformation
+#boto3-stubs[essential]

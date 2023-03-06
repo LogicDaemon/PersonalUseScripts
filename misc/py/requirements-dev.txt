@@ -1,3 +1,11 @@
+mypy # no type annotations for gevent
+prospector
+
+# not supported on Windows, not working with python>3.9
+#pytype
+
+# types-*
+# *-stubs
 types-requests
 types-setuptools
 types-appdirs
