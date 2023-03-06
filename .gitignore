@@ -1,4 +1,4 @@
-./misc/.mypy_cache/**
+**/.mypy_cache/**
 ./temp-backup-scripts/**
 ./software_update/**
 ./misc/_Distributives.base_dirs.txt
