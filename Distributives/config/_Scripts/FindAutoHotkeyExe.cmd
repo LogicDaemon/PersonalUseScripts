@@ -1,1 +1,0 @@
-d:/Users/LogicDaemon/Dropbox/Projects/LocalAppData/Scripts/FindAutoHotkeyExe.cmd

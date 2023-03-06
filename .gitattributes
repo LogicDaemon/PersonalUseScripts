@@ -1,5 +1,4 @@
 *.ahk text eol=crlf
 *.cmd text eol=crlf
-*.xml text
-*.rdf text
-*.py text
+*.py text eol=lf
+* -text
