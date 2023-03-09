@@ -25,7 +25,7 @@ magnitudeSeq:=WindowSplitSize.MinIndex()
 SplitPath A_AhkPath,, A_AhkDir
 EnvGet ProgramFilesx86, ProgramFiles(x86)
 If Not ProgramFilesx86
-    ProgramFilesx86:=ProgramFiles
+    ProgramFilesx86 := ProgramFiles
 EnvGet LocalAppData, LOCALAPPDATA
 EnvGet SystemDrive, SystemDrive
 EnvGet SystemRoot, SystemRoot
@@ -34,10 +34,6 @@ hotkeys_custom_ahk := FirstExisting( A_ScriptDir "\Hotkeys_Custom." A_USERNAME "
                                    , A_ScriptDir "\Hotkeys_Custom." A_COMPUTERNAME ".ahk"
                                    , A_ScriptDir "\Hotkeys_Custom." A_USERNAME ".ahk"
                                    , A_ScriptDir "\Hotkeys_Custom.ahk" ) ; same order as includes
-
-autohotkeyChm := FirstExisting( A_AhkDir "\AutoHotkey.chm"
-                              , laPrograms "\AutoHotkey\AutoHotkey.chm"
-                              , A_ProgramFiles "\AutoHotkey\AutoHotkey.chm" )
 
 GroupAdd WindowsActionCenter, Action center ahk_class Windows.UI.Core.CoreWindow ahk_exe ShellExperienceHost.exe
 
@@ -277,7 +273,8 @@ FillDelayedRunGroups() {
     ;Error:  Parameter #2 must match an existing #If expression.
     ;--->	087: Hotkey,If,("AlternateHotkeys==" altMode)
     ;vk5a=z #z
-    #If AlternateHotkeys==0x5A
+    ;vk51=q #q
+    #If AlternateHotkeys==0x51
     #If
     local altKey, HotkeysRunDelayed, altMode, altFunc, key, args, hotkeyFunc, OutExtension
     ; {key: [File, Arguments, Directory, Operation, Show], ...} ; Show is as in ShellRun or -1 to run as ahk script (w/o ShellRun)
@@ -318,14 +315,15 @@ FillDelayedRunGroups() {
                                             , "#!VK53":  [A_ScriptDir "\EmailSelection.ahk",, ""]                ;vk53=s #!s
                                             , "Browser_Favorites": [A_ScriptDir "\Skype.cmd",,,,7]
                                             , "Launch_Mail": [A_ScriptDir "\EmailButton.ahk"] }
-                                , "#VK5A":  { "^VK45":   [notepad2exe, """" A_ScriptFullPath """"]               ;vk45=e ^e
+                                ; VK5A=Z, VK51=Q
+                                , "#VK51":  { "^VK45":   [notepad2exe, """" A_ScriptFullPath """"]               ;vk45=e ^e
                                             , "^+VK45":  [notepad2exe, """" hotkeys_custom_ahk """"]             ;vk45=e ^+e
                                             , "#VK57":   AU3_SpyExecArray                                        ;vk57=w #w
                                             , "#VK52":   [A_ScriptDir "\LiceCapResize.ahk",,""]                  ;vk52=r #r
                                             , "#VK50":   [A_AhkPath, A_ScriptDir "\putty_smartact.ahk"]          ;vk50=p #p
                                             , "#+VK44":  [A_ScriptDir "\Dropbox.ahk"]                            ;vk44=d #+d
-                                            , "F1":      [A_ScriptDir "\F1.ahk",,,,7]
-                                            , "+F1":     [autohotkeyChm,,""] } }
+                                            , "F1":      [A_ScriptDir "\F1.ahk"]
+                                            , "+F1":     [A_ScriptDir "\AutohotkeyHelp.ahk"] } }
 
     For altKey, HotkeysRunDelayed in RunDelayedGroups {
         If (altKey) {

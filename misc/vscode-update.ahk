@@ -67,6 +67,16 @@ DownloadVSCode(ByRef distDir, ByRef vsCodeDest) {
         updInfo.path := distPathArchive
         return updInfo
     }
+    If (FileExist(distDir "\.Distributives_Update_Run.*.cmd")) {
+        Loop Files, %distDir%\.Distributives_Update_Run.*.cmd
+        {
+            RunWait %comspec% /C "%A_LoopFileFullPath%", %distDir%, Min UseErrorLevel
+            If (distPathArchive := FindArchive(distPathMask)) {
+                updInfo.path := distPathArchive
+                return updInfo
+            }
+        }
+    }
     tmpDlDir = %A_TEMP%\%A_ScriptName%.tmp
     FileCreateDir %tmpDlDir%
     cmdline = %SystemRoot%\System32\curl.exe -RO -z "%path%" "%newVerURL%"
