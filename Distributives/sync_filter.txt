@@ -1,1 +1,1 @@
-*.*|**\temp\**\**;**\bat\**\**;**\sf.net\**\**;**\.mypy_cache\**\**;*.??_;*.inx;*.jpg;*.lin;*.log;*.png;*.torrent;*.key
+*.*|**\temp\**\**;**\bat\**\**;**\sf.net\**\**;**\.mypy_cache\**\**;*.log

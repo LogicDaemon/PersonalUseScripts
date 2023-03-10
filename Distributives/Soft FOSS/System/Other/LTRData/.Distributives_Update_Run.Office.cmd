@@ -6,4 +6,9 @@
 )
 (
     CALL "%baseScripts%\_DistDownload.cmd" www.ltr-data.se/files/imdiskinst.exe imdiskinst.exe
+    
+    SET "srcpath=%~dp0reboot.pro ImDisk Toolkit\"
+    rem CALL "%baseScripts%\_DistDownload_sf.cmd" imdisk-toolkit ImDiskTk-x64.zip
+    CALL "%baseScripts%\_DistDownload.cmd" http://sourceforge.net/projects/imdisk-toolkit/files/latest/download *.zip --user-agent="Wget/1.19.1 (mingw32)"
+    CALL "%baseScripts%\_DistDownload.cmd" http://sourceforge.net/projects/imdisk-toolkit/files/latest/download *.zip --user-agent="Wget/1.19.1 (mingw64)"
 )
