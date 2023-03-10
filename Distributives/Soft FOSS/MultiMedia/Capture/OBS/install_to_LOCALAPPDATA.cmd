@@ -12,11 +12,12 @@ SETLOCAL ENABLEEXTENSIONS
 @(
     CALL :install "%dstfname%"
     FOR /D %%A IN ("%~dp0plugins\*") DO CALL :installplugin "%%~A"
+    COMPACT /C /S:"%LOCALAPPDATA%\Programs\obs-studio" /EXE:LZX
 EXIT /B
 )
 :install
 @(
-    %exe7z% x -aos -y -o"%LOCALAPPDATA%\Programs\%~n1" -- "%~1" || EXIT /B
+    %exe7z% x -xr!*.pdb -aos -y -o"%LOCALAPPDATA%\Programs\%~n1" -- "%~1" || EXIT /B
     ECHO N|RMDIR "%LOCALAPPDATA%\Programs\obs-studio"
     ECHO N|DEL "%LOCALAPPDATA%\Programs\obs-studio"
     MKLINK /D "%LOCALAPPDATA%\Programs\obs-studio" "%LOCALAPPDATA%\Programs\%~n1" || MKLINK /J "%LOCALAPPDATA%\Programs\obs-studio" "%LOCALAPPDATA%\Programs\%~n1"
@@ -31,7 +32,7 @@ EXIT /B
     IF NOT DEFINED dstfname EXIT /B 1
 )
 @(
-    %exe7z% x -aos -y -o"%installDest%" -- "%dstfname%"
+    %exe7z% x -xr!*.pdb -aos -y -o"%installDest%" -- "%dstfname%"
 EXIT /B
 )
 
