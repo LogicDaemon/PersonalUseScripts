@@ -24,3 +24,16 @@ For i, procName in killProcesses {
         }
     }
 }
+
+If (A_IsAdmin) {
+    SetWorkingDir %A_ScriptDir%
+    Run "%A_AhkPath%" "%A_ScriptDir%\vscode-update.ahk"
+    Run "%A_AhkPath%" "%A_ScriptDir%\update_go.ahk"
+    Run "%A_AhkPath%" "%A_ScriptDir%\update_KeePass.ahk"
+    
+    Run %comspec% /C "%A_ScriptDir%\Update_SysInternals.cmd",, Min
+    
+    RunWait %comspec% /C "%A_ScriptDir%\update-git-for-windows.cmd",, Min
+    RunWait %comspec% /C "%A_ScriptDir%\update_aws_cli.cmd",, Min
+    RunWait %comspec% /C "%A_ScriptDir%\update_obs.cmd",, Min
+}

@@ -3,8 +3,10 @@
 #NoEnv
 FileEncoding UTF-8
 
-EnvGet LocalAppData,LOCALAPPDATA
-EnvGet SystemRoot,SystemRoot
+EnvGet LocalAppData, LOCALAPPDATA
+EnvGet SystemDrive, SystemDrive
+EnvGet SystemRoot, SystemRoot
+laPrograms := LocalAppData "\Programs"
 
 win11minversion := "10.0.22000"
 autohotkeyHelp := VerCompare(A_OsVersion, ">=" win11minversion)
@@ -12,7 +14,7 @@ autohotkeyHelp := VerCompare(A_OsVersion, ">=" win11minversion)
                 : FirstExisting( A_AhkDir "\AutoHotkey.chm"
                                , laPrograms "\AutoHotkey\AutoHotkey.chm"
                                , A_ProgramFiles "\AutoHotkey\AutoHotkey.chm" )
-Run %autohotkeyHelp%
+Run "%autohotkeyHelp%"
 
 ; https://www.libe.net/en-windows-build
 ; Windows 11 versions:
