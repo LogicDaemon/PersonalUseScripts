@@ -1,24 +1,59 @@
 #NoEnv
 #SingleInstance
 
+#include <find7zexe>
+
 Try {
+    goVerURL:="https://golang.org/VERSION?m=text"
     distDir := Find_Distributives_subpath("Developement\go")
-    goVer := GetURL("https://golang.org/VERSION?m=text")
+    goVer := GetURL(goVerURL)
     If (!goVer) {
-        MsgBox Go version is not retrieved from https://golang.org/VERSION?m=text, instead got "%goVer%"
+        Throw Exception("Error getting go version",, goVerURL)
         ExitApp 1
     }
-    goDistFName := goVer ".windows-amd64.zip"
-    dlURL := "https://golang.org/dl/" goDistFName
-    timeCond := FileExist(distDir "\" goDistFName) ? "-z """ goDistFName """" : ""
-    RunWait curl.exe -RJOL %timeCond% "%dlURL%", %distDir%, Min UseErrorLevel
+    For i, ext in ["7z", "zip"] { ; zip must be the last
+        goDistFName := goVer ".windows-amd64." ext
+        If (FileExist(distDir "\" goDistFName)) {
+            distExists := True
+            break
+        }
+    }
 
-    #include <find7zexe>
+    If (!distExists) {
+        dlURL := "https://golang.org/dl/" goDistFName
+        ;-z doesn't work with the go distributive server
+        ;timeCond := FileExist(distDir "\" goDistFName) ? "-z """ distDir "\" goDistFName """" : ""
+        tempDir=%distDir%\temp
+        FileCreateDir %tempDir%
+        curlcmd = curl.exe -RJOL %timeCond% "%dlURL%"
+        RunWait %curlcmd%, %tempDir%, Min UseErrorLevel
+        FileGetSize distSize, %tempDir%\%goDistFName%
+        If (!distSize) {
+            FileDelete %tempDir%\%goDistFName%
+            FileRemoveDir %tempDir%
+            FileAppend %A_Now% %curlcmd%`n, %A_Temp%\%A_ScriptName%.log, CP0
+            Throw Exception("0-sized distributive downloaded",, dlURL)
+        }
+        
+        RunWait %comspec% /C ""%A_ScriptDir%\repack_to_7z.cmd" /NK "%tempDir%\%goDistFName%"", %tempDir%, Min UseErrorLevel
+        If (!ErrorLevel) {
+            ;SplitPath goDistFName, OutFileName, OutDir, OutExtension, OutNameNoExt, OutDrive]
+            SplitPath goDistFName, , , , goDistFNameNoExt
+            goDistFName := goDistFNameNoExt ".7z"
+        }
+        
+        FileMove %tempDir%\%goDistFName%, %distDir%\%goDistFName%
+        Try {
+            FileRemoveDir %tempDir%
+        }
+    }
+
 
     destDir := ExpandEnvVars("%LocalAppData%\Programs") "\go"
     If (IsObject(InstallUpdate(distDir, goDistFName, destDir, SubStr(goVer, 1, 2) == "go" ? SubStr(goVer, 3) : goVer, "go", "bin\go.exe"))) {
-        FileAppend % ObjectToText(updDirOrErrors) "`n", %A_Temp%\%A_ScriptName%.log
-        Throw Exception("Update errors",, ObjectToText(updDirOrErrors))
+        errLog = %A_Temp%\%A_ScriptName%.log
+        FileAppend % ObjectToText(updDirOrErrors) "`n", %errLog%
+        Throw Exception("Update errors. Error log is in ""%TEMP%\" A_ScriptName ".log""" ,, ObjectToText(updDirOrErrors))
     }
 } Catch e {
     Throw e
@@ -36,30 +71,47 @@ InstallUpdate( ByRef distDir
     
     distPath := distDir "\" distFName
     destDirWithVer := destDir "-" ver
-    distSubdir := BackslashPrefix(distSubdir)
-    checkPath := BackslashPrefix(checkPath)
-    destLinkDir := destDirWithVer . (distSubdir ? "\" distSubdir : "")
-    destCheckPath := destLinkDir . (checkPath ? "\" checkPath : "")
+    
+    distSubdir := BackslashPrefixed(distSubdir)
+    destLinkDir := destDirWithVer . distSubdir
+    
+    checkPath := BackslashPrefixed(checkPath)
+    destCheckPath := destLinkDir . checkPath
+    
     If (!FileExist(distPath))
         Throw Exception("Distributive does not exist",, distPath)
     If (!FileExist(destCheckPath)) {
-        RunWait "%exe7z%" x -aoa -o"%destDirWithVer%" -- "%distPath%",, Min UseErrorLevel
+        ;If FileExist(distPath ".tmp")
+        ;    FileRemoveDir %distPath%.tmp, 1
+        cmdexec = "%exe7z%" x -aoa -o"%destDirWithVer%" -- "%distPath%"
+        RunWait %cmdexec%,, Min UseErrorLevel
         If (ErrorLevel) {
-            If (ErrorLevel>1)
-                Throw Exception("Unpacking error from 7-Zip",, ErrorLevel)
-            errors[v] := ErrorLevel
+            errors["7-Zip"] := savedErr := ErrorLevel
+            If (savedErr>=2) {
+                ;Try {
+                ;    FileRemoveDir %distPath%.tmp, 1
+                ;}
+                FileAppend %A_Now% %cmdexec%`n, %A_Temp%\%A_ScriptName%.log, CP0
+                Throw Exception("7-Zip unpacking error",, ErrorLevel "`n""" distPath ".tmp""")
+            }
         }
+        ;FileMoveDir %distPath%.tmp, %distPath%, R
     }
-    RunWait %comspec% /C "RD "%destDir%" & MKLINK /J "%destDir%" "%destLinkDir%"",, Min
+    Run compact.exe /C /EXE:LZX /S, %destLinkDir%, Min UseErrorLevel
+    RunWait %comspec% /C "RD "%destDir%" & MKLINK /J "%destDir%" "%destLinkDir%"", %destLinkDir%\.., Min UseErrorLevel
     If (ErrorLevel)
         errors["MKLINK"] := ErrorLevel
+    ; Cleanup the old versions
     If (!errors.Count()) {
         Loop Files, %destDir%-*, D
         {
-            If ( A_LoopFileFullPath != destLinkDir && FileExist(A_LoopFileFullPath . distSubdir . checkPath) ) {
+            checkFullPath := A_LoopFileFullPath . distSubdir . checkPath
+            If ( A_LoopFileFullPath != destDirWithVer
+                && FileExist(A_LoopFileFullPath . distSubdir . checkPath) ) {
+                MsgBox Removing %checkFullPath% and then %A_LoopFileFullPath%
                 Try {
-                    FileDelete %mainexe%
-                    ; continues only if main exe was successfully deleted
+                    FileDelete %checkFullPath%
+                    ; continues only if the checked path was successfully deleted
                     FileRemoveDir %A_LoopFileFullPath%, 1
                 }
             }
@@ -68,7 +120,7 @@ InstallUpdate( ByRef distDir
     return errors.Count() ? errors : destDirWithVer
 }
 
-BackslashPrefix(str) {
+BackslashPrefixed(str) {
     return (str && SubStr(str, 1, 1) != "\") ? "\" str : str
 }
 
