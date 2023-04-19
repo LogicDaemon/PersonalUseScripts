@@ -31,7 +31,7 @@ IF EXIST "%tempdest%" (
 
 :checkArg
 IF /I "%~1"=="/R" (
-    rem Recursive, with if there is more than one argument after; otherwise, it's only mask
+    rem Recursive, with dir if there is more than one argument after; otherwise, it's only mask
     IF "%~3"=="" (
 	SET "ArgForFOR=%1 "
     ) ELSE (
@@ -62,8 +62,8 @@ GOTO :checkArg
             IF NOT "%nobackup%"=="1" (
                 rem FOR %%A IN ("%tempdest%\*.7z") DO CALL :removeSuffix "%%~A"
                 FOR %%A IN ("%tempdest%\*.*") DO @IF EXIST "%~dp1%%~nxA" MOVE "%~dp1%%~nxA" "%~dp1%%~nxA.bak"
-                MOVE "%tempdest%\*.*" "%~dp1"
             )
+            MOVE /Y "%tempdest%\*.*" "%~dp1"
 	)
 	POPD
     )
