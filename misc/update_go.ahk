@@ -108,7 +108,7 @@ InstallUpdate( ByRef distDir
             checkFullPath := A_LoopFileFullPath . distSubdir . checkPath
             If ( A_LoopFileFullPath != destDirWithVer
                 && FileExist(A_LoopFileFullPath . distSubdir . checkPath) ) {
-                MsgBox Removing %checkFullPath% and then %A_LoopFileFullPath%
+                ; MsgBox Removing %checkFullPath% and then %A_LoopFileFullPath%
                 Try {
                     FileDelete %checkFullPath%
                     ; continues only if the checked path was successfully deleted
