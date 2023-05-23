@@ -2,12 +2,12 @@
 REM by LogicDaemon <www.logicdaemon.ru>
 REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode.ru>.
 SETLOCAL ENABLEEXTENSIONS
-rem rclone_to_YD.cmd rclonecommand src YD:dest args
+rem rclone_to_YD.cmd rclonecommand src dest    args
 rem 0                1             2   3       4
-SET rclonecommand=%1
-SET "src=%~2"
-SET "dest=%~3"
-CALL :SetDestTrimSrc %2 || EXIT /B
+    SET rclonecommand=%1
+    SET "src=%~2"
+    SET "dest=%~3"
+    CALL :SetDestTrimSrc %2 || EXIT /B
 )
 :appendnextarg
 @(
@@ -34,21 +34,21 @@ rclone %rclonecommand% "%src%" "YD:%dest%" --timeout 60m %rcloneargs%
         EXIT /B 1
     )
     IF NOT DEFINED dest CALL :SetWithReplacedBackslashes dest "%~p1"
-    EXIT /B 0
+EXIT /B 0
 )
 :SetWithReplacedBackslashes
 @(
-SETLOCAL
-SET "v=%~2"
+    SETLOCAL
+    SET "v=%~2"
 )
 @(
-ENDLOCAL
-SET "%~1=%v:\=/%"
+    ENDLOCAL
+    SET "%~1=%v:\=/%"
 EXIT /B
 )
 :showerror
 @(
-ECHO Error code %ERRORLEVEL%
-PAUSE
+    ECHO Error code %ERRORLEVEL%
+    PAUSE
 EXIT /B
 )

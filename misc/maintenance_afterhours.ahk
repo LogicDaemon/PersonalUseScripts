@@ -28,6 +28,7 @@ For i, procName in killProcesses {
 If (A_IsAdmin) {
     SetWorkingDir %A_ScriptDir%
     Run "%A_AhkPath%" "%A_ScriptDir%\vscode-update.ahk"
+    Run "%A_AhkPath%" "%A_ScriptDir%\vscode-update.insiders.ahk"
     Run "%A_AhkPath%" "%A_ScriptDir%\update_go.ahk"
     Run "%A_AhkPath%" "%A_ScriptDir%\update_KeePass.ahk"
     

@@ -189,11 +189,9 @@ return
 
 ButtonOK:		;Fügt den ausgewählten Text in die Anwendung ein
 	Critical
-	ClipSaved:=ClipboardAll
-	ControlGetText clipboard,Edit2
+	ControlGetText cb,Edit2
 	GUI destroy
-	Send {Ctrl Down}v{Ctrl Up}
-	Clipboard:=ClipSaved
+	PasteViaClipboard(cb)
 GuiEscape:		;GUI verschwindet, Programm bleibt im Speicher
 GuiClose:		;Programm wird beendet
 	ExitApp
@@ -693,11 +691,17 @@ PasteNotepad2Boilerplate() {
 }
 
 PasteViaClipboard(ByRef data) {
+    WinGet exe, ProcessName, A
     clipBackup:=ClipboardAll
     Clipboard := data
     
     ClipWait 3,1
-    Send ^v
+    If exe in cmd.exe,putty.exe
+    {
+        Send +{Insert}
+    } Else {
+        Send ^v
+    }
     Sleep 100
     Clipboard:=clipBackup
 }

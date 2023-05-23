@@ -53,7 +53,7 @@ SetScheme(idx) {
 ExitFunc(ExitReason, ExitCode) {
     local
     SetScheme(1)
-    MsgBox Power scheme is set to normal
+    TrayTip,, Power scheme is set to normal
 }
 
 #include <GetIdleTime>
