@@ -4,5 +4,5 @@ REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 In
 SETLOCAL ENABLEEXTENSIONS
 
 START "" /D "%~dp0" wget -N https://www.gyan.dev/ffmpeg/builds/ffmpeg-tools.zip
-START "" /D "%~dp00" wget -pr -ml1 -A.html,.7z https://www.gyan.dev/ffmpeg/builds/
+START "" /D "%~dp0" wget -pr -ml1 -A.html,.7z https://www.gyan.dev/ffmpeg/builds/
 )
