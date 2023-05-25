@@ -9,4 +9,3 @@
     CALL "%baseScripts%\_DistDownload.cmd" "https://crystalmark.info/redirect.php?product=CrystalDiskMarkInstaller" *.exe
     CALL "%baseScripts%\_DistDownload.cmd" "https://crystalmark.info/redirect.php?product=CrystalDiskMark" *.zip
 )
-

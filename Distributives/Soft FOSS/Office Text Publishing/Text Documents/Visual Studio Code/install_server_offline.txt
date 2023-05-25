@@ -1,0 +1,22 @@
+https://stackoverflow.com/a/57601121/1421036
+
+1. Upload the `vscode-server-linux-x64.tar.gz` to server
+2. Unzip the downloaded `vscode-server-linux-x64.tar.gz` to `~/.vscode-server/bin/${commit_id}` without `vscode-server-linux-x64` dir
+3. Create `0` file under `~/.vscode-server/bin/${commit_id}`
+
+```
+commit_id=f06011ac164ae4dc8e753a3fe7f9549844d15e35
+
+# Download url is: https://update.code.visualstudio.com/commit:${commit_id}/server-linux-x64/stable
+curl -sSL "https://update.code.visualstudio.com/commit:${commit_id}/server-linux-x64/stable" -o vscode-server-linux-x64.tar.gz
+
+mkdir -p ~/.vscode-server/bin/${commit_id}
+tar zxvf vscode-server-linux-x64.tar.gz -C ~/.vscode-server/bin/${commit_id} --strip 1
+touch ~/.vscode-server/bin/${commit_id}/0
+
+If you want to disable telemetry, you can pass in --disable-telemetry when launching the VS Code Server: 
+
+    code tunnel --disable-telemetry
+
+Alternatively, if you would like to specify an initial telemetry level, such as only collecting errors, you can pass in --telemetry-level followed by the level (for example, error).
+```
