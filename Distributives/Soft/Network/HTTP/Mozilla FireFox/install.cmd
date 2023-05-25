@@ -6,15 +6,22 @@ SETLOCAL ENABLEEXTENSIONS
     IF NOT DEFINED PROGRAMDATA SET "PROGRAMDATA=%ALLUSERSPROFILE%\Application Data"
     IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%USERPROFILE%\Application Data"
 
-    SET "distSubdir=32-bit\"
-    IF /I "%PROCESSOR_ARCHITECTURE%"=="AMD64" SET "distSubdir=64-bit\"
-    IF DEFINED PROCESSOR_ARCHITEW6432 SET "distSubdir=64-bit\"
-    IF DEFINED ProgramW6432 ( SET "lProgramFiles=%ProgramW6432%" ) ELSE SET "lProgramFiles=%ProgramFiles%"
-    SET "ErrorMemory="
+    SET "lang=%~1"
+    IF NOT DEFINED lang SET "lang=en-US"
+    
+    SET "distSubdir=%~2"
+    IF NOT DEFINED distSubdir (
+        SET "distSubdir=32-bit"
+        IF /I "%PROCESSOR_ARCHITECTURE%"=="AMD64" SET "distSubdir=64-bit"
+        IF DEFINED PROCESSOR_ARCHITEW6432 SET "distSubdir=64-bit"
+        IF DEFINED ProgramW6432 ( SET "lProgramFiles=%ProgramW6432%" ) ELSE SET "lProgramFiles=%ProgramFiles%"
+    )
 
     SET "TempIni=%TEMP%\FirefoxInstall.ini"
     FOR /F "usebackq delims=" %%I IN (`ver`) DO SET "winVer=%%~I"
     CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd"
+
+    SET "ErrorMemory="
 )
 (
     IF DEFINED DefaultsSource CALL :GetDir configDir "%DefaultsSource%"
@@ -24,7 +31,7 @@ SETLOCAL ENABLEEXTENSIONS
 	IF EXIST "%srcpath%Vista\Firefox Setup *.exe" (
 	    SET "InstDistributive=%srcpath%Vista\Firefox Setup *.exe"
 	) ELSE SET "InstDistributive=%srcpath:\Distributives\Soft\=\Distributives\Soft_old\%Vista\Firefox Setup *.exe"
-    ) ELSE SET "InstDistributive=%srcpath%%distSubdir%Firefox Setup *.exe"
+    ) ELSE SET "InstDistributive=%srcpath%%lang% %distSubdir%\Firefox Setup *.exe"
     SET "MozMainSvcUninst=%lProgramFiles%\Mozilla Maintenance Service\Uninstall.exe"
     SET "cProgramFiles=%lProgramFiles:\=\\%"
 )
@@ -54,13 +61,13 @@ IF NOT DEFINED exe7z CALL "%configDir%_Scripts\find7zexe.cmd" || EXIT /B
 EXIT /B
 )
 :HideDesktopShortcut
-    REM Hiding desktop shortcut
-    SET RegQueryParsingOptions="usebackq tokens=3* delims= "
+REM Hiding desktop shortcut
+SET RegQueryParsingOptions="usebackq tokens=3* delims= "
 (
     FOR /F %RegQueryParsingOptions% %%I IN (`REG QUERY "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" /v "Common Desktop" %recodecmd%`) DO SET "CommonDesktop=%%~J"
     IF NOT DEFINED CommonDesktop EXIT /B
 )
-    FOR /F "usebackq delims=" %%I IN (`%comspec% /C ECHO %CommonDesktop%`) DO SET "CommonDesktop=%%~I"
+FOR /F "usebackq delims=" %%I IN (`%comspec% /C ECHO %CommonDesktop%`) DO SET "CommonDesktop=%%~I"
 (
     ATTRIB +H "%CommonDesktop%\Mozilla Firefox.lnk"
 
