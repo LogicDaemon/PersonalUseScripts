@@ -8,8 +8,8 @@ SETLOCAL ENABLEEXTENSIONS
     COMPACT /C rclone_to_YD.log
     SET "errorRename="
 )
-(CALL bisync_with_YD.cmd "V:\Distributives" --filters-file "%~dp0rclone-filters.txt" %* 2>&1 || SET "errorRename=1") | tee -a "rclone_to_YD.log"
 (
+    CALL bisync_with_YD.cmd "V:\Distributives" --filters-file "%~dp0rclone-filters.txt" --log-file "rclone_to_YD.log" %* || SET "errorRename=1"
     COMPACT /C /F /EXE:LZX rclone_to_YD.log
     IF DEFINED errorRename (
         REN "rclone_to_YD.log" "%~dp0rclone_to_YD.error%DATE:/=_%_%TIME::=_%.log"

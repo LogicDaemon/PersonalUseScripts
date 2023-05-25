@@ -8,8 +8,8 @@ SETLOCAL ENABLEEXTENSIONS
     COMPACT /C rclone_to_YD.log
     SET "errorRename="
 )
-(rclone sync "V:\Distributives" "YD:Distributives" --timeout 60m -v --delete-excluded --filter-from "%~dp0rclone-filters.txt" 2>&1 || SET "errorRename=1") | tee -a "%~dp0rclone_to_YD.log"
 (
+    rclone sync "V:\Distributives" "YD:Distributives" --timeout 60m -v --delete-excluded --filter-from "%~dp0rclone-filters.txt" --log-file "%~dp0rclone_to_YD.log" || SET "errorRename=1"
     COMPACT /C /F /EXE:LZX rclone_to_YD.log
     IF DEFINED errorRename (
         MOVE "%~dp0rclone_to_YD.log" "%~dp0rclone_to_YD.error%DATE:/=_%_%TIME::=_%.log"
