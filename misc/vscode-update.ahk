@@ -195,7 +195,7 @@ UpdateVSCode(ByRef destDir, ByRef updInfo, additionalArchives := "") {
     For i, v in paths {
         destDirWithVer := destDir "-" newVerName
         If (FileExist(v)) {
-            If (FileExist(destDirWithVer "\Code.exe"))
+            If (FileExist(destDirWithVer "\Code*.exe"))
                 continue
             RunWait "%exe7z%" x -aoa -o"%destDirWithVer%" -- "%v%",, Min UseErrorLevel
             If (ErrorLevel)
