@@ -1,7 +1,7 @@
 @(REM coding:CP866
     SETLOCAL ENABLEEXTENSIONS
     IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
-    IF NOT DEFINED baseScripts SET "baseScripts=\Local_Scripts\software_update\Downloader"
+    IF NOT DEFINED baseScripts SET "baseScripts=\Distributives\Local_Scripts\software_update\Downloader"
 )
 (
     IF EXIST "%~dp0..\..\..\..\Updates\Windows\wsusoffline\msse\x86-glb\MSEInstall-x86-rus.exe" (

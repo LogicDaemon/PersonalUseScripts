@@ -8,7 +8,7 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     SET "url=https://autohotkey.com/download/ahk-install.exe"
     SET "urlfname=ahk-install.exe"
     SET "distfmask=AutoHotkey_*_setup.exe"
-    IF NOT DEFINED baseScripts SET "baseScripts=\Local_Scripts\software_update\Downloader"
+    IF NOT DEFINED baseScripts SET "baseScripts=\Distributives\Local_Scripts\software_update\Downloader"
 )
 (
     FOR /F "usebackq delims=" %%A IN (`DIR /B /O-D "%srcpath%%distfmask%"`) DO (

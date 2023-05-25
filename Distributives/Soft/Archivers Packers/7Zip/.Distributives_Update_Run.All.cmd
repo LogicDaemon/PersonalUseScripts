@@ -4,7 +4,7 @@ SETLOCAL ENABLEEXTENSIONS
     SET "distcleanup=1"
     SET "AddtoS_UScripts=1"
 
-    IF NOT DEFINED baseScripts SET "baseScripts=\Local_Scripts\software_update\Downloader"
+    IF NOT DEFINED baseScripts SET "baseScripts=\Distributives\Local_Scripts\software_update\Downloader"
     SET "UpdateScriptName=7Zip"
     CALL :Download7zip "%~dp032-bit" *.exe
     CALL :Download7zip "%~dp064-bit" *-x64.exe

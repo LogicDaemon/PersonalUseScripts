@@ -1,6 +1,6 @@
 @(REM coding:CP866
     SETLOCAL ENABLEEXTENSIONS
-    IF NOT DEFINED baseScripts SET "baseScripts=\Local_Scripts\software_update\Downloader"
+    IF NOT DEFINED baseScripts SET "baseScripts=\Distributives\Local_Scripts\software_update\Downloader"
     SET "distcleanup=1"
     SET "UseTimeAsVersion=1"
 )

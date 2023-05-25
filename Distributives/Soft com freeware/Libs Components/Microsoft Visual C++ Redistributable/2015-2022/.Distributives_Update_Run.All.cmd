@@ -2,7 +2,7 @@
 SETLOCAL ENABLEEXTENSIONS
     SET "srcpath=%~dp0"
 
-    IF NOT DEFINED baseScripts SET "baseScripts=\Local_Scripts\software_update\Downloader"
+    IF NOT DEFINED baseScripts SET "baseScripts=\Distributives\Local_Scripts\software_update\Downloader"
 )
 @(
     CALL "%baseScripts%\_DistDownload.cmd" https://aka.ms/vs/17/release/vc_redist.arm64.exe VC_redist.arm64.exe

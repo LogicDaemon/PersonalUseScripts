@@ -6,7 +6,7 @@ SETLOCAL ENABLEEXTENSIONS
     IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     CALL "%~dp0getfilenames.cmd"
     IF NOT DEFINED runDir SET "runDir=%~dp0temp"
-    IF NOT DEFINED baseScripts SET "baseScripts=\Local_Scripts\software_update\Downloader"
+    IF NOT DEFINED baseScripts SET "baseScripts=\Distributives\Local_Scripts\software_update\Downloader"
 )
 (
     CALL "%baseScripts%\_GetWorkPaths.cmd"

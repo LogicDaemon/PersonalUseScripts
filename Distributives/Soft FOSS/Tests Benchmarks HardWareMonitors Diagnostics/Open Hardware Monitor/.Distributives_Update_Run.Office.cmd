@@ -2,7 +2,7 @@
 SETLOCAL ENABLEEXTENSIONS
 
     SET "srcpath=%~dp0"
-    IF NOT DEFINED baseScripts SET "baseScripts=\Local_Scripts\software_update\Downloader"
+    IF NOT DEFINED baseScripts SET "baseScripts=\Distributives\Local_Scripts\software_update\Downloader"
 )
 (
     rem https://openhardwaremonitor.org/files/openhardwaremonitor-v0.9.5.zip
