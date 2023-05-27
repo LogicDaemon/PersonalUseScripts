@@ -1,5 +1,4 @@
 *.ahk text eol=crlf
 *.cmd text eol=crlf
-.utils.cmd text eol=crlf
 *.py text eol=lf
 * -text

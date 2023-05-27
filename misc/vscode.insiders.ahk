@@ -20,7 +20,7 @@ If (vscodeRunning && !scriptcmdln) {
 
 EnvGet LocalAppData, LocalAppData
 Loop {
-    If (vscodeexe := FirstExisting(LocalAppData "\Programs\Microsoft VS Code\Code.exe", LocalAppData "\Programs\VS Code\Code.exe", ProgramFiles "\Microsoft VS Code\Code.exe"))
+    If (vscodeexe := FirstExisting(LocalAppData "\Programs\Microsoft VS Code Insiders\Code - Insiders.exe", LocalAppData "\Programs\VS Code Insiders\Code - Insiders.exe", ProgramFiles "\Microsoft VS Code Insiders\Code - Insiders.exe"))
         break
     If (A_Index > installScripts.Count())
         Throw Exception("VS Code is neither found nor can be installed")

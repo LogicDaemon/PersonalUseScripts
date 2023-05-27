@@ -675,18 +675,19 @@ PasteNotepad2Boilerplate() {
     Send {F9}
     WinWait Encoding ahk_class #32770
     ;PostMessage 0x185, 1, 2, SysListView321 ; Select all listbox items. 0x185 is LB_SETSEL
-    If ext in cmd,bat
+    If mExt1 in cmd,bat
     {
         ;Control ChooseString, OEM (866)
-        ControlSend SysListView321, {Home}{Down}{Enter}
+        ControlSend SysListView321, {Home}{Down}
     } Else If (ext = "url") {
         Control ChooseString, Unicode (UTF-16 LE BOM)
     } Else {
+        MsgBox mExt1="%mExt1%"
         ; fails to select actually this: Control ChooseString, UTF-8 Signature
         ControlSend SysListView321, {Home}utf-8 sig
     }
     Sleep 50
-    ControlSend SysListView321, {Enter}
+    ControlSend,, {Enter}
     ExitApp
 }
 
