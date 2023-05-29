@@ -10,7 +10,6 @@ Loop 3
 }
 Gui Add, Button, Section xm Default, OK
 Gui Show
-; InputBox, hot_password1,,, HIDE
 return
 
 ButtonOK:

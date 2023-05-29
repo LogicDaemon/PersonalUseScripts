@@ -3,13 +3,13 @@
 
 Run "%A_AhkPath%" "%A_ScriptDir%\KeePass_%A_UserName%.ahk"
 
-Gui Add, Text, Section, Main pass:
-Gui Add, Edit, ys x80 vhot_password Password, %hot_password%
-Gui Add, Text, Section xm, 2nd pass:
-Gui Add, Edit, ys x80 vhot2_password Password, %hot2_password%
+Loop 3
+{
+    Gui Add, Text, Section xm, pass%A_Index%:
+    Gui Add, Edit, ys x80 vhot_password%A_Index% Password, % hot_password%A_Index%
+}
 Gui Add, Button, Section xm Default, OK
 Gui Show
-; InputBox, hot_password,,, HIDE
 return
 
 ButtonOK:
@@ -23,20 +23,21 @@ GuiClose:
 return
 
 ReadPassesFromFile(fname := "*") {
-    global hot_password, hot2_password
+    global hot_password1, hot_password2, hot_password3
     If (!fname)
         return
-    linesread := StrSplit(ReadSlowly(fname), "`n", "`r")
-    If (!IsObject(linesread))
-        return
-    hot_password := linesRead[1], hot2_password := linesRead[2]
-    return hot2_password
+    ; linesread := StrSplit(ReadSlowly(fname), "`n", "`r")
+    passwordsCount := 0
+    Loop Parse, % ReadSlowly(fname), `n, `r
+        hot_password%A_Index% := A_LoopField, passwordsCount += !!A_LoopField
+    Until A_Index >= 3
+    return passwordsCount == 3
 }
 
 CustomReload() {
-    global hot_password, hot2_password
+    global hot_password1, hot_password2, hot_password3
     Exec := RunWithStdin( A_AhkPath " """ A_ScriptDir "\Hotkeys_Reload_Intermediary.ahk"" *" ; "*" indicates that password should be read from stdin
-                        , hot_password "`n" hot2_password )
+                        , hot_password1 "`n" hot_password2 "`n" hot_password3 )
     Sleep 500
     return true
 }
@@ -44,5 +45,6 @@ CustomReload() {
 #PgUp::         Volume_Up
 #PgDn::         Volume_Down
 
-#!VK4C::        SendRaw %hot_password% ;vk4C=l #!l
-#!+VK4C::       SendRaw %hot2_password% ;vk4C=l #!+l
+#!VK4C::        SendRaw %hot_password1% ;vk4C=l #!l
+#!+VK4C::       SendRaw %hot_password2% ;vk4C=l #!+l
+#!^VK4C::       SendRaw %hot_password3% ;vk4C=l #!^l
