@@ -682,7 +682,6 @@ PasteNotepad2Boilerplate() {
     } Else If (ext = "url") {
         Control ChooseString, Unicode (UTF-16 LE BOM)
     } Else {
-        ;MsgBox mExt1="%mExt1%"
         ; fails to select actually this: Control ChooseString, UTF-8 Signature
         ControlSend SysListView321, {Home}utf-8 sig
     }
