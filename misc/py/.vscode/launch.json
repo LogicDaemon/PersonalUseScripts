@@ -16,6 +16,22 @@
                         },
                 },
                 {
+                        "name": "embed passport\\*.jpg watermarked",
+                        "type": "python",
+                        "request": "launch",
+                        "program": "${file}",
+                        "console": "integratedTerminal",
+                        "justMyCode": true,
+                        "args": [
+                                "embed",
+                                "passport\\*.jpg",
+                                "watermarked"
+                        ],
+                        "env": {
+                                "GEVENT_SUPPORT": "True"
+                        },
+                },
+                {
                         "name": "set_older_datetimes_for_same_files.py",
                         "type": "python",
                         "request": "launch",
@@ -31,7 +47,6 @@
                         "env": {
                                 "GEVENT_SUPPORT": "True"
                         },
- 
                 },
         ]
 }
