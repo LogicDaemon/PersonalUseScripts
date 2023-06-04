@@ -190,8 +190,8 @@ UpdateVSCode(ByRef destDir, ByRef updInfo, additionalArchives := "") {
     If (!newVerName)
         Throw Exception("No updated version (empty filename in updInfo.path)",, updInfo)
     For i, prefix in ["VSCode-", "win32-x64-"]
-    If (StartsWith(newVerName, prefix))
-        newVerName := SubStr(newVerName, StrLen(prefix)+1)
+        If (StartsWith(newVerName, prefix))
+            newVerName := SubStr(newVerName, StrLen(prefix)+1)
     For i, v in paths {
         destDirWithVer := destDir "-" newVerName
         If (FileExist(v)) {
@@ -219,11 +219,13 @@ UpdateVSCode(ByRef destDir, ByRef updInfo, additionalArchives := "") {
 CleanOldInstallations(ByRef newVerDir, ByRef destDir) {
     Loop Files, %destDir%-*, D
     {
-        If ( A_LoopFileFullPath <> newVerDir
-            && FileExist(mainexe := A_LoopFileFullPath "\Code.exe")) {
-            FileDelete %mainexe%
-            If (!ErrorLevel)
-                FileRemoveDir %A_LoopFileFullPath%, 1
+        If ( A_LoopFileFullPath <> newVerDir ) {
+            mainexe := FirstExisting( A_LoopFileFullPath "\Code*.exe" )
+            If (mainexe) {
+                FileDelete %mainexe%
+                If (!ErrorLevel)
+                    FileRemoveDir %A_LoopFileFullPath%, 1
+            }
         }
     }
 }

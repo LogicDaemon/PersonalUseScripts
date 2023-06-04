@@ -10,5 +10,4 @@ SETLOCAL ENABLEEXTENSIONS
 EXIT /B
 :found
     FOR /F "usebackq delims=" %%A IN (`jq ".[].browser_download_url" "%~dp0latest_assets.json"`) DO CURL -z "%%~nxA" -RJOL "%%~A"
-rem      | .browser_download_url
 )

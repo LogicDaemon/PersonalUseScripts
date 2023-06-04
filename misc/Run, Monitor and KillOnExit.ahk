@@ -44,7 +44,7 @@ Loop {
 
 Process Exist, %exePID%
 If (!ErrorLevel)
-    Process Exist, uTorrent.exe
+    Process Exist, %exename%
 If (ErrorLevel)
     Process WaitClose, %ErrorLevel%
 
