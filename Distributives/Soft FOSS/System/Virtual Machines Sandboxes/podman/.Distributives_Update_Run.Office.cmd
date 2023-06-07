@@ -7,7 +7,8 @@
 CALL "%baseScripts%\_GetWorkPaths.cmd"
 (
     IF NOT EXIST "%workdir%" MKDIR "%workdir%"
-    CURL https://api.github.com/repos/containers/podman/releases | jq ".[] | select(.prerelease==false) | select(.draft==false) | .assets | .[].browser_download_url" > "%workdir%release_urls.txt" || EXIT /B
+rem     CURL https://api.github.com/repos/containers/podman/releases | jq ".[] | select(.prerelease==false) | select(.draft==false) | .assets | .[].browser_download_url" > "%workdir%release_urls.txt" || EXIT /B
+    CURL https://api.github.com/repos/containers/podman/releases/latest | jq ".assets | .[].browser_download_url" > "%workdir%release_urls.txt" || EXIT /B
     FOR /F "usebackq delims=" %%A IN ("%workdir%release_urls.txt") DO (
         SET "urlbase=%%~pA"
         SET "fname=%%~nxA"
@@ -16,9 +17,7 @@ CALL "%baseScripts%\_GetWorkPaths.cmd"
     EXIT /B
 )
 :CheckDownload <url>
-(
-    CALL :getfname dver "%urlbase:~0,-1%"
-)
+CALL :getfname dver "%urlbase:~0,-1%"
 IF EXIST "%srcpath%%dver%\%fname%" (
     SET "timecond=-z "%srcpath%%dver%\%fname%""
 ) ELSE (
@@ -32,7 +31,10 @@ IF EXIST "%srcpath%%dver%\%fname%" (
     EXIT /B
     :CheckDownloadMatch
     START "" /B /WAIT /D "%workdir%" CURL %timecond% -RJOL %1
-    IF EXIST "%workdir%%fname%" MOVE /Y "%workdir%%fname%" "%srcpath%%dver%\"
+    IF NOT EXIST "%srcpath%%dver%" (
+        MKDIR "%srcpath%%dver%"
+        IF EXIST "%workdir%%fname%" MOVE /Y "%workdir%%fname%" "%srcpath%%dver%\%fname%"
+    )
     EXIT /B
 )
 :getfname
