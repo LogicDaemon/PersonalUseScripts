@@ -75,21 +75,22 @@ DownloadVSCodeInsiders(ByRef distDir, ByRef vsCodeDest, ByRef urlSuffixChannel :
         }
     }
     EnvGet SystemRoot, SystemRoot
-    If (newVerURL) {
+    If (newVerURL) {  ; newVerURL is only available when updInfoRaw is known; in these cases, path will also be defined
+        pathtmp := path ".tmp"
         ; -O remote name overrides -o
-        cmdline = %SystemRoot%\System32\curl.exe -R -z "%path%" -o "%path%.tmp" -- "%newVerURL%"
-    } Else {
+        cmdline = %SystemRoot%\System32\curl.exe -R -z "%path%" -o "%pathtmp%" -- "%newVerURL%"
+        FileDelete %distDir%\*.tmp
+        RunWait %cmdline%, %distDir%, Min UseErrorLevel
+    } Else {        
         ; Try https://update.code.visualstudio.com/latest/win32-x64-user/insider
         newVerURL := "https://update.code.visualstudio.com/latest/" urlSuffixArch "-user/" urlSuffixChannel
         cmdline = %SystemRoot%\System32\curl.exe -RO -- "%newVerURL%"
+        RunWait %cmdline%, %distDir%, Min UseErrorLevel
     }
-    FileDelete %distDir%\*.tmp
-    RunWait %cmdline%, %distDir%, Min UseErrorLevel
     If (ErrorLevel) {
         errorMessage = Error %ErrorLevel% downloading URL
     } Else {
         If (path) {
-            pathtmp := path ".tmp"
             If (!FileExist(pathtmp)) {
                 ; Assume curl -z found that current file is fresh enough
                 pathtmp := ""
@@ -98,12 +99,18 @@ DownloadVSCodeInsiders(ByRef distDir, ByRef vsCodeDest, ByRef urlSuffixChannel :
             pathtmp := FirstExisting(distDir "\*.tmp")
             If (pathtmp) {
                 path := SubStr(pathtmp, 1, -4)
+                SplitPath path, latestDistFileName
+                Loop Files, %distDir%\VSCode-win32-x64-*.*
+                    If (A_LoopFileName != latestDistFileName)
+                        FileDelete %A_LoopFileName%
             } Else {
-                Loop Files, %distDir%\*.*
+                ; VSCode-win32-x64-1.79.0-insider-2dfb838f494f035099e999f0cd0eff5f1f488a30.zip
+                Loop Files, %distDir%\VSCode-win32-x64-*.*
                 {
                     If A_LoopFileExt not in zip,7z
                         Continue
                     If (A_LoopFileTimeModified > latestTime) {
+                        FileDelete %path%
                         latestTime := A_LoopFileTimeModified
                         , path := A_LoopFileFullPath
                     }
