@@ -115,6 +115,7 @@ return
     ;SI or SP or SE [v1.0.43+]: Sets the method by which auto-replace hotstrings send their keystrokes
     ;Z: This rarely-used option resets the hotstring recognizer after each triggering of the hotstring
     
+    ;typography
     ;:?:"<::«
     ;::ЭБ::«
     ;:?:">::»
@@ -122,10 +123,29 @@ return
     #Hotstring * ?0 C
     ::--- ::– `
     ::... ::… `
-    ::>= ::≥ `
-    ::<= ::≤ `
+    ;arrows
     ::<- ::← `
     ::-> ::→ `
+    ::-^ ::↑ `
+    ::v- ::↓ `
+    ;double arrows
+    ::[<=>] ::⇔ `
+    ::[<=] ::⇐ `
+    ::[=>] ::⇒ `
+    ;math
+    ::>= ::≥ `
+    ::<= ::≤ `
+    ::[!=] ::≠ `
+    ::[==] ::≡ `
+    ::[~=] ::≅ `
+    ::[~~] ::≈ `
+    ::[+-] ::± `
+    ;physics
+    ::[ps] ::㎰ ` ; U+33B0 e3 8e b0 	SQUARE PS
+    ::[ns] ::㎱ ` ; U+33B1 e3 8e b1 	SQUARE NS
+    ::[us] ::㎲ ` ; U+33B2 e3 8e b2 	SQUARE MU L
+    ::[ms] ::㎳ ` ; U+33B3 e3 8e b3 	SQUARE MS
+    ;other
     ::[ ] ::☐ ` ; U+2610 e2 98 90 	BALLOT BOX
     ::[v] ::☑ ` ; U+2611 e2 98 91 	BALLOT BOX WITH CHECK
     ::[X] ::☒ ` ; U+2612 e2 98 92 	BALLOT BOX WITH X
@@ -137,6 +157,134 @@ return
     ::_*x*_ ::🗶 ` ; U+1F5F6 f0 9f 97 b6 	BALLOT BOLD SCRIPT X
     ::[_*x*_] ::🗷 ` ; U+1F5F7 f0 9f 97 b7 	BALLOT BOX WITH BOLD SCRIPT X
     ::[V] ::🗹 ` ; U+1F5F9 f0 9f 97 b9 	BALLOT BOX WITH BOLD CHECK
+    ::[y] ::🗸 ` ; U+1F5F8 f0 9f 97 b8 	BALLOT BOX WITH CHECK
+    ::[b*] ::★ ` ; U+2605 e2 98 85 	BLACK STAR
+    ::[w*] ::☆ ` ; U+2606 e2 98 86 	WHITE STAR
+    ::[0100] ::🕐 ` ; U+1F550 f0 9f 95 90 	CLOCK FACE ONE OCLOCK
+    ::[0200] ::🕑 ` ; U+1F551 f0 9f 95 91 	CLOCK FACE TWO OCLOCK
+    ::[0300] ::🕒 ` ; U+1F552 f0 9f 95 92 	CLOCK FACE THREE OCLOCK
+    ::[0400] ::🕓 ` ; U+1F553 f0 9f 95 93 	CLOCK FACE FOUR OCLOCK
+    ::[0500] ::🕔 ` ; U+1F554 f0 9f 95 94 	CLOCK FACE FIVE OCLOCK
+    ::[0600] ::🕕 ` ; U+1F555 f0 9f 95 95 	CLOCK FACE SIX OCLOCK
+    ::[0700] ::🕖 ` ; U+1F556 f0 9f 95 96 	CLOCK FACE SEVEN OCLOCK
+    ::[0800] ::🕗 ` ; U+1F557 f0 9f 95 97 	CLOCK FACE EIGHT OCLOCK
+    ::[0900] ::🕘 ` ; U+1F558 f0 9f 95 98 	CLOCK FACE NINE OCLOCK
+    ::[1000] ::🕙 ` ; U+1F559 f0 9f 95 99 	CLOCK FACE TEN OCLOCK
+    ::[1100] ::🕚 ` ; U+1F55A f0 9f 95 9a 	CLOCK FACE ELEVEN OCLOCK
+    ::[1200] ::🕛 ` ; U+1F55B f0 9f 95 bb 	CLOCK FACE TWELVE OCLOCK
+    ::(A) ::Ⓐ ` ; U+24B6 e2 92 b6 	CIRCLED LATIN CAPITAL LETTER A
+    ::(B) ::Ⓑ ` ; U+24B7 e2 92 b7 	CIRCLED LATIN CAPITAL LETTER B
+    ::(C) ::Ⓒ ` ; U+24B8 e2 92 b8 	CIRCLED LATIN CAPITAL LETTER C
+    ::(D) ::Ⓓ ` ; U+24B9 e2 92 b9 	CIRCLED LATIN CAPITAL LETTER D
+    ::(E) ::Ⓔ ` ; U+24BA e2 92 ba 	CIRCLED LATIN CAPITAL LETTER E
+    ::(F) ::Ⓕ ` ; U+24BB e2 92 bb 	CIRCLED LATIN CAPITAL LETTER F
+    ::(G) ::Ⓖ ` ; U+24BC e2 92 bc 	CIRCLED LATIN CAPITAL LETTER G
+    ::(H) ::Ⓗ ` ; U+24BD e2 92 bd 	CIRCLED LATIN CAPITAL LETTER H
+    ::(I) ::Ⓘ ` ; U+24BE e2 92 be 	CIRCLED LATIN CAPITAL LETTER I
+    ::(J) ::Ⓙ ` ; U+24BF e2 92 bf 	CIRCLED LATIN CAPITAL LETTER J
+    ::(K) ::Ⓚ ` ; U+24C0 e2 93 80 	CIRCLED LATIN CAPITAL LETTER K
+    ::(L) ::Ⓛ ` ; U+24C1 e2 93 81 	CIRCLED LATIN CAPITAL LETTER L
+    ::(M) ::Ⓜ ` ; U+24C2 e2 93 82 	CIRCLED LATIN CAPITAL LETTER M
+    ::(N) ::Ⓝ ` ; U+24C3 e2 93 83 	CIRCLED LATIN CAPITAL LETTER N
+    ::(O) ::Ⓞ ` ; U+24C4 e2 93 84 	CIRCLED LATIN CAPITAL LETTER O
+    ::(P) ::Ⓟ ` ; U+24C5 e2 93 85 	CIRCLED LATIN CAPITAL LETTER P
+    ::(Q) ::Ⓠ ` ; U+24C6 e2 93 86 	CIRCLED LATIN CAPITAL LETTER Q
+    ::(R) ::Ⓡ ` ; U+24C7 e2 93 87 	CIRCLED LATIN CAPITAL LETTER R
+    ::(S) ::Ⓢ ` ; U+24C8 e2 93 88 	CIRCLED LATIN CAPITAL LETTER S
+    ::(T) ::Ⓣ ` ; U+24C9 e2 93 89 	CIRCLED LATIN CAPITAL LETTER T
+    ::(U) ::Ⓤ ` ; U+24CA e2 93 8a 	CIRCLED LATIN CAPITAL LETTER U
+    ::(V) ::Ⓥ ` ; U+24CB e2 93 8b 	CIRCLED LATIN CAPITAL LETTER V
+    ::(W) ::Ⓦ ` ; U+24CC e2 93 8c 	CIRCLED LATIN CAPITAL LETTER W
+    ::(X) ::Ⓧ ` ; U+24CD e2 93 8d 	CIRCLED LATIN CAPITAL LETTER X
+    ::(Y) ::Ⓨ ` ; U+24CE e2 93 8e 	CIRCLED LATIN CAPITAL LETTER Y
+    ::(Z) ::Ⓩ ` ; U+24CF e2 93 8f 	CIRCLED LATIN CAPITAL LETTER Z
+    ::(a) ::ⓐ ` ; U+24D0 e2 93 90 	CIRCLED LATIN SMALL LETTER A
+    ::(b) ::ⓑ ` ; U+24D1 e2 93 91 	CIRCLED LATIN SMALL LETTER B
+    ::(c) ::ⓒ ` ; U+24D2 e2 93 92 	CIRCLED LATIN SMALL LETTER C
+    ::(d) ::ⓓ ` ; U+24D3 e2 93 93 	CIRCLED LATIN SMALL LETTER D
+    ::(e) ::ⓔ ` ; U+24D4 e2 93 94 	CIRCLED LATIN SMALL LETTER E
+    ::(f) ::ⓕ ` ; U+24D5 e2 93 95 	CIRCLED LATIN SMALL LETTER F
+    ::(g) ::ⓖ ` ; U+24D6 e2 93 96 	CIRCLED LATIN SMALL LETTER G
+    ::(h) ::ⓗ ` ; U+24D7 e2 93 97 	CIRCLED LATIN SMALL LETTER H
+    ::(i) ::ⓘ ` ; U+24D8 e2 93 98 	CIRCLED LATIN SMALL LETTER I
+    ::(j) ::ⓙ ` ; U+24D9 e2 93 99 	CIRCLED LATIN SMALL LETTER J
+    ::(k) ::ⓚ ` ; U+24DA e2 93 9a 	CIRCLED LATIN SMALL LETTER K
+    ::(l) ::ⓛ ` ; U+24DB e2 93 9b 	CIRCLED LATIN SMALL LETTER L
+    ::(m) ::ⓜ ` ; U+24DC e2 93 9c 	CIRCLED LATIN SMALL LETTER M
+    ::(n) ::ⓝ ` ; U+24DD e2 93 9d 	CIRCLED LATIN SMALL LETTER N
+    ::(o) ::ⓞ ` ; U+24DE e2 93 9e 	CIRCLED LATIN SMALL LETTER O
+    ::(p) ::ⓟ ` ; U+24DF e2 93 9f 	CIRCLED LATIN SMALL LETTER P
+    ::(q) ::ⓠ ` ; U+24E0 e2 93 a0 	CIRCLED LATIN SMALL LETTER Q
+    ::(r) ::ⓡ ` ; U+24E1 e2 93 a1 	CIRCLED LATIN SMALL LETTER R
+    ::(s) ::ⓢ ` ; U+24E2 e2 93 a2 	CIRCLED LATIN SMALL LETTER S
+    ::(t) ::ⓣ ` ; U+24E3 e2 93 a3 	CIRCLED LATIN SMALL LETTER T
+    ::(u) ::ⓤ ` ; U+24E4 e2 93 a4 	CIRCLED LATIN SMALL LETTER U
+    ::(v) ::ⓥ ` ; U+24E5 e2 93 a5 	CIRCLED LATIN SMALL LETTER V
+    ::(w) ::ⓦ ` ; U+24E6 e2 93 a6 	CIRCLED LATIN SMALL LETTER W
+    ::(x) ::ⓧ ` ; U+24E7 e2 93 a7 	CIRCLED LATIN SMALL LETTER X
+    ::(y) ::ⓨ ` ; U+24E8 e2 93 a8 	CIRCLED LATIN SMALL LETTER Y
+    ::(z) ::ⓩ ` ; U+24E9 e2 93 a9 	CIRCLED LATIN SMALL LETTER Z
+    ::(0) ::⓪ ` ; U+24EA e2 93 aa 	CIRCLED DIGIT ZERO
+    ::(1) ::① ` ; U+2460 e2 91 a0 	CIRCLED DIGIT ONE
+    ::(2) ::② ` ; U+2461 e2 91 a1 	CIRCLED DIGIT TWO
+    ::(3) ::③ ` ; U+2462 e2 91 a2 	CIRCLED DIGIT THREE
+    ::(4) ::④ ` ; U+2463 e2 91 a3 	CIRCLED DIGIT FOUR
+    ::(5) ::⑤ ` ; U+2464 e2 91 a4 	CIRCLED DIGIT FIVE
+    ::(6) ::⑥ ` ; U+2465 e2 91 a5 	CIRCLED DIGIT SIX
+    ::(7) ::⑦ ` ; U+2466 e2 91 a6 	CIRCLED DIGIT SEVEN
+    ::(8) ::⑧ ` ; U+2467 e2 91 a7 	CIRCLED DIGIT EIGHT
+    ::(9) ::⑨ ` ; U+2468 e2 91 a8 	CIRCLED DIGIT NINE
+    ::(10) ::⑩ ` ; U+2469 e2 91 a9 	CIRCLED NUMBER TEN
+    ::(11) ::⑪ ` ; U+246a e2 91 aa 	CIRCLED NUMBER ELEVEN
+    ::(12) ::⑫ ` ; U+246b e2 91 ab 	CIRCLED NUMBER TWELVE
+    ::(13) ::⑬ ` ; U+246c e2 91 ac 	CIRCLED NUMBER THIRTEEN
+    ::(14) ::⑭ ` ; U+246d e2 91 ad 	CIRCLED NUMBER FOURTEEN
+    ::(15) ::⑮ ` ; U+246e e2 91 ae 	CIRCLED NUMBER FIFTEEN
+    ::(16) ::⑯ ` ; U+246f e2 91 af 	CIRCLED NUMBER SIXTEEN
+    ::(17) ::⑰ ` ; U+2470 e2 91 b0 	CIRCLED NUMBER SEVENTEEN
+    ::(18) ::⑱ ` ; U+2471 e2 91 b1 	CIRCLED NUMBER EIGHTEEN
+    ::(19) ::⑲ ` ; U+2472 e2 91 b2 	CIRCLED NUMBER NINETEEN
+    ::(20) ::⑳ ` ; U+2473 e2 91 b3 	CIRCLED NUMBER TWENTY
+    ::(21) ::㉑ ` ; U+3251 e3 89 91 	CIRCLED NUMBER TWENTY ONE
+    ::(22) ::㉒ ` ; U+3252 e3 89 92 	CIRCLED NUMBER TWENTY TWO
+    ::(23) ::㉓ ` ; U+3253 e3 89 93 	CIRCLED NUMBER TWENTY THREE
+    ::(24) ::㉔ ` ; U+3254 e3 89 94 	CIRCLED NUMBER TWENTY FOUR
+    ::(25) ::㉕ ` ; U+3255 e3 89 95 	CIRCLED NUMBER TWENTY FIVE
+    ::(26) ::㉖ ` ; U+3256 e3 89 96 	CIRCLED NUMBER TWENTY SIX
+    ::(27) ::㉗ ` ; U+3257 e3 89 97 	CIRCLED NUMBER TWENTY SEVEN
+    ::(28) ::㉘ ` ; U+3258 e3 89 98 	CIRCLED NUMBER TWENTY EIGHT
+    ::(29) ::㉙ ` ; U+3259 e3 89 99 	CIRCLED NUMBER TWENTY NINE
+    ::(30) ::㉚ ` ; U+325a e3 89 9a 	CIRCLED NUMBER THIRTY
+    ::(31) ::㉛ ` ; U+325b e3 89 9b 	CIRCLED NUMBER THIRTY ONE
+    ::(32) ::㉜ ` ; U+325c e3 89 9c 	CIRCLED NUMBER THIRTY TWO
+    ::(33) ::㉝ ` ; U+325d e3 89 9d 	CIRCLED NUMBER THIRTY THREE
+    ::(34) ::㉞ ` ; U+325e e3 89 9e 	CIRCLED NUMBER THIRTY FOUR
+    ::(35) ::㉟ ` ; U+325f e3 89 9f 	CIRCLED NUMBER THIRTY FIVE
+    ::(36) ::㊱ ` ; U+32b1 e3 8a b1 	CIRCLED NUMBER THIRTY SIX
+    ::(37) ::㊲ ` ; U+32b2 e3 8a b2 	CIRCLED NUMBER THIRTY SEVEN
+    ::(38) ::㊳ ` ; U+32b3 e3 8a b3 	CIRCLED NUMBER THIRTY EIGHT
+    ::(39) ::㊴ ` ; U+32b4 e3 8a b4 	CIRCLED NUMBER THIRTY NINE
+    ::(40) ::㊵ ` ; U+32b5 e3 8a b5 	CIRCLED NUMBER FORTY
+    ::(41) ::㊶ ` ; U+32b6 e3 8a b6 	CIRCLED NUMBER FORTY ONE
+    ::(42) ::㊷ ` ; U+32b7 e3 8a b7 	CIRCLED NUMBER FORTY TWO
+    ::(43) ::㊸ ` ; U+32b8 e3 8a b8 	CIRCLED NUMBER FORTY THREE
+    ::(44) ::㊹ ` ; U+32b9 e3 8a b9 	CIRCLED NUMBER FORTY FOUR
+    ::(45) ::㊺ ` ; U+32ba e3 8a ba 	CIRCLED NUMBER FORTY FIVE
+    ::(46) ::㊻ ` ; U+32bb e3 8a bb 	CIRCLED NUMBER FORTY SIX
+    ::(47) ::㊼ ` ; U+32bc e3 8a bc 	CIRCLED NUMBER FORTY SEVEN
+    ::(48) ::㊽ ` ; U+32bd e3 8a bd 	CIRCLED NUMBER FORTY EIGHT
+    ::(49) ::㊾ ` ; U+32be e3 8a be 	CIRCLED NUMBER FORTY NINE
+    ::(50) ::㊿ ` ; U+32bf e3 8a bf 	CIRCLED NUMBER FIFTY
+    ::[10] ::㉈ ` ; U+3248 e3 89 88 	circled number ten on black square
+    ::[20] ::㉉ ` ; U+3249 e3 89 89 	circled number twenty on black square
+    ::[30] ::㉊ ` ; U+324A e3 89 8a 	circled number thirty on black square
+    ::[40] ::㉋ ` ; U+324B e3 89 8b 	circled number forty on black square
+    ::[50] ::㉌ ` ; U+324C e3 89 8c 	circled number fifty on black square
+    ::[60] ::㉍ ` ; U+324D e3 89 8d 	circled number sixty on black square
+    ::[70] ::㉎ ` ; U+324E e3 89 8e 	circled number seventy on black square
+    ::[80] ::㉏ ` ; U+324F e3 89 8f 	circled number eighty on black square
+    
+
     #Hotstring *0 ?0 C0 Z0
 #IfWinActive
 
@@ -321,7 +469,8 @@ FillDelayedRunGroups() {
                                             , "^+VK45":  [notepad2exe, """" hotkeys_custom_ahk """"]             ;vk45=e ^+e
                                             , "#VK57":   AU3_SpyExecArray                                        ;vk57=w #w
                                             , "#VK52":   [A_ScriptDir "\LiceCapResize.ahk",,""]                  ;vk52=r #r
-                                            , "#VK50":   [A_AhkPath, A_ScriptDir "\putty_smartact.ahk"]          ;vk50=p #p
+                                            , "#VK43":   [A_ScriptDir "\putty_connect.ahk"]                      ;vk43=c #c
+                                            , "#VK50":   [A_ScriptDir "\putty_smartact.ahk"]                     ;vk50=p #p
                                             , "#+VK44":  [A_ScriptDir "\Dropbox.ahk"]                            ;vk44=d #+d
                                             , "F1":      [A_ScriptDir "\F1.ahk"]
                                             , "+F1":     [A_ScriptDir "\AutohotkeyHelp.ahk"] } }
