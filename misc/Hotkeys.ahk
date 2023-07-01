@@ -70,7 +70,7 @@ For i, exe64suffix in (A_Is64bitOS ? ["64", ""] : [""]) {
                                   , laPrograms "\SysInternals\procexp" exe64suffix ".exe"
                                   , SystemDrive "\SysUtils\SysInternals\procexp" exe64suffix ".exe")
 }
-vscode := A_ScriptDir "\vscode.ahk"
+vscode := A_ScriptDir "\vscode-any.ahk"
 notepad2exe := FirstExisting(laPrograms "\Total Commander\notepad2.exe"
                            , totalcmdexe "\..\notepad2.exe"
                            , ProgramFiles "\notepad2\notepad2.exe"
@@ -308,7 +308,8 @@ return
 #!.::               Send →                                    ;Win+Alt+>   #!>
 #+VK44::            Send %A_YYYY%-%A_MM%-%A_DD%               ;vk44=d      #+d
 #+VK54::            Send %A_Hour%%A_Min%                      ;vk54=t      #+t
-#NumpadSub::        Send –
+#NumpadSub::        Send – ; en dash
+#+NumpadSub::       Send — ; em dash
 #NumPadMult::       Send ×
 #+NumPadMult::      Send ⋆
 #!NumPadMult::      Send ☆

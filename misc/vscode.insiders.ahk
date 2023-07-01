@@ -4,7 +4,8 @@
 ; ahk_exe Code.exe
 
 SetTitleMatchMode RegEx
-GroupAdd vscode, - Visual Studio Code$ ahk_class ^Chrome_WidgetWin_1$ ahk_exe Code\.exe
+;GroupAdd vscode, - Visual Studio Code$ ahk_class ^Chrome_WidgetWin_1$ ahk_exe Code\.exe
+GroupAdd vscode, - Visual Studio Code - Insiders$ ahk_class ^Chrome_WidgetWin_1$ ahk_exe Code - Insiders.exe
 
 vscodeRunning := WinExist("ahk_group vscode")
 installScripts := [A_ScriptDir "\vscode-update.insiders.ahk"]
