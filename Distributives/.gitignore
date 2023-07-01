@@ -1,7 +1,8 @@
 temp
 latest_assets.json
-*.exe
 *.7z
-*.zip
 *.bz2
+*.exe
 *.msi
+*.rar
+*.zip

@@ -41,6 +41,7 @@ IF NOT DEFINED wgetexe CALL findexe.cmd wgetexe wget.exe "%LOCALAPPDATA%\Program
 CALL :parseMasks %noarchmasks%
 )
 (
+    MKDIR "%workdir%"
     IF EXIST "%srcpath%%sitename%.7z" (
 	%exe7z% x -aoa -o"%workdir%" -- "%srcpath%%sitename%.7z"
     ) ELSE IF EXIST "%srcpath%%sitename%.rar" %exe7z% x -aoa -o"%workdir%" -- "%srcpath%%sitename%.rar"

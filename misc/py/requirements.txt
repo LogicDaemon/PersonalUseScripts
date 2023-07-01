@@ -1,5 +1,6 @@
 appdirs
 requests
+pywin32
 
 #gevent
 #rich
