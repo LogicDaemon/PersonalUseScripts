@@ -13,8 +13,10 @@ SETLOCAL ENABLEEXTENSIONS
 )
 IF "%OSWordSize%"=="64" (
     SET "exenameahk=AutoHotkeyU64.exe"
+    IF NOT DEFINED exe7z SET "exe7z=%~dp0..\..\PreInstalled\utils\7za64.exe"
 ) ELSE (
     SET "exenameahk=AutoHotkey.exe"
+    IF NOT DEFINED exe7z SET "exe7z=%~dp0..\..\PreInstalled\utils\7za.exe"
 )
 (
     FOR /F "usebackq delims=" %%A IN (`DIR /O-D /B "%~dp0AutoHotkey_*.zip"`) DO @(
