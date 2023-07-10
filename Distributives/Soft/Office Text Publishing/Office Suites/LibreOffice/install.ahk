@@ -6,9 +6,9 @@ Menu Tray, Tip, %textTrayTip%
 
 EnvGet RunInteractiveInstalls,RunInteractiveInstalls
 If (!A_IsAdmin) {
-    If (RunInteractiveInstalls!=0) {
-	ScriptRunCommand:=DllCall( "GetCommandLine", "Str" )
-	Run *RunAs %ScriptRunCommand% ; Requires v1.0.92.01+
+    If (RunInteractiveInstalls!="0") {
+        ScriptRunCommand:=DllCall( "GetCommandLine", "Str" )
+        Run *RunAs %ScriptRunCommand% ; Requires v1.0.92.01+
     }
     ExitApp -1
 }
@@ -18,7 +18,8 @@ If (!RunInteractiveInstalls)
     AhkParm=/ErrorStdOut
 
 If (A_Is64bitOS)
-    distsToTry := [["64", "64-bit"]] ; [distSuffix, distSubdir]
+    distsToTry := [ ["86-64", "64-bit"]
+                   ,["64", "64-bit"] ] ; [distSuffix, distSubdir]
 Else
     distsToTry := []
 
@@ -28,7 +29,7 @@ For i, distToTry in distsToTry {
     distDir := FirstExisting(A_ScriptDir "\" distToTry[2], A_ScriptDir)
     HelpDistrMask := distDir "\LibreOffice_*_Win_x" distToTry[1] "_helppack_ru.msi"
     If (FileExist(DistributiveMask := distDir "\LibreOffice_*_Win_x" distToTry[1] ".msi"))
-	break
+        break
 }
 
 If (!DistributiveMask)
@@ -49,13 +50,13 @@ QuietInstall = /qn
 ;Searching distributives
 Loop %DistributiveMask%
     If A_LoopFileFullPath > %Distributive% ; * is less than any digit, so mask will go away first
-	Distributive:=A_LoopFileFullPath
+        Distributive:=A_LoopFileFullPath
 If Not Distributive
     CheckError(-1, "Not found distributive with mask """ . DistributiveMask . """, workdir: """ . A_WorkingDir . """")
 
 Loop %HelpDistrMask%
     If A_LoopFileFullPath > %HelpDistr% ; * is less than any digit, so mask will go away first
-	HelpDistr=%A_LoopFileFullPath%
+        HelpDistr=%A_LoopFileFullPath%
 ;If Not HelpDistr
 ;    CheckError(-1, "Not found helpfile distributive with mask """ . HelpDistrMask . """, workdir: """ . A_WorkingDir . """")
 
@@ -81,8 +82,8 @@ FileSetAttrib +H, %A_DesktopCommon%\LibreOffice *
 
 If (!ErrorsOccured) {
     If (HelpDistr) {
-	TrayTip %textTrayTip%, Offline Help MSI (HelpDistr)
-	ErrorsOccured := ErrorsOccured || InstallMSI(HelpDistr, QuietInstall)
+        TrayTip %textTrayTip%, Offline Help MSI (HelpDistr)
+        ErrorsOccured := ErrorsOccured || InstallMSI(HelpDistr, QuietInstall)
     }
     If FileExist(A_ScriptDir "\Install_Extensions.ahk") {
         Menu Tray, Tip, Installing Extensions
@@ -92,10 +93,10 @@ If (!ErrorsOccured) {
     }
 
     If (FileExist(A_ScriptDir "\SetDefaults.cmd")) {
-	Menu Tray, Tip, Setting up defaults
-	TrayTip %textTrayTip%, Setting up defaults
-	RunWait %comspec% /C "%A_ScriptDir%\SetDefaults.cmd",%A_ScriptDir%,Min UseErrorLevel
-	ErrorsOccured := ErrorsOccured || ErrorLevel
+        Menu Tray, Tip, Setting up defaults
+        TrayTip %textTrayTip%, Setting up defaults
+        RunWait %comspec% /C "%A_ScriptDir%\SetDefaults.cmd",%A_ScriptDir%,Min UseErrorLevel
+        ErrorsOccured := ErrorsOccured || ErrorLevel
     }
 }
 
@@ -110,32 +111,32 @@ InstallMSI(MSIFileFullPath, params) {
     
     SplitPath MSIFileFullPath, MSIFileName
     If (!logPath)
-	logPath=%A_TEMP%\%MSIFileName%.log
+        logPath=%A_TEMP%\%MSIFileName%.log
     Menu Tray, Tip, Installing %MSIFileFullPath%
 TryInstallAgain:
     RunWait %A_WinDir%\System32\msiexec.exe /i "%MSIFileFullPath%" %params% /norestart /l+* "%logPath%",, UseErrorLevel
 
     If (ErrorLevel==1618) { ; Another install is currently in progress
-	TrayTip %textTrayTip%, Error 1618: Another install currently in progress`, waiting 30 sec to repeat
-	Sleep 30000
-	GoTo TryInstallAgain
+        TrayTip %textTrayTip%, Error 1618: Another install currently in progress`, waiting 30 sec to repeat
+        Sleep 30000
+        GoTo TryInstallAgain
     }
     Menu Tray, Tip, %textTrayTip%
     
     If (ErrorLevel==3010) ;3010: restart required
-	return 0
+        return 0
     Else
-	return CheckError(ErrorLevel, MSIFileName)
+        return CheckError(ErrorLevel, MSIFileName)
 }
 
 CheckError(ReturnErrValue, Description) {
     Global RunInteractiveInstalls,logPath
     If (ReturnErrValue) {
-	FileAppend Error %ReturnErrValue% installing %Description%`nLog written to %logPath%, *
-	If (RunInteractiveInstalls!=0)
-	    MsgBox 48, LibreOffice Installing error, ErrorLevel: %ReturnErrValue%`n%Description%, 30
+        FileAppend Error %ReturnErrValue% installing %Description%`nLog written to %logPath%, *
+        If (RunInteractiveInstalls!=0)
+            MsgBox 48, LibreOffice Installing error, ErrorLevel: %ReturnErrValue%`n%Description%, 30
     } else {
-	FileAppend Finished installing %Description%`n, *
+        FileAppend Finished installing %Description%`n, *
     }
     return ReturnErrValue
 }
@@ -144,15 +145,15 @@ ReadListFromFile(filename) {
     out := ""
     Loop Read, %filename%
     {
-	out .= "," . Trim(A_LoopReadLine," `t`n`r")
+        out .= "," . Trim(A_LoopReadLine," `t`n`r")
     }
     return SubStr(out, 2) ; skipping first comma
 }
 
 FirstExisting(paths*) {
     for index,path in paths
-	If (FileExist(path))
-	    return path
+        If (FileExist(path))
+            return path
     
     return
 }
