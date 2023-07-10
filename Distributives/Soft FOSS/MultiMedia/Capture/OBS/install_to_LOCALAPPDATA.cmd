@@ -6,7 +6,7 @@ SETLOCAL ENABLEEXTENSIONS
     CALL find7zexe.cmd
     
     CALL :InitRemembering
-    FOR %%A IN ("%~dp0OBS-Studio-*-Full-x64.zip") DO CALL :RememberIfLatest dstfname "%%~A"
+    FOR %%A IN ("%~dp0OBS-Studio-*-Full-x64.zip" "%~dp0OBS-Studio-*-Full-Installer-x64.exe") DO CALL :RememberIfLatest dstfname "%%~A"
     IF NOT DEFINED dstfname EXIT /B 1
 )
 @(
@@ -17,7 +17,7 @@ EXIT /B
 )
 :install
 @(
-    %exe7z% x -xr!*.pdb -aos -y -o"%LOCALAPPDATA%\Programs\%~n1" -- "%~1" || EXIT /B
+    %exe7z% x -xr!*.pdb -x!"$APPDATA" -x!"$PLUGINSDIR" -x!"uninstall.exe.nsis" -aos -y -o"%LOCALAPPDATA%\Programs\%~n1" -- "%~1" || EXIT /B
     ECHO N|RMDIR "%LOCALAPPDATA%\Programs\obs-studio"
     ECHO N|DEL "%LOCALAPPDATA%\Programs\obs-studio"
     MKLINK /D "%LOCALAPPDATA%\Programs\obs-studio" "%LOCALAPPDATA%\Programs\%~n1" || MKLINK /J "%LOCALAPPDATA%\Programs\obs-studio" "%LOCALAPPDATA%\Programs\%~n1"
@@ -28,7 +28,7 @@ EXIT /B
 @(
     SET "dstfname="
     CALL :InitRemembering
-    FOR %%A IN ("%~1\*-win64.zip") DO CALL :RememberIfLatest dstfname "%%~A"
+    FOR %%A IN ("%~1\*-win64.zip" "%~1\*-win64.7z" "%~1\*-win64.rar") DO CALL :RememberIfLatest dstfname "%%~A"
     IF NOT DEFINED dstfname EXIT /B 1
 )
 @(
