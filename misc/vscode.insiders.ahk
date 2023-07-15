@@ -31,6 +31,7 @@ Loop {
 SplitPath vscodeexe,, vscodedir
 EnvGet PATH, PATH
 EnvSet PATH, %PATH%;%vscodedir%
+PrependPaths()
 Run "%vscodeexe%" %scriptcmdln%
 
 ; If (!vscodeRunning && ((removehp && RegWriteUserEnv("http_proxy", "")) + (removehps && RegWriteUserEnv("https_proxy", "")))) ; + is like OR but with mandatory execution for both args
@@ -38,5 +39,6 @@ Run "%vscodeexe%" %scriptcmdln%
 
 ExitApp
 
+#include %A_LineFile%\..\vscode.lib.ahk
 #include <RegWriteUserEnv>
 #include <ParseScriptCommandLine>
