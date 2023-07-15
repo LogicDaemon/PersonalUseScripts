@@ -1,6 +1,0 @@
-rufus-2.18.exe
-
-This file has been downloaded from:
-http://rufus.akeo.ie/downloads/rufus-2.18.exe
-
-Date: 21.11.2017, 15:02

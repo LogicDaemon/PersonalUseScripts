@@ -9,12 +9,15 @@ SETLOCAL ENABLEEXTENSIONS
 @(
     CALL :cleanup
     FOR /F "usebackq delims=" %%A IN (`DIR /B /A-D /O-D "faf_windows-x64_*.zip"`) DO @(
-        %exe7z% x -o"%destDir%\temp" -- "%%~A" || EXIT /B
+        %exe7z% x -o"%destDir%\temp" -- "%%~A" steam_appid.txt || EXIT /B
         FOR /D %%B IN ("%destDir%\temp\*.*") DO @(
             IF EXIST "%destDir%\%%~nxB" (
                 ECHO Version %%~nxB exists in "%destDir%\%%~nxB", not replacing contents
                 SET "nocleanup=1"
+                DEL "%%~B\steam_appid.txt"
+                RD "%%~B"
             ) ELSE (
+                %exe7z% x -aoa -o"%destDir%\temp" -- "%%~A" || EXIT /B
                 MOVE /Y "%%~B" "%destDir%\%%~nxB"
             )
             ECHO Updating the link to version %%~nxB

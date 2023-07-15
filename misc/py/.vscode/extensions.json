@@ -4,7 +4,6 @@
                 "aykutsarac.jsoncrack-vscode",
                 "dbankier.vscode-quick-select",
                 "donjayamanne.python-environment-manager",
-                "hediet.debug-visualizer",
                 "ibm.output-colorizer",
                 "janisdd.vscode-edit-csv",
                 "jeff-hykin.macro-commander",
@@ -21,6 +20,6 @@
                 "tabnine.tabnine-vscode",
                 "tobias-faller.vt100-syntax-highlighting",
                 "weijunyu.vscode-json-path",
-                "wraith13.multi-encode",
+                "wraith13.multi-encode"
         ]
 }

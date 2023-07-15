@@ -1,6 +1,0 @@
-rufus-3.4p.exe
-
-This file has been downloaded from:
-https://github-production-release-asset-2e65be.s3.amazonaws.com/2810292/4c208e00-f8ae-11e8-8c94-580d9259e8ff?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20190325%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20190325T093610Z&X-Amz-Expires=300&X-Amz-Signature=d5270b59db75b2adbe746da80afa1c10ea502b62b4a6114f521d906cbedbac6a&X-Amz-SignedHeaders=host&actor_id=0&response-content-disposition=attachment%3B%20filename%3Drufus-3.4p.exe&response-content-type=application%2Foctet-stream
-
-Date: 25.03.2019, 12:36

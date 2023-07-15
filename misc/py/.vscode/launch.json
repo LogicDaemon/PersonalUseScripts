@@ -14,39 +14,6 @@
                         "env": {
                                 "GEVENT_SUPPORT": "True"
                         },
-                },
-                {
-                        "name": "embed passport\\*.jpg watermarked",
-                        "type": "python",
-                        "request": "launch",
-                        "program": "${file}",
-                        "console": "integratedTerminal",
-                        "justMyCode": true,
-                        "args": [
-                                "embed",
-                                "passport\\*.jpg",
-                                "watermarked"
-                        ],
-                        "env": {
-                                "GEVENT_SUPPORT": "True"
-                        },
-                },
-                {
-                        "name": "set_older_datetimes_for_same_files.py",
-                        "type": "python",
-                        "request": "launch",
-                        "program": "set_older_datetimes_for_same_files/set_older_datetimes_for_same_files.py",
-                        "args": [
-                                "v:\\Distributives\\",
-                                "D:\\Users\\LogicDaemon\\Documents\\github.com\\logicdaemon\\PersonalUseScripts\\Distributives\\",
-                                "--dry-run",
-                                "--debug",
-                        ],
-                        "console": "integratedTerminal",
-                        "justMyCode": true,
-                        "env": {
-                                "GEVENT_SUPPORT": "True"
-                        },
-                },
+                }
         ]
 }
