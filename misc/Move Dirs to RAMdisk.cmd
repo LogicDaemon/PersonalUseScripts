@@ -33,6 +33,7 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
 
     IF NOT EXIST "%USERPROFILE%" EXIT /B
 
+    SET "tryRenaming=1"
     MKDIR "%RAMDrive%\Temp\obs-studio\crashes"
     MKDIR "%RAMDrive%\Temp\obs-studio\plugin_config\obs-browser"
     MKDIR "%RAMDrive%\Temp\obs-studio\plugin_config\obs-browsers"
@@ -62,9 +63,14 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Microsoft\Windows\Notifications"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Microsoft\Windows\WebCache"
 
-    rem CALL :MoveToRAMDrive "%APPDATA%\..\LocalLow"
+    rem CALL :MoveToRAMDrive "%APPDATA%\AppData\LocalLow\LocalLow"
+    CALL :MoveToRAMDrive "%USERPROFILE%\AppData\LocalLow\webviewdata"
+    CALL :MoveToRAMDrive "%USERPROFILE%\AppData\LocalLow\Sun\Java\Deployment\cache"
+    CALL :MoveToRAMDrive "%USERPROFILE%\AppData\LocalLow\Sun\Java\Deployment\tmp"
+    CALL :MoveToRAMDrive "%USERPROFILE%\AppData\LocalLow\Sun\Java\Deployment\log"
     CALL :MoveToRAMDrive "%USERPROFILE%\.cache"
-    CALL :MoveToRAMDrive "%USERPROFILE%\.openjfx\cache"
+    REM DLLs there
+    rem CALL :MoveToRAMDrive "%USERPROFILE%\.openjfx\cache"
     
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Battle.net\BrowserCache"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Battle.net\Cache"
@@ -93,11 +99,27 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\VEGAS"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Programs\Tor Browser\Browser\TorBrowser\Data\Browser\Caches"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Programs\Tor Browser\Browser\TorBrowser\Data\Browser\profile.default\storage"
+    CALL :MoveToRAMDrive "%LOCALAPPDATA%\Programs\jdownloader\logs"
+    CALL :MoveToRAMDrive "%LOCALAPPDATA%\Programs\jdownloader\tmp"
         
 rem     CALL :MoveToRAMDrive 
     
-    FOR /D %%P IN ("%LOCALAPPDATA%\Mozilla\Firefox\Profiles\*") DO CALL :MoveToRAMDrive "%%~P"
-    FOR /D %%P IN ("%LOCALAPPDATA%\Packages\*") DO (
+    FOR /D %%P IN ("%LOCALAPPDATA%\Mozilla\Firefox\Profiles\*") DO @CALL :MoveToRAMDrive "%%~P"
+    
+    FOR %%B IN ("%LOCALAPPDATA%\Google\Chrome" "%LOCALAPPDATA%\Google\Chrome Beta" "%LOCALAPPDATA%\Chromium" "%LOCALAPPDATA%\Vivaldi") DO @(
+        FOR /D %%P IN ("%%~B\User Data\Default" "%%~B\User Data\Profile *" "%%~B\User Data\Guest Profile" "%%~B\User Data\Guest Profile") DO @(
+            FOR /D %%E IN ("%%~P" "%%~P\Storage\ext\*") DO (
+                FOR /F "usebackq delims=" %%A IN ("%~dp0Chrome_Profile_Temporary.txt") DO @IF EXIST "%%~E\%%~A" CALL :MoveToRAMDrive "%%~E\%%~A"
+            )
+        )
+        FOR /D %%C IN ("%%~B\User Data\Crashpad" "%%~B\User Data\ShaderCache") DO @(
+            IF EXIST "%%~C" CALL :MoveToRAMDrive "%%~C"
+        )
+        IF EXIST "%%~P\User Data\Crashpad" CALL :MoveToRAMDrive "%%~B\User Data\Crashpad"
+    )
+
+    SET "tryRenaming="
+    FOR /D %%P IN ("%LOCALAPPDATA%\Packages\*") DO @(
         CALL :MoveToRAMDrive "%%~P\AC\INetCache"
         CALL :MoveToRAMDrive "%%~P\AC\INetHistory"
         CALL :MoveToRAMDrive "%%~P\AC\Temp"
@@ -105,19 +127,11 @@ rem     CALL :MoveToRAMDrive
         CALL :MoveToRAMDrive "%%~P\LocalState\LiveTile"
         CALL :MoveToRAMDrive "%%~P\TempState"
     )
-    
-    FOR %%B IN ("%LOCALAPPDATA%\Google\Chrome" "%LOCALAPPDATA%\Google\Chrome Beta" "%LOCALAPPDATA%\Chromium" "%LOCALAPPDATA%\Vivaldi") DO @(
-        FOR /D %%P IN ("%%~B\User Data\Default" "%%~B\User Data\Profile *") DO @(
-            FOR /D %%E IN ("%%~P" "%%~P\Storage\ext\*") DO (
-                FOR /F "usebackq delims=" %%A IN ("%~dp0Chrome_Profile_Temporary.txt") DO IF EXIST "%%~E\%%~A" CALL :MoveToRAMDrive "%%~E\%%~A"
-            )
-        )
-    )
     CALL :CopyPermissions "%USERPROFILE%"
     EXIT /B
 )
 :MoveToRAMDrive <src_path> <dest_drive>
-(
+@(
     IF "%~2"=="" ( CALL :LinkBack %1 "%RAMDrive%%~pnx1" ) ELSE ( CALL :LinkBack %1 "%~2%~pnx1" )
 EXIT /B
 )
@@ -128,19 +142,13 @@ EXIT /B
 )
 :LinkBack <source> <destination>
 (
-    IF EXIST "%~1\*" IF NOT EXIST %2 (
-	IF NOT EXIST "%~dp2" MKDIR "%~dp2"
-	IF NOT EXIST "%~dp2" EXIT /B
-	MOVE /Y %1 %2
-    )
-    IF NOT EXIST %2 MKDIR %2
+    IF NOT EXIST %2 IF EXIST "%~1\*.*" MOVE /Y %1 %2
+    IF NOT EXIST %2 MKDIR "%~dp2"
     IF NOT EXIST %2 EXIT /B
     RD /Q %1
-    MKLINK /D %1 %2 || MKLINK /J %1 %2 || IF DEFINED xlnexe (
-        %xlnexe% -n %2 %1 || (
-            RD /S /Q %1
-            xln.exe -n %2 %1
-        )
-    )
+    IF EXIST %1 ECHO N|DEL %1
+    IF DEFINED tryRenaming IF EXIST %1 MOVE %1 "%1.LINKED_FROM_RAM_DISK_%DATE%_%TIME::=%" || EXIT /B
+    IF EXIST %1 EXIT /B
+    MKLINK /D %1 %2 || MKLINK /J %1 %2 || %xlnexe% -n %2 %1
 EXIT /B
 )

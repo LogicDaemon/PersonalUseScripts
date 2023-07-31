@@ -25,10 +25,15 @@ For i, procName in killProcesses {
     }
 }
 
+If (FileExist("w:\FileHistory\" A_UserName)) {
+    Loop Files, w:\FileHistory\%A_UserName%\*.*, D
+        CompactCompressible(A_LoopFileFullPath "\Data")
+}
+
 If (A_IsAdmin) {
     SetWorkingDir %A_ScriptDir%
     Run "%A_AhkPath%" "%A_ScriptDir%\vscode-update.ahk"
-    Run "%A_AhkPath%" "%A_ScriptDir%\vscode-update.insiders.ahk"
+    Run "%A_AhkPath%" "%A_ScriptDir%\vscode-insiders-update.ahk"
     Run "%A_AhkPath%" "%A_ScriptDir%\update_go.ahk"
     Run "%A_AhkPath%" "%A_ScriptDir%\update_KeePass.ahk"
     
@@ -37,4 +42,60 @@ If (A_IsAdmin) {
     RunWait %comspec% /C "%A_ScriptDir%\update-git-for-windows.cmd",, Min
     RunWait %comspec% /C "%A_ScriptDir%\update_aws_cli.cmd",, Min
     RunWait %comspec% /C "%A_ScriptDir%\update_obs.cmd",, Min
+}
+
+ExitApp
+
+CompactCompressible(dir) {
+    definitelyCompress :=   { "js": ""
+                            , "json": ""
+                            , "md": ""
+                            , "ts": ""
+                            , "txt": ""
+                            , "xml": ""
+                            , "yml": ""
+                            , "pyi": ""
+                            , "yaml": "" }
+    definitelyIgnore := { "7z": ""
+                        , "aac": ""
+                        , "ape": ""
+                        , "avi": ""
+                        , "bz2": ""
+                        , "cab": ""
+                        , "flac": ""
+                        , "flv": ""
+                        , "gif": ""
+                        , "gz": ""
+                        , "jpeg": ""
+                        , "jpg": ""
+                        , "m4a": ""
+                        , "m4v": ""
+                        , "mkv": ""
+                        , "mov": ""
+                        , "mp3": ""
+                        , "mp4": ""
+                        , "ogg": ""
+                        , "png": ""
+                        , "rar": ""
+                        , "webm": ""
+                        , "wma": ""
+                        , "wmv": ""
+                        , "xz": ""
+                        , "zip": "" }
+    Loop Files, %dir%\*.*, FD
+    {
+        If (InStr(A_LoopFileAttrib, "D")) {
+            CompactCompressible(A_LoopFileFullPath)
+            Continue
+        }
+        If (definitelyIgnore.HasKey(A_LoopFileExt))
+            Continue
+        If (definitelyCompress.HasKey(A_LoopFileExt)) {
+            compress := definitelyCompress[A_LoopFileExt]
+        }
+        ; ToDo: collect statistics for remaining files
+        If (!compress)
+            compress := "/EXE:LZX"
+        RunWait compact.exe /C /EXE:LZX "%A_LoopFileFullPath%",, Hide UseErrorLevel
+    }
 }

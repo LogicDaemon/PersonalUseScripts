@@ -22,7 +22,7 @@ WM_MENUSELECT:=0x011F
 WindowSplitSize:=[1.2, 1.5, 1920/1024, 2, 2.5]
 magnitudeSeq:=WindowSplitSize.MinIndex()
 
-SplitPath A_AhkPath,, A_AhkDir
+SplitPath A_AhkPath,, AhkExeDir
 EnvGet ProgramFilesx86, ProgramFiles(x86)
 If Not ProgramFilesx86
     ProgramFilesx86 := ProgramFiles
@@ -79,9 +79,10 @@ notepad2exe := FirstExisting(laPrograms "\Total Commander\notepad2.exe"
                            , LocalAppData "\Programs\VS Code\Code.exe"
                            , SystemRoot "\System32\notepad.exe")
 
-AU3_SpyExecArray := [ FirstExisting( A_AhkDir "\AU3_Spy.exe"
+AU3_SpyExecArray := [ FirstExisting( AhkExeDir "\AU3_Spy.exe"
+                                   , AhkExeDir "\AU3_Spy.exe"
                                    , laPrograms "\AutoHotkey\AU3_Spy.exe"
-                                   , A_AhkDir "\WindowSpy.ahk"
+                                   , AhkExeDir "\WindowSpy.ahk"
                                    , laPrograms "\AutoHotkey\WindowSpy.ahk" ) ]
 
 keepassahk := FirstExisting(A_ScriptDir "\KeePass_" A_UserName ".ahk", A_ScriptDir "\KeePass.ahk")
@@ -121,20 +122,23 @@ return
     ;:?:">::»
     ;::ЭЮ::»
     #Hotstring * ?0 C
-    ::--- ::– `
-    ::... ::… `
     ;arrows
-    ::<- ::← `
-    ::-> ::→ `
-    ::-^ ::↑ `
-    ::v- ::↓ `
+    ::<-- ::← `
+    ::--> ::→ `
+    ::^|| ::↑ `
+    ::v|| ::↓ `
+    ;dashes
+    ::--- ::— `
+    ;-- is after arrows which also use --
+    ::-- ::– `
+    ::... ::…`
     ;double arrows
     ::[<=>] ::⇔ `
     ::[<=] ::⇐ `
     ::[=>] ::⇒ `
     ;math
-    ::>= ::≥ `
-    ::<= ::≤ `
+    ::[>=] ::≥ `
+    ::[<=] ::≤ `
     ::[!=] ::≠ `
     ::[==] ::≡ `
     ::[~=] ::≅ `
@@ -575,12 +579,12 @@ MoveToCorner(HorizSplit, VertSplit, MonNum := -1) {
     IfWinNotExist A
         return
     
-    ;Now get window position
+    ; Now get window position
     WinGetPos newX, newY, newW, newH
 
-    If (MonNum == -1) { ; If current window' monitor should be used, find it
+    If (MonNum == -1) {         ; If current window' monitor should be used, find it
         MonNum := FindWindowMonitorIndex(newX, newY, newW, newH)
-        If (MonNum == "") ; Primary monitor will be used instead
+        If (MonNum == "")       ; Primary monitor will be used instead
             TrayTip window @ (x%newX% y%newY% w%newW% h%newH%) is out of bounds,Cannot find current monitor,,0x22
     }
     
@@ -603,7 +607,7 @@ MoveToCorner(HorizSplit, VertSplit, MonNum := -1) {
         
     WinMove,,, newX, newY, , 
     WinMove,,, , , newW, newH
-    ;    ToolTip newX: %newX% newY: %newY%`nnewW: %newW% newH: %newH%
+    ; ToolTip newX: %newX% newY: %newY%`nnewW: %newW% newH: %newH%
 }
 
 PrepareAltMode(ByRef altMode) {
@@ -646,7 +650,7 @@ lToggleWindowMonitor:
     WinCentralPointX := X + W/2
     WinCentralPointY := Y + H/2
     
-;	ToDo: find current monitor, select next (get it from resizing func.)
+    ; ToDo: find current monitor, select next (get it from resizing func.)
     SysGet Monitor1Dimensions, Monitor, 1
     SysGet Monitor2Dimensions, Monitor, 2
     If ( ( WinCentralPointX > Monitor1DimensionsLeft ) && ( WinCentralPointX < Monitor2DimensionsLeft ) )
@@ -662,10 +666,10 @@ lToggleWindowMonitor:
 lMaximizeWindow:
     WinGet WinMinMaxState, MinMax, A
     If WinMinMaxState
-        PostMessage, 0x112, 0xF120,,, A  ; 0x112 = WM_SYSCOMMAND, 0xF120 = SC_RESTORE
+        PostMessage, 0x112, 0xF120,,, A ; 0x112 = WM_SYSCOMMAND, 0xF120 = SC_RESTORE
     Else
-        PostMessage 0x112, 0xF030,,, A ; 0x112 = WM_SYSCOMMAND, 0xF030 = SC_MAXIMIZE
-;    TODO: restore window original position
+        PostMessage 0x112, 0xF030,,, A  ; 0x112 = WM_SYSCOMMAND, 0xF030 = SC_MAXIMIZE
+    ; ToDo: restore window original position
     return
 
 RunDelayed(ByRef params*) { ; File [, Arguments, Directory, Operation, Show]; Show is as in ShellRun or -1 to run as ahk script (w/o ShellRun)

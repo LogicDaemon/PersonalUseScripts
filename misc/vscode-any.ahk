@@ -19,7 +19,7 @@ If (vscodeRunning && !scriptcmdln) {
     ExitApp
 }
 
-Run "%A_AhkPath%" "%A_ScriptDir%\vscode.insiders.ahk" %scriptcmdln%
+Run "%A_AhkPath%" "%A_ScriptDir%\vscode-insiders.ahk" %scriptcmdln%
 
 ExitApp
 
