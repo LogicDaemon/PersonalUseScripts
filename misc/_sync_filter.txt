@@ -1,0 +1,1 @@
+*.*|**\.mypy_cache\**\**;Hotkeys_Custom.*;_Distributives.base_dirs.txt
