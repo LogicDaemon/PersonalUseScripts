@@ -6,11 +6,30 @@
 Try {
     goVerURL:="https://golang.org/VERSION?m=text"
     distDir := Find_Distributives_subpath("Developement\go")
-    goVer := GetURL(goVerURL)
-    If (!goVer) {
-        Throw Exception("Error getting go version",, goVerURL)
-        ExitApp 1
+    goVersion := GetURL(goVerURL)
+    If (!goVersion)
+        Throw Exception("Error retrieving go version",, goVerURL)
+    
+    Loop Parse, goVersion, `n, `r
+    {
+        goVer := Trim(A_LoopField, "`r`n `t")
+        break
     }
+    
+    Try {
+        f := FileOpen(distDir "\VERSION", "r")
+        prevVer := f.ReadLine()
+    }
+    Try {
+        f.Close()
+    }
+    If (prevVer != goVer) {
+        FileMove %distDir%\VERSION, %distDir%\VERSION.bak, 1
+        f := FileOpen(distDir "\VERSION", "w")
+        f.Write(goVersion)
+        f.Close()
+    }
+    
     For i, ext in ["7z", "zip"] { ; zip must be the last
         goDistFName := goVer ".windows-amd64." ext
         If (FileExist(distDir "\" goDistFName)) {
@@ -20,17 +39,20 @@ Try {
     }
 
     If (!distExists) {
+        tempDir=%distDir%\temp
+        FileCreateDir %tempDir%
         dlURL := "https://golang.org/dl/" goDistFName
         ;-z doesn't work with the go distributive server
         ;timeCond := FileExist(distDir "\" goDistFName) ? "-z """ distDir "\" goDistFName """" : ""
-        tempDir=%distDir%\temp
-        FileCreateDir %tempDir%
         curlcmd = curl.exe -RJOL %timeCond% "%dlURL%"
-        RunWait %curlcmd%, %tempDir%, Min UseErrorLevel
+        RunWait %curlcmd%, %tempDir%, Min
+        If (ErrorLevel)
+            Throw Exception(curlcmd,, ErrorLevel)
         FileGetSize distSize, %tempDir%\%goDistFName%
         If (!distSize) {
-            FileDelete %tempDir%\%goDistFName%
-            FileRemoveDir %tempDir%
+            Try {
+                FileDelete %tempDir%\%goDistFName%
+            }
             FileAppend %A_Now% %curlcmd%`n, %A_Temp%\%A_ScriptName%.log, CP0
             Throw Exception("0-sized distributive downloaded",, dlURL)
         }
