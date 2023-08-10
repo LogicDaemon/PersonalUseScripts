@@ -6,7 +6,7 @@ SETLOCAL ENABLEEXTENSIONS
         IF /I "%PROCESSOR_ARCHITECTURE%"=="AMD64" SET "OS64Bit=1"
         IF DEFINED PROCESSOR_ARCHITEW6432 SET "OS64Bit=1"
 
-        IF DEFINED OS64Bit IF DEFINED installjre64bit (
+        IF DEFINED OS64Bit (
             CALL "%~dp0jre_install_common.cmd" "jre-8*-windows-x64.exe"
             CALL "%~dp0jre_uninstall_common.cmd" /LeaveLast "%~dp0jre8_uids_64-bit.txt" "%~dp0jre8_uids.txt"
             EXIT /B
