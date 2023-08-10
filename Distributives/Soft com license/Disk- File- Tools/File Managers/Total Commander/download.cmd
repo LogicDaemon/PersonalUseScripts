@@ -30,9 +30,9 @@ IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%U
 )
 (
     MKDIR "%dirDlTmp%"
-    START "" /B /D "%dirDlTmp%" %dlcmdPrefix% http://totalcommander.ch/win/tcmd%verComponent2%%verComponent3%x32.exe %dlcmdSuffix%
-    START "" /B /D "%dirDlTmp%" %dlcmdPrefix% http://totalcommander.ch/win/tcmd%verComponent2%%verComponent3%x64.exe %dlcmdSuffix%
-    START "" /B /WAIT /D "%dirDlTmp%" %dlcmdPrefix% http://totalcommander.ch/win/tcmd%verComponent2%%verComponent3%x32_64.exe %dlcmdSuffix% || EXIT /B
+    START "" /B /WAIT /D "%dirDlTmp%" %dlcmdPrefix% http://totalcommander.ch/win/tcmd%verComponent2%%verComponent3%%verComponent4%x32.exe %dlcmdSuffix% || EXIT /B
+    START "" /B /WAIT /D "%dirDlTmp%" %dlcmdPrefix% http://totalcommander.ch/win/tcmd%verComponent2%%verComponent3%%verComponent4%x64.exe %dlcmdSuffix% || EXIT /B
+    START "" /B /WAIT /D "%dirDlTmp%" %dlcmdPrefix% http://totalcommander.ch/win/tcmd%verComponent2%%verComponent3%%verComponent4%x32_64.exe %dlcmdSuffix% || EXIT /B
     FOR %%A IN ("%dirDlTmp%\*.*") DO MOVE /Y "%%~A" "%dirDist%" || EXIT /B
     
     MOVE /Y "%dirData%newver.txt" "%dirData%oldver.txt"
