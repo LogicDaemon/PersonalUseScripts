@@ -143,7 +143,7 @@ EXIT /B
 :LinkBack <source> <destination>
 (
     IF NOT EXIST %2 IF EXIST "%~1\*.*" MOVE /Y %1 %2
-    IF NOT EXIST %2 MKDIR "%~dp2"
+    IF NOT EXIST %2 MKDIR "%~f2"
     IF NOT EXIST %2 EXIT /B
     RD /Q %1
     IF EXIST %1 ECHO N|DEL %1

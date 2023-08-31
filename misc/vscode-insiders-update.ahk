@@ -1,4 +1,5 @@
 ﻿#NoEnv
+#SingleInstance
 #include %A_ScriptDir%\vscode-update.ahk
 
 If (FileExist(A_ScriptDir "\..\VSCode-win32-x64-*.zip")) {

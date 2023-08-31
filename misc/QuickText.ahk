@@ -8,6 +8,15 @@ FileEncoding UTF-8
 
 SetTitleMatchMode RegEx
 
+GroupAdd SendKeys, ahk_exe spring.exe
+GroupAdd SendKeys, ahk_class SDL_app
+sendKeysInsteadOfPasting := WinActive("ahk_group SendKeys")
+
+For _, exe in ["cmd.exe","putty.exe","spring.exe"]
+	GroupAdd PasteViaShiftInsert, ahk_exe i)\b\Q%exe%\E\b
+
+useShiftInsert := WinActive("ahk_group PasteViaShiftInsert")
+
 GroupAdd Notepad2Boilerplates, ahk_class \bNotepad2\b
 GroupAdd Notepad2Boilerplates, ahk_class \bNotepad2U\b
 ;For _, ext in ["bat", "cmd", "ahk", "url"]
@@ -16,17 +25,6 @@ GroupAdd Notepad2Boilerplates, ahk_class \bNotepad2U\b
 If (WinActive("ahk_group Notepad2Boilerplates")) {
 	PasteNotepad2Boilerplate()
 }
-
-GroupAdd SendKeys, ahk_exe spring.exe
-GroupAdd SendKeys, ahk_class SDL_app
-sentKeysInsteadOfPasting := WinActive("ahk_group SendKeys")
-
-For _, exe in ["cmd.exe","putty.exe","spring.exe"]
-	GroupAdd PasteViaShiftInsert, ahk_exe \b\Q%exe%\E\b
-
-useShiftInsert := WinActive("ahk_group PasteViaShiftInsert")
-
-
 
 ; ---------------------------------------------------------------------
 ; Name:  			Search&Paste
@@ -600,9 +598,9 @@ PasteNotepad2Boilerplate() {
 
 PasteOrSend(ByRef data) {
 	local
-	global useShiftInsert, sentKeysInsteadOfPasting
+	global useShiftInsert, sendKeysInsteadOfPasting
 
-	If (sentKeysInsteadOfPasting) {
+	If (sendKeysInsteadOfPasting) {
 		SendRaw %data%
 		Return
 	}

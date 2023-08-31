@@ -1,4 +1,8 @@
-﻿#NoEnv
+﻿; ToDo:
+; * show Enter as “⏎” https://www.compart.com/en/unicode/U+23CE, maybe some other keys too
+; * usr [] instead of {} for key name bracing
+; * add spaced between {key1}×N{key2}×N combinations
+#NoEnv
 #SingleInstance force
 #InstallKeybdHook
 #MaxHotkeysPerInterval 500

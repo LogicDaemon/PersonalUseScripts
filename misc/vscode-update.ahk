@@ -1,4 +1,5 @@
 ﻿#NoEnv
+#SingleInstance
 #include <find7zexe>
 
 If (A_ScriptFullPath == A_LineFile) {
@@ -217,14 +218,18 @@ UpdateVSCode(ByRef destDir, ByRef updInfo, additionalArchives := "") {
 }
 
 CleanOldInstallations(ByRef newVerDir, ByRef destDir) {
+    ;MsgBox newVerDir: %newVerDir%`, destDir=%destDir%
     Loop Files, %destDir%-*, D
     {
         If ( A_LoopFileFullPath <> newVerDir ) {
-            mainexe := FirstExisting( A_LoopFileFullPath "\Code*.exe" )
-            If (mainexe) {
+            ;MsgBox Checking %A_LoopFileFullPath%
+            mainexe := FirstExisting( A_LoopFileFullPath "\Code.exe"
+                                    , A_LoopFileFullPath "\Code - Insiders.exe" )
+            If (!mainexe)
+                Continue
+            Try {
                 FileDelete %mainexe%
-                If (!ErrorLevel)
-                    FileRemoveDir %A_LoopFileFullPath%, 1
+                FileRemoveDir %A_LoopFileFullPath%, 1
             }
         }
     }
@@ -247,3 +252,4 @@ LoadJSON(ByRef path) {
 
 #include <GetURL>
 #include <JSON>
+#include <FirstExisting>
