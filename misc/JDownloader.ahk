@@ -48,23 +48,27 @@ If (args || !jdWinHID) {
     Sleep 3000
 }
 
+Process_mode_background_begin()
 Loop
 {
     Menu Tray, Tip, JDownloader is running
     TrayTip
     While ( jdPID && WinExist("ahk_exe " jdPID)
          || jdWinHID && WinExist("ahk_id " jdWinHID) )
-        Sleep 15000
+        WinWaitClose
     ; No window found, but that might be because an update is running
-    Menu Tray, Tip, JDownloader is running
+    jdPID:=""
     Menu Tray, Tip, JDownloader window is lost. Waiting in case it's an update.
     TrayTip JDownloader starter, JDownloader window is lost. Waiting in case it's an update.
-    Sleep 60000
+    WinWait %jdWinTitle%,,60
+    If (ErrorLevel)
+        break
 } Until !(jdWinHID := WinExist(jdWinTitle))
 
 TrayTip JDownloader starter, No JDownloader window found after 60s. Probably it exited.
 Menu Tray, Tip, JDownloader exited`, backing up config...
 BackupConfig()
+Process_mode_background_end()
 Exit
 
 BackupConfig() {
@@ -90,21 +94,23 @@ BackupConfig() {
     zipMaxIndex := {}, excludeFiles := []
     Loop Files, %jdDir%\cfg\*.zip, F
     {
-        suffixStart := RegExMatch(A_LoopFileName, "(\d+)\.zip$", m)
-        If (!suffixStart)
+        indexPos := RegExMatch(A_LoopFileName, "(\d+)\.zip$", m)
+        If (!indexPos)
             Continue
-        prefix := SubStr(A_LoopFileName, 1, suffixStart - 1)
+        fileAge_s=
+        fileAge_s -= A_LoopFileTimeModified, S
+        prefix := SubStr(A_LoopFileName, 1, indexPos - 1)
         curIdx := m1 + 0
-        fileAge=
-        fileAge -= A_LoopFileTimeModified, S
-        If (fileAge < 60)
-            Continue
         prevIdx := zipMaxIndex[prefix]
         ; MsgBox m1=%m1%, prefix=%prefix%, curIdx=%curIdx%, prevIdx=%prevIdx%
-        If (prevIdx && m1 > prevIdx) {
-            excludeFiles.Push(prefix prevIdx ".zip")
+        If (fileAge_s < 60 || m1 <= prevIdx) {
+            excludeFiles.Push(prefix m1 ".zip")
+            Continue
         }
-        zipMaxIndex[prefix] := m1
+        If (!prevIdx || m1 > prevIdx)
+            zipMaxIndex[prefix] := m1
+        If (prevIdx)
+            excludeFiles.Push(prefix prevIdx ".zip")
     }
 
     excludeSwitches := ""
@@ -120,16 +126,24 @@ BackupConfig() {
         If (ErrorLevel) {
             TrayTip JDownloader starter, Config backup using robocopy failed`, error %ErrorLevel%
             Menu Tray, Tip, Config backup failed`, error %ErrorLevel%
-            Run explorer.exe /open,"%jdDir%\cfg"
-            Run explorer.exe /open,"%confBackupBaseDir%"
+            Run explorer.exe /open`,"%jdDir%\cfg"
+            Run explorer.exe /open`,"%confBackupBaseDir%"
             Return False
         }
     } Else {
         FileMove %confBackupBaseDir%\cfg.7z.tmp, %confBackupBaseDir%\cfg.7z, 1
     }
     TrayTip JDownloader starter, Config is backed up
-    Menu Tray, Tip, Config is backed up
+    Menu Tray, Tip, Config is backed up %A_HH%:%A_MM%
     Return True
+}
+
+Process_mode_background_begin() {
+    DllCall("SetPriorityClass", "UInt", DllCall("GetCurrentProcess"), "UInt", 0x00100000) ; PROCESS_MODE_BACKGROUND_BEGIN=0x00100000 https://msdn.microsoft.com/en-us/library/ms686219.aspx
+}
+
+Process_mode_background_end() {
+    DllCall("SetPriorityClass", "UInt", DllCall("GetCurrentProcess"), "UInt", 0x00200000) ; PROCESS_MODE_BACKGROUND_END=0x00200000 https://msdn.microsoft.com/en-us/library/ms686219.aspx
 }
 
 #include <ParseScriptCommandLine>
