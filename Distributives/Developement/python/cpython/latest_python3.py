@@ -2,7 +2,7 @@
 '''
 Download the latest version of Python 3, either source or binary depending on current OS.
 On Linux, also build and install it to $HOME/.local.
-On Windows, install to default per-user location ("%LOCALAPPDATA%\Programs" for 3.11, see https://docs.python.org/3.11/using/windows.html)
+On Windows, install to default per-user location ("%LOCALAPPDATA%\\Programs" for 3.11, see https://docs.python.org/3.11/using/windows.html)
 
 Requires lxml for normal work, and lxml-stubs for developing/debugging.
 
