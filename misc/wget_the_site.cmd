@@ -15,9 +15,15 @@ IF DEFINED RARmoredirs ECHO Переменная RARmoredirs определена, но не работает в 
 
 SET "sitename=%~1"
 IF "%~2"=="" (
-  SET "URL=http://%sitename%/"
-) ELSE SET "URL=%~2"
-IF NOT DEFINED wgetcommonopt SET "wgetcommonopt=-m -w 2 --random-wait --waitretry=300 -x -E -e robots=off -k -K -p -np --no-check-certificate --progress=dot:giga"
+    SET "wgetArgs=http://%sitename%/"
+) ELSE (
+    CALL :gatherWgetArgsWithoutFirst %*
+)
+IF NOT DEFINED wgetcommonopt (
+    SET "wgetcommonopt=-m --waitretry=300 -x -E -e robots=off -k -K -np --no-check-certificate --progress=dot:giga"
+    IF NOT DEFINED wgetextendedoptions SET "wgetextendedoptions=-p"
+    IF NOT DEFINED wgetwaitoptions SET "wgetwaitoptions=-w 2 --random-wait"
+)
 REM %3 and further may be used to spec additional argiments, like
 REM -X"dir1,dir2" - directory exclusion
 REM -w N  -  wait N seconds between pages
@@ -45,19 +51,24 @@ CALL :parseMasks %noarchmasks%
     IF EXIST "%srcpath%%sitename%.7z" (
 	%exe7z% x -aoa -o"%workdir%" -- "%srcpath%%sitename%.7z"
     ) ELSE IF EXIST "%srcpath%%sitename%.rar" %exe7z% x -aoa -o"%workdir%" -- "%srcpath%%sitename%.rar"
-
-    SHIFT
-    SHIFT
-    START "" /b /wait /D"%workdir%" wget.exe %wgetcommonopt% %URL% %1 %2 %3 %4 %5 %6 %7 %8 %9
+)
+(
+    START "" /b /wait /D"%workdir%" wget.exe %wgetcommonopt% %wgetwaitoptions% %wgetextendedoptions% %wgetArgs%
     START "" /b /wait /D"%workdir%" %exe7z% a -sdel -r %opts7z% -- "%srcpath%%sitename%.7z" "%sitename%" %moreDirs%
-
 EXIT /B
 )
 
 :parseMasks <masks>
-(
+@(
     IF "%~1"=="" EXIT /B
     SET opts7z=%opts7z% -xr!"%~1"
     SHIFT
 GOTO :parseMasks
+)
+:gatherWgetArgsWithoutFirst
+(
+    IF [%2]==[] EXIT /B
+    SET "wgetArgs=%wgetArgs% %2"
+    SHIFT /2
+    GOTO :gatherWgetArgsWithoutFirst
 )
