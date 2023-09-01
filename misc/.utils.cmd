@@ -67,31 +67,11 @@ EXIT /B
 )
 :findlatest <path>
 (
-    CALL :InitRemembering
-    FOR %%A IN (%*) DO CALL :RememberIfLatest latestFile "%%A"
-EXIT /B
-)
-:InitRemembering
-(
-    SET "latestDate=0000000000:00"
-EXIT /B
-)
-:RememberIfLatest <varName> <path>
-(
-    SETLOCAL
-    SET "currentFDate=%~t2"
-)
-(
-@rem     01.12.2011 21:29, so reverse date to get correct comparison
-    SET "currentFDate=%currentFDate:~6,4%%currentFDate:~3,2%%currentFDate:~0,2%%currentFDate:~11%"
-)
-(
-    ENDLOCAL
-    IF "%currentFDate%" GTR "%latestDate%" (
-	SET "%~1=%~2"
-	SET "latestDate=%currentFDate%"
+    FOR /F "usebackq delims=" %%A IN (`DIR /B /S /O-D %*`) DO @(
+        SET "latestFile=%%~A"
+        EXIT /B
     )
-EXIT /B
+    EXIT /B 1
 )
 :ReadRegHostname <var>
 (
