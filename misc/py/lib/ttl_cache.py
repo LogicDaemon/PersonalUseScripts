@@ -1,18 +1,21 @@
-''' Decorator for caching function results for a given time to live (ttl)
+'''
+Decorator for caching function results for a given time to live (ttl)
 '''
 
 from functools import wraps
 import time
+import sys
 from typing import (Callable, Dict, Generic, TypeVar)
-from typing_extensions import ParamSpec  # requires ≥3.10
-
-from .shared_func import ReprFromAnnotationsMixin
+if sys.version_info >= (3,11):
+    from typing import ParamSpec
+else:
+    from typing_extensions import ParamSpec  # requires ≥3.10
 
 _PARAM_SPEC = ParamSpec('_PARAM_SPEC')
 _RETURN_TYPE = TypeVar('_RETURN_TYPE')
 
 
-class TTLCacheCachedResult(Generic[_RETURN_TYPE], ReprFromAnnotationsMixin):
+class TTLCacheCachedResult(Generic[_RETURN_TYPE]):
     value: _RETURN_TYPE
     expires: float
     __slots__ = tuple(__annotations__)

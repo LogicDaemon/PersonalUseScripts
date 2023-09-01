@@ -150,6 +150,7 @@ return
     ::[us] ::㎲ ` ; U+33B2 e3 8e b2 	SQUARE MU L
     ::[ms] ::㎳ ` ; U+33B3 e3 8e b3 	SQUARE MS
     ;other
+    ::[link] ::🔗 ; U+1F517 f0 9f 94 97  Link Symbol
     ::[ ] ::☐ ` ; U+2610 e2 98 90 	BALLOT BOX
     ::[v] ::☑ ` ; U+2611 e2 98 91 	BALLOT BOX WITH CHECK
     ::[X] ::☒ ` ; U+2612 e2 98 92 	BALLOT BOX WITH X
