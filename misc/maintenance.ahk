@@ -24,7 +24,7 @@ Try {
             , [dirDropbox "\Config\scripts\copy tasks.cmd"]
             , [dirDropbox "\Config\scripts\export registry settings.cmd"]
             , [A_ScriptDir "\Vivaldi_prefs_backup.ahk"] )
-} Catch {}
+}
 
 killProcesses = [ "update_notifier.exe"
                 , "DropboxUpdate.exe" ]
