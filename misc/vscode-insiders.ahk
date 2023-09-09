@@ -19,6 +19,9 @@ If (vscodeRunning && !scriptcmdln) {
     ExitApp
 }
 
+ToolTip Checking for VS Code Insiders update...
+RunWait "%A_AhkPath%" "%A_ScriptDir%\vscode-insiders-update.ahk"
+ToolTip
 EnvGet LocalAppData, LocalAppData
 Loop {
     If (vscodeexe := FirstExisting(LocalAppData "\Programs\Microsoft VS Code Insiders\Code - Insiders.exe", LocalAppData "\Programs\VS Code Insiders\Code - Insiders.exe", ProgramFiles "\Microsoft VS Code Insiders\Code - Insiders.exe"))

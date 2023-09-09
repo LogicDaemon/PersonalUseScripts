@@ -19,17 +19,17 @@ If (WinExist("ahk_group jumpnet")) {
     Run "%LocalAppData%\Programs\putty\PUTTY.EXE" -load "jnldev-va-2.serverpod.net" -N
     WinWait ahk_group jumpnet
 }
-Loop
-{
-    WinWaitNotActive
-    WinGet state, MinMax
-} Until state == -1 or state == "" ; "" means the window doesn't exist
+;Loop
+;{
+;    WinWaitNotActive
+;    WinGet state, MinMax
+;} Until state == -1 or state == "" ; "" means the window doesn't exist
 
-If (WinExist("ahk_group cdnjump")) {
-    WinActivate
-} Else {
-    Run "%LocalAppData%\Programs\putty\PUTTY.EXE" -load "cdn-jump" -N
-}
+;If (WinExist("ahk_group cdnjump")) {
+;    WinActivate
+;} Else {
+;    Run "%LocalAppData%\Programs\putty\PUTTY.EXE" -load "cdn-jump" -N
+;}
 
 Exitapp 0
 
