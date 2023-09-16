@@ -4,5 +4,5 @@ REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 In
 SETLOCAL ENABLEEXTENSIONS
 rem aws sso login --profile AdministratorAccess-572304703581
 rem use --boto-profile AdministratorAccess-572304703581 in the following line for SSO
-CALL "%~dp0py.cmd" "%~dp0py\connect-asg-host\prepare-asg-host-connection.py" --region us-east-1 --asg am-scaling-media-qa-asg-us-east-1 --boto-profile 572304703581_AdministratorAccess
+CALL "%~dp0py.cmd" "%~dp0py\connect-asg-host\prepare-asg-host-connection.py" --region us-east-1 --asg am-qa-media-asg-us-east-1 --boto-profile 572304703581_AdministratorAccess
 )
