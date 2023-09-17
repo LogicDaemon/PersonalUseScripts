@@ -14,7 +14,7 @@ IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%U
     
     FOR /F "usebackq skip=3" %%A IN (`"%SystemRoot%\System32\nslookup.exe -type=txt releaseversion.ghisler.com"`) DO IF NOT "%%~A"=="" SET "newtcver=%%~A"
     IF NOT DEFINED newtcver EXIT /B 1
-    FOR /F "usebackq delims=" %%A IN ("%dirData%oldver.txt") DO SET "oldtcver=%%~A"
+    FOR /F "usebackq delims=" %%A IN ("%dirData%lastver.txt") DO SET "oldtcver=%%~A"
 )
 (
     IF "%newtcver%"=="%oldtcver%" EXIT /B 0
@@ -35,6 +35,6 @@ IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%U
     START "" /B /WAIT /D "%dirDlTmp%" %dlcmdPrefix% http://totalcommander.ch/win/tcmd%verComponent2%%verComponent3%%verComponent4%x32_64.exe %dlcmdSuffix% || EXIT /B
     FOR %%A IN ("%dirDlTmp%\*.*") DO MOVE /Y "%%~A" "%dirDist%" || EXIT /B
     
-    MOVE /Y "%dirData%newver.txt" "%dirData%oldver.txt"
+    MOVE /Y "%dirData%newver.txt" "%dirData%lastver.txt"
     EXIT /B
 )

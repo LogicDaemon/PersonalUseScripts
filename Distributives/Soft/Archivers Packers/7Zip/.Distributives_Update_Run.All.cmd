@@ -15,7 +15,7 @@ EXIT /B
     SETLOCAL
 	IF NOT EXIST %1 MKDIR %1
 	SET "srcpath=%~f1\"
-	CALL "%baseScripts%\_DistDownload.cmd" http://www.7-zip.org/ %2 -ml1 -nd -A.exe
+	CALL "%baseScripts%\_DistDownload.cmd" https://www.7-zip.org/ %2 -ml1 -nd -A.exe
     ENDLOCAL
 EXIT /B
 )

@@ -10,6 +10,7 @@ SETLOCAL ENABLEEXTENSIONS
     ) ELSE (
         SET "OSWordSize=%~1"
     )
+    CALL find7zexe.cmd
 )
 IF "%OSWordSize%"=="64" (
     SET "exenameahk=AutoHotkeyU64.exe"
@@ -18,20 +19,21 @@ IF "%OSWordSize%"=="64" (
     SET "exenameahk=AutoHotkey.exe"
     IF NOT DEFINED exe7z SET "exe7z=%~dp0..\..\PreInstalled\utils\7za.exe"
 )
-(
-    FOR /F "usebackq delims=" %%A IN (`DIR /O-D /B "%~dp0AutoHotkey_*.zip"`) DO @(
-        CALL find7zexe.cmd x -aoa -y -o"%LOCALAPPDATA%\Programs\%%~nA" "%~dp0%%~A"
-        MKLINK /D "%LOCALAPPDATA%\Programs\AutoHotkey" "%LOCALAPPDATA%\Programs\%%~nA" || MKLINK /J "%LOCALAPPDATA%\Programs\AutoHotkey" "%LOCALAPPDATA%\Programs\%%~nA" || (
-            RD "%LOCALAPPDATA%\Programs\AutoHotkey" && (
-                MKLINK /D "%LOCALAPPDATA%\Programs\AutoHotkey" "%LOCALAPPDATA%\Programs\%%~nA" || MKLINK /J "%LOCALAPPDATA%\Programs\AutoHotkey" "%LOCALAPPDATA%\Programs\%%~nA"
-            )
-        )
-        IF NOT EXIST "%LocalAppData%\Programs\bin\ahk.exe" (
-            IF NOT EXIST "%LocalAppData%\Programs\bin" MKDIR "%LocalAppData%\Programs\bin"
-            MKLINK "%LocalAppData%\Programs\bin\ahk.exe" "%LOCALAPPDATA%\Programs\AutoHotkey\%exenameahk%"
-        )
-        CALL "%~dp0..\..\PreInstalled\auto\AutoHotkey_Lib.cmd"
-        "%LOCALAPPDATA%\Programs\AutoHotkey\%exenameahk%" "%~dp0associate.ahk" /user
-        EXIT /B
+FOR /F "usebackq tokens=1*" %%A IN ("%~dp0ver.zip.txt") DO (
+    REM %%A - version
+    REM %%B - filename
+    CALL %exe7z% x -aoa -y -o"%LOCALAPPDATA%\Programs\%%~nA" "%~dp0%%~A"
+    MKLINK /D "%LOCALAPPDATA%\Programs\AutoHotkey" "%LOCALAPPDATA%\Programs\%%~nA" || ^
+    MKLINK /J "%LOCALAPPDATA%\Programs\AutoHotkey" "%LOCALAPPDATA%\Programs\%%~nA" || ^
+    RD "%LOCALAPPDATA%\Programs\AutoHotkey" && (
+        MKLINK /D "%LOCALAPPDATA%\Programs\AutoHotkey" "%LOCALAPPDATA%\Programs\%%~nA" || ^
+        MKLINK /J "%LOCALAPPDATA%\Programs\AutoHotkey" "%LOCALAPPDATA%\Programs\%%~nA"
     )
+    IF NOT EXIST "%LocalAppData%\Programs\bin\ahk.exe" (
+        IF NOT EXIST "%LocalAppData%\Programs\bin" MKDIR "%LocalAppData%\Programs\bin"
+        MKLINK "%LocalAppData%\Programs\bin\ahk.exe" "%LOCALAPPDATA%\Programs\AutoHotkey\%exenameahk%"
+    )
+    CALL "%~dp0..\..\PreInstalled\auto\AutoHotkey_Lib.cmd"
+    "%LOCALAPPDATA%\Programs\AutoHotkey\%exenameahk%" "%~dp0associate.ahk" /user
+    EXIT /B
 )

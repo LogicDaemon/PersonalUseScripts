@@ -4,27 +4,25 @@ Download Inkscape distributive from https://inkscape.org/release/
 '''
 
 from __future__ import annotations, generator_stop
-from enum import StrEnum
-from genericpath import isdir
-from io import BufferedWriter
-import re
-import time
 
-# Python Standard Library modules, see https://docs.python.org/3/py-modindex.html
-from typing import (Dict, Generator, Iterable, Iterator, List, Mapping,
-                    Optional, NoReturn, Sequence)
-import sys
-import os
-import logging
 import email.utils
-#import configparser
+import logging
+import os
+import re
+import sys
+import time
+# Python Standard Library modules, see https://docs.python.org/3/py-modindex.html
+from typing import Iterable, Iterator, List, Mapping, NoReturn, Optional
+from urllib.parse import urlsplit
 
+import httpx
 # Installable modules, see https://pypi.org/
 import lxml
 import lxml.html
-import httpx
-from urllib.parse import urlsplit
 from rich import progress
+
+#import configparser
+
 # from pip._vendor.rich import progress  # type: ignore
 
 http_timeout = 10
@@ -34,7 +32,7 @@ log = logging.getLogger(
 
 
 def get_env_log_level(
-        default=logging.DEBUG if __debug__ else logging.INFO) -> int:
+        default: int = logging.DEBUG if __debug__ else logging.INFO) -> int:
     ''' Get the log level from the environment variable LOG_LEVEL '''
     env_log_level = os.environ.get('LOG_LEVEL')
     if env_log_level not in ('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'):

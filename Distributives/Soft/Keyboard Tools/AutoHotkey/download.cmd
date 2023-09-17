@@ -14,8 +14,10 @@
 @(
     IF NOT DEFINED logsDir SET "logsDir=%workdir%"
     
-    CALL :DownloadDistributive https://autohotkey.com/download/ahk.zip "AutoHotkey_*.zip"
-    CALL :DownloadDistributive https://autohotkey.com/download/ahk-install.exe "AutoHotkey_*_setup.exe"
+    rem CALL :DownloadDistributive https://autohotkey.com/download/ahk.zip "AutoHotkey_*.zip"
+    CALL :DownloadDistributive https://autohotkey.com/download/ahk.zip "*.zip"
+    rem CALL :DownloadDistributive https://autohotkey.com/download/ahk-install.exe "AutoHotkey_*_setup.exe"
+    CALL :DownloadDistributive https://autohotkey.com/download/ahk-install.exe "*.exe"
     RD /Q "%workdir%"
     EXIT /B
 )
@@ -38,8 +40,19 @@ FOR /F "usebackq delims=" %%A IN (`DIR /B /O-D "%srcpath%%distfmask%"`) DO (
 :ExitFor_CurDistPath
 (
     MKDIR "%workdir%new.tmp"
-    FOR %%A IN ("-LORJ" "-LOR") DO (
-        START "" /B /WAIT /D "%workdir%new.tmp" curl "%url%" %timeCond% %%~A -H "authority: autohotkey.com" -H "upgrade-insecure-requests: 1" -H "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.80 Safari/537.36" -H "accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3" -H "accept-encoding: gzip, deflate, br" -H "accept-language: en-GB,en-US;q=0.9,en;q=0.8"
+    FOR %%A IN ("J" "") DO (
+        REM -H "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.80 Safari/537.36"
+        REM -H "accept-encoding: gzip, deflate, br" ^
+        REM -H "accept-language: en-GB,en-US;q=0.9,en;q=0.8" ^
+        REM -H "accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3" ^
+        REM -H "upgrade-insecure-requests: 1" ^
+        curl -LRO%%~A ^
+            %timeCond% ^
+            --output-dir "%workdir%new.tmp" ^
+            --remove-on-error ^
+            --path-as-is ^
+            -H "authority: autohotkey.com" ^
+            -- "%url%"
         REM on 2022 and years before, any -z condition causes 0-sized file to be downloaded
         FOR %%B IN ("%workdir%new.tmp\*.*") DO @IF "%%~zB"=="0" DEL "%%~B"
         rem without -o for CURL and -O for wget, filename is unknown
@@ -87,6 +100,7 @@ EXIT /B 0
 (
     SET cleanup_action=CALL "%baseScripts%\mvold.cmd"
     CALL "%baseScripts%\DistCleanup.cmd" "%srcpath%%distfmask%" "%srcpath%%dstfname%"
+    IF EXIST "%srcpath%%dstfname%" COMP %1 "%srcpath%%dstfname%" /M >NUL && EXIT /B
     MOVE /Y %1 "%srcpath%%dstfname%"
 EXIT /B
 )
