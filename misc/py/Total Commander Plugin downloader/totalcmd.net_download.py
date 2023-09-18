@@ -11,7 +11,6 @@ import os
 import posixpath
 import re
 import sys
-import tempfile
 import time
 from enum import Enum
 from typing import NoReturn, Optional, TypedDict, Unpack
@@ -126,7 +125,7 @@ def download_file(
     dest_dir: str,
     progressbar: Optional[progress.Progress],
     httpx_client: Optional[httpx.Client] = None,
-) -> Optional[str]:
+) -> str:
     if httpx_client is None:
         httpx_client = init_httpx_client(follow_redirects=True)
     logging.info('Downloading %s...', url)
@@ -161,7 +160,7 @@ def download_file(
                         time.mktime(last_modified)
                 ) < 60:  # 1 minute difference is ok
                     logging.info('File %s is already up-to-date', destination)
-                    continue
+                    break
             # save the file
             with open(destination, 'wb'), open(tmp_destination, 'wb') as f:
                 progress_task_id = (progressbar.add_task(
@@ -191,7 +190,68 @@ def download_file(
             if last_modified:
                 os.utime(destination,
                          (time.time(), time.mktime(last_modified)))
-            return destination
+            break
+    return destination
+
+
+def update_descript_ion(path: str, description: str) -> None:
+    ''' Update descript.ion file for the given path with the given description
+        Accroding to https://stackoverflow.com/a/15808848/1421036, descript.ion
+        file format is:
+        ```
+        Filename This is the first line\\nSecond line\\nLast line\x04\xc2
+        "Filename with spaces" This is the first line\\nSecond line\\nLast line\x04\xc2
+        ```
+        The `descript.ion` file contains a backslash and a letter 'n' in place
+        of a line break, and two special characters 04 C2 at the end of the
+        comment. In addition, the line is ended by a Windows line break 0D 0A.
+
+        Apparently, the two extra characters at the end of the line signal the
+        end of a multiline comment. If removed, the comment is rendered as a
+        single line in the GUI, and the '\n' sequences are displayed literally.
+    '''
+    dirname = path
+    while dirname:
+        dirname, desc_fname = os.path.split(dirname)
+        if desc_fname:
+            break
+    else:
+        raise ValueError(f'Cannot determine description file name for {path}')
+
+    if '\n' in description:
+        description = description.replace('\n', '\\n')
+        multiline_description_suffix = '\x04\xc2'
+    else:
+        multiline_description_suffix = ''
+
+    desc_fname = f'"{desc_fname}"' if ' ' in desc_fname else desc_fname
+    descript_ion_path = os.path.join(dirname, 'descript.ion')
+    descript_ion_fname_tmp = descript_ion_path + '.tmp'
+    try:
+        with open(descript_ion_path) as f2:
+            orig = f2.read()
+    except FileNotFoundError:
+        orig = ''
+    curr_desc_line_pos = (0 if orig.startswith(desc_fname + ' ') else
+                          orig.find(f'\n{desc_fname} '))
+    if curr_desc_line_pos >= 0:
+        curr_desc_offset = curr_desc_line_pos + len(desc_fname)
+        next_desc_pos = orig.find('\n', curr_desc_line_pos + 1) + 1
+        current_desc = orig[curr_desc_offset:next_desc_pos].rstrip('\r\n')
+        if description in current_desc:
+            return
+        if current_desc.endswith(multiline_description_suffix):
+            # remove duplicating suffix
+            multiline_description_suffix = ''
+        descript_ion = (
+            f'{orig[:curr_desc_offset]} {description} {current_desc}{multiline_description_suffix}\n'
+            + (orig[next_desc_pos:] if next_desc_pos else ''))
+    else:
+        descript_ion = f'{desc_fname} {description}{multiline_description_suffix}\n'
+
+    with open(descript_ion_fname_tmp, 'w') as f:
+        f.write(descript_ion)
+    os.replace(descript_ion_fname_tmp, descript_ion_path)
 
 
 def main() -> NoReturn:
@@ -239,14 +299,17 @@ def main() -> NoReturn:
         ) as progressbar:
             for url in plugin_data.download_urls:
                 try:
-                    download_file(
+                    dest = download_file(
                         url,
                         dest_dir,
                         progressbar,
                         httpx_client=httpx_client,
                     )
                 except Exception:
-                    log.exception('Failed to download %s', url)
+                    log.exception('Downloading %s failed', url)
+                    continue
+                print(dest)
+                update_descript_ion(dest, f'URL: {url}')
 
     sys.exit()
 
