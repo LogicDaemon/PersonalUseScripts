@@ -452,6 +452,7 @@ FillDelayedRunGroups() {
                                             , "#^!VK57": [A_ScriptDir "\WinActivateOrExec.ahk", """" laPrograms "\Tor Browser\Browser\firefox.exe"""] ;#^!w
                                             , "^!SC132": [A_ScriptDir "\WinActivateOrExec.ahk", """" laPrograms "\Tor Browser\Browser\firefox.exe"""] ;^!Homepage
                                             , "#F1":     [comspec, " /K ""CD /D """ A_ScriptDir """ & PUSHD ""%TEMP%"" & ECHO POPD to go to " A_ScriptDir """"] ;/U https://twitter.com/LogicDaemon/status/936259452617060354
+                                            ;, "#+F1":    [LocalAppData "\Programs\bin\mintty.exe", "wsl --cd ~"]
                                             , "#+F1":    [LocalAppData "\Microsoft\WindowsApps\Microsoft.WindowsTerminal_8wekyb3d8bbwe\wt.exe", "nt -p Debian"]
                                             , "#VK45":   [A_ScriptDir "\WinActivateOrExec.ahk", """" totalcmdexe """",,""] ;vk45=e #e
                                             , "#+VK45":  [totalcmdexe,,,,-1]                                     ;vk45=e #+e
