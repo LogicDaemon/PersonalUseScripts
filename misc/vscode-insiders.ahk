@@ -23,7 +23,9 @@ RunWait "%A_AhkPath%" "%A_ScriptDir%\vscode-insiders-update.ahk"
 ToolTip
 EnvGet LocalAppData, LocalAppData
 Loop {
-    If (vscodeexe := FirstExisting(LocalAppData "\Programs\Microsoft VS Code Insiders\Code - Insiders.exe", LocalAppData "\Programs\VS Code Insiders\Code - Insiders.exe", ProgramFiles "\Microsoft VS Code Insiders\Code - Insiders.exe"))
+    If (vscodeexe := FirstExisting( LocalAppData "\Programs\Microsoft VS Code Insiders\Code - Insiders.exe"
+                                  , LocalAppData "\Programs\VS Code Insiders\Code - Insiders.exe"
+                                  , ProgramFiles "\Microsoft VS Code Insiders\Code - Insiders.exe" ))
         break
     If (A_Index > installScripts.Count())
         Throw Exception("VS Code is neither found nor can be installed")
