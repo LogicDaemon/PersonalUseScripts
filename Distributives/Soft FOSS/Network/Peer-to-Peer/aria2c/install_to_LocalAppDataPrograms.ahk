@@ -66,10 +66,8 @@ InstallDist(latestPath) {
         FileRemoveDir %tempDir%, 1
         removeTemp := ErrorLevel
 
-        Try {
-            FileRemoveDir %destLink%
-            FileDelete %destLink%
-        }
+        Try FileRemoveDir %destLink%
+        Try FileDelete %destLink%
         If (FileExist(destLink))
             Throw Exception("Error: Failed to remove the old link",, destLink)
         RunWait %comspec% /C "MKLINK /D "%destLink%" "%destPerVer%" || MKLINK /J "%destLink%" "%destPerVer%"",, Min UseErrorLevel

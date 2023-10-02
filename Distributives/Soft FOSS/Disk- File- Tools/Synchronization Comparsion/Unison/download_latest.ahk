@@ -10,18 +10,30 @@ EnvGet workdir,workdir
 If (!workdir)
     workdir := A_ScriptDir "\temp"
 
-For i, asset in JSON.Load(GetUrl("https://api.github.com/repos/bcpierce00/unison/releases/latest")).assets
-    If (asset.name ~= "unison-v.+\.windows\.zip") {
-;unison-v2.51.4_rc2+ocaml-4.12.0+x86_64.windows.zip
-;unison-v2.51.4_rc2+ocaml-4.10.1+i386.windows.zip
+latestAssetsRaw := GetUrl("https://api.github.com/repos/bcpierce00/unison/releases/latest")
+For i, asset in JSON.Load(latestAssetsRaw).assets {
+    If (asset.name ~= "unison-.+[\.\-]windows(-\w+)?\.zip") {
+        relPath := StrReplace(RegExReplace(asset.browser_download_url, "^\w+://", ""), "/", "\")
+        SplitPath relPath,, subDir
+        FileCreateDir %A_ScriptDir%\%subDir%
+        dlDest := A_ScriptDir "\" subDir "\" asset.name
+        
+        ;unison-2.53.3-windows-i386.zip
+        ;unison-v2.51.4_rc2+ocaml-4.12.0+x86_64.windows.zip
+        ;unison-v2.51.4_rc2+ocaml-4.10.1+i386.windows.zip
         FileCreateDir %workdir%
-        If (FileExist(A_ScriptDir "\" asset.name))
-            timeCond := " -z """ A_ScriptDir "\" asset.name """"
+        If (FileExist(dlDest))
+            timeCond := " -z """ dlDest """"
         RunWait % "CURL -RLo""" workdir "\" asset.name """" timeCond " """ asset.browser_download_url """", %workdir%, Min UseErrorLevel
         If (FileExist(workdir "\" asset.name))
-            FileMove % workdir "\" asset.name, % A_ScriptDir "\" asset.name, 1
+            FileMove % workdir "\" asset.name, %dlDest%, 1
     }
     FileRemoveDir %workdir%
+    f := FileOpen(A_ScriptDir "\latest_assets.json", 1, "UTF-8-RAW")
+    f.Write(latestAssetsRaw)
+    f.Close()
+    Run COMPACT.EXE /C /EXE:LZX "%A_ScriptDir%\latest_assets.json",, Min
+}
 ExitApp
 
 #include <JSON>
