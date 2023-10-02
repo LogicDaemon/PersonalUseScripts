@@ -10,7 +10,7 @@ config := ProcessCLArgs( {"needADrive": "d"} )
 
 EnvGet LOCALAPPDATA,LOCALAPPDATA
 ;EnvSet syncprog, "%LOCALAPPDATA%\Programs\unison\bin\unison-gtk2.exe"
-guisyncprog=%LOCALAPPDATA%\Programs\unison\bin\unison-gui.exe
+guisyncprog=%LOCALAPPDATA%\Programs\unison\bin\unison-text+gui.exe
 textsyncprog=%LOCALAPPDATA%\Programs\unison\bin\unison.exe
 If (FileExist(guisyncprog)) {
     EnvSet syncprog, "%guisyncprog%"
@@ -41,12 +41,17 @@ If (config.needADrive && !drivessynced) {
 }
 ExitApp
 
-RunScript(ByRef syncScript) {
+RunScript(ByRef syncScript, runDir := "") {
+    If (runDir == "")
+        runDir := A_Temp
     If (FileExist(syncScript)) {
         TrayTip Running script, %SyncScript%, 15, 1
-        Run %comspec% /C %SyncScript%, %A_LoopField%:\Local_Scripts
-        Sleep 3000
+        Run %comspec% /C "%SyncScript%", %runDir%
+        err := ErrorLevel
+        If (err)
+            Sleep 3000
         TrayTip
+        Return !err
     } Else {
         Throw Exception("Script not found",, syncScript)
     }
