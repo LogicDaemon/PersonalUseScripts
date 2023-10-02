@@ -7,11 +7,10 @@ SetTitleMatchMode RegEx
 ;GroupAdd vscode, - Visual Studio Code$ ahk_class ^Chrome_WidgetWin_1$ ahk_exe Code\.exe
 GroupAdd vscode, - Visual Studio Code - Insiders$ ahk_class ^Chrome_WidgetWin_1$ ahk_exe Code - Insiders.exe
 
-vscodeRunning := WinExist("ahk_group vscode")
 installScripts := [A_ScriptDir "\vscode-insiders-update.ahk"]
 
 scriptcmdln := ParseScriptCommandLine()
-If (vscodeRunning && !scriptcmdln) {
+If (!scriptcmdln && WinExist("ahk_group vscode")) {
     If (WinActive())
         WinActivateBottom ahk_group vscode
     Else
@@ -37,7 +36,7 @@ EnvSet PATH, %PATH%;%vscodedir%
 PrependPaths()
 Run "%vscodeexe%" %scriptcmdln%
 
-; If (!vscodeRunning && ((removehp && RegWriteUserEnv("http_proxy", "")) + (removehps && RegWriteUserEnv("https_proxy", "")))) ; + is like OR but with mandatory execution for both args
+; If (!WinExist("ahk_group vscode") && ((removehp && RegWriteUserEnv("http_proxy", "")) + (removehps && RegWriteUserEnv("https_proxy", "")))) ; + is like OR but with mandatory execution for both args
 ;     EnvUpdate    
 
 ExitApp

@@ -9,7 +9,17 @@
 config := ProcessCLArgs( {"needADrive": "d"} )
 
 EnvGet LOCALAPPDATA,LOCALAPPDATA
-EnvSet syncprog, "%LOCALAPPDATA%\Programs\unison\bin\unison-gtk2.exe"
+;EnvSet syncprog, "%LOCALAPPDATA%\Programs\unison\bin\unison-gtk2.exe"
+guisyncprog=%LOCALAPPDATA%\Programs\unison\bin\unison-gui.exe
+textsyncprog=%LOCALAPPDATA%\Programs\unison\bin\unison.exe
+If (FileExist(guisyncprog)) {
+    EnvSet syncprog, "%guisyncprog%"
+} Else If (FileExist(textsyncprog)) {
+    MsgBox "%syncprog%" does not exist`, falling back to "%textsyncprog%".
+    EnvSet syncprog, "%textsyncprog%"
+} Else {
+    Throw Exception("Could not find unison-gui.exe or unison.exe")
+}
 
 RegRead hostname, HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters, Hostname
 syncScriptPath := A_ScriptDir "\sync_" hostname ".cmd"

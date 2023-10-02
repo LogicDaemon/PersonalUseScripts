@@ -7,7 +7,7 @@ SETLOCAL ENABLEEXTENSIONS
     IF NOT DEFINED unisontext EXIT /B 1
     IF "%~1"=="" (
         IF NOT DEFINED unisonopt SET unisonopt=-auto
-        SET skipPresyncs=
+        SET skipPresyncs=1
     ) ELSE (
         SET unisonopt=%unisonopt% %*
         SET skipPresyncs=1
@@ -16,7 +16,7 @@ SETLOCAL ENABLEEXTENSIONS
 IF NOT DEFINED syncprog SET "syncprog=%unisontext%"
 (
 PUSHD "%TEMP%" || EXIT /B
-START "Distributives Unison server" /B %unisontext% -socket 10355
+START "Distributives Unison server" /MIN %unisontext% -socket 10355
 PING -n 2 127.0.0.1 >NUL
 
 START "" /B /WAIT %comspec% /C "%~dpn0_execsyncs.cmd"

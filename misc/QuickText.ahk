@@ -585,7 +585,7 @@ PasteNotepad2Boilerplate() {
 	{
 		;Control ChooseString, OEM (866)
 		ControlSend SysListView321, {Home}{Down}
-	} Else If (ext = "url") {
+	} Else If (mExt1 = "url") {
 		Control ChooseString, Unicode (UTF-16 LE BOM)
 	} Else {
 		; fails to select actually this: Control ChooseString, UTF-8 Signature
