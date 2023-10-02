@@ -96,7 +96,8 @@ class TotalcmdNetPluginData:
                 '//p[contains(@class, "opis")]/b[contains(text(), "Category")]'
             )[0].tail.strip()  # type: ignore
             # 'TC Lister Plugins'
-            category_name_match = re.match(r'TC (\w+) Plugins', category_name)
+            # 'Content plugins'
+            category_name_match = re.match(r'(?:TC )?(\w+) Plugins', category_name, re.IGNORECASE)
             if category_name_match is None:
                 raise ValueError(f'Unknown category: {category_name}')
             category = PluginCategory(category_name_match.groups(1)[0])
