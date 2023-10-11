@@ -15,6 +15,7 @@ GetURL(ByRef URL, tries := 20, delay := 3000) {
     Throw Exception("Error downloading URL", A_ThisFunc, st)
 }
 
+#Warn Unreachable, Off
 If (A_LineFile==A_ScriptFullPath) {
     global debug := {}
     Try {

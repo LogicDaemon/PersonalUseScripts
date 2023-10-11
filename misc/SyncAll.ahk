@@ -6,7 +6,13 @@
 ;IfNotExist O:\
 ;    RunWait %comspec% /C RestartO.cmd
 
-config := ProcessCLArgs( {"needADrive": "d"} )
+; Use -fastercheckUNSAFE when syncing Unison with a slow samba remote for the first time.
+; Possibly with -path subdir also.
+
+config := ProcessCLArgs( {"needADrive": "d"}, 0, True )
+syncScriptArgs := ""
+For i, v in config[""]
+    syncScriptArgs .= " " v
 
 EnvGet LOCALAPPDATA,LOCALAPPDATA
 ;EnvSet syncprog, "%LOCALAPPDATA%\Programs\unison\bin\unison-gtk2.exe"
@@ -42,11 +48,12 @@ If (config.needADrive && !drivessynced) {
 ExitApp
 
 RunScript(ByRef syncScript, runDir := "") {
+    global syncScriptArgs
     If (runDir == "")
         runDir := A_Temp
     If (FileExist(syncScript)) {
         TrayTip Running script, %SyncScript%, 15, 1
-        Run %comspec% /C "%SyncScript%", %runDir%
+        Run %comspec% /C "%syncScript%%syncScriptArgs%", %runDir%
         err := ErrorLevel
         If (err)
             Sleep 3000
@@ -56,3 +63,5 @@ RunScript(ByRef syncScript, runDir := "") {
         Throw Exception("Script not found",, syncScript)
     }
 }
+
+#include <ProcessCLArgs>

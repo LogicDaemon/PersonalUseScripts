@@ -10,7 +10,7 @@ SETLOCAL ENABLEEXTENSIONS
 
     IF NOT DEFINED skipPresyncs (
         ECHO Synchronizing Soft and drivers
-        %unisontext% Distributives_u327016.your-storagebox.de %unisonopt% -batch -path Soft -path Drivers -path "Soft com freeware" -path "Soft com license" -path "Soft FOSS" -path "Soft private use only"
+        %unisontext% Distributives_u327016.your-storagebox.de %unisonopt% -batch -path Soft -path Drivers -path "Soft com freeware" -path "Soft com license" -path "Soft FOSS" -path "Soft private use only" -noupdate socket://localhost:10355/v:/Distributives
         ECHO Synchronizing remaining
     )
     %syncprog% Distributives_u327016.your-storagebox.de %unisonopt%
