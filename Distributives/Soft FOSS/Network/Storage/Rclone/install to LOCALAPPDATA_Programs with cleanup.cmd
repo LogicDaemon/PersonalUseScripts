@@ -26,7 +26,10 @@ SETLOCAL ENABLEEXTENSIONS
     %exe7z% x -y -aoa -o"%tempUnpackDir%" -- "%distpath%"
     FOR /D %%B IN ("%tempUnpackDir%\*.*") DO IF NOT EXIST "%destBaseDir%\%%~nxB" (
         SET "unpackedDir=%%~nxB"
-        MOVE "%%~B" "%destBaseDir%\%%~nxB" || EXIT /B 1
+        MOVE "%%~B" "%destBaseDir%\%%~nxB" || (
+            XCOPY "%%~B" "%destBaseDir%\%%~nxB" /E /I /H /Y /B || EXIT /B
+            IF NOT EXIST "%destBaseDir%\%%~nxB" EXIT /B 1
+        )
         ECHO N|RD "%linkName%"
         MKLINK /J "%linkName%" "%destBaseDir%\%%~nxB" && GOTO :cleanup
     )

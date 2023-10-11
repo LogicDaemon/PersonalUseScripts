@@ -1,0 +1,15 @@
+Version 0.4.0  [2023-09-28]
+[+]  Added support for embedded PKCS#7 certificates which
+     are used in binary files like EXE, DLL, SYS, CPL, MSI,
+     CAB, CAT and so on.
+     The detect string returned to TC doesn't contain these
+     extensions by default, they need to be added manually
+     by the user.
+[+]  Added packer interface (WCX).
+     The plugin can now be used to extract single
+     certificates from certificate files and to convert
+     between binary and Base64 formats. See Readme for
+     information on how to register it as a packer plugin.
+
+Version 0.3.0  [2022-08-07]
+-  Initial public release
