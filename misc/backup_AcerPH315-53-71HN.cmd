@@ -3,8 +3,9 @@ REM by LogicDaemon <www.logicdaemon.ru>
 REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
 SETLOCAL ENABLEEXTENSIONS
 
+IF NOT EXIST u:\Backups\V_Various EXIT /B
 SET "backupsDest=u:\Backups\V_Various"
-FOR %%A IN (v:\Archive v:\Distributives v:\Games\Spring v:\Games\ModOrganizer v:\MultiMedia) DO @CALL :zpaq_compress_dir %%A
+FOR %%A IN (v:\Archive v:\Games\Spring v:\Games\ModOrganizer v:\MultiMedia) DO @CALL :zpaq_compress_dir %%A
 
 EXIT /B
 )

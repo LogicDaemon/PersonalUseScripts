@@ -43,6 +43,10 @@ If (A_IsAdmin) {
     RunWait %comspec% /C "%A_ScriptDir%\update_aws_cli.cmd",, Min
     RunWait %comspec% /C "%A_ScriptDir%\update_obs.cmd",, Min
 }
+RegRead hostname, HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters, Hostname
+backupScript=%A_ScriptDir%\backup_%hostname%.cmd
+If (FileExist(backupScript))
+    Run %comspec% /C "%A_ScriptDir%\backup_%hostname%.cmd",, Min
 
 ExitApp
 
