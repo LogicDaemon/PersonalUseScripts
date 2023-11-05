@@ -1,6 +1,0 @@
-ImDiskTk.exe
-
-This file has been downloaded from:
-https://netix.dl.sourceforge.net/project/imdisk-toolkit/20170706/ImDiskTk.exe
-
-Date: 31.08.2018, 17:17
