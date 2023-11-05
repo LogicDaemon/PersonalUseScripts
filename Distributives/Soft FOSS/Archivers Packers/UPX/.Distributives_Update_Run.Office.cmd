@@ -1,8 +1,6 @@
 @(REM coding:CP866
-    SETLOCAL ENABLEEXTENSIONS
-    IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
-    IF NOT DEFINED baseScripts SET "baseScripts=\Distributives\Local_Scripts\software_update\Downloader"
-)
-(
-    CALL "%baseScripts%\_DistDownload_github.cmd" https://github.com/upx/upx/releases/latest "upx-" "-win64.zip"
+REM by LogicDaemon <www.logicdaemon.ru>
+REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+SETLOCAL ENABLEEXTENSIONS
+CALL ahk.cmd download_latest.ahk %*
 )
