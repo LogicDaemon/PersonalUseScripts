@@ -12,7 +12,7 @@ If ErrorLevel
     ExitApp
 RegRead hostname, HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters, Hostname
 If (hostname != A_COMPUTERNAME) ; A_COMPUTERNAME is always uppercase, but might also be shortened if the hostname is too long
-    hostname = A_COMPUTERNAME
+    hostname := A_COMPUTERNAME
 FileAppend,
 (LTrim RTrim0
 #NoEnv

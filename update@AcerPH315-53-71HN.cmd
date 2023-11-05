@@ -1,6 +1,6 @@
 @(REM coding:CP866
 SETLOCAL ENABLEEXTENSIONS
-robocopy "d:\Distributives" "%~dp0Distributives" *.cmd *.ahk *.list descript.ion "partial list of free SysUtils.txt" jre_install_common.cfg opabackup342.exe.config /S /XD config Drivers_local Local_Scripts wsusoffline
+robocopy "d:\Distributives" "%~dp0Distributives" *.cmd *.ahk *.list *.py descript.ion "partial list of free SysUtils.txt" jre_install_common.cfg opabackup342.exe.config /S /XD config Drivers_local Local_Scripts wsusoffline
 
 ln --unroll --recursive --mirror "%USERPROFILE%\Documents\AutoHotkey\Lib" "%~dp0AutoHotkey\Lib"
 @REM TODO: cipher /U /N /H ., and parse the output to skip encrypted files instead of hardcoding them here

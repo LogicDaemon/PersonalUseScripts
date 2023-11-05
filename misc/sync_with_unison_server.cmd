@@ -8,10 +8,8 @@ SETLOCAL ENABLEEXTENSIONS
     IF NOT DEFINED unisontext EXIT /B 1
     IF "%~1"=="" (
         IF NOT DEFINED unisonopt SET unisonopt=-auto
-        SET skipPresyncs=0
     ) ELSE (
         SET unisonopt=%unisonopt% %*
-        SET skipPresyncs=1
     )
 )
 IF NOT DEFINED syncprog SET "syncprog=%unisontext%"

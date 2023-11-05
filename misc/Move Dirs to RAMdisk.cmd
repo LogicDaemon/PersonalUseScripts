@@ -49,14 +49,24 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     MKDIR "%RAMDrive%\Temp\OEM\AcerLogs"
     MKDIR "%RAMDrive%\Temp\OEM\CareCenter"
     MKDIR "%RAMDrive%\Temp\OEM\Preload"
+    
+    MKDIR "%RAMDrive%\ProgramData\GOG.com\Galaxy\webcache\common"
+    MKDIR "%RAMDrive%\ProgramData\GOG.com\Galaxy\lock-files"
+    MKDIR "%RAMDrive%\ProgramData\GOG.com\Galaxy\logs"
+    MKDIR "%RAMDrive%\ProgramData\GOG.com\Galaxy\crashdumps"
     rem CALL :MoveToRAMDrive "c:\OEM\AcerLogs"
     rem CALL :MoveToRAMDrive "c:\OEM\CareCenter"
     rem CALL :MoveToRAMDrive "c:\OEM\Preload"
 
-    CALL :MoveToRAMDrive "%APPDATA%\discord\Cache"
-    CALL :MoveToRAMDrive "%APPDATA%\discord\Code Cache"
     CALL :MoveToRAMDrive "%APPDATA%\DropboxElectron"
-    CALL :MoveToRAMDrive "%APPDATA%\npm-cache"    
+    CALL :MoveToRAMDrive "%APPDATA%\npm-cache"
+
+    rem Electron apps
+    FOR %%B IN (Beyond-All-Reason Dropbox Code "Code - Insiders" update-hub discord) DO @(
+        FOR %%C IN ("Cache" "CachedData" "CachedExtensions" "CachedProfilesData" "Code Cache" "Crashpad" "DawnCache" "GPUCache" "logs" "Service Worker\CacheStorage" "Service Worker\ScriptCache" "Session Storage") DO @(
+            CALL :MoveToRAMDrive "%APPDATA%\%%~B\%%~C"
+        )
+    )
     
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Microsoft\Internet Explorer"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Microsoft\Media Player"
@@ -104,7 +114,10 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Programs\Tor Browser\Browser\TorBrowser\Data\Browser\profile.default\storage"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Programs\jdownloader\logs"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Programs\jdownloader\tmp"
-        
+    CALL :MoveToRAMDrive "%LOCALAPPDATA%\EpicGamesLauncher\Saved\Config\CrashReportClient"
+    CALL :MoveToRAMDrive "%LOCALAPPDATA%\EpicGamesLauncher\Saved\Logs"
+    CALL :MoveToRAMDrive "%LOCALAPPDATA%\EpicGamesLauncher\Saved\webcache_4430"
+    
 rem     CALL :MoveToRAMDrive 
     
     FOR /D %%P IN ("%LOCALAPPDATA%\Mozilla\Firefox\Profiles\*") DO @CALL :MoveToRAMDrive "%%~P"
