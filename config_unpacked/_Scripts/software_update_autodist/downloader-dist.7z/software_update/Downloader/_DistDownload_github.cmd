@@ -6,8 +6,8 @@ SETLOCAL ENABLEEXTENSIONS
     CALL "%~dp0_GetWorkPaths.cmd"
 )
 :GetGithubLatestRelease <url> <distname-prefix> <distname-suffix>
-rem IF NOT DEFINED workdir SET "workdir=%~dp0temp\"
 (
+    IF NOT DEFINED workdir EXIT /B 1
     IF NOT EXIST "%workdir%" MKDIR "%workdir%"
     rem CURL still ignores server filename. Have no idea what to do with it. So it'll be only used as backup.
     rem -J, --remote-header-name  Use the header-provided filename (H)
@@ -27,4 +27,3 @@ rem IF NOT DEFINED workdir SET "workdir=%~dp0temp\"
     MOVE /Y "%workdir%wget-input.html" "%workdir%wget-input-prev.html"
     EXIT /B
 )
-

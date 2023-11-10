@@ -3,15 +3,17 @@
 # import modules used here -- sys is a very standard one
 import os
 import sys
-import requests
+import httpx
 import xmltodict
 import werkzeug
 import datetime
 
+cl = httpx.Client(http2=True, timeout=60)
+
 
 def download_with_timestamp_from_server(
         url: str, fail_when_no_last_modified_header: bool = False):
-    with requests.get(url, stream=True) as r:
+    with cl.stream('GET', url) as r:
         r.raise_for_status()
         print(r.headers)
         content_disp = r.headers.get('content-disposition')
@@ -46,7 +48,7 @@ def download_with_timestamp_from_server(
         os.makedirs('temp', exist_ok=True)
         tempf = os.path.join('temp', local_filename)
         with open(tempf, 'wb') as f:
-            for chunk in r.iter_content(chunk_size=8192):
+            for chunk in r.iter_bytes(chunk_size=65536):
                 # If you have chunk encoded response uncomment if
                 # and set chunk_size parameter to None.
                 # if chunk:
@@ -61,10 +63,11 @@ def download_with_timestamp_from_server(
 
 
 # Gather our code in a main() function
-def main():
+def main() -> None:
     download_with_timestamp_from_server(
-        xmltodict.parse(requests.get(
-            sys.argv[1]).text)['rss']['channel']['item']['enclosure']['@url'], sys.argv.get(2, False))
+        xmltodict.parse(cl.get(
+            sys.argv[1]).text)['rss']['channel']['item']['enclosure']['@url'],
+        bool(sys.argv[2]) if len(sys.argv) > 2 else False)
 
 
 # Standard boilerplate to call the main() function to begin
