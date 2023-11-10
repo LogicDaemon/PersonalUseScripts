@@ -23,16 +23,22 @@ IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%U
     FOR /F "delims=.; tokens=1,2,3,4,5" %%A IN ("%newtcver%") DO (
 	SET "verComponent1=%%~A"
 	SET "verComponent2=%%~B"
-	SET "verComponent3=%%~C"
+	SET "verComponent3=0%%~C"
 	SET "verComponent4=%%~D"
 	SET "verComponent5=%%~E"
     )
 )
 (
+    SET "verComponent3=%verComponent3:~-2%"
+    IF "%verComponent4%"=="0" SET "verComponent4="
+)
+(
     MKDIR "%dirDlTmp%"
-    START "" /B /WAIT /D "%dirDlTmp%" %dlcmdPrefix% http://totalcommander.ch/win/tcmd%verComponent2%%verComponent3%%verComponent4%x32.exe %dlcmdSuffix% || EXIT /B
-    START "" /B /WAIT /D "%dirDlTmp%" %dlcmdPrefix% http://totalcommander.ch/win/tcmd%verComponent2%%verComponent3%%verComponent4%x64.exe %dlcmdSuffix% || EXIT /B
-    START "" /B /WAIT /D "%dirDlTmp%" %dlcmdPrefix% http://totalcommander.ch/win/tcmd%verComponent2%%verComponent3%%verComponent4%x32_64.exe %dlcmdSuffix% || EXIT /B
+    PUSHD "%dirDlTmp%" || EXIT /B
+    %dlcmdPrefix% https://totalcommander.ch/%verComponent2%%verComponent3%%verComponent4%/tcmd%verComponent2%%verComponent3%%verComponent4%x32.exe %dlcmdSuffix% || EXIT /B
+    %dlcmdPrefix% https://totalcommander.ch/%verComponent2%%verComponent3%%verComponent4%/tcmd%verComponent2%%verComponent3%%verComponent4%x64.exe %dlcmdSuffix% || EXIT /B
+    %dlcmdPrefix% https://totalcommander.ch/%verComponent2%%verComponent3%%verComponent4%/tcmd%verComponent2%%verComponent3%%verComponent4%x32_64.exe %dlcmdSuffix% || EXIT /B
+    POPD || EXIT /B
     FOR %%A IN ("%dirDlTmp%\*.*") DO MOVE /Y "%%~A" "%dirDist%" || EXIT /B
     
     MOVE /Y "%dirData%newver.txt" "%dirData%lastver.txt"
