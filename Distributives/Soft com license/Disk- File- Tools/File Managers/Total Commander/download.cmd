@@ -17,7 +17,10 @@ IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%U
     FOR /F "usebackq delims=" %%A IN ("%dirData%lastver.txt") DO SET "oldtcver=%%~A"
 )
 (
-    IF "%newtcver%"=="%oldtcver%" EXIT /B 0
+    IF "%newtcver%"=="%oldtcver%" (
+        ECHO Downloaded version is the same as the current one, %newtcver%
+        EXIT /B 0
+    )
     (ECHO %newtcver%)>"%dirData%newver.txt"
     
     FOR /F "delims=.; tokens=1,2,3,4,5" %%A IN ("%newtcver%") DO (
