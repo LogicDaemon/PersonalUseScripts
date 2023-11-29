@@ -10,18 +10,39 @@ EnvGet workdir,workdir
 If (!workdir)
     workdir := A_ScriptDir "\temp"
 
-For i, asset in JSON.Load(GetUrl("https://api.github.com/repos/skeeto/w64devkit/releases/latest")).assets {
-    ; w64devkit-1.20.0.zip
-    If (asset.name ~= "w64devkit-(?P<ver>[\d\.]+\d)\.zip") {
-        FileCreateDir %workdir%
+FileCreateDir %workdir%
+
+releases_raw := GetUrl("https://api.github.com/repos/msys2/msys2-installer/releases")
+f := FileOpen(workdir "\releases.json", "w")
+f.Write(releases_raw)
+f.Close()
+
+releases := JSON.Load(releases_raw)
+releases_raw := ""
+
+accept_branches :=  { "main": ""
+                    , "master": ""
+                    , "release": "" }
+
+For _, release in releases {
+    If (release.draft || release.prerelease || !accept_branches.HasKey(release.target_commitish))
+        Continue
+    For _, asset in release.assets {
+        If (EndsWith(asset.name, ".sfx.exe"))
+            Continue
         If (FileExist(A_ScriptDir "\" asset.name))
             timeCond := " -z """ A_ScriptDir "\" asset.name """"
         RunWait % "CURL -RLo""" workdir "\" asset.name """" timeCond " """ asset.browser_download_url """", %workdir%, Min UseErrorLevel
         If (FileExist(workdir "\" asset.name))
             FileMove % workdir "\" asset.name, % A_ScriptDir "\" asset.name, 1
+        FileRemoveDir %workdir%
     }
-    FileRemoveDir %workdir%
+    Break
 }
 ExitApp
+
+EndsWith(long, short) {
+    Return short == SubStr(long, 1-StrLen(short))
+}
 
 #include <JSON>
