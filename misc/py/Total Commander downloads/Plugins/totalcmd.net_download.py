@@ -21,7 +21,6 @@ import lxml.html
 from packaging import version
 
 from rich import progress
-from torch import dsmm
 # except ImportError:
 #     from pip._vendor.rich import progress
 
@@ -97,7 +96,8 @@ class TotalcmdNetPluginData:
             )[0].tail.strip()  # type: ignore
             # 'TC Lister Plugins'
             # 'Content plugins'
-            category_name_match = re.match(r'(?:TC )?(\w+) Plugins', category_name, re.IGNORECASE)
+            category_name_match = re.match(r'(?:TC )?(\w+) Plugins',
+                                           category_name, re.IGNORECASE)
             if category_name_match is None:
                 raise ValueError(f'Unknown category: {category_name}')
             category = PluginCategory(category_name_match.groups(1)[0])

@@ -12,7 +12,7 @@
                         "console": "integratedTerminal",
                         "justMyCode": true,
                         "env": {
-                                "GEVENT_SUPPORT": "True"
+                                // "GEVENT_SUPPORT": "True"
                         },
                 }
         ]

@@ -1,0 +1,5 @@
+dnspython
+httpx[http2]
+lxml
+packaging
+rich
