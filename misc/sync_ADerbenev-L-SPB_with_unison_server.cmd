@@ -6,11 +6,13 @@ SETLOCAL ENABLEEXTENSIONS
     SET "filterSyncs="
     IF "%unisonopt%"=="" SET "filterSyncs=1"
     IF "%unisonopt%"=="-auto" SET "filterSyncs=1"
+    
+    CALL "%LOCALAPPDATA%\_sec\connect_AcerPH315-53-71HN.cmd"
 )
 @IF NOT DEFINED syncprog SET "syncprog=%unisontext%"
 @(
     IF DEFINED filterSyncs (
-        %unisontext% Distributives_AcerPH315-53-71HN -path "Soft/Keyboard Tools/AutoHotkey/ver.zip.txt" -prefer "\\AcerPH315-53-71HN\Distributives$" -auto -batch
+        %unisontext% Distributives_AcerPH315-53-71HN -path "Soft/Keyboard Tools/AutoHotkey/ver.zip.txt" -path "Developement/Versioning/git/latest_assets.json" -prefer "\\AcerPH315-53-71HN\Distributives$" -auto -batch
         DEL "%TEMP%\%~n0.list.txt"
         FOR %%A IN ("%USERPROFILE%\.unison\*_AcerPH315-53-71HN.prf") DO @(
             <NUL %unisontext% "%%~nA" "-auto=false" || ECHO "%%~nA">>"%TEMP%\%~n0.list.txt"

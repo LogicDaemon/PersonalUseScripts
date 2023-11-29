@@ -42,6 +42,8 @@ If (A_IsAdmin) {
     RunWait %comspec% /C "%A_ScriptDir%\update-git-for-windows.cmd",, Min
     RunWait %comspec% /C "%A_ScriptDir%\update_aws_cli.cmd",, Min
     RunWait %comspec% /C "%A_ScriptDir%\update_obs.cmd",, Min
+    RunWait "%LOCALAPPDATA%\Programs\msys64\ucrt64.exe" pacman -Suy --noconfirm,, Min
+    RunWait "%LOCALAPPDATA%\Programs\msys64\ucrt64.exe" paccache -r --noconfirm,, Min
 }
 RegRead hostname, HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters, Hostname
 backupScript=%A_ScriptDir%\backup_%hostname%.cmd
