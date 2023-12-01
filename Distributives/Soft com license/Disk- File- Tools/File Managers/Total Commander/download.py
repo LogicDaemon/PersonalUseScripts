@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
-'''
-Download plugins from totalcmd.net
+''' download https://www.ghisler.com/download.htm
+parse it
+download 3 TCs from there
 '''
 
 from __future__ import annotations, generator_stop
 
+# Python Standard Library modules, see https://docs.python.org/3/py-modindex.html
+from typing import NoReturn, Optional, TypedDict
 import email.utils
 import logging
 import os
@@ -12,9 +15,9 @@ import posixpath
 import re
 import sys
 import time
-from enum import Enum
-from typing import NoReturn, Optional, TypedDict, Unpack
 
+# Installable modules, see https://pypi.org/
+import dns.resolver
 import httpx
 import lxml
 import lxml.html
@@ -23,6 +26,9 @@ from packaging import version
 from rich import progress
 # except ImportError:
 #     from pip._vendor.rich import progress
+
+VERSION_FILE_NAME = 'lastver.txt'
+VERSION_FILE_ENCODING = 'oem'
 
 log = logging.getLogger(
     os.path.basename(__file__) if __name__ == '__main__' else __name__)
@@ -38,13 +44,14 @@ httpx_client_default_args = HttpxArgs(
     follow_redirects=True,
 )
 
+shared_httpx_client: Optional[httpx.Client] = None
 
-def init_httpx_client(**kwargs: Unpack[HttpxArgs]) -> httpx.Client:
-    if kwargs:
-        return httpx.Client(**(
-            httpx_client_default_args  # type: ignore
-            | kwargs))
-    return httpx.Client(**httpx_client_default_args)
+
+def init_httpx_client() -> httpx.Client:
+    global shared_httpx_client
+    if shared_httpx_client is None:
+        shared_httpx_client = httpx.Client(**httpx_client_default_args)
+    return shared_httpx_client
 
 
 def get_env_log_level(
@@ -56,79 +63,63 @@ def get_env_log_level(
     return getattr(logging, env_log_level.upper())
 
 
-class PluginCategory(Enum):
-    content = 'Content'
-    filesystem = 'Filesystem'
-    lister = 'Lister'
-    packer = 'Packer'
-
-
-class TotalcmdNetPluginData:
-    urlname: str
-    name: str
+class TotalCmdDownloads:
     version: version.Version
-    category: PluginCategory
     download_urls: list[httpx.URL]
-    whatsnew: str
     __slots__ = tuple(__annotations__)
 
-    def __init__(self,
-                 name_in_url: str,
-                 category: Optional[PluginCategory] = None,
-                 httpx_client: Optional[httpx.Client] = None) -> None:
-        if httpx_client is None:
-            httpx_client = init_httpx_client(follow_redirects=True)
-        self.urlname = name_in_url
-        url = httpx.URL(
-            f'https://www.totalcmd.net/plugring/{name_in_url}.html')
+    def __init__(self) -> None:
+        httpx_client = init_httpx_client()
+        url = httpx.URL('https://www.ghisler.com/download.htm')
         page = lxml.html.fromstring(httpx_client.get(url).content)
 
         assert isinstance(page, lxml.html.HtmlElement)
-        name_on_page: str = page.xpath('//h1')[0].text.strip()  # type: ignore
-        # 'PE Viewer 3.0.7'
-        self.name = name_on_page[:name_on_page.rfind(' ')]
-        self.version = version.Version(name_on_page[name_on_page.rfind(' ') +
-                                                    1:])
+        # /html/body/table/tbody/tr[2]/td[2]/h3[1]/font/text()[1]
+        for header in page.xpath('//h3/*'):
+            text = header.text
+            if text is None:
+                continue
+            m = re.search(
+                r'Download\s*version\s+(?P<ver>[\d.]+)\s+of\s+Total\s+Commander',
+                text.strip(), re.IGNORECASE | re.MULTILINE)
+            if m:
+                self.version = version.Version(m.group('ver'))
+                break
+        else:
+            raise ValueError('Cannot find version number')
 
-        if category is None:
-            category_name = page.xpath(
-                '//p[contains(@class, "opis")]/b[contains(text(), "Category")]'
-            )[0].tail.strip()  # type: ignore
-            # 'TC Lister Plugins'
-            # 'Content plugins'
-            category_name_match = re.match(r'(?:TC )?(\w+) Plugins',
-                                           category_name, re.IGNORECASE)
-            if category_name_match is None:
-                raise ValueError(f'Unknown category: {category_name}')
-            category = PluginCategory(category_name_match.groups(1)[0])
-        self.category = category
-
+        # /html/body/table/tbody/tr[2]/td[2]/ul[1]
+        # <ul>
+        #     <li><a href="https://totalcommander.ch/1102/tcmd1102x32.exe"><font size="2" face="Arial"><b>32-bit version only</b></font></a><font size="2" face="Arial"> (Windows 95 up to Windows
+        #         11, runs on 32-bit AND 64-bit machines!)</font></li>
+        #     <li><a href="https://totalcommander.ch/1102/tcmd1102x64.exe"><font size="2" face="Arial"><b>64-bit version only</b></font></a><font size="2" face="Arial"> (Windows XP up to Windows
+        #         11, runs ONLY on 64-bit machines!)</font></li>
+        #     <li><a href="https://totalcommander.ch/1102/tcmd1102x32_64.exe"><font size="2" face="Arial"><b>64-bit+32-bit combined
+        #         download</b></font></a><font size="2" face="Arial"> (Windows 95 up to Windows 11,
+        #         32-bit AND 64-bit machines!)</font></li>
+        #     <li><font size="2" face="Arial">Insecure downloads
+        #         via http: </font><a href="http://totalcommander.ch/1102/tcmd1102x32.exe"><font size="2" face="Arial"><b>32-bit</b></font></a><font size="2" face="Arial"><b> | </b></font><a href="http://totalcommander.ch/1102/tcmd1102x64.exe"><font size="2" face="Arial"><b>64-bit</b></font></a><font size="2" face="Arial"><b> | </b></font><a href="http://totalcommander.ch/1102/tcmd1102x32_64.exe"><font size="2" face="Arial"><b>64-bit+32-bit combined</b></font></a></li>
+        # </ul>
         self.download_urls = [
             url.join(short_url) for short_url in page.xpath(  # type: ignore
-                '//ul[contains(@class, "download_links")]//a/@href')
+                '//ul[1]//a/@href')
+            if not short_url.startswith('http://') and '.exe' in short_url
         ]
-        # self.whatsnew = page.xpath('/html/body/table/tbody/tr/td/table[2]/tbody/tr/td[1]/center[2]/textarea')[0].text_content()
-        whatsnew_elem_title = "What's new"
-        self.whatsnew = page.xpath(
-            f'//center/b[contains(text(), "{whatsnew_elem_title}")]/following::textarea'
-        )[0].text  # type: ignore
         log.info('%s', self)
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({self.name} {self.version})'
+        return f'{self.__class__.__name__}({' '.join(getattr(self, v) for v in self.__slots__)})'
 
     def __str__(self) -> str:
-        return f'{self.name} {self.version} ({self.category})\n{self.download_urls}\n{self.whatsnew}'
+        return f'{self.__class__.__name__} {self.version} ({self.download_urls})'
 
 
 def download_file(
     url: httpx.URL,
     dest_dir: str,
     progressbar: Optional[progress.Progress],
-    httpx_client: Optional[httpx.Client] = None,
 ) -> str:
-    if httpx_client is None:
-        httpx_client = init_httpx_client(follow_redirects=True)
+    httpx_client = init_httpx_client()
     logging.info('Downloading %s...', url)
     while True:  # for redirects
         with httpx_client.stream('GET', url, follow_redirects=True) as dl:
@@ -255,12 +246,46 @@ def update_descript_ion(path: str, description: str) -> None:
     os.replace(descript_ion_fname_tmp, descript_ion_path)
 
 
+def query_current_version():
+    # current version is available in txt DNS record of releaseversion.ghisler.com
+    # in format '10.11.2.0;1'
+    host = 'releaseversion.ghisler.com'
+    answer = dns.resolver.resolve(host, 'TXT')
+    assert str(answer.qname) == f'{host}.'
+    for rdata in answer:  # pyright: ignore[reportGeneralTypeIssues]
+        for txt_bytes in rdata.strings:
+            txt_string = txt_bytes.decode('utf-8')
+            if re.match(r'[\d.]+(;\d+)?', txt_string):
+                return txt_string
+    return None
+
+
+def read_saved_ver(dest_dir: str) -> str | None:
+    try:
+        with open(os.path.join(dest_dir, VERSION_FILE_NAME),
+                  encoding=VERSION_FILE_ENCODING) as f:
+            return f.readline().strip()
+    except FileNotFoundError:
+        pass
+    return None
+
+
+def save_ver(dest_dir: str, ver: str) -> None:
+    with open(os.path.join(dest_dir, VERSION_FILE_NAME),
+              'w',
+              encoding=VERSION_FILE_ENCODING) as f:
+        f.write(ver)
+
+
 def main() -> NoReturn:
     import argparse
     parser = argparse.ArgumentParser(
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument('plugin_name')
+    # parser.add_argument('action',
+    #                     choices=('download', 'check'),
+    #                     default='check')
+    parser.add_argument('--dest-dir', '-D', help='Destination directory')
     parser.add_argument('--debug',
                         '-d',
                         action='store_true',
@@ -269,48 +294,41 @@ def main() -> NoReturn:
     logging.basicConfig(
         level=logging.DEBUG if args.debug else get_env_log_level())
 
-    with init_httpx_client() as httpx_client:
-        plugin_data = TotalcmdNetPluginData(args.plugin_name,
-                                            httpx_client=httpx_client)
-        dest_dir = os.path.join(
-            os.path.realpath(os.path.dirname(__file__)),
-            'Sorted',
-            plugin_data.category.value,
-            plugin_data.name,
-        )
-        if not os.path.isdir(dest_dir):
-            os.makedirs(dest_dir)
-        if plugin_data.whatsnew:
-            whatsnew_fname = os.path.join(dest_dir, 'whatsnew.txt')
-            whatsnew_fname_tmp = whatsnew_fname + '.tmp'
-            with open(whatsnew_fname_tmp, 'w') as f:
-                f.write(plugin_data.whatsnew)
-            os.replace(whatsnew_fname_tmp, whatsnew_fname)
-        with progress.Progress(
-                progress.TextColumn(
-                    '[progress.description]{task.description}'),
-                progress.BarColumn(),
-                progress.TextColumn(
-                    '[progress.percentage]{task.percentage:>3.0f}%'),
-                # progress.TextColumn('[progress.filesize]{task.completed}'),
-                # progress.TextColumn('[progress.filesize]{task.total}'),
-                progress.TimeElapsedColumn(),
-                progress.TimeRemainingColumn(),
-                progress.TransferSpeedColumn(),
-        ) as progressbar:
-            for url in plugin_data.download_urls:
-                try:
-                    dest = download_file(
-                        url,
-                        dest_dir,
-                        progressbar,
-                        httpx_client=httpx_client,
-                    )
-                except Exception:
-                    log.exception('Downloading %s failed', url)
-                    continue
-                print(dest)
-                update_descript_ion(dest, f'URL: {url}')
+    dest_dir = args.dest_dir or os.environ.get('srcpath') or os.getcwd()
+
+    cur_ver = query_current_version()
+    saved_ver = read_saved_ver(dest_dir)
+    if cur_ver == saved_ver:
+        log.info('Current version %s is the same as last saved %s', cur_ver,
+                 saved_ver)
+        sys.exit()
+    log.info('Current version %s is different from last saved %s', cur_ver,
+             saved_ver)
+
+    init_httpx_client()
+    dl_info = TotalCmdDownloads()
+    with progress.Progress(
+            progress.TextColumn('[progress.description]{task.description}'),
+            progress.BarColumn(),
+            progress.TextColumn(
+                '[progress.percentage]{task.percentage:>3.0f}%'),
+            # progress.TextColumn('[progress.filesize]{task.completed}'),
+            # progress.TextColumn('[progress.filesize]{task.total}'),
+            progress.TimeElapsedColumn(),
+            progress.TimeRemainingColumn(),
+            progress.TransferSpeedColumn(),
+    ) as progressbar:
+        for url in dl_info.download_urls:
+            try:
+                dest = download_file(url, dest_dir, progressbar)
+            except Exception:
+                log.exception('Downloading %s failed', url)
+                continue
+            print(dest)
+            update_descript_ion(dest, f'URL: {url}')
+
+    if cur_ver is not None:
+        save_ver(dest_dir, cur_ver)
 
     sys.exit()
 
