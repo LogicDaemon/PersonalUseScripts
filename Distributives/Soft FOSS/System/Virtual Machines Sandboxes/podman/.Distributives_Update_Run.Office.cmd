@@ -17,24 +17,30 @@ rem     CURL https://api.github.com/repos/containers/podman/releases | jq ".[] |
     EXIT /B
 )
 :CheckDownload <url>
-CALL :getfname dver "%urlbase:~0,-1%"
+IF NOT DEFINED dver (
+    CALL :getfname dver "%urlbase:~0,-1%"
+)
+(
+    IF NOT DEFINED CREATED_VER_DIR (
+        IF NOT EXIST "%srcpath%%dver%" MKDIR "%srcpath%%dver%"
+        SET CREATED_VER_DIR=1
+    )
+    IF "%~nx1"=="shasums" GOTO :CheckDownloadMatch
+    IF "%~x1"==".exe" GOTO :CheckDownloadMatch
+    IF "%~x1"==".msi" GOTO :CheckDownloadMatch
+    rem https://github.com/containers/podman/releases/download/v4.8.0/podman-remote-release-windows_amd64.zip
+    IF "%fname:~-18%"=="-windows_amd64.zip" GOTO :CheckDownloadMatch
+    EXIT /B 1
+)
+:CheckDownloadMatch
 IF EXIST "%srcpath%%dver%\%fname%" (
     SET "timecond=-z "%srcpath%%dver%\%fname%""
 ) ELSE (
     SET "timecond="
 )
 (
-    IF "%shasums%"=="shasums" GOTO :CheckDownloadMatch
-    IF "%~x1"==".exe" GOTO :CheckDownloadMatch
-    IF "%~x1"==".msi" GOTO :CheckDownloadMatch
-    IF "%fname:~-18%"=="-windows_amd64.zip" GOTO :CheckDownloadMatch
-    EXIT /B
-    :CheckDownloadMatch
     START "" /B /WAIT /D "%workdir%" CURL %timecond% -RJOL %1
-    IF NOT EXIST "%srcpath%%dver%" (
-        MKDIR "%srcpath%%dver%"
-        IF EXIST "%workdir%%fname%" MOVE /Y "%workdir%%fname%" "%srcpath%%dver%\%fname%"
-    )
+    IF EXIST "%workdir%%fname%" MOVE /Y "%workdir%%fname%" "%srcpath%%dver%\%fname%"
     EXIT /B
 )
 :getfname
