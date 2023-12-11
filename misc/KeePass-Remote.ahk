@@ -1,8 +1,8 @@
 ﻿#NoEnv
 
-EnvGet LocalAppData, LOCALAPPDATA
+EnvGet SecretDataDir, SecretDataDir
 
-Loop Read, %LocalAppData%\_sec\KeePassKeyFind.txt
+Loop Read, %SecretDataDir%\KeePassKeyFind.txt
 {
     key := FirstMatching(ExpandEnvVars(A_LoopReadLine))
 } Until key

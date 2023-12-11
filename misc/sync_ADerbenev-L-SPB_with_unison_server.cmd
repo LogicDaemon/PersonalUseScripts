@@ -6,8 +6,6 @@ SETLOCAL ENABLEEXTENSIONS
     SET "filterSyncs="
     IF "%unisonopt%"=="" SET "filterSyncs=1"
     IF "%unisonopt%"=="-auto" SET "filterSyncs=1"
-    
-    CALL "%LOCALAPPDATA%\_sec\connect_AcerPH315-53-71HN.cmd"
 )
 @IF NOT DEFINED syncprog SET "syncprog=%unisontext%"
 @(

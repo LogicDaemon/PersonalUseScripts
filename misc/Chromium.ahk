@@ -4,10 +4,8 @@
 #NoEnv
 #SingleInstance force
 
-;#Include <GetKnownFolder>
-;#Include <nprivRun>
-
-LocalAppData = GetKnownFolder("LocalAppData")
+EnvGet LocalAppData, LOCALAPPDATA
+EnvGet SecretDataDir, SecretDataDir
 
 SetTitleMatchMode RegEx
 ChromiumWinTitleRegex := ".+ - Chromium$ ahk_exe chrome.exe"
@@ -25,9 +23,8 @@ If %0%
 }
 
 set_cmds := ""
-EnvGet LocalAppData, LOCALAPPDATA
 For i, varname in ["GOOGLE_DEFAULT_CLIENT_ID", "GOOGLE_DEFAULT_CLIENT_SECRET", "GOOGLE_API_KEY"] {
-    IniRead value, %LocalAppData%\_sec\Chromium Google API keys.ini,Chromium-local-build,%varname%,%A_Space%
+    IniRead value, %SecretDataDir%\Chromium Google API keys.ini,Chromium-local-build,%varname%,%A_Space%
     EnvSet %varname%, % value
     set_cmds .= "SET """ varname "=" value """ & "
 }
@@ -101,3 +98,5 @@ ParseCommandLine() {
     
     return SubStr(CommandLine, skipChars)
 }
+
+#Include <nprivRun>

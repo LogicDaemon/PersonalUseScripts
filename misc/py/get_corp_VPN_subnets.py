@@ -51,8 +51,7 @@ def readConfig() -> configparser.ConfigParser:
         os.path.join(appdirs.user_config_dir(appname=__file__),
                       'wiki_parser.ini'))
     if os.name == 'nt':
-        secretPath = os.path.join(os.getenv('LOCALAPPDATA', '.'), '_sec',
-                                   'wiki.txt')
+        secretPath = os.path.join(os.getenv('SecretDataDir'), 'wiki.txt')
     else:
         secretPath = os.path.join(appdirs.user_config_dir(appname=__file__),
                                    'secrets.txt')

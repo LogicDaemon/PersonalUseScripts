@@ -3,6 +3,7 @@
 #NoEnv
 FileEncoding UTF-8
 
+EnvGet SecretDataDir,SecretDataDir
 EnvGet LocalAppData,LOCALAPPDATA
 EnvGet SystemRoot,SystemRoot
 
@@ -10,7 +11,7 @@ GroupAdd jumpnet, jnldev-va-2.serverpod.net - PuTTY ahk_class PuTTY ahk_exe PUTT
 GroupAdd cdnjump, cdn-jump.anymeeting.com - PuTTY ahk_class PuTTY ahk_exe PUTTY.EXE
 
 WaitForSubnet(IMVPNSubnets()) ;wait for VPN connection
-Run "%LocalAppData%\Programs\putty\PAGEANT.EXE" "%LocalAppData%\_sec\aderbenev-rsa-key-20210414.ppk"
+Run "%LocalAppData%\Programs\putty\PAGEANT.EXE" "%SecretDataDir%\aderbenev-rsa-key-20210414.ppk"
 Process Wait, PAGEANT.EXE
 
 If (WinExist("ahk_group jumpnet")) {
