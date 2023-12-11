@@ -17,6 +17,7 @@ If (IsObject(updDirOrErrors)) {
     Run *Open "%A_Temp%\%A_ScriptName%.log"
     Throw Exception("Update errors",, errorsText)
 } Else {
+    RunWait %comspec% /C "MKLINK /H "%vsCodeDest%\code-insiders.exe" "%vsCodeDest%\Code - Insiders.exe"", %vsCodeDest%, Min
     CleanOldInstallations(updDirOrErrors, vsCodeDest)
 }
 
