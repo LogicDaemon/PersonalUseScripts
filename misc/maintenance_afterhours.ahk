@@ -6,24 +6,8 @@ FileEncoding UTF-8
 EnvGet LocalAppData,LOCALAPPDATA
 EnvGet SystemRoot,SystemRoot
 
-killProcesses := [ "conhost.exe"
-                 , "git.exe" ]
-
-For i, procName in killProcesses {
-    WinKill ahk_exe %procName%,,5
-    While true {
-        Process Exist, %procName%
-        If (!ErrorLevel)
-            break
-        If (prevPID == ErrorLevel) {
-            RunWait taskkill.exe /IM %procName% /F,, Min UseErrorLevel
-            break
-        } Else {
-            prevPID := ErrorLevel
-            Process Close, %procName%
-        }
-    }
-}
+;KillProcesses([ "conhost.exe"
+;                 , "git.exe" ])
 
 If (FileExist("w:\FileHistory\" A_UserName)) {
     Loop Files, w:\FileHistory\%A_UserName%\*.*, D
@@ -51,6 +35,24 @@ If (FileExist(backupScript))
     Run %comspec% /C "%A_ScriptDir%\backup_%hostname%.cmd",, Min
 
 ExitApp
+
+KillProcesses(processesNames) {
+    For i, procName in killProcesses {
+        WinKill ahk_exe %procName%,,5
+        While true {
+            Process Exist, %procName%
+            If (!ErrorLevel)
+                break
+            If (prevPID == ErrorLevel) {
+                RunWait taskkill.exe /IM %procName% /F,, Min UseErrorLevel
+                break
+            } Else {
+                prevPID := ErrorLevel
+                Process Close, %procName%
+            }
+        }
+    }
+}
 
 CompactCompressible(dir) {
     definitelyCompress :=   { "js": ""

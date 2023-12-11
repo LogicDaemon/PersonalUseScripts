@@ -4,8 +4,7 @@ REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 In
 SETLOCAL ENABLEEXTENSIONS
     IF NOT DEFINED hostname CALL :ReadRegHostname hostname
 
-    CALL _unison_get_command.cmd || EXIT /B
-    IF NOT DEFINED unisontext EXIT /B 1
+    IF NOT DEFINED unisontext CALL _unison_get_command.cmd || EXIT /B
     IF "%~1"=="" (
         IF NOT DEFINED unisonopt SET unisonopt=-auto
     ) ELSE (

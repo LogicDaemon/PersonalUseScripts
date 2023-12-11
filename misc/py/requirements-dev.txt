@@ -1,5 +1,6 @@
 mypy # no type annotations for gevent
-prospector
+flake8
+pylint
 
 # not supported on Windows, not working with python>3.9
 #pytype

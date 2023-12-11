@@ -21,7 +21,7 @@ textsyncprog=%LOCALAPPDATA%\Programs\unison\bin\unison.exe
 If (FileExist(guisyncprog)) {
     EnvSet syncprog, "%guisyncprog%"
 } Else If (FileExist(textsyncprog)) {
-    MsgBox "%syncprog%" does not exist`, falling back to "%textsyncprog%".
+    ;MsgBox "%syncprog%" does not exist`, falling back to "%textsyncprog%".
     EnvSet syncprog, "%textsyncprog%"
 } Else {
     Throw Exception("Could not find unison-gui.exe or unison.exe")

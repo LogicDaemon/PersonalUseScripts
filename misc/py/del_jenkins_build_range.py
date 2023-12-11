@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-'''
-Removes a range of Jenkins builds.
-'''
+""" Removes a range of Jenkins builds. """
 
 from __future__ import annotations, generator_stop
 
@@ -52,7 +50,8 @@ def delete_build(client: httpx.Client,
 
 def main() -> NoReturn:
     default_cred_path = os.path.join(
-        os.environ.get('LOCALAPPDATA', os.environ.get('HOME', '.')), '_sec',
+        os.environ.get('SecretDataDir') or os.path.join(
+        os.environ.get('LOCALAPPDATA', os.environ.get('HOME', '.')), '_sec'),
         'jenkins-api-credentials.txt')
 
     import argparse
