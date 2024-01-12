@@ -13,7 +13,7 @@ import re
 import sys
 import time
 from enum import Enum
-from typing import NoReturn, Optional, TypedDict, Unpack
+from typing import NoReturn, Optional, Tuple, TypedDict, Union, Unpack
 
 import httpx
 import lxml
@@ -66,10 +66,10 @@ class PluginCategory(Enum):
 class TotalcmdNetPluginData:
     urlname: str
     name: str
-    version: version.Version
+    version: Union[version.Version, str]
     category: PluginCategory
     download_urls: list[httpx.URL]
-    whatsnew: str
+    whatsnew: Optional[str]
     __slots__ = tuple(__annotations__)
 
     def __init__(self,
@@ -87,8 +87,11 @@ class TotalcmdNetPluginData:
         name_on_page: str = page.xpath('//h1')[0].text.strip()  # type: ignore
         # 'PE Viewer 3.0.7'
         self.name = name_on_page[:name_on_page.rfind(' ')]
-        self.version = version.Version(name_on_page[name_on_page.rfind(' ') +
-                                                    1:])
+        try:
+            self.version = version.Version(
+                name_on_page[name_on_page.rfind(' ') + 1:])
+        except version.InvalidVersion:
+            self.version = name_on_page[name_on_page.rfind(' ') + 1:]
 
         if category is None:
             category_name = page.xpath(
@@ -109,9 +112,12 @@ class TotalcmdNetPluginData:
         ]
         # self.whatsnew = page.xpath('/html/body/table/tbody/tr/td/table[2]/tbody/tr/td[1]/center[2]/textarea')[0].text_content()
         whatsnew_elem_title = "What's new"
-        self.whatsnew = page.xpath(
-            f'//center/b[contains(text(), "{whatsnew_elem_title}")]/following::textarea'
-        )[0].text  # type: ignore
+        try:
+            self.whatsnew = page.xpath(
+                f'//center/b[contains(text(), "{whatsnew_elem_title}")]/following::textarea'
+            )[0].text  # type: ignore
+        except IndexError:
+            self.whatsnew = None
         log.info('%s', self)
 
     def __repr__(self) -> str:
@@ -126,7 +132,9 @@ def download_file(
     dest_dir: str,
     progressbar: Optional[progress.Progress],
     httpx_client: Optional[httpx.Client] = None,
-) -> str:
+) -> Tuple[str, httpx.URL]:
+    """ Download a file
+        Return path to the downloaded file and a final URL after redirects """
     if httpx_client is None:
         httpx_client = init_httpx_client(follow_redirects=True)
     logging.info('Downloading %s...', url)
@@ -192,10 +200,10 @@ def download_file(
                 os.utime(destination,
                          (time.time(), time.mktime(last_modified)))
             break
-    return destination
+    return destination, dl.url
 
 
-def update_descript_ion(path: str, description: str) -> None:
+def update_descript_ion(path: str, description: str, encoding='utf-8') -> None:
     ''' Update descript.ion file for the given path with the given description
         Accroding to https://stackoverflow.com/a/15808848/1421036, descript.ion
         file format is:
@@ -213,46 +221,68 @@ def update_descript_ion(path: str, description: str) -> None:
     '''
     dirname = path
     while dirname:
-        dirname, desc_fname = os.path.split(dirname)
-        if desc_fname:
+        dirname, described_file_name = os.path.split(dirname)
+        if described_file_name:
             break
     else:
         raise ValueError(f'Cannot determine description file name for {path}')
 
-    if '\n' in description:
-        description = description.replace('\n', '\\n')
-        multiline_description_suffix = '\x04\xc2'
-    else:
-        multiline_description_suffix = ''
+    lf_is_in_description = '\n' in description
+    multiline_desc_suffix = b'\x04\xc2' if lf_is_in_description else b''
+    description = description.replace('\n', '\\n')
+    enc_description = description.encode(encoding)
+    space = ' '.encode(encoding)
+    lf = '\n'.encode(encoding)
 
-    desc_fname = f'"{desc_fname}"' if ' ' in desc_fname else desc_fname
+    described_file_name = (f'"{described_file_name}"' if ' '
+                           in described_file_name else described_file_name)
+    desc_filename_enc = described_file_name.encode(encoding)
     descript_ion_path = os.path.join(dirname, 'descript.ion')
     descript_ion_fname_tmp = descript_ion_path + '.tmp'
     try:
-        with open(descript_ion_path) as f2:
+        with open(descript_ion_path, 'rb') as f2:
             orig = f2.read()
     except FileNotFoundError:
-        orig = ''
-    curr_desc_line_pos = (0 if orig.startswith(desc_fname + ' ') else
-                          orig.find(f'\n{desc_fname} '))
-    if curr_desc_line_pos >= 0:
-        curr_desc_offset = curr_desc_line_pos + len(desc_fname)
-        next_desc_pos = orig.find('\n', curr_desc_line_pos + 1) + 1
-        current_desc = orig[curr_desc_offset:next_desc_pos].rstrip('\r\n')
-        if description in current_desc:
-            return
-        if current_desc.endswith(multiline_description_suffix):
-            # remove duplicating suffix
-            multiline_description_suffix = ''
-        descript_ion = (
-            f'{orig[:curr_desc_offset]} {description} {current_desc}{multiline_description_suffix}\n'
-            + (orig[next_desc_pos:] if next_desc_pos else ''))
+        orig = b''
+    if orig:
+        curr_desc_line_pos = (0 if orig.startswith(desc_filename_enc + space)
+                              else orig.find(lf + desc_filename_enc + space) +
+                              len(lf))
     else:
-        descript_ion = f'{desc_fname} {description}{multiline_description_suffix}\n'
-
-    with open(descript_ion_fname_tmp, 'w') as f:
-        f.write(descript_ion)
-    os.replace(descript_ion_fname_tmp, descript_ion_path)
+        curr_desc_line_pos = -1
+    if curr_desc_line_pos >= 0:
+        curr_desc_offset = (curr_desc_line_pos + len(desc_filename_enc) +
+                            len(space))
+        next_desc_pos = orig.find(lf, curr_desc_offset) + len(lf)
+        current_desc = orig[curr_desc_offset:next_desc_pos].rstrip(b'\r' + lf)
+        if enc_description in current_desc:
+            return
+        if current_desc in enc_description:
+            current_desc = b''
+        lf_is_in_description = lf_is_in_description or lf in enc_description
+        if current_desc.endswith(multiline_desc_suffix):
+            # remove duplicating suffix
+            multiline_desc_suffix = b''
+        with open(descript_ion_fname_tmp, 'wb') as f:
+            f.write(orig[:curr_desc_offset])
+            for token in (
+                    enc_description,
+                ('\\n'.encode(encoding) if lf_is_in_description else space)
+                    if current_desc else b'',
+                    current_desc,
+                    multiline_desc_suffix,
+                    lf,
+            ):
+                f.write(token)
+            if next_desc_pos:
+                f.write(orig[next_desc_pos:])
+        os.replace(descript_ion_fname_tmp, descript_ion_path)
+    else:
+        with open(descript_ion_path, 'ab') as f:
+            if orig and not orig.endswith(lf):
+                f.write(lf)
+            f.write(f'{described_file_name} {description}'.encode(encoding))
+            f.write(multiline_desc_suffix + lf)
 
 
 def main() -> NoReturn:
@@ -283,7 +313,7 @@ def main() -> NoReturn:
         if plugin_data.whatsnew:
             whatsnew_fname = os.path.join(dest_dir, 'whatsnew.txt')
             whatsnew_fname_tmp = whatsnew_fname + '.tmp'
-            with open(whatsnew_fname_tmp, 'w') as f:
+            with open(whatsnew_fname_tmp, 'w', encoding='utf-8') as f:
                 f.write(plugin_data.whatsnew)
             os.replace(whatsnew_fname_tmp, whatsnew_fname)
         with progress.Progress(
@@ -300,7 +330,7 @@ def main() -> NoReturn:
         ) as progressbar:
             for url in plugin_data.download_urls:
                 try:
-                    dest = download_file(
+                    dest, final_url = download_file(
                         url,
                         dest_dir,
                         progressbar,
@@ -309,8 +339,14 @@ def main() -> NoReturn:
                 except Exception:
                     log.exception('Downloading %s failed', url)
                     continue
-                print(dest)
-                update_descript_ion(dest, f'URL: {url}')
+                if url == final_url:
+                    print(f'"{url}" saved to "{dest}"')
+                    update_descript_ion(dest, f'URL: {url}')
+                else:
+                    print(f'"{final_url}" (redirected from "{url}") '
+                          f'saved to "{dest}"')
+                    update_descript_ion(
+                        dest, f'URL: {url}\nRedirected to: {final_url}')
 
     sys.exit()
 
