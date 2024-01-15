@@ -15,8 +15,6 @@
 :download <url>
 @(
     CALL "%baseScripts%\_DistDownload.cmd" %1 "*%~x1" -N
-    IF "%~x1"==".torrent" IF EXIST "%~dp0%~nx1" (
-        START "" /D "%srcpath%" /B aria2c --file-allocation=trunc --enable-dht6 --seed-time=0 --bt-detach-seed-only --bt-hash-check-seed=false --auto-file-renaming=false --check-integrity=true -T "%~dp0%~nx1"
-    )
+    IF "%~x1"==".torrent" IF EXIST "%~dp0%~nx1" START "" /WAIT /B /D "%srcpath%" aria2c --file-allocation=trunc --enable-dht6 --seed-time=0 --bt-detach-seed-only --bt-hash-check-seed=false --auto-file-renaming=false --check-integrity=true -T "%~dp0%~nx1"
     EXIT /B
 )
