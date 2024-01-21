@@ -9,8 +9,8 @@ EnvGet LocalAppData,LOCALAPPDATA
 If (!exe7z)
     exe7z := "7z.exe"
 
-;SplitPath A_ScriptDir, distName
 distName = aria2
+destBase = %LocalAppData%\Programs
 mask := distName . (A_Is64bitOs ? "-*-win-64bit-build*.zip" : "-*-win-32bit-build*.zip")
 
 latestPath := latestVer := latestbuild := ""
@@ -72,13 +72,13 @@ InstallDist(ByRef archivePath, ByRef distName, archiveWithSubdir:=True) {
         If (FileExist(destBase "\" unpackedDirName))
             Throw Exception("Error: The destination directory already exists",, destBase "\" unpackedDirName)
     }
+    removeTemp := True
+    FileAppend Running %exe7z%`n, **, CP1
+    ; FileAppend inside try fails if the stderr is not redirected to a file
     Try {
-        removeTemp := True
-        FileAppend Running %exe7z%`n, **, CP1
         RunWait "%exe7z%" x -aoa -y -o"%tempDir%" -- "%archivePath%",, Min UseErrorLevel
         If (ErrorLevel)
             Throw Exception("Failed to extract the distributive to temp dir",, archivePath " to " tempDir)
-        
         If (archiveWithSubdir) {
             unpackedDirsCount := 0
             Loop Files, %tempDir%\*.*, D
@@ -121,7 +121,7 @@ InstallDist(ByRef archivePath, ByRef distName, archiveWithSubdir:=True) {
         FileAppend Exception %errorText%, **, CP1
         If (removeTemp)
             FileRemoveDir %tempDir%, 1
-        Return ""
+        Return
     }
 }
 
