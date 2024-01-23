@@ -1,7 +1,20 @@
 ﻿;by LogicDaemon <www.logicdaemon.ru>
 ;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <http://creativecommons.org/licenses/by-sa/4.0/deed.ru>.
 
-InstallDistToLocalAppData(name, distPath, subdirRegexInArchive := "", installDirOverride := "") {
+InstallDistToLocalAppData(name, distPath, subdirRegexInArchive := "", installDirOverride := "", args7z := "") {
+    ; name is the name of the distribution, e.g. "qBittorrent".
+    ;   That is how a symlink or junction in %LocalAppData%\Programs will be named.
+    ; distPath is path to the archive to unpack. Must be a specific file name, not a mask.
+    ;   That name should be unique (include version number, etc.), because the archive will be unpacked
+    ;   to a directory with the same name.
+    ; subdirRegexInArchive is a regex to match a subdirectory in the archive.
+    ; installDirOverride is a path to the directory to unpack the distribution to,
+    ;   instead of %LocalAppData%\Programs\%name of distPath%.
+    ; args7z are additional arguments to pass to 7z.exe.
+    ; For example:
+    ; InstallDistToLocalAppData("qBittorrent", A_ScriptDir "\qbittorrent_4.6.3_x64_setup.exe")
+    local
+    global exe7z
     If (!exe7z)
         GoSub ImportFind7zExe
     If (!LocalAppData)
@@ -14,7 +27,7 @@ InstallDistToLocalAppData(name, distPath, subdirRegexInArchive := "", installDir
     
     Try FileRemoveDir %tempDir%, 1
     removeTemp := true
-    runcmd = "%exe7z%" x -aoa -y -o"%tempDir%" -- "%distPath%"
+    runcmd = "%exe7z%" x -aoa -y -o"%tempDir%" %args7z% -- "%distPath%"
     
     stderr.WriteLine("> " runcmd)
     Try {
@@ -34,13 +47,12 @@ InstallDistToLocalAppData(name, distPath, subdirRegexInArchive := "", installDir
             If (unpackedDirsCount == 0)
                 Throw Exception("Error: No matching subdirs unarchived",, distPath)
         } Else {
-            SplitPath distPath,, unpackedDirName
             SplitPath distPath, , , , unpackedDirName
             unpackedDist := tempDir
         }
-        destPerVer : = installDirOverride == "" ? destBase "\" unpackedDirName 
-            : ( installDirOverride ~= "^\w:\\|^\\\\" ? installDirOverride 
-                : destBase "\" installDirOverride)
+        destPerVer := installDirOverride == "" ? (destBase "\" unpackedDirName)
+            : ( installDirOverride ~= "^\w:\\|^\\\\" ? installDirOverride
+            : destBase "\" installDirOverride)
         If (FileExist(destPerVer))
             Throw Exception("Error: The destination directory already exists",, destPerVer)
         SplitPath destPerVer, , destBaseDir
@@ -52,7 +64,7 @@ InstallDistToLocalAppData(name, distPath, subdirRegexInArchive := "", installDir
         }
         Try FileRemoveDir %tempDir%, 1
         removeTemp := ErrorLevel
-
+        
         Try FileRemoveDir %destLink%
         If (FileExist(destLink))
             Throw Exception("Error: Failed to remove the old link/junction",, destLink)
