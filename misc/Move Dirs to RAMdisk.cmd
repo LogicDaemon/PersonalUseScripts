@@ -60,9 +60,14 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
 
     CALL :MoveToRAMDrive "%APPDATA%\DropboxElectron"
     CALL :MoveToRAMDrive "%APPDATA%\npm-cache"
+    CALL :MoveToRAMDrive "%APPDATA%\obs-studio\crashes"
+    CALL :MoveToRAMDrive "%APPDATA%\obs-studio\logs"
+    CALL :MoveToRAMDrive "%APPDATA%\obs-studio\profiler_data"
+    CALL :MoveToRAMDrive "%APPDATA%\obs-studio\updates"
+    CALL :MoveToRAMDrive "%APPDATA%\obs-studio\plugin_config\obs-browser\obs_profile_cookies\C33655CA96322DC4\GPUCache"
 
     rem Electron apps
-    FOR %%B IN (Beyond-All-Reason Dropbox Code "Code - Insiders" update-hub discord) DO @(
+    FOR %%B IN (Beyond-All-Reason Dropbox Code "Code - Insiders" update-hub discord obs-studio\plugin_config\obs-browser) DO @(
         FOR %%C IN ("Cache" "CachedData" "CachedExtensions" "CachedProfilesData" "Code Cache" "Crashpad" "DawnCache" "GPUCache" "logs" "Service Worker\CacheStorage" "Service Worker\ScriptCache" "Session Storage") DO @(
             CALL :MoveToRAMDrive "%APPDATA%\%%~B\%%~C"
         )

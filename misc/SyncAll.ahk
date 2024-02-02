@@ -35,10 +35,10 @@ DriveGet DrivesF, List, FIXED
 DriveGet DrivesR, List, REMOVABLE
 Drives=%DrivesR%%DrivesF%
 
-drivessynced := false
+drivesSynced := false
 Loop Parse, Drives
-    Try RunScript(A_LoopField ":\Local_Scripts\sync_" hostname ".cmd"), synced++, drivessynced := true
-If (config.needADrive && !drivessynced) {
+    Try RunScript(A_LoopField ":\Local_Scripts\sync_" hostname ".cmd"), synced++, drivesSynced := true
+If (config.needADrive && !drivesSynced) {
     icon := localSynced ? 0x30 : 0x10
     , msgAppend := localSynced ? "`, but local computer sync script is started." : ""
     , timeout := localSynced ? 15 : 0

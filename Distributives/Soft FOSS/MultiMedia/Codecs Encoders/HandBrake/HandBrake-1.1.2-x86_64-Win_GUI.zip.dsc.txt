@@ -1,6 +1,0 @@
-HandBrake-1.1.2-x86_64-Win_GUI.zip
-
-This file has been downloaded from:
-https://download2.handbrake.fr/1.1.2/HandBrake-1.1.2-x86_64-Win_GUI.zip
-
-Date: 10.12.2018, 14:36
