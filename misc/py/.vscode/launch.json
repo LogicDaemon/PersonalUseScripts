@@ -6,9 +6,23 @@
         "configurations": [
                 {
                         "name": "Python: Current File",
-                        "type": "python",
+                        "type": "debugpy",
                         "request": "launch",
                         "program": "${file}",
+                        "console": "integratedTerminal",
+                        "justMyCode": true,
+                        "env": {
+                                // "GEVENT_SUPPORT": "True"
+                        },
+                },
+                {
+                        "name": "Python: Current File with -d",
+                        "type": "debugpy",
+                        "request": "launch",
+                        "program": "${file}",
+                        "args": [
+                                "-d"
+                        ],
                         "console": "integratedTerminal",
                         "justMyCode": true,
                         "env": {
