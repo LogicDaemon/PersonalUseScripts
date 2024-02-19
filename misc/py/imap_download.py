@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-""" Download emails from an IMAP server,
-    and save them to a directory,
-    optionally delete them from the server.
+"""
+Download emails from an IMAP server,
+and save them to a directory,
+optionally delete them from the server.
 """
 from __future__ import annotations, generator_stop
 
@@ -64,6 +65,7 @@ class CustomHelpAction(argparse.Action):
         for path in config_paths():
             print(f'  {path}')
         parser.exit()
+        assert False, 'unreachable'
 
 
 ConfigOption = TypedDict('ConfigOption', {
@@ -146,8 +148,10 @@ class Config:
             name = conf_field.name.replace('_', '-')
             parser_kwargs: ConfigOption = option.copy()
             if hasattr(self, conf_field.name):
-                # a value is already loaded from the config file
-                parser_kwargs.pop('default', None)
+                # a value is already loaded from the config file;
+                # just removing the default is not enough for bool
+                parser_kwargs['default'] = getattr(self, conf_field.name)
+                parser_kwargs['required'] = False
             elif ('default' not in parser_kwargs
                   and conf_field.default is not dataclasses.MISSING):
                 parser_kwargs['default'] = conf_field.default
@@ -211,6 +215,7 @@ def main() -> None:
 
     imapi_client = imaplib.IMAP4_SSL(config.imap_server)
     log.debug('IMAPI client: %s\nLogging in... ', imapi_client)
+    typ: str
     typ, resp = imapi_client.login(config.username, config.password)
 
     log.debug('%s\n', typ)
