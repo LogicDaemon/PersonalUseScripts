@@ -10,3 +10,5 @@ pylint
 types-requests
 types-setuptools
 types-appdirs
+types-pyyaml
+types-pywin32

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-'''
+"""
 Keeps one hardlink per file in a directory.
-'''
+"""
 
 from __future__ import annotations, generator_stop
 
-# Python Standard Library modules, see https://docs.python.org/3/py-modindex.html
+# Python Standard Library modules, see https://docs.python.org/3/py-modindex.html  # NOQA: E501
 from typing import (DefaultDict, NoReturn, Optional, Set)
 from collections import defaultdict
 from fnmatch import fnmatch
@@ -21,7 +21,7 @@ log = logging.getLogger(
 
 
 def get_env_log_level(default=logging.INFO) -> int:
-    ''' Get the log level from the environment variable LOG_LEVEL '''
+    """ Get the log level from the environment variable LOG_LEVEL """
     env_log_level = os.environ.get('LOG_LEVEL')
     if env_log_level is None or env_log_level not in ('DEBUG', 'INFO',
                                                       'WARNING', 'ERROR',
@@ -30,7 +30,7 @@ def get_env_log_level(default=logging.INFO) -> int:
     return getattr(logging, env_log_level.upper())
 
 
-LINKED_PATHS_TYPE = DefaultDict[int, DefaultDict[str, set[str]]]
+LINKED_PATHS_TYPE = DefaultDict[int, DefaultDict[str, Set[str]]]
 
 
 def find_hardlinks(
