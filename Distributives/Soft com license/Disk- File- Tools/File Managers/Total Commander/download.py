@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-''' download https://www.ghisler.com/download.htm
+""" download https://www.ghisler.com/download.htm
 parse it
 download 3 TCs from there
-'''
+"""
 
 from __future__ import annotations, generator_stop
 
@@ -56,7 +56,7 @@ def init_httpx_client() -> httpx.Client:
 
 def get_env_log_level(
         default=logging.DEBUG if __debug__ else logging.INFO) -> int:
-    ''' Get the log level from the environment variable LOG_LEVEL '''
+    """ Get the log level from the environment variable LOG_LEVEL """
     env_log_level = os.environ.get('LOG_LEVEL')
     if env_log_level not in ('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'):
         return default
@@ -187,7 +187,7 @@ def download_file(
 
 
 def update_descript_ion(path: str, description: str) -> None:
-    ''' Update descript.ion file for the given path with the given description
+    """ Update descript.ion file for the given path with the given description
         Accroding to https://stackoverflow.com/a/15808848/1421036, descript.ion
         file format is:
         ```
@@ -201,7 +201,7 @@ def update_descript_ion(path: str, description: str) -> None:
         Apparently, the two extra characters at the end of the line signal the
         end of a multiline comment. If removed, the comment is rendered as a
         single line in the GUI, and the '\n' sequences are displayed literally.
-    '''
+    """
     dirname = path
     while dirname:
         dirname, desc_fname = os.path.split(dirname)

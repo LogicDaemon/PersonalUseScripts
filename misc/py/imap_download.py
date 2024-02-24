@@ -10,15 +10,17 @@ from __future__ import annotations, generator_stop
 import argparse
 import dataclasses
 import getpass
+import imaplib
 import logging
 import os
+import pathlib
 import sys
-import imaplib
 from dataclasses import field as dc_field
-from typing import (Any, Dict, Generator, Iterable, List, NoReturn, Optional,
-                    Tuple, Type, TypedDict, Union, cast)
+from typing import (Any, Dict, Generator, Iterable, List, Mapping, NoReturn,
+                    Optional, Tuple, Type, TypedDict, Union, cast)
 
 # Installable modules https://pypi.org/
+import appdirs
 import yaml
 
 UTF8_ENCODING_NAME = 'utf8'
@@ -28,21 +30,24 @@ log = logging.getLogger(
 
 
 def get_env_log_level(
-    default=logging.DEBUG if __debug__ else logging.INFO
+    default: int = logging.DEBUG if __debug__ else logging.INFO
 ) -> Tuple[int, Optional[str]]:
-    ''' Get the log level from the environment variable LOG_LEVEL '''
+    """ Get the log level from the environment variable LOG_LEVEL """
     # pylint: disable=R0801,duplicate-code
-    env_log_level = os.environ.get('LOG_LEVEL')
+    try:
+        env_log_level = os.environ['LOG_LEVEL']
+    except KeyError:
+        return default, None
     valid_log_levels = {'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'}
     if env_log_level not in valid_log_levels:
         return default, (f'Invalid log level {env_log_level}, '
-                         f'must be one of {', '.join(valid_log_levels)}')
+                         f'must be one of {", ".join(valid_log_levels)}')
     return getattr(logging, env_log_level.upper()), None
 
 
 def config_paths() -> Generator[str, None, None]:
-    # pylint: disable=R0801,duplicate-code,C0415,import-outside-toplevel  # NOQA: E501
-    import appdirs
+    """ Generate the paths where the configuration file can be found """
+    # pylint: disable=R0801,duplicate-code
     name_wo_ext = os.path.splitext(__file__)[0]
     yield name_wo_ext + '.yml'
     basename = os.path.basename(name_wo_ext)
@@ -53,17 +58,19 @@ def config_paths() -> Generator[str, None, None]:
 
 
 class CustomHelpAction(argparse.Action):
+    """ Custom action to print the help message and the configuration file
+        paths
+    """
 
     def __call__(self,
                  parser,
                  namespace,
                  values,
                  option_string=None) -> NoReturn:
-        # Call your function here
         parser.print_help()
         print('Configuration is loaded from the first of following files:')
         for path in config_paths():
-            print(f'  {path}')
+            print('  ' + path)
         parser.exit()
         assert False, 'unreachable'
 
@@ -86,6 +93,9 @@ ConfigOption = TypedDict('ConfigOption', {
     'slots': True
 }))  # pylint: disable=unexpected-keyword-arg  # NOQA: E501
 class Config:
+    """ Script parameters class, all parameters can be loaded from a YAML file,
+        and overridden from the command line.
+    """
     # pylint: disable=R0801,duplicate-code,R0902,too-many-instance-attributes  # NOQA: E501
     username: str = dc_field(
         metadata=ConfigOption(help='Username', short_name='u'))
@@ -99,7 +109,7 @@ class Config:
         default='INBOX', help='Mailbox (folder) name', short_name='m'))
     filter: str = dc_field(metadata=ConfigOption(
         default='ALL', help='Filter for the emails', short_name='f'))
-    path: str = dc_field(metadata=ConfigOption(
+    path: pathlib.Path = dc_field(metadata=ConfigOption(
         default='emails', help='Target directory path', short_name='t'))
     delete: bool = dc_field(metadata=ConfigOption(
         action='store_true', help='Delete emails from server'))
@@ -111,13 +121,26 @@ class Config:
 
     @staticmethod
     def _load_file(path: Union[str, os.PathLike]) -> Dict:
-        with open(path) as f:
-            return yaml.safe_load(f)
+        with open(path) as f:  # pylint: disable=W1514,unspecified-encoding  # system encoding is fine  # NOQA: E501
+            return yaml.safe_load(f)  # pyright: ignore[reportArgumentType]
+
+    @staticmethod
+    def constructor_from_name(type_name: str) -> Type[Any]:
+        """ Get the named constructor """
+        if '.' in type_name:
+            module, type_name = type_name.rsplit('.', 1)
+            return getattr(sys.modules[module], type_name)
+        try:
+            return getattr(__builtins__, type_name)
+        except AttributeError:
+            return globals()[type_name]
 
     def load(
         self,
         paths: Union[None, str, Iterable[str], Iterable[os.PathLike]] = None
     ) -> None:
+        """ Load configuration from the first found file in the list of paths
+        """
         if paths is None:
             paths = config_paths()
         elif isinstance(paths, str):
@@ -130,15 +153,25 @@ class Config:
             break
         else:
             return
-        available_options = frozenset(
-            [k.name for k in dataclasses.fields(self)])
-        for option, value in data.items():
-            if option not in available_options:
-                raise ValueError(f'Unknown option {option}')
-            setattr(self, option, value)
+        if not isinstance(data, Mapping):
+            raise TypeError(f'Configuration file "{path}" should be a mapping,'
+                            f' but is "{type(data).__name__}"')
+        # available_options = dataclasses.asdict(self)  # does not work
+        available_options = {k.name: k for k in dataclasses.fields(self)}
+        for name, raw_value in data.items():
+            option = available_options[name]
+            vtype_raw = getattr(option, 'type', None)
+            if vtype_raw is None or (vtype_raw == 'str'
+                                     and isinstance(raw_value, str)):
+                setattr(self, name, raw_value)
+                continue
+            vtype = self.constructor_from_name(vtype_raw) if isinstance(
+                vtype_raw, str) else vtype_raw
+            setattr(self, name, vtype(raw_value))
 
     def argparse_args(
             self) -> Generator[Tuple[List[str], ConfigOption], None, None]:
+        """ Generate argparse arguments based on the Config class """
         yield (['--help', '-h', '-?'],
                ConfigOption(action=CustomHelpAction,
                             help='Show this help message and exit',
@@ -161,6 +194,9 @@ class Config:
             yield parser_args, parser_kwargs
 
     def argument_parser(self) -> argparse.ArgumentParser:
+        """ Generate an argparse.ArgumentParser instance based on the Config
+            class
+        """
         parser = argparse.ArgumentParser(
             description=__doc__,
             formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -172,6 +208,7 @@ class Config:
     def apply_args(self,
                    args: argparse.Namespace,
                    logging_force_reconfig: bool = False) -> None:
+        """ Apply the argparse.Namespace instance to the Config instance """
         for conf_field in dataclasses.fields(self):
             name = conf_field.name.replace('-', '_')
             new_value = getattr(args, name)
@@ -182,12 +219,15 @@ class Config:
             log_level, env_log_level_error = logging.DEBUG, None
         else:
             log_level, env_log_level_error = get_env_log_level()
+        # allow log line continuation
         logging.StreamHandler.terminator = ""
         logging.basicConfig(level=log_level, force=logging_force_reconfig)
         if env_log_level_error is not None:
             log.warning('%s\n', env_log_level_error)
 
     def process_cli(self) -> argparse.Namespace:
+        """ Parse command line arguments and apply them to the Config instance
+        """
         args = self.argument_parser().parse_args()
         self.apply_args(args)
         return args
@@ -204,11 +244,11 @@ def log_imap4_response(resp: Iterable[bytes | None], enc: str) -> None:
 
 
 def main() -> None:
+    """ Executed when run from the command line """
     # pylint: disable=R0801,duplicate-code  # NOQA: E501
     config.process_cli()
     dest_dir = config.path
-    if not os.path.isdir(dest_dir):
-        os.makedirs(dest_dir)
+    os.makedirs(dest_dir, exist_ok=True)
     if config.password is None:
         config.password = getpass.getpass('Password: ')
     enc = config.server_response_encoding
@@ -267,8 +307,7 @@ def main() -> None:
     log.info('Done.')
 
 
-config = Config()
-
 if __name__ == '__main__':
     # This is executed when run from the command line
+    config = Config()
     main()
