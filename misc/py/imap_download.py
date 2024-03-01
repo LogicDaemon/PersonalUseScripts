@@ -75,16 +75,17 @@ class CustomHelpAction(argparse.Action):
         assert False, 'unreachable'
 
 
-ConfigOption = TypedDict('ConfigOption', {
-    'action': Union[str, Type[argparse.Action]],
-    'default': Any,
-    'help': str,
-    'short_name': str,
-    'required': bool,
-    'type': Any,
-    'nargs': int,
-},
-                         total=False)
+ConfigOption = TypedDict(
+    'ConfigOption', {
+        'action': Union[str, Type[argparse.Action]],
+        'default': Any,
+        'help': str,
+        'short_name': str,
+        'required': bool,
+        'type': Any,
+        'nargs': int,
+    },
+    total=False)
 
 
 # Use @dataclasses.dataclass(slots=True) after upgrading to python 3.10
@@ -99,22 +100,29 @@ class Config:
     # pylint: disable=R0801,duplicate-code,R0902,too-many-instance-attributes  # NOQA: E501
     username: str = dc_field(
         metadata=ConfigOption(help='Username', short_name='u'))
-    password: str = dc_field(metadata=ConfigOption(
-        help='Password. If not defined, read from stdin.', short_name='p'))
+    password: str = dc_field(
+        metadata=ConfigOption(
+            help='Password. If not defined, read from stdin.', short_name='p'))
     imap_server: str = dc_field(
         metadata=ConfigOption(help='IMAP server', short_name='s'))
-    server_response_encoding: str = dc_field(metadata=ConfigOption(
-        default=UTF8_ENCODING_NAME, help='Server response encoding'))
-    mailbox: str = dc_field(metadata=ConfigOption(
-        default='INBOX', help='Mailbox (folder) name', short_name='m'))
-    filter: str = dc_field(metadata=ConfigOption(
-        default='ALL', help='Filter for the emails', short_name='f'))
-    path: pathlib.Path = dc_field(metadata=ConfigOption(
-        default='emails', help='Target directory path', short_name='t'))
-    delete: bool = dc_field(metadata=ConfigOption(
-        action='store_true', help='Delete emails from server'))
-    debug: str = dc_field(metadata=ConfigOption(
-        action='store_true', help='Debug mode', short_name='d'))
+    server_response_encoding: str = dc_field(
+        metadata=ConfigOption(
+            default=UTF8_ENCODING_NAME, help='Server response encoding'))
+    mailbox: str = dc_field(
+        metadata=ConfigOption(
+            default='INBOX', help='Mailbox (folder) name', short_name='m'))
+    filter: str = dc_field(
+        metadata=ConfigOption(
+            default='ALL', help='Filter for the emails', short_name='f'))
+    path: pathlib.Path = dc_field(
+        metadata=ConfigOption(
+            default='emails', help='Target directory path', short_name='t'))
+    delete: bool = dc_field(
+        metadata=ConfigOption(
+            action='store_true', help='Delete emails from server'))
+    debug: str = dc_field(
+        metadata=ConfigOption(
+            action='store_true', help='Debug mode', short_name='d'))
 
     def __init__(self) -> None:
         self.load()
@@ -161,8 +169,8 @@ class Config:
         for name, raw_value in data.items():
             option = available_options[name]
             vtype_raw = getattr(option, 'type', None)
-            if vtype_raw is None or (vtype_raw == 'str'
-                                     and isinstance(raw_value, str)):
+            if vtype_raw is None or (vtype_raw == 'str' and
+                                     isinstance(raw_value, str)):
                 setattr(self, name, raw_value)
                 continue
             vtype = self.constructor_from_name(vtype_raw) if isinstance(
@@ -173,9 +181,10 @@ class Config:
             self) -> Generator[Tuple[List[str], ConfigOption], None, None]:
         """ Generate argparse arguments based on the Config class """
         yield (['--help', '-h', '-?'],
-               ConfigOption(action=CustomHelpAction,
-                            help='Show this help message and exit',
-                            nargs=0))
+               ConfigOption(
+                   action=CustomHelpAction,
+                   help='Show this help message and exit',
+                   nargs=0))
         for conf_field in dataclasses.fields(self):
             option = cast(ConfigOption, conf_field.metadata)
             name = conf_field.name.replace('_', '-')
@@ -185,8 +194,8 @@ class Config:
                 # just removing the default is not enough for bool
                 parser_kwargs['default'] = getattr(self, conf_field.name)
                 parser_kwargs['required'] = False
-            elif ('default' not in parser_kwargs
-                  and conf_field.default is not dataclasses.MISSING):
+            elif ('default' not in parser_kwargs and
+                  conf_field.default is not dataclasses.MISSING):
                 parser_kwargs['default'] = conf_field.default
             short_name = parser_kwargs.pop('short_name', None)
             parser_args = ([f'--{name}'] +
@@ -231,6 +240,9 @@ class Config:
         args = self.argument_parser().parse_args()
         self.apply_args(args)
         return args
+
+
+config: Config
 
 
 def log_imap4_response(resp: Iterable[bytes | None], enc: str) -> None:
