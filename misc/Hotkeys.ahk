@@ -521,7 +521,7 @@ FillDelayedRunGroups() {
                                             , "#VK50":   [notepad2exe]                                           ;vk50=p #p
                                             , "#+VK50":  [notepad2exe,"/c /b"]                                   ;vk50=p #+p
                                             , "#!VK50":  [A_ScriptDir "\QuickText.ahk"]                          ;vk50=p #!p
-                                            , "#VK54":   [laPrograms "\Telegram\telegram.exe"]                   ;vk54=t #t
+                                            , "#VK54":   [A_ScriptDir "\WinActivateOrExec.ahk", laPrograms "\Telegram\telegram.exe"] ;vk54=t #t
                                             , "#!VK54":  [A_ScriptDir "\tombo.cmd",,,,7]                         ;vk54=t #!t
                                             ;, "#VK55":   [A_AhkPath, A_ScriptDir "\putty_smartact.ahk"]         ;vk55=u #u
                                             , "#VK56":   [vscode]                                                ;vk56=v #v
