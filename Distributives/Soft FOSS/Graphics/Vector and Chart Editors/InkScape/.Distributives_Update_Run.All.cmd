@@ -4,5 +4,5 @@ REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 In
 SETLOCAL ENABLEEXTENSIONS
 
 SET "srcpath=%~dp0"
-CALL py.cmd -O "%~dp0download.py" -t "windows/64-bit/compressed-7z"
+START "" /B /WAIT py -O "%~dp0download.py" -t "windows/64-bit/compressed-7z"
 )

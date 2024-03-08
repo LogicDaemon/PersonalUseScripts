@@ -27,16 +27,20 @@ If (A_Args.Length()) {
 If (!commit)
     commit := ReadVSCodeCommitFromDist(vscodeDistPath)
 
-dlDestBaseDir := A_ScriptDir "..\Visual Studio Code Addons\Remote Server\"
+dlDestBaseDir := A_ScriptDir "\..\Visual Studio Code Addons\Remote Server\"
 dlDestDir := dlDestBaseDir "server\"
 dlDestName := "vscode-server-linux-x64." commit ".tar.gz"
-dlDestPath := dlDestDir "\" dlDestName
+dlDestPath := dlDestDir dlDestName
 If (FileExist(dlDestPath) || FileExist(dlDestBaseDir "vscode-remote-wsl\" commit "\vscode-server-linux-x64.tar.gz" ))
     ExitApp
 Try FileCreateDir %dlDestDir%
-RunWait curl.exe -RL -o "%dlDestPath%.tmp" "https://update.code.visualstudio.com/commit:%commit%/server-linux-x64/stable", %dlDestDir%, Min UseErrorLevel
-If (ErrorLevel)
-    Throw Exception("curl error",, ErrorLevel)
+dlCmd=curl.exe -RLJ -o "%dlDestPath%.tmp" "https://update.code.visualstudio.com/commit:%commit%/server-linux-x64/stable"
+RunWait %dlCmd%, %dlDestDir%, Min UseErrorLevel
+If (ErrorLevel) {
+    RunWait %COMSPEC% /C "%dlCmd% >"%dlDestPath%.log" 2>&1", %dlDestDir%, Min UseErrorLevelS
+    If (ErrorLevel)
+        Throw Exception("curl error, see """ dlDestPath ".log""",, ErrorLevel)
+}
 FileMove %dlDestPath%.tmp, %dlDestPath%, 1
 
 ReadVSCodeCommitFromDist(vscodeDistPath) {

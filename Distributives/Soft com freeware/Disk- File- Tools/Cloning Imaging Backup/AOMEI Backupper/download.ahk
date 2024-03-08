@@ -40,7 +40,7 @@ ParseVersionInfo(ByRef rawupdateinfo) {
             value := kv[2]
             Switch sectName {
                 Case "package":
-                    If (key ~= "url\d*")
+                    If (key ~= "url\d*" && !(value ~= "Trial\.exe"))
                         sect[key] := value
                 Case "version":
                     verPartName := { "maj": "major"
@@ -70,7 +70,8 @@ Download(verdata) {
     
     For _, url in verdata.package {
         SplitPath url, outFileName
-        RunWait %SystemRoot%\System32\curl.exe -R -z "%outFileName%" --output "%outFileName%" "%url%", %outDir%, Min
+        ;RunWait %comspec% /C "curl -v --no-progress-meter -R -l -z "%outFileName%" --output "%outFileName%" "%url%" >>"%outFileName%.log" 2>&1", %outDir%, Min
+        RunWait %comspec% /C "wget -N "%url%" >>"%outFileName%.log" 2>&1", %outDir%, Min
     }
 }
 
