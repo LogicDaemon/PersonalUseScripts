@@ -15,41 +15,41 @@
     IF /I "%PROCESSOR_ARCHITECTURE%"=="AMD64" SET "OS64Bit=1"
     IF DEFINED PROCESSOR_ARCHITEW6432 SET "OS64Bit=1"
     IF NOT DEFINED exename7za IF DEFINED OS64Bit ( SET "exename7za=7za64.exe" ) ELSE ( SET "exename7za=7za.exe" )
-    IF NOT DEFINED exenameAutohotkey IF DEFINED OS64Bit ( SET "exenameAutohotkey=AutoHotkeyU64.exe" ) ELSE ( SET "exenameAutohotkey=AutoHotkey.exe" )
+    IF NOT DEFINED exenameAutohotkey IF DEFINED OS64Bit ( SET "exenameAutohotkey=AutoHotkeyU64.exe" ) ELSE ( SET "exenameAutohotkey=AutoHotkeyU32.exe" )
 )
 (
     IF NOT DEFINED exe7z SET exe7z="%utilsdir%%exename7za%"
-    IF NOT DEFINED AutohotkeyExe SET AutohotkeyExe="%utilsdir%%exenameAutohotkey%"
+    rem IF NOT DEFINED AutohotkeyExe
+    rem Even if it's defined, it could be installed without libs which are required
+    SET AutohotkeyExe="%utilsdir%%exenameAutohotkey%"
     SET "IsAdmin="
     IF NOT "%~1"=="/user" (
         REM Check if running with admin rights
         %SystemRoot%\System32\fltmc.exe >nul 2>&1 && SET "IsAdmin=1"
     )
-    IF DEFINED IsAdmin (
-        IF EXIST "%ProgramFiles%\AutoHotkey" (
-            SET "PrimaryDestination=%ProgramFiles%\AutoHotkey\Lib"
-        ) ELSE IF EXIST "%ProgramFiles(x86)%\AutoHotkey" (
-            SET "PrimaryDestination=%ProgramFiles(x86)%\AutoHotkey\Lib"
-        ) ELSE (
-            IF DEFINED AutoHotkey_Lib_reentrance EXIT /B 1
-            SET "AutoHotkey_Lib_reentrance=1"
-            CALL "%~dp0..\..\Keyboard Tools\AutoHotkey\install.cmd" & EXIT /B
-            REM install_silently will call this script, so do not continue
+    IF NOT DEFINED AhkLibPrimaryDestination (
+        IF DEFINED IsAdmin (
+            IF EXIST "%ProgramFiles%\AutoHotkey" (
+                SET "AhkLibPrimaryDestination=%ProgramFiles%\AutoHotkey\Lib"
+            ) ELSE IF EXIST "%ProgramFiles(x86)%\AutoHotkey" (
+                SET "AhkLibPrimaryDestination=%ProgramFiles(x86)%\AutoHotkey\Lib"
+            )
         )
-    ) ELSE (
-        CALL :GetAhkUserLibDir PrimaryDestination
-        IF NOT DEFINED PrimaryDestination (
-            ECHO Error getting user lib dir with an autohotkey script
-            SET "PrimaryDestination=%USERPROFILE%\Documents\AutoHotkey\Lib"
+        IF NOT DEFINED AhkLibPrimaryDestination (
+            CALL :GetAhkUserLibDir AhkLibPrimaryDestination
+            IF NOT DEFINED AhkLibPrimaryDestination (
+                ECHO Error getting user lib dir with an autohotkey script
+                SET "AhkLibPrimaryDestination=%USERPROFILE%\Documents\AutoHotkey\Lib"
+            )
         )
     )
 )
 (
-    IF NOT EXIST "%PrimaryDestination%\*.*" IF EXIST "%PrimaryDestination%" (
-        RD "%PrimaryDestination%"
-        MOVE "%PrimaryDestination%" "%PrimaryDestination%.bak%RANDOM%"
+    IF NOT EXIST "%AhkLibPrimaryDestination%\*.*" IF EXIST "%AhkLibPrimaryDestination%" (
+        RD "%AhkLibPrimaryDestination%"
+        MOVE "%AhkLibPrimaryDestination%" "%AhkLibPrimaryDestination%.bak%RANDOM%"
     )
-    ECHO n|%exe7z% x -aos -o"%PrimaryDestination%" -- "%srcpath%%~n0.7z"||%ErrorCmd%
+    ECHO n|%exe7z% x -aos -o"%AhkLibPrimaryDestination%" -- "%srcpath%%~n0.7z"||%ErrorCmd%
     IF NOT DEFINED ErrorPresence EXIT /B 0
 )
 EXIT /B %ErrorPresence%

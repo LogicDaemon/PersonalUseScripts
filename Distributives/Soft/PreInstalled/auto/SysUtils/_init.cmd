@@ -7,7 +7,13 @@ REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 In
         SET "ErrorCmd=SET ErrorPresence=1"
         SET "ErrorPresence="
     )
-    SET "SysUtilsDir=%SystemDrive%\SysUtils"
+    IF NOT DEFINED SysUtilsDir (
+        IF EXIST "%SystemDrive%\SysUtils" (
+            SET "SysUtilsDir=%SystemDrive%\SysUtils"
+        ) ELSE (
+            SET "SysUtilsDir=%LOCALAPPDATA%\Programs\SysUtils"
+        )
+    )
     SET "utilsdir=%~dp0..\..\utils\"
     
     SET "OS64Bit="
