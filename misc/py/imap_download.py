@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-"""
-Download emails from an IMAP server,
-and save them to a directory,
-optionally delete them from the server.
+""" Download emails from an IMAP server,
+    and save them to a directory,
+    optionally delete them from the server.
 """
 from __future__ import annotations, generator_stop
 

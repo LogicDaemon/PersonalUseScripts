@@ -10,6 +10,7 @@ Run %comspec% /C "update.cmd", %LocalAppData%\Programs\SysInternals, Min
 ;Run "%A_AhkPath%" "%LocalAppData%\Programs\pac\wpad.js update.ahk"
 
 Run sc.exe stop AdobeARMservice,, Min
+Run sc.exe config AdobeARMservice start= disabled,, Min
 
 ;ProcPri :=  { "LMS.exe": "L"
 ;            , "AeXNSAgent.exe": "L"
