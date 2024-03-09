@@ -4,11 +4,11 @@ REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 In
 SETLOCAL ENABLEEXTENSIONS
 IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
 
+    VOL R: | FIND " Volume in drive R is RamDisk" || EXIT /B
     SET "RAMDrive=r:"
     rem SET "USERPROFILE=d:\Users\LogicDaemon"
     rem SET "APPDATA=%USERPROFILE%\AppData\Roaming"
     rem SET "LOCALAPPDATA=%USERPROFILE%\AppData\Local"
-    IF EXIST "%LocalAppData%\Programs\bin\xln.exe" SET xlnexe="%LocalAppData%\Programs\bin\xln.exe"
     SET "retries=30"
 )
 :again
@@ -21,19 +21,9 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     )
     ATTRIB +I "%RAMDrive%\*.*" /S /D /L
 
-    REM if it's a link, it will be removed and re-created as an empty dir;
-    REM if it's a dir without contents, same
-    REM but if it's non-empty dir, it will stay as is (note lack of "/S")
-    RD /Q "%LOCALAPPDATA%\Temp"
-    REM this is needed because now the directory will be moved to R:, and if it's a link to R:, that might break MOVE which will move files to themselves and then remove from source (but as it's linked to dest, remove that single copy altogether)
-    CALL :LinkBack "%LOCALAPPDATA%\Temp" "r:\Temp"
-
     MKDIR "%RAMDrive%\Temp\NVIDIA Corporation\NV_Cache"
     COMPACT /U "%RAMDrive%\Temp\NVIDIA Corporation"
 
-    IF NOT EXIST "%USERPROFILE%" EXIT /B
-
-    SET "tryRenaming=1"
     MKDIR "%RAMDrive%\Temp\obs-studio\crashes"
     MKDIR "%RAMDrive%\Temp\obs-studio\plugin_config\obs-browser"
     MKDIR "%RAMDrive%\Temp\obs-studio\plugin_config\obs-browsers"
@@ -62,10 +52,24 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     MKDIR "%RAMDrive%\ProgramData\GOG.com\Galaxy\lock-files"
     MKDIR "%RAMDrive%\ProgramData\GOG.com\Galaxy\logs"
     MKDIR "%RAMDrive%\ProgramData\GOG.com\Galaxy\crashdumps"
+    
+    @REM CALL :MkDirsWithCopiedPermissions "%SystemRoot%" "%RAMDrive%" ServiceProfiles LocalService AppData Local Temp
+    CALL :MoveLinkBack "%SystemRoot%\ServiceProfiles\LocalService\AppData\Local\Temp\TfsStore" "%RAMDrive%\ServiceProfiles\LocalService\AppData\Local\Temp\TfsStore"
+
+    IF NOT EXIST "%USERPROFILE%" EXIT /B
+    IF NOT EXIST "%LOCALAPPDATA%" EXIT /B
+
+    REM if it's a link, it will be removed and re-created as an empty dir;
+    REM if it's a dir without contents, same
+    REM but if it's non-empty dir, it will stay as is (note lack of "/S")
+    RD /Q "%LOCALAPPDATA%\Temp"
+    REM this is needed because now the directory will be moved to R:, and if it's a link to R:, that might break MOVE which will move files to themselves and then remove from source (but as it's linked to dest, remove that single copy altogether)
+    CALL :MoveLinkBack "%LOCALAPPDATA%\Temp" "r:\Temp"
+
+    SET "tryRenaming=1"
     rem CALL :MoveToRAMDrive "c:\OEM\AcerLogs"
     rem CALL :MoveToRAMDrive "c:\OEM\CareCenter"
     rem CALL :MoveToRAMDrive "c:\OEM\Preload"
-
     CALL :MoveToRAMDrive "%APPDATA%\DropboxElectron"
     CALL :MoveToRAMDrive "%APPDATA%\npm-cache"
     CALL :MoveToRAMDrive "%APPDATA%\obs-studio\crashes"
@@ -157,28 +161,68 @@ rem     CALL :MoveToRAMDrive
         CALL :MoveToRAMDrive "%%~P\LocalState\LiveTile"
         CALL :MoveToRAMDrive "%%~P\TempState"
     )
-    CALL :CopyPermissions "%USERPROFILE%"
     EXIT /B
 )
 :MoveToRAMDrive <src_path> <dest_drive>
 @(
-    IF "%~2"=="" ( CALL :LinkBack %1 "%RAMDrive%%~pnx1" ) ELSE ( CALL :LinkBack %1 "%~2%~pnx1" )
+    IF "%~2"=="" ( CALL :MoveLinkBack %1 "%RAMDrive%%~pnx1" ) ELSE ( CALL :MoveLinkBack %1 "%~2%~nx1" )
 EXIT /B
 )
-:CopyPermissions <src_path> <dest_drive>
+:MoveLinkBack <source> <destination>
 (
-    IF "%~2"=="" ( XCOPY %1 "%RAMDrive%%~pnx1" /Y /T /E /O /U /K /B ) ELSE ( XCOPY %1 "%~2%~pnx1" /Y /T /E /O /U /K /B )
-EXIT /B
-)
-:LinkBack <source> <destination>
-(
-    IF NOT EXIST %2 IF EXIST "%~1\*.*" MOVE /Y %1 %2
-    IF NOT EXIST %2 MKDIR "%~f2"
-    IF NOT EXIST %2 EXIT /B
-    RD /Q %1
+    CALL :MkdirMissingTreeWithPermissions %1 %2
+    IF NOT EXIST %2 MKDIR %2 || EXIT /B
+    IF EXIST %1 RD /Q %1
     IF EXIST %1 ECHO N|DEL %1
     IF DEFINED tryRenaming IF EXIST %1 MOVE %1 "%1.LINKED_FROM_RAM_DISK_%DATE%_%TIME::=%" || EXIT /B
     IF EXIST %1 EXIT /B
-    MKLINK /D %1 %2 || MKLINK /J %1 %2 || %xlnexe% -n %2 %1
+    MKLINK /D %1 %2 || MKLINK /J %1 %2
 EXIT /B
+)
+:MkdirMissingTreeWithPermissions <source> <destination>
+(
+    SET "sourceDir=%~dp1"
+    SET "destinationDir=%~dp2"
+)
+(
+    IF "%sourceDir:~-1%"=="\" SET "sourceDir=%sourceDir:~0,-1%"
+    IF "%destinationDir:~-1%"=="\" SET "destinationDir=%destinationDir:~0,-1%"
+)
+IF NOT EXIST "%destinationDir%" CALL :MkdirMissingTreeWithPermissions "%sourceDir%" "%destinationDir%"
+:CopyDirPermissions <source> <destination>
+(
+    IF NOT EXIST %2 MKDIR %2
+    PUSHD "%~1" && (
+        icacls . /save "%RAMDrive%\Temp\acl.tmp"
+        POPD
+        PUSHD "%~2" || EXIT /B
+        icacls . /restore "%RAMDrive%\Temp\acl.tmp"
+        POPD
+        DEL "%RAMDrive%\Temp\acl.tmp"
+    )
+    EXIT /B
+)
+:MkDirsWithCopiedPermissions <source> <destination> <directories>
+(
+    SETLOCAL ENABLEEXTENSIONS
+    IF NOT EXIST %2 MKDIR %2
+    SET "subDir=%~3"
+)
+:MkDirsWithCopiedPermissionsLoop
+(
+    IF NOT EXIST "%~2\%subDir%" MKDIR "%~2\%subDir%"
+    PUSHD "%~1\%subDir%" && (
+        icacls . /save "%RAMDrive%\Temp\acl.tmp"
+        POPD && ^
+        PUSHD "%~2\%subDir%" && (
+            icacls . /restore "%RAMDrive%\Temp\acl.tmp"
+            POPD
+        )
+        DEL "%RAMDrive%\Temp\acl.tmp"
+    )
+    @REM doesn't work: ECHO F|XCOPY /D "%~1\%subDir%" "%~2\%subDir%" /-I /Y /T /O /K /B
+    IF "%~4"=="" EXIT /B
+    SET "subDir=%subdir%\%~4"
+    SHIFT /4
+    GOTO :MkDirsWithCopiedPermissionsLoop
 )
