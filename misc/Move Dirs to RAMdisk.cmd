@@ -10,6 +10,12 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     rem SET "APPDATA=%USERPROFILE%\AppData\Roaming"
     rem SET "LOCALAPPDATA=%USERPROFILE%\AppData\Local"
     SET "retries=30"
+
+    SET "vscodeRemoteWSLDistSubdir=Soft FOSS\Office Text Publishing\Text Documents\Visual Studio Code Addons\Remote Server\vscode-remote-wsl"
+)
+@(
+    CALL "%~dp0_Distributives.find_subpath.cmd" Distributives "%vscodeRemoteWSLDistSubdir%"
+    IF DEFINED Distributives SET "vscodeRemoteWSLDist=%Distributives%\%vscodeRemoteWSLDistSubdir%"
 )
 :again
 @(
@@ -65,6 +71,9 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     RD /Q "%LOCALAPPDATA%\Temp"
     REM this is needed because now the directory will be moved to R:, and if it's a link to R:, that might break MOVE which will move files to themselves and then remove from source (but as it's linked to dest, remove that single copy altogether)
     CALL :MoveLinkBack "%LOCALAPPDATA%\Temp" "r:\Temp"
+    IF DEFINED vscodeRemoteWSLDist IF EXIST "%vscodeRemoteWSLDist%" (
+        MKLINK /J "r:\Temp\vscode-remote-wsl" "d:\Distributives\%vscodeRemoteWSLDist%"
+    )
 
     SET "tryRenaming=1"
     rem CALL :MoveToRAMDrive "c:\OEM\AcerLogs"
