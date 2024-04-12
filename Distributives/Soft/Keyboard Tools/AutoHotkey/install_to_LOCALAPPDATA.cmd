@@ -38,8 +38,12 @@ SETLOCAL ENABLEEXTENSIONS
         IF EXIST "%LOCALAPPDATA%\Programs\AutoHotkey" RD "%LOCALAPPDATA%\Programs\AutoHotkey"
         MKLINK /J "%LOCALAPPDATA%\Programs\AutoHotkey" "%ahkDestDir%" || CALL :SaveExitErrorCode
         IF NOT EXIST "%LocalAppData%\Programs\bin\ahk.exe" (
-            IF NOT EXIST "%LocalAppData%\Programs\bin" MKDIR "%LocalAppData%\Programs\bin"
+            IF NOT EXIST "%LocalAppData%\Programs\bin" (
+                MKDIR "%LocalAppData%\Programs\bin"
+                "%LOCALAPPDATA%\Programs\AutoHotkey\%exenameahk%" "%~dp0..\..\PreInstalled\utils\pathman.ahk" /au "%LocalAppData%\Programs\bin"
+            )
             MKLINK "%LocalAppData%\Programs\bin\ahk.exe" "%LOCALAPPDATA%\Programs\AutoHotkey\%exenameahk%"
+            MKLINK /D "%LocalAppData%\Programs\bin\Lib" "%LOCALAPPDATA%\Programs\AutoHotkey\Lib"
         )
         "%LOCALAPPDATA%\Programs\AutoHotkey\%exenameahk%" "%~dp0associate.ahk" /user
         EXIT /B

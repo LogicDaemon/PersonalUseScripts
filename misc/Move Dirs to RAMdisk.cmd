@@ -4,18 +4,21 @@ REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 In
 SETLOCAL ENABLEEXTENSIONS
 IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
 
-    VOL R: | FIND " Volume in drive R is RamDisk" || EXIT /B
-    SET "RAMDrive=r:"
+    VOL R: | FIND " Volume in drive R is RamDisk" && SET "RAMDrive=r:"
+    IF NOT DEFINED RAMDrive VOL R: | FIND " Volume in drive R is RAM disk" && SET "RAMDrive=r:"
+    IF NOT DEFINED RAMDrive EXIT /B
+    
     rem SET "USERPROFILE=d:\Users\LogicDaemon"
     rem SET "APPDATA=%USERPROFILE%\AppData\Roaming"
     rem SET "LOCALAPPDATA=%USERPROFILE%\AppData\Local"
-    SET "retries=30"
 
     SET "vscodeRemoteWSLDistSubdir=Soft FOSS\Office Text Publishing\Text Documents\Visual Studio Code Addons\Remote Server\vscode-remote-wsl"
 )
 @(
     CALL "%~dp0_Distributives.find_subpath.cmd" Distributives "%vscodeRemoteWSLDistSubdir%"
-    IF DEFINED Distributives SET "vscodeRemoteWSLDist=%Distributives%\%vscodeRemoteWSLDistSubdir%"
+    IF DEFINED Distributives IF EXIST %Distributives%\%vscodeRemoteWSLDistSubdir% SET "vscodeRemoteWSLDist=%Distributives%\%vscodeRemoteWSLDistSubdir%"
+
+    SET "retries=30"
 )
 :again
 @(
@@ -71,9 +74,7 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     RD /Q "%LOCALAPPDATA%\Temp"
     REM this is needed because now the directory will be moved to R:, and if it's a link to R:, that might break MOVE which will move files to themselves and then remove from source (but as it's linked to dest, remove that single copy altogether)
     CALL :MoveLinkBack "%LOCALAPPDATA%\Temp" "r:\Temp"
-    IF DEFINED vscodeRemoteWSLDist IF EXIST "%vscodeRemoteWSLDist%" (
-        MKLINK /J "r:\Temp\vscode-remote-wsl" "d:\Distributives\%vscodeRemoteWSLDist%"
-    )
+    IF DEFINED vscodeRemoteWSLDist MKLINK /J "r:\Temp\vscode-remote-wsl" "%vscodeRemoteWSLDist%"
 
     SET "tryRenaming=1"
     rem CALL :MoveToRAMDrive "c:\OEM\AcerLogs"
@@ -94,6 +95,7 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
         )
     )
     
+    CALL :MoveToRAMDrive "%LOCALAPPDATA%\Microsoft\Edge"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Microsoft\Internet Explorer"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Microsoft\Media Player"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Microsoft\Windows\Explorer"
@@ -108,6 +110,7 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     CALL :MoveToRAMDrive "%USERPROFILE%\AppData\LocalLow\Sun\Java\Deployment\tmp"
     CALL :MoveToRAMDrive "%USERPROFILE%\AppData\LocalLow\Sun\Java\Deployment\log"
     CALL :MoveToRAMDrive "%USERPROFILE%\.cache"
+    
     REM DLLs there
     rem CALL :MoveToRAMDrive "%USERPROFILE%\.openjfx\cache"
     
@@ -170,6 +173,15 @@ rem     CALL :MoveToRAMDrive
         CALL :MoveToRAMDrive "%%~P\LocalState\LiveTile"
         CALL :MoveToRAMDrive "%%~P\TempState"
     )
+
+    REM %USERPROFILE%\.cache\gpt4all\ contains downloaded gguf files, so they should be linked back to avoid wasting multi-gb downloads
+    FOR %%D IN ("d:\Users\LogicDaemon\GPT4All\Models" "%USERPROFILE%\GPT4All\Models" "V:\Distributives\LLMs\gguf") DO @(
+        IF EXIST "%%~D" (
+            MKLINK /J "%USERPROFILE%\.cache\gpt4all" "%%~D"
+            
+        )
+    )
+
     EXIT /B
 )
 :MoveToRAMDrive <src_path> <dest_drive>

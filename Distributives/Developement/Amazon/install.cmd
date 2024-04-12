@@ -3,7 +3,7 @@ REM by LogicDaemon <www.logicdaemon.ru>
 REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode.ru>.
 SETLOCAL ENABLEEXTENSIONS
 
-msiexec.exe /qn /norestart /i "%~dp0AWSCLIV2.msi" %*
+msiexec.exe /qn /norestart /i "%~dp0AWS_SAM_CLI_64_PY3.msi" %*
 IF ERRORLEVEL 1 GOTO :EchoError
 EXIT /B
 )

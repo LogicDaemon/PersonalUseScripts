@@ -12,7 +12,6 @@ SETLOCAL ENABLEEXTENSIONS
 @(
     rem "%LocalAppData%\Programs\msys64\ucrt64.exe" 
     SET "PATH=%LocalAppData%\Programs\msys64\usr\bin;%PATH"
-    "%LocalAppData%\Programs\msys64\usr\bin\rsync.exe" --progress --stats --human-readable --8-bit-output --compress --compress-choice=zstd --fuzzy --update --times --hard-links --keep-dirlinks --links --safe-links --recursive --skip-compress=.7z,.rar,.xz,.gz,.cab,bz2,bzip2,png,jpg,mp4 --exclude-from=/v/Distributives/Local_Scripts/rsync-excludes.txt /v/Distributives u327016.your-storagebox.de:.
 
     %unisontext% Distributives_u327016.your-storagebox.de -path "Soft/Keyboard Tools/AutoHotkey/ver.zip.txt" -prefer "socket://localhost:10355/v:/Distributives" -auto -batch
     IF DEFINED filterSyncs IF NOT "%filterSyncs%"=="0" (

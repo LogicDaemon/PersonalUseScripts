@@ -18,12 +18,12 @@ IF NOT DEFINED inst64bit GOTO :CPPInst32bit
 "%cppdistpath%\vcredist2010_x64.exe" /q /norestart
 "%cppdistpath%\vcredist2012_x64.exe" /q /norestart
 rem wsusoffline doesn't download the latest version of 2013 redistributable
-"2013 KB3138367\vcredist_x64.en-US.exe" /q /norestart
+"%~dp02013 KB3138367\vcredist_x64.en-US.exe" /q /norestart
 
 rem https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads
 rem Note Visual C++ 2015, 2017 and 2019 all share the same redistributable files.
 rem "%cppdistpath%\vcredist2019_x64.exe" /q /norestart
-"%cppdistpath%\2015-2022\VC_redist.x64.exe" /q /norestart
+"%~dp02015-2022\VC_redist.x64.exe" /q /norestart
 
 rem 32-bit distributives are also useful on 64-bit platform for 32-bit apps
 :CPPInst32bit
@@ -31,9 +31,9 @@ rem 32-bit distributives are also useful on 64-bit platform for 32-bit apps
 "%cppdistpath%\vcredist2008_x86.exe" /q /r:n
 "%cppdistpath%\vcredist2010_x86.exe" /q /norestart
 "%cppdistpath%\vcredist2012_x86.exe" /q /norestart
-"2013 KB3138367\vcredist_x86.en-US.exe" /q /norestart
+"%~dp02013 KB3138367\vcredist_x86.en-US.exe" /q /norestart
 rem "%cppdistpath%\vcredist2019_x86.exe" /q /norestart
-"%cppdistpath%\2015-2022\VC_redist.x86.exe" /q /norestart
+"%~dp02015-2022\VC_redist.x86.exe" /q /norestart
 
 CALL "%~dp0remove_tempfiles.cmd"
 )

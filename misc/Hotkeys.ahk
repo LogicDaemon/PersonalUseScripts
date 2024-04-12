@@ -545,6 +545,8 @@ FillDelayedRunGroups() {
             altFunc := Func("PrepareAltMode").Bind(altMode)
             Hotkey %altKey%, %altFunc%
             Hotkey If, AlternateHotkeys==0x%altMode%
+        } Else {
+            Hotkey If
         }
         For key,args in HotkeysRunDelayed {
             If (FileExist(args[1])) {
@@ -559,9 +561,9 @@ FillDelayedRunGroups() {
                 FileAppend % "Not found: " args[1], *
             }
         }
-        If (altKey)
-            HotKey If
     }
+    If (altKey)
+        HotKey If
 }
 
 RemoveToolTip:
