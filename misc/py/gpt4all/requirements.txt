@@ -1,0 +1,4 @@
+gpt4all
+typer
+appdirs
+pyyaml
