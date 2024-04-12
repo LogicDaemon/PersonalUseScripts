@@ -5,10 +5,11 @@ FileEncoding UTF-8
 
 EnvGet LocalAppData,LOCALAPPDATA
 EnvGet SystemRoot,SystemRoot
+Global removeDirsBeforeExit := []
 
-Try
+Try {
     exe7z := find7zexe()
-Catch {
+} Catch {
     Try
         exe7z := find7zaexe()
     Catch
@@ -17,9 +18,7 @@ Catch {
 
 installBaseDir := LocalAppData "\Programs"
 installLink := installBaseDir "\7-Zip"
-
 distFor64BitOSRegexp := {0: "", 1: "-x64\.exe$"}
-
 main7zDist := FindLatestByFileVersion( A_ScriptDir "\7-zip.org\a\7z*-x64.exe"
                                      , distFor64BitOSRegexp[A_Is64bitOS]
                                      , distFor64BitOSRegexp[!A_Is64bitOS] )
@@ -38,6 +37,10 @@ RunWait %comspec% /c MKLINK /J "%installLink%" "%installDest%", %A_Temp%, Min
 
 ; Update "HKEY_CURRENT_USER\Software\7-Zip" "Path"
 RegWrite REG_SZ, HKEY_CURRENT_USER\Software\7-Zip, Path, %installLink%
+
+For _, dir in removeDirsBeforeExit
+    FileRemoveDir %dir%, 1
+
 Exit
 
 Get7zaFromExtra() {
@@ -45,6 +48,7 @@ Get7zaFromExtra() {
         Throw Exception("Need an installed 7-Zip or at least 7-zip.org\a\7zr.exe")
     SplitPath A_ScriptDir, ScriptDirName
     tempDir = %A_Temp%\%ScriptDirName%_%A_ScriptName%
+    removeDirsBeforeExit.Push(tempDir)
     extrasArchive := FindLatestByNameVersion(A_ScriptDir "\7-zip.org\a\7z*-extra.7z")
     inArchivePath := A_Is64bitOS ? "x64\7za.exe" : "7za.exe"
     RunWait %A_ScriptDir%\7-zip.org\a\7zr.exe x -aoa -y -o"%tempDir%\" -- "%extrasArchive%" "%inArchivePath%"
