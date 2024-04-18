@@ -12,3 +12,4 @@ Loop Files, %LocalAppData%\Programs\CrystalDiskInfo*, D
     Run "%A_LoopFileFullPath%\DiskInfo%exesuffix%.exe" /CopyExit, %A_LoopFileFullPath%
     break
 }
+ExitApp %ErrorLevel%

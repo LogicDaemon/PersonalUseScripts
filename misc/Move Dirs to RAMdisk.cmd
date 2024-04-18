@@ -56,11 +56,13 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     MKDIR "%RAMDrive%\Temp\_tc"
     MKDIR "%RAMDrive%\Temp\NvTelemetry_WD"
     MKDIR "%RAMDrive%\Temp\GHISLER"
-    
-    MKDIR "%RAMDrive%\ProgramData\GOG.com\Galaxy\webcache\common"
-    MKDIR "%RAMDrive%\ProgramData\GOG.com\Galaxy\lock-files"
-    MKDIR "%RAMDrive%\ProgramData\GOG.com\Galaxy\logs"
-    MKDIR "%RAMDrive%\ProgramData\GOG.com\Galaxy\crashdumps"
+
+    IF EXIST "%ProgramData%\GOG.com" (
+        MKDIR "%RAMDrive%\ProgramData\GOG.com\Galaxy\webcache\common"
+        MKDIR "%RAMDrive%\ProgramData\GOG.com\Galaxy\lock-files"
+        MKDIR "%RAMDrive%\ProgramData\GOG.com\Galaxy\logs"
+        MKDIR "%RAMDrive%\ProgramData\GOG.com\Galaxy\crashdumps"
+    )
     
     @REM CALL :MkDirsWithCopiedPermissions "%SystemRoot%" "%RAMDrive%" ServiceProfiles LocalService AppData Local Temp
     CALL :MoveLinkBack "%SystemRoot%\ServiceProfiles\LocalService\AppData\Local\Temp\TfsStore" "%RAMDrive%\ServiceProfiles\LocalService\AppData\Local\Temp\TfsStore"
@@ -80,18 +82,16 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     rem CALL :MoveToRAMDrive "c:\OEM\AcerLogs"
     rem CALL :MoveToRAMDrive "c:\OEM\CareCenter"
     rem CALL :MoveToRAMDrive "c:\OEM\Preload"
-    CALL :MoveToRAMDrive "%APPDATA%\DropboxElectron"
     CALL :MoveToRAMDrive "%APPDATA%\npm-cache"
     CALL :MoveToRAMDrive "%APPDATA%\obs-studio\crashes"
     CALL :MoveToRAMDrive "%APPDATA%\obs-studio\logs"
     CALL :MoveToRAMDrive "%APPDATA%\obs-studio\profiler_data"
     CALL :MoveToRAMDrive "%APPDATA%\obs-studio\updates"
-    CALL :MoveToRAMDrive "%APPDATA%\obs-studio\plugin_config\obs-browser\obs_profile_cookies\C33655CA96322DC4\GPUCache"
-
+    
     rem Electron apps
-    FOR %%B IN (Beyond-All-Reason Dropbox Code "Code - Insiders" update-hub discord obs-studio\plugin_config\obs-browser) DO @(
-        FOR %%C IN ("Cache" "CachedData" "CachedExtensions" "CachedProfilesData" "Code Cache" "Crashpad" "DawnCache" "GPUCache" "logs" "Service Worker\CacheStorage" "Service Worker\ScriptCache" "Session Storage") DO @(
-            CALL :MoveToRAMDrive "%APPDATA%\%%~B\%%~C"
+    FOR /D %%B IN ("%APPDATA%\Beyond-All-Reason" "%APPDATA%\Dropbox" "%APPDATA%\Code" "%APPDATA%\Code - Insiders" "%APPDATA%\update-hub" "%APPDATA%\discord" "%APPDATA%\obs-studio\plugin_config\obs-browser" "%AppData%\Dropbox\Partitions\*.*" "%APPDATA%\obs-studio\plugin_config\obs-browser\obs_profile_cookies\*") DO @(
+        IF EXIST "%%~B" FOR %%C IN ("Cache" "CachedData" "CachedExtensions" "CachedProfilesData" "Code Cache" "Crashpad" "DawnCache" "GPUCache" "logs" "Service Worker\CacheStorage" "Service Worker\ScriptCache" "Session Storage") DO @(
+            IF EXIST "%%~B\%%~C" CALL :MoveToRAMDrive "%%~B\%%~C"
         )
     )
     
@@ -127,6 +127,8 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Dropbox\metrics"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Dropbox\QuitReports"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Dropbox\logs"
+    CALL :MoveToRAMDrive "%LOCALAPPDATA%\DropboxUpdate\CrashReports"
+    CALL :MoveToRAMDrive "%LOCALAPPDATA%\DropboxUpdate\Update\Download"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Jedi"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Kalypso Media"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\kdenlive"
