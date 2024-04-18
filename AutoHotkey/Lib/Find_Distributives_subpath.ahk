@@ -5,19 +5,22 @@ Find_Distributives_subpath(ByRef subpath) {
     static baseDirsList := ""
     If (!baseDirsList) {
         baseDirsList := [], baseDirsSet := {}
-        distBaseDirsListFile := ExpandEnvVars("%LocalAppData%\Scripts\_Distributives.base_dirs.txt")
-        If (FileExist(distBaseDirsListFile))
+        distBaseDirsListFileBase := ExpandEnvVars("%LocalAppData%\Scripts\_Distributives.base_dirs")
+        distBaseDirsListFileSuffix := ".txt"
+        RegRead hostname, HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters, Hostname
+        If (!FileExist(distBaseDirsListFile := distBaseDirsListFileBase "@" hostname distBaseDirsListFileSuffix) )
+            distBaseDirsListFile := distBaseDirsListFileBase distBaseDirsListFileSuffix
+        If (FileExist(distBaseDirsListFile)) {
             FileRead distBaseDirsList, %distBaseDirsListFile%
-        Else
+        } Else {
+            EnvGet USERPROFILE,USERPROFILE
             distBaseDirsList =
             ( LTrim
-                %distBaseDirsList%
                 D:
-                X:
-                V:
-                W:
                 %A_MyDocuments%
+                %USERPROFILE%
             )
+        }
         Loop Parse, distBaseDirsList, `n, `r
             If (s := Trim(A_LoopField)) {
                 basePath := ExpandEnvVars(s)
@@ -31,6 +34,8 @@ Find_Distributives_subpath(ByRef subpath) {
     }
     
     For i, basePath in baseDirsList {
+        If (FileExist(res := basePath subpath))
+            return res
         If (FileExist(res := basePath "\Distributives\" subpath))
             return res
     }
