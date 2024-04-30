@@ -18,9 +18,11 @@ If (!scriptcmdln && WinExist("ahk_group vscode")) {
     ExitApp
 }
 
-ToolTip Checking for VS Code update...
-RunWait "%A_AhkPath%" "%A_ScriptDir%\vscode-update.ahk"
-ToolTip
+If (!scriptcmdln) {
+    ToolTip Checking for VS Code update...
+    RunWait "%A_AhkPath%" "%A_ScriptDir%\vscode-update.ahk"
+    ToolTip
+}
 EnvGet LocalAppData, LocalAppData
 Loop {
     If (vscodeexe := FirstExisting(LocalAppData "\Programs\Microsoft VS Code\Code.exe", LocalAppData "\Programs\VS Code\Code.exe", ProgramFiles "\Microsoft VS Code\Code.exe"))
