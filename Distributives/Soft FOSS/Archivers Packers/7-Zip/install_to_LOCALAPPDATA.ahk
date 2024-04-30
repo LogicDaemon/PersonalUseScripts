@@ -38,6 +38,21 @@ RunWait %comspec% /c MKLINK /J "%installLink%" "%installDest%", %A_Temp%, Min
 ; Update "HKEY_CURRENT_USER\Software\7-Zip" "Path"
 RegWrite REG_SZ, HKEY_CURRENT_USER\Software\7-Zip, Path, %installLink%
 
+RegWrite REG_SZ, HKEY_CURRENT_USER\Software\Classes\CLSID\{23170F69-40C1-278A-1000-000100020000},,7-Zip Shell Extension
+RegWrite REG_SZ, HKEY_CURRENT_USER\Software\Classes\CLSID\{23170F69-40C1-278A-1000-000100020000}\InprocServer32,,%LocalAppData%\Programs\7-Zip\7-zip.dll
+RegWrite REG_SZ, HKEY_CURRENT_USER\Software\Classes\CLSID\{23170F69-40C1-278A-1000-000100020000}\InprocServer32, ThreadingModel, Apartment
+RegWrite REG_SZ, HKEY_CURRENT_USER\Software\Classes\*\shellex\ContextMenuHandlers\7-Zip,,{23170F69-40C1-278A-1000-000100020000}
+RegWrite REG_SZ, HKEY_CURRENT_USER\Software\Classes\Directory\shellex\ContextMenuHandlers\7-Zip,,{23170F69-40C1-278A-1000-000100020000}
+RegWrite REG_SZ, HKEY_CURRENT_USER\Software\Classes\Folder\shellex\ContextMenuHandlers\7-Zip,,{23170F69-40C1-278A-1000-000100020000}
+RegWrite REG_SZ, HKEY_CURRENT_USER\Software\Classes\Directory\shellex\DragDropHandlers\7-Zip,,{23170F69-40C1-278A-1000-000100020000}
+RegWrite REG_SZ, HKEY_CURRENT_USER\Software\Classes\Drive\shellex\DragDropHandlers\7-Zip,,{23170F69-40C1-278A-1000-000100020000}
+RegRead v, HKEY_CURRENT_USER\SOFTWARE\7-Zip\Options, MenuIcons
+If (v=="")
+    RegWrite REG_DWORD, HKEY_CURRENT_USER\SOFTWARE\7-Zip\Options, MenuIcons, 00000001
+RegRead v, HKEY_CURRENT_USER\SOFTWARE\7-Zip\Options, CascadedMenu
+If (v=="")
+    RegWrite REG_DWORD, HKEY_CURRENT_USER\SOFTWARE\7-Zip\Options, CascadedMenu, 00000001
+
 For _, dir in removeDirsBeforeExit
     FileRemoveDir %dir%, 1
 
