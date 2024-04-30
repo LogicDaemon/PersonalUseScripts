@@ -32,15 +32,20 @@ For i, classMask in [ "VivaldiHTM"
             If (!InStr(cmdlArgs, check))
                 cmdlArgs := addArg A_Space cmdlArgs
         nprivRun(aShellOpen[1], cmdlArgs)
-        WinWait %VivaldiWinTitleRegex%,,5
-        If (!ErrorLevel) {
+        WinWait %VivaldiWinTitleRegex%,,30
+        If (ErrorLevel) {
+            ToolTip Failed to open %classMask%`, trying other options
+            resetToolTip:=True
+        } Else {
             ForceWinActivate(VivaldiWinTitleRegex)
             break
         }
     }
 }
 
-If (!aShellOpen)
+If (resetToolTip)
+    ToolTip
+Else If (!aShellOpen)
     Throw Exception("Vivaldi path not found.")
 
 ExitApp
