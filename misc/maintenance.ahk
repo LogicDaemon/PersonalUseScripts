@@ -23,7 +23,8 @@ Try {
     cmds.Push([dirDropbox "\Config\scripts\call _link.cmd for HOSTNAME and GROUP.cmd"]
             , [dirDropbox "\Config\scripts\copy tasks.cmd"]
             , [dirDropbox "\Config\scripts\export registry settings.cmd"]
-            , [A_ScriptDir "\Vivaldi_prefs_backup.ahk"] )
+            , [A_ScriptDir "\Vivaldi_prefs_backup.ahk"]
+            , ["icacls.exe", "DropboxExt*.dll /deny LogicDaemon:(X)", A_AppData "\Dropbox\bin"] )
 }
 
 killProcesses = [ "update_notifier.exe"
