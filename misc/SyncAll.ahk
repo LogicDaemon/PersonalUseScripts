@@ -16,8 +16,8 @@ For i, v in config[""]
 
 EnvGet LOCALAPPDATA,LOCALAPPDATA
 ;EnvSet syncprog, "%LOCALAPPDATA%\Programs\unison\bin\unison-gtk2.exe"
-guisyncprog=%LOCALAPPDATA%\Programs\unison\bin\unison-text+gui.exe
-textsyncprog=%LOCALAPPDATA%\Programs\unison\bin\unison.exe
+guisyncprog=%LOCALAPPDATA%\Programs\scoop\apps\unison\current\bin\unison-text+gui.exe
+textsyncprog=%LOCALAPPDATA%\Programs\scoop\apps\unison\current\bin\unison.exe
 If (FileExist(guisyncprog)) {
     EnvSet syncprog, "%guisyncprog%"
 } Else If (FileExist(textsyncprog)) {

@@ -3,8 +3,10 @@
 #NoEnv
 FileEncoding UTF-8
 
+KeyWait Shift, T1
+
 ; can't use hostname at this point
-#include *i %A_ScriptDir%\alt_browser.%A_COMPUTERNAME%.ahk
+#include *i %A_ScriptDir%\alt_browser@%A_COMPUTERNAME%.ahk
 ; following is only executed if the above is unsuccessful
 
 FileSelectFile browserPath, 3, ; 3 = 1: File Must Exist + 2: Path Must Exist
@@ -23,6 +25,6 @@ ExitApp
 
 #include <ParseScriptCommandLine>
 
-), %A_ScriptDir%\alt_browser.%hostname%.ahk, UTF-8
-Run "%A_ScriptDir%\alt_browser.%hostname%.ahk"
+), %A_ScriptDir%\alt_browser@%hostname%.ahk, UTF-8
+Run "%A_ScriptDir%\alt_browser@%hostname%.ahk"
 ExitApp

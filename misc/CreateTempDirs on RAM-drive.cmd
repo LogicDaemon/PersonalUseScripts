@@ -10,4 +10,5 @@ IF NOT EXIST R:\ (
 (
 MKDIR R:\Temp
 @CALL "%~dp0Move Dirs to RAMdisk.cmd" %* >"R:\Move Dirs to RAMdisk.log" 2>&1
+COMPACT /C /EXE:LZX "R:\Move Dirs to RAMdisk.log"
 )

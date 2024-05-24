@@ -46,8 +46,15 @@ definitelyIgnore := { "7z": ""
                     , "xz": ""
                     , "zip": "" }
 
-;KillProcesses([ "conhost.exe"
-;                 , "git.exe" ])
+For i, procName in ["Code.exe", "Code - Insiders.exe", "code-insiders.exe"] {
+    Process Exist, %procName%
+    If (ErrorLevel) {
+        foundVSCode := ErrorLevel
+        break
+    }
+}
+If (!foundVSCode)
+    KillProcesses([ "git.exe" ])
 
 If (A_IsAdmin) {
     SetWorkingDir %A_ScriptDir%
