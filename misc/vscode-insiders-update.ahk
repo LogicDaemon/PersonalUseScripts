@@ -98,13 +98,14 @@ DownloadVSCodeInsiders(ByRef distDir, ByRef vsCodeDest, ByRef urlSuffixChannel :
                 pathtmp := ""
             }
         } Else {
-            pathtmp := FirstExisting(distDir "\*.tmp")
+            pathtmp := FirstExistingFilePath(distDir "\*.tmp")
             If (pathtmp) {
                 path := SubStr(pathtmp, 1, -4)
                 SplitPath path, latestDistFileName
-                Loop Files, %distDir%\VSCode-win32-x64-*.*
-                    If (A_LoopFileName != latestDistFileName)
-                        FileDelete %A_LoopFileName%
+                If (StartsWith(latestDistFileName, "VSCode-win32-x64-"))
+                    Loop Files, %distDir%\VSCode-win32-x64-*.*
+                        If (A_LoopFileName != latestDistFileName)
+                            FileDelete %A_LoopFileFullPath%
             } Else {
                 ; VSCode-win32-x64-1.79.0-insider-2dfb838f494f035099e999f0cd0eff5f1f488a30.zip
                 Loop Files, %distDir%\VSCode-win32-x64-*.*
@@ -130,9 +131,10 @@ DownloadVSCodeInsiders(ByRef distDir, ByRef vsCodeDest, ByRef urlSuffixChannel :
                 ; from where "commit" matches updInfo.version
                 ; But the archive is not yet unpacked at this stage
                 tmpDir := A_Temp "\" A_Scriptname ".tmp"
-                RunWait %exe7z% x -aoa -y -o"%tmpDir%" -- "%path%" "resources\app\product.json",, Min UseErrorLevel
+                fullCmd = %exe7z% x -aoa -y -o"%tmpDir%" -- "%path%" "resources\app\product.json"
+                RunWait %fullCmd%,, Min UseErrorLevel
                 If (ErrorLevel)
-                    Throw Exception("Failed to unpack resources\app\product.json",, path)
+                    Throw Exception("Failed to unpack resources\app\product.json from """ path """",, fullCmd)
                 productInfoPath := tmpDir "\resources\app\product.json"
                 productInfo := LoadJSON(productInfoPath)
                 If (!IsObject(productInfo))

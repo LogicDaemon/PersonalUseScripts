@@ -114,7 +114,7 @@ DownloadVSCode(ByRef distDir, ByRef vsCodeDest, ByRef urlSuffixChannel := "", By
                 pathtmp := ""
             }
         } Else {
-            pathtmp := FirstExisting(distDir "\*.tmp")
+            pathtmp := FirstExistingFilePath(distDir "\*.tmp")
             If (pathtmp) {
                 path := SubStr(pathtmp, 1, -4)
             } Else {
@@ -223,7 +223,7 @@ CleanOldInstallations(ByRef newVerDir, ByRef destDir) {
     {
         If ( A_LoopFileFullPath <> newVerDir ) {
             ;MsgBox Checking %A_LoopFileFullPath%
-            mainexe := FirstExisting( A_LoopFileFullPath "\Code.exe"
+            mainexe := FirstExistingFilePath( A_LoopFileFullPath "\Code.exe"
                                     , A_LoopFileFullPath "\Code - Insiders.exe" )
             If (!mainexe)
                 Continue
@@ -252,4 +252,4 @@ LoadJSON(ByRef path) {
 
 #include <GetURL>
 #include <JSON>
-#include <FirstExisting>
+#include <FirstExistingFilePath>
