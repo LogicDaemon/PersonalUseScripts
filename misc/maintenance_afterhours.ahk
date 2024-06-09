@@ -56,23 +56,24 @@ For i, procName in ["Code.exe", "Code - Insiders.exe", "code-insiders.exe"] {
 If (!foundVSCode)
     KillProcesses([ "git.exe" ])
 
-If (A_IsAdmin) {
-    SetWorkingDir %A_ScriptDir%
-    Run "%A_AhkPath%" "%A_ScriptDir%\vscode-update.ahk"
-    Run "%A_AhkPath%" "%A_ScriptDir%\vscode-insiders-update.ahk"
-    Run "%A_AhkPath%" "%A_ScriptDir%\update_go.ahk"
-    Run "%A_AhkPath%" "%A_ScriptDir%\update_KeePass.ahk"
-    
-    Run %comspec% /C "%A_ScriptDir%\Update_SysInternals.cmd",, Min
-    
-    RunWait %comspec% /C "%A_ScriptDir%\update-git-for-windows.cmd",, Min
-    RunWait %comspec% /C "%A_ScriptDir%\update_aws_cli.cmd",, Min
-    RunWait %comspec% /C "%A_ScriptDir%\update_obs.cmd",, Min
-    RunWait "%LOCALAPPDATA%\Programs\msys64\ucrt64.exe" pacman -Suy --noconfirm,, Min
-    RunWait "%LOCALAPPDATA%\Programs\msys64\ucrt64.exe" paccache -r --noconfirm,, Min
-    
-    RunWait scoop update -a,, Min
-}
+SetWorkingDir %A_ScriptDir%
+Run "%A_AhkPath%" "%A_ScriptDir%\vscode-update.ahk"
+Run "%A_AhkPath%" "%A_ScriptDir%\vscode-insiders-update.ahk"
+Run "%A_AhkPath%" "%A_ScriptDir%\update_go.ahk"
+Run "%A_AhkPath%" "%A_ScriptDir%\update_KeePass.ahk"
+
+Run %comspec% /C "%A_ScriptDir%\Update_SysInternals.cmd",, Min
+
+RunWait %comspec% /C "%A_ScriptDir%\update-git-for-windows.cmd",, Min
+RunWait %comspec% /C "%A_ScriptDir%\update_aws_cli.cmd",, Min
+RunWait %comspec% /C "%A_ScriptDir%\update_obs.cmd",, Min
+RunWait "%LOCALAPPDATA%\Programs\msys64\ucrt64.exe" pacman -Suy --noconfirm,, Min
+RunWait "%LOCALAPPDATA%\Programs\msys64\ucrt64.exe" paccache -r --noconfirm,, Min
+
+;breaks kdiff3
+;RunWait scoop.cmd update -a,, Min
+RunWait DFHL.exe /l ., %LOCALAPPDATA%\Programs\scoop\shims, Min
+
 RegRead hostname, HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters, Hostname
 backupScript=%A_ScriptDir%\backup_%hostname%.cmd
 If (FileExist(backupScript))
