@@ -67,13 +67,17 @@ SaveCredFromClip(data) {
     } Catch e {
         Throw e
     }
+    tooltipBase := "Wrote " data[1] " AWS cred to ""%UserProfile%\.aws\credentials"""
     If (FileExist(A_ScriptDir "\update_aws_cred_post_actions.cmd")) {
-        ToolTip % "Running update_aws_cred_post_actions.cmd"
+        ToolTip % tooltipBase "; running update_aws_cred_post_actions.cmd"
         RunWait "%A_ScriptDir%\update_aws_cred_post_actions.cmd",, Min UseErrorLevel
+        ToolTip
+    } Else {
+        ToolTip % tooltipBase
+        SetTimer ClearTooltip, -3000
     }
     If (exitAfter)
         ExitApp
-    ToolTip % "Wrote Prod AWS cred to profile " data[1] " (see ""%UserProfile%\.aws\credentials""), copying to DEV-FS-05"
 }
 
 ContainAWSCred(ByRef data) {
