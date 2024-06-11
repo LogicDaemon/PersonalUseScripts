@@ -61,6 +61,7 @@ Run "%A_AhkPath%" "%A_ScriptDir%\vscode-update.ahk"
 Run "%A_AhkPath%" "%A_ScriptDir%\vscode-insiders-update.ahk"
 Run "%A_AhkPath%" "%A_ScriptDir%\update_go.ahk"
 Run "%A_AhkPath%" "%A_ScriptDir%\update_KeePass.ahk"
+Run "%A_AhkPath%" "%A_ScriptDir%\RemoveMicrosoftEdgeAutoLaunch.ahk"
 
 Run %comspec% /C "%A_ScriptDir%\Update_SysInternals.cmd",, Min
 
