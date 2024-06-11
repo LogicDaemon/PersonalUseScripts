@@ -51,7 +51,7 @@ ButtonCompareChanges:
     GUISelectChangedOptions()
 return
 
-ButtonOK:
+ButtonWrite:
     Gui Submit, NoHide
     If (CopyViaGUI())
         TrayTip PuTTY settings copy, Settings copied successfully, 1
@@ -59,22 +59,21 @@ ButtonOK:
 
 GuiEscape:
 GuiClose:
-ButtonCancel:
+ButtonClose:
 ExitApp
 
 BuildGUI() {
     local
     global optionNameMaxLength, puttySessions, DefaultSettingsKeyName
         , SessionsKey
-        , GUISourceSession, GUIDestSessions, GUIOptionsChoice
+        , GUISourceSession, GUIDestSessions, GUIOptionsChoice, TxtCompareChangesDisabled
     profileMaxLen := 0
         , puttySessionsString := ""
     Loop Reg, %SessionsKey%, K
     {
-        keyName := A_LoopRegName
-            , puttySessionsString .= keyName "`n"
-            , profileMaxLen := Max(profileMaxLen, StrLen(keyName))
-            , puttySessions[keyName] := ""
+        puttySessionsString .= A_LoopRegName "`n"
+            , profileMaxLen := Max(profileMaxLen, StrLen(A_LoopRegName))
+            , puttySessions[A_LoopRegName] := ""
     }
     LoadSessionData(DefaultSettingsKeyName)
     puttySessionsString := SubStr(puttySessionsString, 1, -1) ; remove trailing separator
@@ -90,30 +89,38 @@ BuildGUI() {
     
     Gui Add, Text, Section ym w%profileWidth%, Copy to profiles
     Gui Add, ListBox, xs r30 w%profileWidth% 8 Sort vGUIDestSessions, %puttySessionsString%
-    Gui Add, Button, Section gSelectAllDestSessions, +
-    Gui Add, Button, ys gDeselectAllDestSessions, -
-    Gui Add, Button, xm Section Default, OK
-    Gui Add, Button, ys, Cancel
-    Gui Add, Button, ys, &Load all settings
-    Gui Add, Button, ys, &Compare changes
+    Gui Add, Button, Section gSelectAllDestSessions, Select all
+    Gui Add, Button, ys gDeselectAllDestSessions, Unselect all
+    Gui Add, Button, xs Section Default, &Write
+    Gui Add, Button, ys, Close
+    Gui Add, Text, xm Section, To find changes`, change an option in any Putty profile now`, ave it`, then click
+    Gui Add, Button, ys-5, &Compare changes
+    Gui Add, Text, ys vTxtCompareChangesDisabled, (sessions are loading`, meanwhile only the selected on the left works)
     
     GuiControl ChooseString, GUISourceSession, %DefaultSettingsKeyName%
     RefreshGUIOptions()
     Gui Show
+    LoadAllSessionsData()
 }
 
 LoadAllSessionsData() {
     local
-    global puttySessions, SessionsKey
+    global puttySessions, SessionsKey, TxtCompareChangesDisabled
     
+    puttySessionsString := ""
     Loop Reg, %SessionsKey%, K
     {
-        If (!puttySessions[A_LoopRegName]) {
-            GuiControl,, GUISourceSession, %A_LoopRegName%
-            GuiControl,, GUIDestSessions, %A_LoopRegName%
-        }
         puttySessions[A_LoopRegName] := LoadSessionData(A_LoopRegName)
+        , puttySessionsString .= A_LoopRegName "`n"
     }
+    puttySessionsString := SubStr(puttySessionsString, 1, -1)
+
+    For cntr in ["GUISourceSession", "GUIDestSessions"] {
+        ; GuiControl, -Redraw, %cntr%
+        GuiControl,, cntr, %puttySessionsString%
+        ; GuiControl, -Redraw, %cntr%
+    }
+    GuiControl Hide, TxtCompareChangesDisabled
 }
 
 CopyViaGUI() {
