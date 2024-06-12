@@ -95,7 +95,7 @@ BuildGUI() {
     Gui Add, Button, ys, Close
     Gui Add, Text, xm Section, To find changes`, change an option in any Putty profile now`, ave it`, then click
     Gui Add, Button, ys-5, &Compare changes
-    Gui Add, Text, ys vTxtCompareChangesDisabled, (sessions are loading`, meanwhile only the selected on the left works)
+    Gui Add, Text, ys vTxtCompareChangesDisabled, (sessions are loading`, meanwhile only the selected on the left is compared)
     
     GuiControl ChooseString, GUISourceSession, %DefaultSettingsKeyName%
     RefreshGUIOptions()
