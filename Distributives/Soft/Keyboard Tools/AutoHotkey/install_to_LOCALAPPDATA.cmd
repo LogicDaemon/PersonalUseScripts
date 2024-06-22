@@ -43,7 +43,7 @@ SETLOCAL ENABLEEXTENSIONS
                 "%LOCALAPPDATA%\Programs\AutoHotkey\%exenameahk%" "%~dp0..\..\PreInstalled\utils\pathman.ahk" /au "%LocalAppData%\Programs\bin"
             )
             MKLINK "%LocalAppData%\Programs\bin\ahk.exe" "%LOCALAPPDATA%\Programs\AutoHotkey\%exenameahk%"
-            MKLINK /D "%LocalAppData%\Programs\bin\Lib" "%LOCALAPPDATA%\Programs\AutoHotkey\Lib"
+            rem MKLINK /D "%LocalAppData%\Programs\bin\Lib" "%LOCALAPPDATA%\Programs\AutoHotkey\Lib"
         )
         "%LOCALAPPDATA%\Programs\AutoHotkey\%exenameahk%" "%~dp0associate.ahk" /user
         EXIT /B
