@@ -1,0 +1,84 @@
+﻿;by LogicDaemon <www.logicdaemon.ru>
+;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+#Requires AutoHotkey v2.0
+FileEncoding "UTF-8"
+
+srcPathPrefix := A_ScriptDir "\7-zip.org\a\7zr"
+srcNameSuffix := ".exe"
+srcPath := srcPathPrefix . srcNameSuffix
+
+Try
+    ver := FileGetVersion(srcPath)
+Catch Error as e {
+    FileAppend e.message, "**"
+    ExitApp 1
+}
+targetPath := srcPathPrefix "-" ver srcNameSuffix
+If (FileExist(targetPath)) {
+    For link in ListLinks(targetPath)
+        If link == targetPath
+            ExitApp 0
+    FileAppend "Target path already exists, but is not a hard link to " targetPath, "**"
+    mtime := FileGetTime(targetPath)
+    mdate := SubStr(mtime, 1, 8)
+    For ,suffix in ["-" mdate, "-" mtime, "@" A_Now] {
+        targetPath := srcPathPrefix "-" ver "-" mdate srcNameSuffix
+        If !FileExist(targetPath)
+            break
+    }
+}
+
+If !HardLink(srcPath, targetPath) {
+    FileAppend "Failed to create hard link to " targetPath, "**"
+    ExitApp 1
+}
+ExitApp 0
+
+HardLink(existingPath, newPath) {
+    ; returns 1 on success, 0 on failure
+    Return DllCall( "CreateHardLink", "Str", newPath, "Str", existingPath, "Int", 0)
+}
+
+; by Saiapatsu
+; https://www.autohotkey.com/boards/viewtopic.php?style=7&t=86940
+ListLinks(path) {
+	static ERROR_MORE_DATA := 234
+	static MAX_PATH := 260
+	
+	root := SubStr(path, 1, 2)
+	paths := []
+	
+	buflen := MAX_PATH
+	VarSetStrCapacity(&linkname, buflen)
+	handle := DllCall("FindFirstFileNameW",
+		"WStr", path,
+		"UInt", 0,
+		"UInt*", buflen,
+		"WStr", linkname)
+	
+	if (A_LastError == ERROR_MORE_DATA)
+		throw "ListLinks: ERROR_MORE_DATA, 260 was not enough..."
+	if (handle == 0xffffffff)
+		throw "ListLinks: FindFirstFileNameW failed"
+	
+	try
+	{
+		Loop
+		{
+			paths.Push(root linkname)
+			
+			buflen := MAX_PATH
+			VarSetStrCapacity(&linkname, buflen)
+			more := DllCall("FindNextFileNameW",
+			"UInt", handle,
+			"UInt*", buflen,
+			"WStr", linkname)
+		} until (!more)
+		
+		if (A_LastError == ERROR_MORE_DATA)
+			throw "ListLinks: ERROR_MORE_DATA, 260 was not enough..."
+	} finally
+		DllCall("FindClose", "UInt", handle)
+	
+	return paths
+}

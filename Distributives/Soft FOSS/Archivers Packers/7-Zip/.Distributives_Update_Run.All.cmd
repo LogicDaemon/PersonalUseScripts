@@ -7,6 +7,7 @@
 )
 (
     START "" /B /D"%srcpath%" wget -ml1 https://7-zip.org/download.html -A.exe,.msi,.7z
+    CALL find_ahk2exe.cmd "%~dp0hardlink_7zr_version_after_downloading.ahk2"
 rem     CALL "%baseScripts%\_DistDownload.cmd" https://7-zip.org/download.html 7zr.exe
 rem     CALL "%baseScripts%\_DistDownload.cmd" https://7-zip.org/download.html 7z*-x64.exe -ml1
 rem     CALL "%baseScripts%\_DistDownload.cmd" https://7-zip.org/download.html 7z*.exe -ml1
