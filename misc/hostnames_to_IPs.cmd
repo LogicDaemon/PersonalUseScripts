@@ -1,7 +1,7 @@
 @(REM coding:CP866
 REM Reads list of hostnames, outputs list of corresponding IP addresses.
 REM Lists all addresses of round-robing hosts (parses output of nslookup for each host).
-REM Requires unix-style find utility.
+REM Requires unix-style sort utility.
 REM
 REM by LogicDaemon <www.logicdaemon.ru>
 REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <http://creativecommons.org/licenses/by-sa/4.0/>.
@@ -14,6 +14,10 @@ SET tmplistuniq="%TEMP%\%~n0.%RANDOM%.tmp.uniq"
 
 SET "CopyOldList="
 SET "AddMode=Default"
+
+FOR "delims=" %%A IN ("%ProgramFiles%\Git\usr\bin\sort.exe" "%LocalAppData%\Programs\scoop\apps\git\current\usr\bin\sort.exe" "%LocalAppData%\Programs\msys64\usr\bin\sort.exe") DO @(
+    IF EXIST "%%~A" SET "sortexe=%%~A" && GOTO :nextarg
+)
 )
 :nextarg
 SET "opt=%~1"
@@ -25,7 +29,6 @@ IF "%opt:~,1%"=="/" (
 (
     SET "input=%1"
     SET "output=%2"
-
 )
 (
     IF DEFINED CopyOldList (
@@ -35,7 +38,7 @@ IF "%opt:~,1%"=="/" (
 
     rem uniq works only for non-unique lines standing one next to each other (sorted list) -- uniq %tmplist% allowed_by_hostnames.ip-list.uniq
     rem but sort can remove duplicates on its own
-    "%SystemDrive%\SysUtils\UnxUtils\sort.exe" -us %tmplist% >%tmplistuniq%
+    %sortexe% -us %tmplist% >%tmplistuniq%
 
     DEL %tmplist%
     IF DEFINED output (
