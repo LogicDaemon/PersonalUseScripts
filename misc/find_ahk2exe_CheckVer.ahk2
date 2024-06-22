@@ -1,0 +1,6 @@
+﻿FileAppend A_AhkVersion, "*"
+If (VerCompare(A_AhkVersion, "2.0") >= 0)
+    ExitApp 0
+; sometimes it's required to return specific error level
+a := A_Args[1]
+ExitApp (a ? a : 1)

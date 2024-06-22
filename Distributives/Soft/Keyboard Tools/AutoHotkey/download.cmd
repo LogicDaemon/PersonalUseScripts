@@ -13,12 +13,27 @@
 )
 @(
     IF NOT DEFINED logsDir SET "logsDir=%workdir%"
+    SET "reqVerPrefix=1."
     
-    rem CALL :DownloadDistributive https://autohotkey.com/download/ahk.zip "AutoHotkey_*.zip"
-    CALL :DownloadDistributive https://autohotkey.com/download/ahk.zip "*.zip"
     rem CALL :DownloadDistributive https://autohotkey.com/download/ahk-install.exe "AutoHotkey_*_setup.exe"
     CALL :DownloadDistributive https://autohotkey.com/download/ahk-install.exe "*.exe"
+    rem CALL :DownloadDistributive https://autohotkey.com/download/ahk.zip "AutoHotkey_*.zip"
+    CALL :DownloadDistributive https://autohotkey.com/download/ahk.zip "*.zip"
     RD /Q "%workdir%"
+    
+    ENDLOCAL
+    SETLOCAL ENABLEEXTENSIONS
+    PUSHD "%~dp0v2" || EXIT /B
+    SET "srcpath=%~dp0v2\"
+    CALL "%baseScripts%\_GetWorkPaths.cmd"
+    IF NOT DEFINED workdir SET "workdir=%srcpath%temp\"
+)
+@(
+    IF NOT DEFINED logsDir SET "logsDir=%workdir%"
+    SET "reqVerPrefix=2."
+    CALL :DownloadDistributive https://www.autohotkey.com/download/ahk-v2.exe *.exe
+    CALL :DownloadDistributive https://www.autohotkey.com/download/ahk-v2.zip *.zip
+    
     EXIT /B
 )
 :DownloadDistributive
@@ -80,7 +95,7 @@ FOR /F "usebackq delims=" %%A IN (`DIR /B /O-D "%srcpath%%distfmask%"`) DO (
 :ExitGetVerLoop
 (
     IF NOT "%ver%"=="" ( REM when destination is on a remote, somehow ver is defined but is empty string
-        IF NOT "%ver:~0,2%"=="1." (
+        IF DEFINED reqVerPrefix IF NOT "%ver:~0,2%"=="%reqVerPrefix%" (
 	    ( CALL :ExitWithError "Version %ver% downloaded from %url% (must be version 1.*), aborting"
 	    EXIT /B 1
 	    ) > "%srcpath%warning.txt"
@@ -160,5 +175,10 @@ EXIT /B
 :ReplaceStarWithStr <varname> <str_with_a_star> <replacement>
 @(
     FOR /F "tokens=1* delims=*" %%A IN (%2) DO SET "%~1=%%~A%~3%%~B"
+    EXIT /B
+)
+:PrintDstFname
+@(
+    ECHO dstfname: %dstfname%
     EXIT /B
 )
