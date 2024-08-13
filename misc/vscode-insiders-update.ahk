@@ -124,7 +124,7 @@ DownloadVSCodeInsiders(ByRef distDir, ByRef vsCodeDest, ByRef urlSuffixChannel :
             If (pathtmp) {
                 FileMove %pathtmp%, %path%, 1
                 If (ErrorLevel)
-                    Throw Exception("Rename failed",, """" %path%.tmp """ to """ path """")
+                    Throw Exception("Rename failed",, """" path ".tmp"" to """ path """")
             }
             If (!IsObject(updInfo)) {
                 ; resources\app\product.json in the archive contains the build info,

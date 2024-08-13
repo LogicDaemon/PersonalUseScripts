@@ -7,7 +7,7 @@
 EnvGet LocalAppData,LOCALAPPDATA
 EnvGet SystemRoot,SystemRoot
 
-awsDevAccId:="572304703581_AdministratorAccess"
+awsDevAccId:="572304703581_Administrator"
 
 cred := ParseClipCred(Clipboard)
 If (cred) {

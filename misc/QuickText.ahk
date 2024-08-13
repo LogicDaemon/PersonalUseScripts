@@ -26,6 +26,16 @@ If (WinActive("ahk_group Notepad2Boilerplates")) {
 	PasteNotepad2Boilerplate()
 }
 
+WinGetTitle winTitle, A
+;am-media-all (Channel) - Intermedia - 1 new item - Slack — Mozilla Firefox
+;am-media-all (Channel) - Intermedia - 3 new items - Slack — Mozilla Firefox
+;am-media-all (Channel) - Intermedia - Slack — Mozilla Firefox
+;am-media-all (Channel) - Intermedia - Slack
+If (winTitle ~= "am-media-all \(Channel\) - Intermedia( - \d+ new items?)? - Slack.*") {
+	Run "%A_AhkPath%" "%A_ScriptDir%\worktime_message.ahk"
+	ExitApp
+}
+
 ; ---------------------------------------------------------------------
 ; Name:  			Search&Paste
 ; Author:           Boskoop
@@ -559,6 +569,7 @@ ReadConfig() {
 }
 
 PasteNotepad2Boilerplate() {
+	local
 	StatusBarGetText FileSize, 2
 	If ( FileSize != "0 bytes" && FileSize != "0 байт" ) {
 		TrayTip Ignoring boilerplating,Size = %FileSize%`, should be 0.,2

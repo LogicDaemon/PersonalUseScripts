@@ -3,7 +3,7 @@ REM by LogicDaemon <www.logicdaemon.ru>
 REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode.ru>.
 SETLOCAL ENABLEEXTENSIONS
     FOR /F "usebackq delims=" %%A IN (`DIR /B /A-D /O-D "%~dp0*.7z"`) DO (
-        SET "latest=%%~A"
+        SET "latest=%~dp0%%~A"
         GOTO :found
     )
     ECHO Found no matching distributive.
