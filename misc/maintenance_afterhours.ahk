@@ -68,21 +68,45 @@ Run %comspec% /C "%A_ScriptDir%\Update_SysInternals.cmd",, Min
 RunWait %comspec% /C "%A_ScriptDir%\update-git-for-windows.cmd",, Min
 RunWait %comspec% /C "%A_ScriptDir%\update_aws_cli.cmd",, Min
 RunWait %comspec% /C "%A_ScriptDir%\update_obs.cmd",, Min
-RunWait "%LOCALAPPDATA%\Programs\msys64\ucrt64.exe" pacman -Suy --noconfirm,, Min
-RunWait "%LOCALAPPDATA%\Programs\msys64\ucrt64.exe" paccache -r --noconfirm,, Min
+If (FileExist("%LOCALAPPDATA%\Programs\msys64\ucrt64.exe")) {
+    RunWait "%LOCALAPPDATA%\Programs\msys64\ucrt64.exe" pacman -Suy --noconfirm,, Min
+    RunWait "%LOCALAPPDATA%\Programs\msys64\ucrt64.exe" paccache -r --noconfirm,, Min
+}
 
-;breaks kdiff3
+FileRead scoop_noautoupdate_txt, %LocalAppData%\Programs\scoop\apps\_noautoupdate.txt
+scoop_noautoupdate := {}
+For _, line in StrSplit(scoop_noautoupdate_txt, "`n") {
+    If (line)
+        scoop_noautoupdate[line] := ""
+}
+scoop_noautoupdate_txt=
+
 ;RunWait scoop.cmd update -a,, Min
-RunWait DFHL.exe /l ., %LOCALAPPDATA%\Programs\scoop\shims, Min
+Loop Files, %LocalAppData%\Programs\scoop\apps, D
+    If !scoop_noautoupdate.HasKey(A_LoopFileName) {
+        RunWait scoop update "%A_LoopFileName%",, Min
+        RunWait scoop cleanup "%A_LoopFileName%",, Min
+    }
+RunWait "%A_AhkPath%" "%A_ScriptDir%\scoop_remove_old_versions_from_cache.ahk"
+RunWait "%LocalAppData%\Programs\DFHL_2.6\DFHL.exe" /l ., %LOCALAPPDATA%\Programs\scoop\shims, Min
 
 RegRead hostname, HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters, Hostname
 backupScript=%A_ScriptDir%\backup_%hostname%.cmd
 If (FileExist(backupScript))
     Run %comspec% /C "%A_ScriptDir%\backup_%hostname%.cmd",, Min
 
-If (FileExist("w:\FileHistory\" A_UserName)) {
-    Loop Files, w:\FileHistory\%A_UserName%\*.*, D
+comprDir := "w:\FileHistory\" A_UserName
+If (FileExist(comprDir)) {
+    Loop Files, %comprDir%\*.*, D
         CompactCompressible(A_LoopFileFullPath "\Data")
+}
+
+RunWait "%LocalAppData%\Programs\DFHL_2.6\DFHL.exe" /r /l /o .vscode .vscode-insiders, %USERPROFILE%, Min
+For _, comprDir in [ USERPROFILE "\.vscode"
+                   , USERPROFILE "\.vscode-insiders\" ] {
+    If (FileExist(comprDir)) {
+        CompactCompressible(A_LoopFileFullPath "\Data")
+    }
 }
 
 ExitApp
@@ -95,7 +119,7 @@ KillProcesses(processesNames) {
             If (!ErrorLevel)
                 break
             If (prevPID == ErrorLevel) {
-                RunWait taskkill.exe /IM %procName% /F,, Min UseErrorLevel
+                RunWait taskkill.exe /IM "%procName%" /F,, Min UseErrorLevel
                 break
             } Else {
                 prevPID := ErrorLevel
