@@ -6,19 +6,10 @@ FileEncoding UTF-8
 
 EnvGet LocalAppData,LOCALAPPDATA
 EnvGet SystemRoot,SystemRoot
-EnvGet path, PATH
 
-For _, dir in StrSplit(path, ";") {
-    If (FileExist(dir "\scoop.cmd") || FileExist(dir "\scoop.ps1")) {
-        scoopBaseDir := dir "\.."
-        scoopCacheDir := scoopBaseDir "\cache"
-        scoopAppsDir := scoopBaseDir "\apps"
-    }
-}
-If (!scoopCacheDir) {
-    MsgBox A_ScriptName, "Scoop not found in PATH", "T60"
-    ExitApp 1
-}
+scoopBaseDir := FindScoopBaseDir()
+scoopCacheDir := scoopBaseDir "\cache"
+scoopAppsDir := scoopBaseDir "\apps"
 
 oldVersionsDest := scoopCacheDir "\old\"
 FileCreateDir % oldVersionsDest
@@ -76,5 +67,7 @@ Loop Files, % scoopCacheDir "\*.*"
                             , fnames: [A_LoopFileName] }
     }
 }
+Exit
 
 #include <JSON>
+#include <FindScoopBaseDir>

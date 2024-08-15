@@ -12,6 +12,13 @@ Run %comspec% /C "update.cmd", %LocalAppData%\Programs\SysInternals, Min
 Run sc.exe stop AdobeARMservice,, Min
 Run sc.exe config AdobeARMservice start= disabled,, Min
 
+GroupAdd _1password, ahk_exe 1password.exe
+WinKill ahk_group _1password
+Loop
+{
+    Process Close, 1password.exe
+} Until !ErrorLevel
+
 ;ProcPri :=  { "LMS.exe": "L"
 ;            , "AeXNSAgent.exe": "L"
 ;            , "AeXAgentUIHost.exe": "L"
