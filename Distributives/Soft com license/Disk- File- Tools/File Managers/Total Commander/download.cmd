@@ -14,14 +14,14 @@ IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%U
     
     FOR /F "usebackq skip=3" %%A IN (`"%SystemRoot%\System32\nslookup.exe -type=txt releaseversion.ghisler.com"`) DO IF NOT "%%~A"=="" SET "newtcver=%%~A"
     IF NOT DEFINED newtcver EXIT /B 1
-    FOR /F "usebackq delims=" %%A IN ("%dirData%lastver.txt") DO SET "oldtcver=%%~A"
+    FOR /F "usebackq delims=" %%A IN ("%dirData%VERSION") DO SET "oldtcver=%%~A"
 )
 (
     IF "%newtcver%"=="%oldtcver%" (
         ECHO Downloaded version is the same as the current one, %newtcver%
         EXIT /B 0
     )
-    (ECHO %newtcver%)>"%dirData%newver.txt"
+    (ECHO %newtcver%)>"%dirData%VERSION.new"
     
     FOR /F "delims=.; tokens=1,2,3,4,5" %%A IN ("%newtcver%") DO (
 	SET "verComponent1=%%~A"
@@ -44,6 +44,6 @@ IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%U
     POPD || EXIT /B
     FOR %%A IN ("%dirDlTmp%\*.*") DO MOVE /Y "%%~A" "%dirDist%" || EXIT /B
     
-    MOVE /Y "%dirData%newver.txt" "%dirData%lastver.txt"
+    MOVE /Y "%dirData%VERSION.new" "%dirData%VERSION"
     EXIT /B
 )

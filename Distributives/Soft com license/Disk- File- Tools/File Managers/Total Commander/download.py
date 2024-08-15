@@ -27,7 +27,7 @@ from rich import progress
 # except ImportError:
 #     from pip._vendor.rich import progress
 
-VERSION_FILE_NAME = 'lastver.txt'
+VERSION_FILE_NAME = 'VERSION'
 VERSION_FILE_ENCODING = 'oem'
 
 log = logging.getLogger(
