@@ -1,7 +1,6 @@
 @(REM coding:CP866
 SETLOCAL ENABLEEXTENSIONS
-robocopy "d:\Distributives\config" "%~dp0Distributives\config" /MIR /S /XD d:\Distributives\config\_Scripts\Lib
-robocopy "d:\Distributives" "%~dp0Distributives" *.cmd *.ahk *.list descript.ion "partial list of free SysUtils.txt" jre_install_common.cfg opabackup342.exe.config /MIR /S /XD config Drivers_local Local_Scripts wsusoffline
+CALL "%~dp0update_Distributives_scripts.cmd" "d:\Distributives" "%~dp0Distributives"
 ahk "%~dp0unpack_Distributives_config.ahk"
 
 robocopy "%USERPROFILE%\Dropbox\Projects\AutoHotkey\Lib" "%~dp0AutoHotkey\Lib" /MIR
