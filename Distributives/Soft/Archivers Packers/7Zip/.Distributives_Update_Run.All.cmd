@@ -1,21 +1,11 @@
 @(REM coding:CP866
+REM by LogicDaemon <www.logicdaemon.ru>
+REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
 SETLOCAL ENABLEEXTENSIONS
 
-    SET "distcleanup=1"
-    SET "AddtoS_UScripts=1"
-
     IF NOT DEFINED baseScripts SET "baseScripts=\Distributives\Local_Scripts\software_update\Downloader"
-    SET "UpdateScriptName=7Zip"
-    CALL :Download7zip "%~dp032-bit" *.exe
-    CALL :Download7zip "%~dp064-bit" *-x64.exe
-EXIT /B
 )
-:Download7zip <dir> <mask>
-(
-    SETLOCAL
-	IF NOT EXIST %1 MKDIR %1
-	SET "srcpath=%~f1\"
-	CALL "%baseScripts%\_DistDownload.cmd" https://www.7-zip.org/ %2 -ml1 -nd -A.exe
-    ENDLOCAL
-EXIT /B
+@(
+    CALL "%baseScripts%\_GetWorkPaths.cmd"
+    py "%~dp0download.py"
 )
