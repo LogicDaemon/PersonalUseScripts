@@ -1,3 +1,15 @@
+/*
+  ShellRun by Lexikos
+    requires: AutoHotkey_L
+    license: http://creativecommons.org/publicdomain/zero/1.0/
+
+  Credit for explaining this method goes to BrandonLive:
+  http://brandonlive.com/2008/04/27/getting-the-shell-to-run-an-application-for-you-part-2-how/
+ 
+  Shell.ShellExecute(File [, Arguments, Directory, Operation, Show])
+  http://msdn.microsoft.com/en-us/library/windows/desktop/gg537745
+*/
+
 ShellRun(prms*)
 {
     shellWindows := ComObjCreate("Shell.Application").Windows

@@ -19,6 +19,8 @@ Loop
     Process Close, 1password.exe
 } Until !ErrorLevel
 
+Run wsl.exe sleep 3600,, Hide
+
 ;ProcPri :=  { "LMS.exe": "L"
 ;            , "AeXNSAgent.exe": "L"
 ;            , "AeXAgentUIHost.exe": "L"

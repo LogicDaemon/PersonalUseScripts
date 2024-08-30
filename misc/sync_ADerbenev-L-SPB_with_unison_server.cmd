@@ -11,7 +11,11 @@ SETLOCAL ENABLEEXTENSIONS
 @IF NOT DEFINED syncprog SET "syncprog=%unisontext%"
 @(
     IF DEFINED filterSyncs IF NOT "%filterSyncs%"=="0" (
-        %unisontext% Distributives_AcerPH315-53-71HN -path "Soft/Keyboard Tools/AutoHotkey/ver.zip.txt" -path "Developement/Versioning/git/latest_assets.json" -prefer "\\AcerPH315-53-71HN\Distributives$" -auto -batch
+        %unisontext% Distributives_AcerPH315-53-71HN ^
+            -path "Developement/go/VERSION" ^
+            -path "Soft/Keyboard Tools/AutoHotkey/ver.zip.txt" ^
+            -path "Developement/Versioning/git/latest_assets.json" ^
+            -prefer "\\AcerPH315-53-71HN\Distributives$" -auto -batch
         DEL "%TEMP%\%~n0.list.txt"
         FOR %%A IN ("%USERPROFILE%\.unison\*_AcerPH315-53-71HN.prf") DO @(
             <NUL %unisontext% "%%~nA" "-auto=false" || ECHO "%%~nA">>"%TEMP%\%~n0.list.txt"

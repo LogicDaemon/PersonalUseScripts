@@ -10,7 +10,7 @@
   http://msdn.microsoft.com/en-us/library/windows/desktop/gg537745
 */
 
-;Value	Meaning
+;Show	Meaning
 ;0 Open the application with a hidden window.
 ;1 Open the application with a normal window. If the window is minimized or maximized, the system restores it to its original size and position.
 ;2 Open the application with a minimized window.

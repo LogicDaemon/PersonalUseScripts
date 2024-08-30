@@ -5,6 +5,7 @@ REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 In
     IF "%~1"=="" GOTO :find7zexe
     CALL :find7zexe & IF NOT DEFINED exe7z EXIT /B
 )
+@IF EXIST "%LocalAppData%\Programs\7-max\7maxc.exe" SET "exe7z="%LocalAppData%\Programs\7-max\7maxc.exe" %exe7z%"
 (
     %exe7z% %*
     @EXIT /B

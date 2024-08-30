@@ -9,11 +9,10 @@
         EXIT /B
     )
     FOR /F "usebackq delims=" %%A IN (`DIR /B /AD /O-D "%LOCALAPPDATA%\Programs\Python\%~1"`) DO @IF EXIST "%LOCALAPPDATA%\Programs\Python\%%~A\python.exe" (
-        SET "py_ver=%%~A"
+        SET "pythonPath="%LOCALAPPDATA%\Programs\Python\%%~A\python.exe"
         GOTO :found
     )
-    python %*
-    EXIT /B 1
+    SET pythonPath=python
 )
 :found
-"%LOCALAPPDATA%\Programs\Python\%%~A\%~2" %*
+"%pythonPath%" %*
