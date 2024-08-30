@@ -1,10 +1,17 @@
 @(REM coding:CP866
-REM by LogicDaemon <www.logicdaemon.ru>
-REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode.ru>.
-SETLOCAL ENABLEEXTENSIONS
-
-rem START "" /D"%~dp0" /WAIT /B wget -xN http://ftp.gimp.org/pub/gimp/help/windows/2.8/2.8.1/gimp-help-2-2.8.1-ru-setup.exe
-rem START "" /D"%~dp0" /WAIT /B wget -xN http://ftp.gimp.org/pub/gimp/help/windows/2.8/2.8.1/gimp-help-2-2.8.1-en-setup.exe
-
-rem https://download.gimp.org/pub/gimp/stable/
+    IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
+    IF NOT DEFINED baseScripts SET "baseScripts=\Distributives\Local_Scripts\software_update\Downloader"
+    CALL "%baseScripts%\_GetWorkPaths.cmd"
+    rem srcpath with baseDistUpdateScripts replaced to baseDistributives
+    rem relpath is srcpath relatively to baseDistributives (no trailing backslash)
+    rem workdir - baseWorkdir with relpath (or %srcpath%temp if baseWorkdir isn't defined)
+    rem logsDir - baseLogsDir with relpath (or nothing)
+)
+@IF NOT DEFINED workdir SET "workdir=%srcpath%\temp"
+@(
+    IF NOT DEFINED logsDir SET "logsDir=%workdir%"
+    IF NOT EXIST "%srcpath%old\." MKDIR "%srcpath%old"
+    MOVE "%srcpath%*.torrent" "%srcpath%old\"
+    CALL "%baseScripts%\_DistDownload.cmd" https://www.gimp.org/downloads/ *.torrent -A.exe.torrent -rl1 -nd -HDdownload.gimp.org
+    FOR %%A IN ("%srcpath%*.torrent") DO aria2c --file-allocation=trunc --enable-dht6 --seed-time=0 --bt-detach-seed-only --bt-hash-check-seed=false --check-integrity=true -T "%%~A"
 )
