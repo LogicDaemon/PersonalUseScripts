@@ -4,10 +4,10 @@
 
 ffExeName := ""
 FileReadLine ffExeName, %A_Temp%\ffExeName.txt, 1
-If (!ffExeName)
-    ffExeName = firefox.exe
-
-GroupAdd firefox, ahk_exe %ffExeName%
+restart:
+If (ffExeName) {
+    GroupAdd firefox, ahk_exe %ffExeName%
+}
 
 If (!A_Args.Length() && WinExist("ahk_group firefox")) {
     If(WinActive())
@@ -21,18 +21,24 @@ cmdArgs := FindFirefoxCommand()
 If (!cmdArgs)
     Throw Exception("Firefox not found")
 mi := cmdArgs.MinIndex()
-ffPath := cmdArgs.RemoveAt(mi)
-cmdArgs := InsertArgsToCommand(cmdArgs, A_Args*)
+ffPath := Unquote(cmdArgs.RemoveAt(mi))
+If (A_Args.Length())
+    cmdArgs := FillCommandArgs(cmdArgs, A_Args, """%1""", ["-osint", "-url"])
+Else
+    cmdArgs := RemoveElements(cmdArgs, ["-osint", "-url", """%1"""])
 
 SplitPath ffPath, ffExeName1
 If (ffExeName != ffExeName1) {
-    FileDelete %A_Temp%\ffExeName.txt
-    FileAppend % ffExeName1 "`n", %A_Temp%\ffExeName.txt
+    f := FileOpen(A_Temp "\ffExeName.txt", "w"), f.Write(ffExeName1), f.Close()
     GroupAdd firefox, ahk_exe %ffExeName1%
+    If (!A_Args.Length()) {
+        ffExeName := ffExeName1
+        GoTo restart
+    }
 }
 
 ; A_ProgramFiles "\Mozilla Firefox\firefox.exe"
-ShellRun(ffPath, cmdArgs)
+ShellRun(ffPath, ArgsArrayToStr(cmdArgs))
 WinWait ahk_group firefox
 WinActivate
 
@@ -79,7 +85,6 @@ CommandWithArgs(ByRef cliString) {
     cmdPath := Unquote(cmdArgs[mi])
     If (!FileExist(cmdPath))
         Throw Exception("File not found", cmdPath)
-    cmdArgs[mi] := cmdPath
     Return cmdArgs
 }
 
@@ -91,25 +96,69 @@ Unquote(ByRef s) {
     Return s
 }
 
-InsertArgsToCommand(argsWithPlaceholder, argsToInsert*) {
-    ; Replaces %1 in the argsWithPlaceholder with the argsToInsert,
-    ; or appends argsToInsert if %1 is not found
+FillCommandArgs(argsWithPlaceholder, ByRef argsToInsert, placeholder := """%1""", removeArgs := "") {
+    ; Replaces placeholder in the argsWithPlaceholder with the argsToInsert,
+    ; or appends argsToInsert if placeholder is not found;
+    ; removes args from the argsWithPlaceholder if they are in removeArgs.
     local
+    out := []
+
+    if (IsObject(removeArgs)) {
+        removeArgsDict := {}
+        For _, v in removeArgs
+            removeArgsDict[v] := ""
+    }
+
     argsNeedInserting := argsToInsert.Length()
     For i, arg in argsWithPlaceholder {
-        If (arg == """%1""") {
-            ; ffArgs.InsertAt(Pos, Value1, [Value2, ... ValueN])
-            argsWithPlaceholder.Delete(i)
-            If (argsNeedInserting) {
-                argsWithPlaceholder.InsertAt(i, argsToInsert*)
-                argsNeedInserting := False
-            }
+        If (argsNeedInserting && arg == placeholder) {
+            out.Push(argsToInsert*)
+            argsNeedInserting := False
+        } If (!removeArgsDict.HasKey(arg)) {
+            out.Push(arg)
         }
     }
     If (argsNeedInserting) {
-        argsWithPlaceholder.Push(argsToInsert*)
+        out.Push(argsToInsert*)
     }
-    Return argsWithPlaceholder
+    Return out
+}
+
+RemoveElements(ByRef arr, ByRef elements) {
+    ; Removes elements from an array
+    local
+    elementsDict := {}
+    For _, v in elements
+        elementsDict[v] := ""
+    remains := 0
+    For i, v in arr
+        If (elementsDict.HasKey(v)) {
+            ; arr.Delete(i) breaks iteration, some elements get skipped
+            arr[i] := ""
+        } Else {
+            remains++
+        }
+    out := []
+    If (remains)
+        For _, v in arr
+            If (v) {
+
+                MsgBox % v
+                out.Push(v)
+            }
+    Return out
+}
+
+ArgsArrayToStr(ByRef arr) {
+    ; Joins command line args array into a single string
+    ; quoting args with spaces and special characters
+    local
+    delimiter := A_Space
+    out := ""
+    For _, s in arr
+        If (Trim(s))
+            out .= (s ~= "^[\w\-\.\\/]+$" ? s : """" s """") . delimiter
+    Return SubStr(out, 1, -StrLen(delimiter))
 }
 
 #include <ShellRun from Installer>
