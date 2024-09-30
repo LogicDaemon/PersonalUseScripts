@@ -14,6 +14,8 @@ For _, line in StrSplit(scoop_noautoupdate_txt, "`n") {
 }
 scoop_noautoupdate_txt=
 
+scoop_postupdate_scripts := {"python": "install-pep-514.reg"}
+
 scoopBaseDir := FindScoopBaseDir()
 
 ;RunWait scoop.cmd update -a,, Min
@@ -21,11 +23,23 @@ Loop Files, % scoopBaseDir "\apps\*.*", D
 {
     If (!scoop_noautoupdate.HasKey(A_LoopFileName)) {
         RunWait scoop.cmd update "%A_LoopFileName%",, Min
+        If (A_ErrorLevel)
+            Continue
         RunWait scoop.cmd cleanup "%A_LoopFileName%",, Min
+        postupdate_script := scoop_postupdate_scripts[A_LoopFileName]
+        If (postupdate_script) {
+            SplitPath postupdate_script,,, script_ext
+            If (script_ext = "reg")
+                RunWait REG IMPORT "%A_LoopFileFullPath%\current\%postupdate_script%",, Min
+            Else If (script_ext = "ahk")
+                Run "%A_AhkPath%" "%A_LoopFileFullPath%\current\%postupdate_script%"
+            Else
+                Run "%A_LoopFileFullPath%\current\%postupdate_script%"
+        }
     }
 }
 Run "%A_AhkPath%" "%A_ScriptDir%\scoop_remove_old_versions_from_cache.ahk"
-Run "%LocalAppData%\Programs\DFHL_2.6\DFHL.exe" /l ., %LOCALAPPDATA%\Programs\scoop\shims, Min
-Exit
+Run DFHL.exe /l ., %LOCALAPPDATA%\Programs\scoop\shims, Min
+ExitApp
 
 #include <FindScoopBaseDir>
