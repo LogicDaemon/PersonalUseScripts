@@ -14,6 +14,11 @@ rem     CURL https://api.github.com/repos/containers/podman/releases | jq ".[] |
         SET "fname=%%~nxA"
         CALL :CheckDownload "%%~A"
     )
+    IF NOT DEFINED dver EXIT /B
+)
+@(
+    IF NOT EXIST "%srcpath%%dver%\." EXIT /B
+    FOR /D %%A IN ("%srcpath%v*.*") DO IF /I "%%~nxA" NEQ "%dver%" ahk.exe "%baseScripts%\mvold.ahk" "%%~A"
     EXIT /B
 )
 :CheckDownload <url>

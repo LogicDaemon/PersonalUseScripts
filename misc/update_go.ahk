@@ -53,7 +53,7 @@ Try {
             Try {
                 FileDelete %tempDir%\%goDistFName%
             }
-            FileAppend %A_Now% %curlcmd%`n, %A_Temp%\%A_ScriptName%.log, CP0
+            FileAppend %A_Now% %curlcmd%`n, %A_Temp%\%A_ScriptName%.log, CP1
             Throw Exception("0-sized distributive downloaded",, dlURL)
         }
         
@@ -113,7 +113,7 @@ InstallUpdate( ByRef distDir
                 ;Try {
                 ;    FileRemoveDir %distPath%.tmp, 1
                 ;}
-                FileAppend %A_Now% %cmdexec%`n, %A_Temp%\%A_ScriptName%.log, CP0
+                FileAppend %A_Now% %cmdexec%`n, %A_Temp%\%A_ScriptName%.log, CP1
                 Throw Exception("7-Zip unpacking error",, ErrorLevel "`n""" distPath ".tmp""")
             }
         }

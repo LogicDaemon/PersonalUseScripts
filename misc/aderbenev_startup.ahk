@@ -4,7 +4,17 @@ FileEncoding UTF-8
 EnvGet LocalAppData, LocalAppData
 
 Process Priority, % DllCall("GetCurrentProcessId"), H
+
 Run "%A_AhkPath%" "%A_ScriptDir%\Hotkeys.ahk"
+
+Loop
+{
+    UnlockBDE("d:")
+    If (FileExist("D:\Distributives"))
+        Break
+    MsgBox 0x10, BDE unlock failed, D:\Distributives not found, 10
+}
+Run wsl.exe echo init complete,, Min
 
 Run %comspec% /C "update.cmd", %LocalAppData%\Programs\SysInternals, Min
 ;Run "%A_AhkPath%" "%LocalAppData%\Programs\pac\wpad.js update.ahk"
@@ -18,8 +28,6 @@ Loop
 {
     Process Close, 1password.exe
 } Until !ErrorLevel
-
-Run wsl.exe sleep 3600,, Hide
 
 ;ProcPri :=  { "LMS.exe": "L"
 ;            , "AeXNSAgent.exe": "L"
@@ -49,3 +57,5 @@ Run wsl.exe sleep 3600,, Hide
 ;    }
 ;    Sleep A_Index << 10
 ;} Until !remain
+
+#include %A_LineFile%\..\unlockBDE.ahk

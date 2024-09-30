@@ -1,45 +1,67 @@
-﻿;by LogicDaemon <www.logicdaemon.ru>
-;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+﻿#Warn
 #NoEnv
 FileEncoding UTF-8
 
 EnvGet LocalAppData,LOCALAPPDATA
 EnvGet SystemRoot,SystemRoot
 
-FileRead scoop_noautoupdate_txt, %LocalAppData%\Programs\scoop\apps\_noautoupdate.txt
-scoop_noautoupdate := {}
-For _, line in StrSplit(scoop_noautoupdate_txt, "`n") {
-    If (line)
-        scoop_noautoupdate[line] := ""
-}
-scoop_noautoupdate_txt=
-
-scoop_postupdate_scripts := {"python": "install-pep-514.reg"}
-
 scoopBaseDir := FindScoopBaseDir()
+logPath := scoopBaseDir "\apps\update.log"
 
 ;RunWait scoop.cmd update -a,, Min
-Loop Files, % scoopBaseDir "\apps\*.*", D
-{
-    If (!scoop_noautoupdate.HasKey(A_LoopFileName)) {
-        RunWait scoop.cmd update "%A_LoopFileName%",, Min
-        If (A_ErrorLevel)
+FileMove %logPath%, %logPath%_old, 1
+RunScoopUpdates(scoopBaseDir, logPath, GetScoopPostUpdateScripts(), GetNoAutoUpdateApps())
+
+Run "%A_AhkPath%" "%A_ScriptDir%\scoop_cleanup_cache.ahk"
+Run DFHL.exe /l ., %LocalAppData%\Programs\scoop\shims, Min
+Run DFHL.exe /l ., %scoopBaseDir%\cache, Min
+ExitApp 
+
+RunScoopUpdates(scoopBaseDir, logPath, scoopPostUpdateScripts, scoopNoAutoUpdate) {
+    local
+
+    Loop Files, %scoopBaseDir%\apps\*.*, D
+    {
+        If (scoopNoAutoUpdate.HasKey(A_LoopFileName))
             Continue
-        RunWait scoop.cmd cleanup "%A_LoopFileName%",, Min
-        postupdate_script := scoop_postupdate_scripts[A_LoopFileName]
-        If (postupdate_script) {
-            SplitPath postupdate_script,,, script_ext
-            If (script_ext = "reg")
-                RunWait REG IMPORT "%A_LoopFileFullPath%\current\%postupdate_script%",, Min
-            Else If (script_ext = "ahk")
-                Run "%A_AhkPath%" "%A_LoopFileFullPath%\current\%postupdate_script%"
+        FileAppend Updating %A_LoopFileName%...`n, %logPath%, CP1
+        RunWait %comspec% /C "scoop.cmd update "%A_LoopFileName%" >>"%logPath%" 2>&1",, Min
+        If (ErrorLevel)
+            Continue
+        FileAppend Cleaning up %A_LoopFileName%...`n, %logPath%, CP1
+        RunWait %comspec% /C "scoop.cmd cleanup "%A_LoopFileName%" >>"%logPath%" 2>&1",, Min
+        postUpdateScript := scoopPostUpdateScripts[A_LoopFileName]
+        If (postUpdateScript) {
+            FileAppend Running post-update script %postUpdateScript%...`n, %logPath%, CP1
+            SplitPath postUpdateScript,,, scriptExt
+            If (scriptExt = "reg")
+                RunWait %comspec% /C "REG IMPORT "%A_LoopFileFullPath%\current\%postUpdateScript%" >>"%logPath%" 2>&1",, Min
+            Else If (scriptExt = "ahk")
+                Run %comspec% /C ""%A_AhkPath%" "%A_LoopFileFullPath%\current\%postUpdateScript%" >>"%logPath%" 2>&1"
             Else
-                Run "%A_LoopFileFullPath%\current\%postupdate_script%"
+                Run %comspec% /C ""%A_LoopFileFullPath%\current\%postUpdateScript%" >>"%logPath%" 2>&1"
         }
     }
 }
-Run "%A_AhkPath%" "%A_ScriptDir%\scoop_remove_old_versions_from_cache.ahk"
-Run DFHL.exe /l ., %LOCALAPPDATA%\Programs\scoop\shims, Min
-ExitApp
+
+GetScoopPostUpdateScripts() {
+    Return {"python": "install-pep-514.reg"}
+}
+
+GetNoAutoUpdateApps() {
+    local
+    SplitPath A_ScriptName,,,,scriptNameNoExt
+    Return ReadTxtToSet(A_ScriptDir "\" scriptNameNoExt "_noautoupdate.txt")
+}
+
+ReadTxtToSet(path) {
+    local
+    FileRead scoopNoAutoUpdateTxt, %path%
+    scoopNoAutoupdate := {}
+    For _, line in StrSplit(scoopNoAutoUpdateTxt, "`n")
+        If (line)
+            scoopNoAutoupdate[line] := ""
+    Return scoopNoAutoupdate
+}
 
 #include <FindScoopBaseDir>

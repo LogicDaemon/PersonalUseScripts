@@ -1,0 +1,45 @@
+<!-- https://learn.microsoft.com/en-us/windows/security/threat-protection/windows-sandbox/windows-sandbox-configure-using-wsb-file -->
+<Configuration>
+  <vGPU>Enable</vGPU>
+  <AudioInput>Enable</AudioInput>
+  <VideoInput>Enable</VideoInput>
+  <ProtectedClient>Default</ProtectedClient>
+  <PrinterRedirection>Default</PrinterRedirection>
+  <ClipboardRedirection>Enable</ClipboardRedirection>
+  <MemoryInMB>16384</MemoryInMB>
+  <MappedFolders>
+    <MappedFolder>
+      <HostFolder>d:\Distributives</HostFolder>
+      <SandboxFolder>c:\Distributives</SandboxFolder>
+      <ReadOnly>true</ReadOnly>
+    </MappedFolder>
+    <MappedFolder>
+      <HostFolder>d:\Users\LogicDaemon\Downloads</HostFolder>
+      <SandboxFolder>c:\Users\WDAGUtilityAccount\Downloads</SandboxFolder>
+      <ReadOnly>false</ReadOnly>
+    </MappedFolder>
+    <MappedFolder>
+      <HostFolder>d:\Users\LogicDaemon\SandboxData</HostFolder>
+      <SandboxFolder>c:\Data</SandboxFolder>
+      <ReadOnly>false</ReadOnly>
+    </MappedFolder>
+    <MappedFolder>
+      <HostFolder>d:\Users\LogicDaemon\AppData\Local\Scripts</HostFolder>
+      <SandboxFolder>c:\Users\WDAGUtilityAccount\AppData\Local\Scripts</SandboxFolder>
+      <ReadOnly>true</ReadOnly>
+    </MappedFolder>
+    <MappedFolder>
+      <HostFolder>d:\Users\LogicDaemon\AppData\Local\Programs</HostFolder>
+      <SandboxFolder>c:\Users\WDAGUtilityAccount\AppData\Local\Programs</SandboxFolder>
+      <ReadOnly>true</ReadOnly>
+    </MappedFolder>
+    <MappedFolder>
+      <HostFolder>d:\Users\LogicDaemon\AppData</HostFolder>
+      <SandboxFolder>c:\Users\WDAGUtilityAccount\AppData_Host</SandboxFolder>
+      <ReadOnly>true</ReadOnly>
+    </MappedFolder>
+  </MappedFolders>
+  <LogonCommand>
+    <Command>c:\WINDOWS\System32\cmd.exe /C "%LOCALAPPDATA%\Scripts\sandbox_logon.cmd"</Command>
+  </LogonCommand>
+</Configuration>
