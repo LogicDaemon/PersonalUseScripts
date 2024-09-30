@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 '''
-Download the latest version of Python 3, either source or binary depending on current OS.
+Download the latest version of Python 3, either source or binary
+    depending on OS.
 On Linux, also build and install it to $HOME/.local.
-On Windows, install to default per-user location ("%LOCALAPPDATA%\\Programs" for 3.11, see https://docs.python.org/3.11/using/windows.html)
+On Windows, install to default per-user location ("%LOCALAPPDATA%\\Programs"
+    for 3.11, see https://docs.python.org/3.11/using/windows.html)
 
 Requires lxml for normal work, and lxml-stubs for developing/debugging.
 
@@ -11,7 +13,7 @@ by LogicDaemon <www.logicdaemon.ru> / <t.me/logicdaemon_pub>
 
 from __future__ import annotations
 
-# Built-in modules
+# Python Standard Library modules https://docs.python.org/3/py-modindex.html
 from typing import Generator, Iterable, Optional
 import sys
 import os
@@ -23,13 +25,17 @@ import time
 from urllib.parse import urlsplit
 from urllib.request import urlopen, HTTPError
 import email.utils
-# Installable standard modules
+
+# Installable modules https://pypi.org/
 import lxml
 import lxml.html
-from packaging import version
-#import configparser
-# Installable 3rd party modules
-# Our own modules
+import httpx
+try:
+    from pip._vendor.packaging import version
+    from pip._vendor.rich.progress import Progress
+except ImportError:
+    from packaging import version
+    from rich.progress import Progress
 
 
 def main() -> None:
@@ -47,19 +53,20 @@ def main() -> None:
                  'download_all' downloads both windows 64 bit and source
                  'build' builds the source (currently only on Linux)
                  'install' on Linux, downloads the source, builds and installs it to users's $HOME/.local;
-                           on Windows, downloads binary and installs to default per-user location ("%%LOCALAPPDATA%%\Programs" for 3.11, see https://docs.python.org/3.11/using/windows.html)'''
+                           on Windows, downloads binary and installs to default per-user location ("%%LOCALAPPDATA%%\Programs", see https://docs.python.org/3/using/windows.html)'''  # NOQA: E501
     )
     parser.add_argument('--version-prefix',
                         '-p',
                         required=False,
                         default='3',
                         help='Version prefix (default: %(default)s)')
-    parser.add_argument('--above-version',
-                        '-a',
-                        required=False,
-                        default=pyver,
-                        type=version.parse,
-                        help='Search for a version above the specified (default: %(default)s)')
+    parser.add_argument(
+        '--above-version',
+        '-a',
+        required=False,
+        default=pyver,
+        type=version.parse,
+        help='Search for a version above the specified (default: %(default)s)')
     parser.add_argument('--destination',
                         '--target',
                         '-t',
@@ -245,7 +252,7 @@ def get_latest_python_version_unchecked(
         assert isinstance(xpo, Iterable)  # for mypy
         for a in xpo:
             # assert isinstance(a, lxml.html._Element)  # doesn't work without lxml stubs
-            t = a.text  # type: ignore  # for mypy
+            t = a.text  # type: ignore
             if t:
                 assert isinstance(t, str)
                 if t.startswith(python_release_text_prefix):
