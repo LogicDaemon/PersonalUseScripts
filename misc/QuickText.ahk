@@ -630,15 +630,13 @@ PasteOrSend(ByRef data) {
 }
 
 GetBoilerplate(ext) {
-	authorship=by LogicDaemon <www.logicdaemon.ru>
-	license=This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+	license := "unlicense (http://unlicense.org/) public domain by LogicDaemon <https://www.logicdaemon.ru/>"
 	ext := Format("{:L}", ext)
 	If (ext == "url")
 		v = [InternetShortcut]`nURL=`n
 	Else If (ext == "ahk")
 		v =
 	( LTrim
-		;%authorship%
 		;%license%
 		#NoEnv
 		FileEncoding UTF-8
@@ -651,7 +649,6 @@ GetBoilerplate(ext) {
 		v =
 	( LTrim
 		@(REM coding:CP866
-		REM %authorship%
 		REM %license%
 		SETLOCAL ENABLEEXTENSIONS
 		`)
