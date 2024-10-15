@@ -1,2 +1,3 @@
 lxml
 packaging
+# pip | rich
