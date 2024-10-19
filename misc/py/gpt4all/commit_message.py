@@ -27,9 +27,26 @@ from gpt4all import GPT4All
 #from . import something
 
 
+class ChatMarkupLanguageLlama(StrEnum):
+    """ Chat Markup Language for the Llama model """
+    MODEL_NAME = 'Meta-Llama-3.1-8B-Instruct-128k-Q4_0.gguf'
+    # SYSTEM_PROMPT = ('<|start_header_id|>system<|end_header_id|>\n'
+    #                  'Cutting Knowledge Date: December 2023\n'
+    #                  'You are a helpful assistant.<|eot_id|>')
+    SYSTEM_PROMPT_START = '<|start_header_id|>system<|end_header_id|>\n'
+    SYSTEM_PROMPT_END = '<|eot_id|>\n'
+    # PROMPT_TEMPLATE = (
+    #     '<|start_header_id|>user<|end_header_id|>'
+    #     '%1<|eot_id|><|start_header_id|>assistant<|end_header_id|>'
+    #     '%2')
+    USER_PROMPT_START = '<|start_header_id|>user<|end_header_id|>'
+    USER_PROMPT_END = '<|eot_id|>\n<|start_header_id|>assistant<|end_header_id|>'
+
+
 # https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/ai-services/openai/includes/chat-markup-language.md
-class ChatMarkupLanguage(StrEnum):
-    """ Chat Markup Language """
+class ChatMarkupLanguageMistral(StrEnum):
+    """ Chat Markup Language for the Mistral model """
+    MODEL_NAME = 'mistral-7b-openorca.gguf2.Q4_0.gguf'
     SYSTEM_PROMPT_START = '<|im_start|>system\n'
     SYSTEM_PROMPT_END = '\n<|im_end|>\n'
     # <|im_end|> in the user prompt is for the last assistant response
@@ -37,12 +54,14 @@ class ChatMarkupLanguage(StrEnum):
     USER_PROMPT_END = '\n<|im_end|>\n<|im_start|>assistant\n'
 
 
-DEFAULT_SYSTEM_PROMPT = (
-    ChatMarkupLanguage.SYSTEM_PROMPT_START +
-    "You help summarizing changes from patches and change lists." +
-    ChatMarkupLanguage.SYSTEM_PROMPT_END)
+Model = ChatMarkupLanguageLlama
+MODEL_NAME = Model.MODEL_NAME
+SYSTEM_PROMPT = (
+    Model.SYSTEM_PROMPT_START +
+    "You are a helpful assistant summarizing changes." +
+    Model.SYSTEM_PROMPT_END)
 
-DEFAULT_PER_FILE_PROMPT_TEMPLATE = (
+PER_FILE_PROMPT_TEMPLATE = (
     'Write a terse technical 1-10 word summary describing the subset of '
     'changes in file "{filename}" useful for creating commit messages.\n'
     'Do not include the filename or amount of changes in the summary.\n'
@@ -50,15 +69,8 @@ DEFAULT_PER_FILE_PROMPT_TEMPLATE = (
     'file "{filename}", "-" means the line is removed.\n'
     '\n{diff}')
 
-DEFAULT_FINAL_PROMPT_TEMPLATE = (
-    'Commit message is using format:\n'
-    '```\n'
-    'change_type (scope): short description\n'
-    '\n'
-    'Longer description\n'
-    '\n'
-    '```\n'
-    'Where change_type is one of:\n'
+FINAL_PROMPT_TEMPLATE = (
+    'change_type is one of:\n'
     '- feat: A new feature\n'
     '- fix: A bug fix\n'
     '- docs: Documentation only changes\n'
@@ -72,7 +84,14 @@ DEFAULT_FINAL_PROMPT_TEMPLATE = (
     '\n'
     'Change summaries:\n'
     '{change_summaries}\n'
-    'Produce the commit message.\n')
+    'Produce the commit message using format:\n'
+    '```\n'
+    'change_type (scope): short description\n'
+    '\n'
+    'Longer description\n'
+    '\n'
+    '```\n'
+    'without any additional text.\n')
 
 # >git diff --cached  .dockerignore
 # diff --git a/.dockerignore b/.dockerignore
@@ -175,30 +194,26 @@ class Config:
     # pylint: disable=R0801,duplicate-code,R0902,too-many-instance-attributes  # NOQA: E501
     commit_message_path: pathlib.Path = dc_field(
         metadata=ConfigOption(
-            help='Path to the file with the commit message',
-            short_name='p'))
+            help='Path to the file with the commit message', short_name='p'))
     system_prompt: str = dc_field(
         metadata=ConfigOption(
-            default=DEFAULT_SYSTEM_PROMPT,
-            help='System prompt to be sent only once'))
+            default=SYSTEM_PROMPT, help='System prompt to be sent only once'))
     per_file_prompt_template: str = dc_field(
         metadata=ConfigOption(
-            default=DEFAULT_PER_FILE_PROMPT_TEMPLATE,
+            default=PER_FILE_PROMPT_TEMPLATE,
             help='Prompt template for each file. You can use {{diff}}, '
             '{{status_line}} and {{filename}} placeholders.'))
     final_prompt_template: str = dc_field(
         metadata=ConfigOption(
-            default=DEFAULT_FINAL_PROMPT_TEMPLATE,
+            default=FINAL_PROMPT_TEMPLATE,
             help='Final prompt template. You can use {{change_summaries}} and '
             '{{git_status}} placeholders.'))
     prompt_prefix: str = dc_field(
         metadata=ConfigOption(
-            default=ChatMarkupLanguage.USER_PROMPT_START,
-            help='Prefix for each LLM prompt'))
+            default=Model.USER_PROMPT_START, help='Prefix for each LLM prompt'))
     prompt_suffix: str = dc_field(
         metadata=ConfigOption(
-            default=ChatMarkupLanguage.USER_PROMPT_END,
-            help='Suffix for each LLM prompt'))
+            default=Model.USER_PROMPT_END, help='Suffix for each LLM prompt'))
     prompt_max_len: int = dc_field(
         metadata=ConfigOption(
             default=2048,
@@ -206,7 +221,7 @@ class Config:
     model: str = dc_field(
         metadata=ConfigOption(
             # default='Nous-Hermes-2-Mistral-7B-DPO.Q4_0.gguf',
-            default='mistral-7b-openorca.gguf2.Q4_0.gguf',
+            default=MODEL_NAME,
             help='Model to use'))
     device: str = dc_field(
         metadata=ConfigOption(
