@@ -1,1 +1,1 @@
-*.*|**\.mypy_cache\**\**;Hotkeys_Custom.*;_Distributives.base_dirs.txt
+*.*|**\.mypy_cache\**\**;**\.venv\**\**;**\__pycache__\**\**;Hotkeys_Custom.*;_Distributives.base_dirs.txt
