@@ -42,6 +42,8 @@ RunScoopUpdates(scoopBaseDir, logPath, scoopPostUpdateScripts, scoopNoAutoUpdate
                 Run %comspec% /C ""%A_LoopFileFullPath%\current\%postUpdateScript%" >>"%logPath%" 2>&1"
         }
     }
+    
+    RunWait compact.exe /C "%logPath%",, Min UseErrorLevel
 }
 
 GetScoopPostUpdateScripts() {
