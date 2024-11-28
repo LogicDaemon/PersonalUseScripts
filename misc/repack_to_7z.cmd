@@ -58,7 +58,7 @@ GOTO :checkArg
     RD /S /Q "%tempdest%"
     %exe7z% x -o"%tempdest%\%~n1" -- "%~1"
     PUSHD "%tempdest%" && (
-	CALL "%~dp07z_am.cmd" /DELETEAFTER /LEASTNOSUFFIX "%tempdest%\%~n1" && (
+	CALL "%~dp07z_am.cmd" /DELETEAFTER /SMALLESTNOSUFFIX "%tempdest%\%~n1" && (
             IF NOT "%nobackup%"=="1" (
                 rem FOR %%A IN ("%tempdest%\*.7z") DO CALL :removeSuffix "%%~A"
                 FOR %%A IN ("%tempdest%\*.*") DO @IF EXIST "%~dp1%%~nxA" MOVE "%~dp1%%~nxA" "%~dp1%%~nxA.bak"

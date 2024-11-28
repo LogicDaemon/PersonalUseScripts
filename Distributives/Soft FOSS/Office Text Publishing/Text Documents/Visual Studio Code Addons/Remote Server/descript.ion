@@ -1,2 +1,2 @@
 ﻿
-vscode-remote-wsl %TEMP%
+vscode-remote-wsl %USERPROFILE%\vscode-remote-wsl\

@@ -513,7 +513,8 @@ FillDelayedRunGroups() {
                                             , "#VK45":   [A_ScriptDir "\WinActivateOrExec.ahk", """" totalcmdexe """",,""] ;vk45=e #e
                                             , "#+VK45":  [totalcmdexe,,,,-1]                                     ;vk45=e #+e
                                             , "#!VK45":  ["shell:MyComputerFolder"]                              ;vk45=e #!e
-                                            , "#^VK45":  [A_ScriptDir "\RemoveDrive.ahk"]                        ;vk45=e #^e
+                                            ;, "#^VK45":  [A_ScriptDir "\RemoveDrive.ahk"]                        ;vk45=e #^e
+                                            , "#^VK45":  [A_ScriptDir "\PassPhrase\email.ahk"]                   ;vk45=e #^e
                                             , "#^+VK45": [eject_all.cmd]                                         ;vk45=e #^+e
                                             , "#VK4A":   [A_ScriptDir "\JDownloader.ahk"]                        ;vk4A=j #j
                                             , "#!VK4B":  [keepassahk,,""]                                        ;vk4B=k #!k

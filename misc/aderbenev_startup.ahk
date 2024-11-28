@@ -5,15 +5,16 @@ EnvGet LocalAppData, LocalAppData
 
 Process Priority, % DllCall("GetCurrentProcessId"), H
 
-Run "%A_AhkPath%" "%A_ScriptDir%\Hotkeys.ahk"
-
 Loop
 {
     UnlockBDE("d:")
-    If (FileExist("D:\Distributives"))
+    If (FileExist("d:\Distributives"))
         Break
     MsgBox 0x10, BDE unlock failed, D:\Distributives not found, 10
 }
+
+Run "%A_AhkPath%" "%A_ScriptDir%\Hotkeys.ahk"
+
 Run wsl.exe echo init complete,, Min
 
 Run %comspec% /C "update.cmd", %LocalAppData%\Programs\SysInternals, Min
@@ -29,33 +30,31 @@ Loop
     Process Close, 1password.exe
 } Until !ErrorLevel
 
-;ProcPri :=  { "LMS.exe": "L"
-;            , "AeXNSAgent.exe": "L"
-;            , "AeXAgentUIHost.exe": "L"
-;            , "SCNotification.exe": "L"
-;            , "CcmExec.exe": "L"
-;            , "DWRCST.EXE": "L"
-;            , "DWRCS.EXE": "L"
-;            , "OneApp.IGCC.WinService.exe": "L"
-;            , "UpdaterService.exe": "L"
-;            , "igfxCUIService.exe": "L"
-;            , "igfxEM.exe": "L"
-;            , "IWDeployAgent.exe": "L"
-;            , "powershell.exe": "L" }
+ProcPri :=  { "LMS.exe": "L"
+            , "AeXNSAgent.exe": "L"
+            , "AeXAgentUIHost.exe": "L"
+            , "SCNotification.exe": "L"
+            , "CcmExec.exe": "L"
+            , "DWRCST.EXE": "L"
+            , "DWRCS.EXE": "L"
+            , "OneApp.IGCC.WinService.exe": "L"
+            , "UpdaterService.exe": "L"
+            , "igfxCUIService.exe": "L"
+            , "igfxEM.exe": "L"
+            , "IWDeployAgent.exe": "L"
+            , "powershell.exe": "L" }
 
-;Loop 4
-;{
-;    remain := 0
-;    For proc, pri in ProcPri {
-;    If (pri) {
-;            Process Priority, %proc%, %pri%
-;            If (ErrorLevel)
-;                ProcPri[proc] := ""
-;            Else
-;                remain++
-;        }
-;    }
-;    Sleep A_Index << 10
-;} Until !remain
+FilterProcess(ByRef fullPath) {
+    local
+    global ProcPri
+    SplitPath fullPath, name
+    Return ProcPri.HasKey(name)
+}
+
+For pid, path in ProcessList("FilterProcess") {
+    SplitPath path, name
+    Process Priority, %pid%, % ProcPri[name]
+}
 
 #include %A_LineFile%\..\unlockBDE.ahk
+#include <ProcessList>
