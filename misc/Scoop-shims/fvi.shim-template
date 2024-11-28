@@ -1,0 +1,3 @@
+path = "%LOCALAPPDATA%\Programs\FreeVimager\FreeVimager-Portable.exe"
+path = "%LOCALAPPDATA%\Programs\FreeVimager\FreeVimager.exe"
+path = "%LOCALAPPDATA%\Programs\FreeVimager\FreeVimager*.exe"

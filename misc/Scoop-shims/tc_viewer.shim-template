@@ -1,0 +1,2 @@
+path = "%LOCALAPPDATA%\Programs\Total Commander\TOTALCMD64.EXE"
+args = /S=L
