@@ -1,6 +1,5 @@
-﻿#NoEnv
-
-ProcessCLArgs(switches, switchTypes := 0, keepUnknownArgs := false) {
+﻿ProcessCLArgs(switches, switchTypes := 0, keepUnknownArgs := false) {
+    local
     ; switches: {name: [commandline-switch-1, commandline-switch-2, …], …}
     ;   example: {"R": ["R", "Read-only", "RO"]} ; to make /R, -Read-Only and +RO map to same "R" key in output object and help
     ; switchTypes: int or a {key: action} dict.

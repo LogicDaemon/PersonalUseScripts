@@ -195,6 +195,7 @@ class Crypt
 	
 		_Encrypt(ByRef encr_Buf,ByRef Buf_Len, password, mode, pFileIn=0, pFileOut=0, CryptAlg = 1,HashAlg = 1)	;mode - 1 encrypt, 0 - decrypt
 		{
+			global CryptConst
 			c := CryptConst
 			;password hashing algorithms
 			CUR_PWD_HASH_ALG := HashAlg == 1 || HashAlg = "MD5" ?c.CALG_MD5
@@ -383,11 +384,14 @@ FINITA_LA_COMEDIA:
 		StrHash(string,HashAlg = 1,pwd = "",hmac_alg = 1)		;strType 1 for ASC, 0 for UTF
 		{
 			buf_len := StrPutVar(string, buf,0,this.StrEncoding)
+			If (!buf_len && StrLen(string))
+				Throw Exception("Invalid encoding",, string)
 			return this._CalcHash(buf,buf_len,0,HashAlg,pwd,hmac_alg)
 		}
 		
 		_CalcHash(ByRef bBuffer,BufferLen,pFile,HashAlg = 1,pwd = "",hmac_alg = 1)
 		{
+			global CryptConst
 			c := CryptConst
 			;password hashing algorithms
 			HASH_ALG := HashAlg==1?c.CALG_MD5
@@ -603,3 +607,6 @@ GetKeySalt(hKey)
 	msgbox % "Fail to get SALT"	
 	;~ msgbox % ByteToHash(pb,dwCount) "`n" dwCount
 }
+
+#include %A_LineFile%\..\CryptFoos.ahk
+#include %A_LineFile%\..\CryptConst.ahk

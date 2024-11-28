@@ -1,11 +1,14 @@
 ; origin: https://www.autohotkey.com/board/topic/66139-ahk-l-calculating-md5sha-checksum-from-file/
 ; reworked by LogicDaemon
 
-filePath := "C:\Windows\notepad.exe"
+If (A_LineFile = A_ScriptFullPath) {
+    filePath := "C:\Windows\notepad.exe"
 
-msgbox % "MD5:`n" HashFile(filePath,2)
-msgbox % "SHA:`n" HashFile(filePath,3)
-msgbox % "SHA512:`n" HashFile(filePath,6)
+    msgbox % ("MD5: " HashFile(filePath,2)
+            . "`nSHA: " HashFile(filePath,3)
+            . "`nSHA512: " HashFile(filePath,6)
+            . "")
+}
 
 /*
 HASH types:
