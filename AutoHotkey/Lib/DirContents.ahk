@@ -1,5 +1,4 @@
-﻿;by LogicDaemon <www.logicdaemon.ru>
-;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <http://creativecommons.org/licenses/by-sa/4.0/>.
+﻿;0BSD (https://opensource.org/license/0bsd) / public domain by LogicDaemon <https://www.logicdaemon.ru/>
 
 DirContents(dir, mask := "*.*", attribFilter := 0) { ; attribFilter = 0x10 to only return directories; -0x10 to return everything but directories
     local ; Force-local mode

@@ -1,5 +1,4 @@
-﻿;by LogicDaemon <www.logicdaemon.ru>
-;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <http://creativecommons.org/licenses/by-sa/4.0/deed.ru>.
+﻿;0BSD (https://opensource.org/license/0bsd) / public domain by LogicDaemon <https://www.logicdaemon.ru/>
 
 ;https://redbooth.com/a/#!/projects/59756/tasks/32350056
 ;https://drive.google.com/a/mobilmir.ru/file/d/0B6JDqImUdYmlejlIRTRWY0JCZjA/view?usp=sharing

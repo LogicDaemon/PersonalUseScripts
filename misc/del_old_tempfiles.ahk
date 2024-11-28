@@ -1,8 +1,7 @@
 ﻿;Remove old files from %TEMP%
 ;                                             by logicdaemon@gmail.com
 ;                                                       logicdaemon.ru
-;by LogicDaemon <www.logicdaemon.ru>
-;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <http://creativecommons.org/licenses/by-sa/4.0/deed.ru>.
+;0BSD (https://opensource.org/license/0bsd) / public domain by LogicDaemon <https://www.logicdaemon.ru/>
 #NoEnv
 
 CleanupDir(A_Temp)

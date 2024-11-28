@@ -1,5 +1,4 @@
-﻿;by LogicDaemon <www.logicdaemon.ru>
-;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode.ru>.
+﻿;0BSD (https://opensource.org/license/0bsd) / public domain by LogicDaemon <https://www.logicdaemon.ru/>
 
 HTTPReq(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=0, ByRef reqmoreHeaders:=0) {
     local

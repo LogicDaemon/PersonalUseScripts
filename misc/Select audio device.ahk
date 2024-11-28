@@ -1,6 +1,5 @@
 ﻿;reworked from https://www.autohotkey.com/boards/viewtopic.php?t=49980
-;by LogicDaemon <www.logicdaemon.ru>
-;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode.ru>.
+;0BSD (https://opensource.org/license/0bsd) / public domain by LogicDaemon <https://www.logicdaemon.ru/>
 #NoEnv
 #SingleInstance force
 FileEncoding UTF-8
