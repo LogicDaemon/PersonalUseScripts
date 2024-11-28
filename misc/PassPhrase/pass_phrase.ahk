@@ -23,9 +23,10 @@ EnvGet LocalAppData, LOCALAPPDATA
 FileReadLine emailSuffix, %LocalAppData%\_sec\EmailSuffix.txt, 1
 
 Gui Add, Text, Section, Random email address
-Gui Add, Text, xs, Service name
-Gui Add, Edit, yp w200 vserviceName gGuiUpdateEmailAddress
-Gui Add, Edit, yp w200 vemailSuffix gGuiUpdateEmailAddress, %emailSuffix%
+Gui Add, Text, Section xm, Service name
+Gui Add, Edit, ys w200 vserviceName gGuiUpdateEmailAddress
+Gui Add, Text, Section xm, e-mail suffix
+Gui Add, Edit, ys w200 vemailSuffix gGuiUpdateEmailAddress, %emailSuffix%
 Gui Add, Edit, xs w500 vemailAddress ReadOnly
 Gui Add, Button, xs gGuiUpdateEmailAddress, Generate email
 
@@ -122,5 +123,3 @@ RandomInt() {
         Throw Exception("RtlGenRandom failed: " ErrorLevel,, A_LastError)
     Return rand
 }
-
-#include <Crypt>

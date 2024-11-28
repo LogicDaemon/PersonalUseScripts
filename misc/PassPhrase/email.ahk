@@ -83,5 +83,3 @@ RandomInt() {
         Throw Exception("RtlGenRandom failed: " ErrorLevel,, A_LastError)
     Return rand
 }
-
-#include <Crypt>
