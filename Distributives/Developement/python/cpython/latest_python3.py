@@ -3,13 +3,15 @@
     depending on OS.
 
     On Linux, also build and install it to $HOME/.local.
-    On Windows, install to default per-user location ("%LOCALAPPDATA%\\Programs"
-        for 3.11, see https://docs.python.org/3.11/using/windows.html)
+    On Windows, install to default per-user location (
+        "%LOCALAPPDATA%\\Programs" for 3.11,
+        see https://docs.python.org/3.11/using/windows.html)
 
     Requires lxml for normal work, and lxml-stubs for developing/debugging.
 
     by LogicDaemon <www.logicdaemon.ru> / <t.me/logicdaemon_pub>
 """
+# pylint: disable=unknown-option-value,line-too-long
 
 from __future__ import annotations
 
@@ -20,22 +22,112 @@ import gzip
 import logging
 import os
 import os.path
+import pathlib
 import posixpath
 import sys
 import tempfile
 import time
-from typing import Generator, Iterable, Optional, Self, Union
+from typing import Generator, Iterable, NoReturn, Optional, Union
 from urllib.parse import urlsplit
 from urllib.request import HTTPError, urlopen
 
+SCRIPT_PATH = pathlib.Path(__file__)
+
+
+def append_sys_path() -> None:
+    """ Add the dependencies directory to the path """
+    dep_dir = str(SCRIPT_PATH.with_suffix('.deps').absolute())
+    sys.path.append(dep_dir)
+    os.environ.setdefault('PYTHONUSERBASE', dep_dir)
+
+
+def restart_with_requirements(
+        req_file: Union[pathlib.Path, str, None] = None) -> NoReturn:
+    """ Install the requirements """
+    import ensurepip  # pylint: disable=import-outside-toplevel
+    ensurepip.bootstrap(user=True)
+    import subprocess  # pylint: disable=import-outside-toplevel
+    req_file = req_file or SCRIPT_PATH.with_suffix(SCRIPT_PATH.suffix +
+                                                   ' requirements.txt')
+    python_executable = sys.executable
+    flag_envvar = f'RESTARTED_{SCRIPT_PATH.stem}'
+    if os.getenv(flag_envvar):
+        print('Restart already attempted', file=sys.stderr)
+        os.abort()
+
+    subprocess.run([
+        python_executable, '-m', 'pip', 'install', '--user', '-r',
+        str(req_file)
+    ],
+                   check=True)
+    os.environ[flag_envvar] = '1'
+    print('Restarting:', sys.executable, *sys.argv, file=sys.stderr)
+    os.execl(sys.executable, sys.executable, *sys.argv)
+
+
 # Installable modules https://pypi.org/
-import lxml
-import lxml.html
+for try_no in range(2):
+    try:
+        import lxml  # pyright: ignore[reportMissingImports]
+        import lxml.html  # pyright: ignore[reportMissingImports]
+        break
+    except ImportError:
+        if try_no:
+            restart_with_requirements()
+        # Try adding the dependencies directory to the path first
+        append_sys_path()
+del try_no
+
+
+class ClumsyProgress:
+    """ Dummy progress bar for systems without rich """
+    # pylint: disable=unused-argument,missing-function-docstring
+    total: Union[int, float]
+    __slots__ = tuple(__annotations__)  # pylint: disable=undefined-variable
+
+    def __enter__(self) -> ClumsyProgress:
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback) -> None:
+        pass
+
+    def add_task(self,
+                 description: str,
+                 start: bool = True,
+                 total: Union[int, float] = 100,
+                 completed: int = 0,
+                 visible: bool = True,
+                 **fields) -> None:
+        self.total = total
+
+    def update(self,
+               task_id,
+               *,
+               total: float | None = None,
+               completed: float | None = None,
+               advance: float | None = None,
+               description: str | None = None,
+               visible: bool | None = None,
+               refresh: bool = False,
+               **fields) -> None:
+        update_progress(completed, self.total)
+
+
+try:  # pylint: disable=too-many-try-statements
+    from pip._vendor.packaging import version
+    from pip._vendor.rich.progress import Progress
+except ImportError:
+    from packaging import version  # pyright: ignore[reportMissingImports]  # NOQA: E501
+    try:
+        from rich.progress import Progress  # pyright: ignore[reportMissingImports]  # NOQA: E501
+    except ImportError:
+        Progress = ClumsyProgress
 
 log = logging.getLogger(__file__ if __name__ == '__main__' else __name__)
 
 
 def main() -> Optional[int]:
+    """ Main function """
     # get python version in 3.11 format
     pyver = version.parse('.'.join(map(str, sys.version_info[:3])))
     parser = argparse.ArgumentParser(
@@ -54,12 +146,11 @@ def main() -> Optional[int]:
               "          on Windows, downloads binary and installs to "
               r'default per-user location, "%%LOCALAPPDATA%%\Programs" '
               "(see https://docs.python.org/3/using/windows.html)"))
-    parser.add_argument(
-        '--version-prefix',
-        '-p',
-        required=False,
-        default='3',
-        help='Version prefix (default: %(default)s)')
+    parser.add_argument('--version-prefix',
+                        '-p',
+                        required=False,
+                        default='3',
+                        help='Version prefix (default: %(default)s)')
     parser.add_argument(
         '--above-version',
         '-a',
@@ -67,23 +158,30 @@ def main() -> Optional[int]:
         default=pyver,
         type=version.parse,
         help='Search for a version above the specified (default: %(default)s)')
-    parser.add_argument(
-        '--below-version',
-        '-b',
-        required=False,
-        default=None,
-        type=version.parse,
-        help='Search for a version below the specified')
-    parser.add_argument(
-        '--destination',
-        '--target',
-        '-t',
-        default='',
-        help='Destination directory')
-    parser.add_argument('--debug', '-d', action='store_true', help='Debug mode')
+    parser.add_argument('--below-version',
+                        '-b',
+                        required=False,
+                        default=None,
+                        type=version.parse,
+                        help='Search for a version below the specified')
+    parser.add_argument('--pre-download-components',
+                        '--layout',
+                        '-l',
+                        action='store_true',
+                        help='Pre-download all components (only on Windows)')
+    parser.add_argument('--destination',
+                        '--target',
+                        '-t',
+                        default=pathlib.Path(),
+                        type=pathlib.Path,
+                        help='Destination directory')
+    parser.add_argument('--debug',
+                        '-d',
+                        action='store_true',
+                        help='Debug mode')
     args = parser.parse_args()
-    log_level = (
-        logging.DEBUG if args.debug or os.getenv('DEBUG') else logging.INFO)
+    log_level = (logging.DEBUG
+                 if args.debug or os.getenv('DEBUG') else logging.INFO)
     logging.basicConfig(level=log_level)
     logging.debug('Arguments: %s\nLog level: %s', args,
                   logging.getLevelName(log_level))
@@ -102,17 +200,31 @@ def main() -> Optional[int]:
             print(ver)
             return 0
 
-        src_url = f'https://www.python.org/ftp/python/{ver}/Python-{ver}.tar.xz'
+        src_url = f'https://www.python.org/ftp/python/{ver}/Python-{ver}.tar.xz'  # NOQA: E501
         # src_url = ver.downloads_page_href
-        w64_url = f'https://www.python.org/ftp/python/{ver}/python-{ver}-amd64.exe'
+        w64_url = f'https://www.python.org/ftp/python/{ver}/python-{ver}-amd64.exe'  # NOQA: E501
         logging.info('Latest Python version %s, urls:\n%s\n%s', ver, src_url,
                      w64_url)
 
         try:  # pylint: disable=W0717,too-many-try-statements
             if dl_all or on_plain_windows:
-                windows_dist_path = os.path.join(args.destination,
-                                                 f'python-{ver}-amd64.exe')
-                download_file(w64_url, windows_dist_path)
+                dest: pathlib.Path = args.destination
+                python_exe_stem = f'python-{ver}-amd64'
+                if args.pre_download_components:
+                    win_dist_dir = dest / python_exe_stem
+                    win_dist_dir.mkdir(parents=True, exist_ok=True)
+                else:
+                    win_dist_dir = dest
+                win_dist_path = win_dist_dir / (python_exe_stem + '.exe')
+                download_file(w64_url, win_dist_path)
+                if args.pre_download_components:
+                    prev_dir = os.path.curdir
+                    # win_dist_path = win_dist_path.resolve()
+                    os.chdir(win_dist_path.parent)
+                    log.info('Downloading components...`nStarting %s',
+                             win_dist_path)
+                    os.system(f'"{win_dist_path.name}" /layout .')
+                    os.chdir(prev_dir)
             if dl_all or on_posix:
                 src_path = os.path.join(args.destination,
                                         f'Python-{ver}.tar.xz')
@@ -132,7 +244,7 @@ def main() -> Optional[int]:
         build_source(ver, src_path, args.mode == 'install')
     else:  # if args.mode == 'install' and on_plain_windows:
         assert 'windows_dist_path' in locals()
-        install_on_windows(windows_dist_path)
+        install_on_windows(win_dist_path)
 
 
 class ChDir:
@@ -151,7 +263,7 @@ class ChDir:
 
 def build_source(pyver: str, path: str, install: bool = False) -> None:
     """ Build and install Python from source """
-    # 'curl https://www.python.org/ftp/python/$pyver/Python-$pyver.tar.xz | xz -d | tar -xf -',
+    # 'curl https://www.python.org/ftp/python/$pyver/Python-$pyver.tar.xz | xz -d | tar -xf -',  # NOQA: E501
     errorcode = os.system(f'''bash -c "xz -dkc '{path}' | tar -xf -"''')
     if errorcode != 0:
         raise RuntimeError('Failed to extract source')
@@ -160,7 +272,7 @@ def build_source(pyver: str, path: str, install: bool = False) -> None:
             ('sudo apt install build-essential zlib1g-dev libncurses5-dev '
              'libgdbm-dev libnss3-dev libssl-dev libreadline-dev '
              'libffi-dev libsqlite3-dev wget libbz2-dev'),
-            f'./configure --prefix="{os.environ["HOME"]}/.local" --enable-optimizations',
+            f'./configure --prefix="{os.environ["HOME"]}/.local" --enable-optimizations',  # NOQA: E501
             'bash -c "make -j$(nproc)"',
         ]
         for c in commands:
@@ -173,7 +285,7 @@ def build_source(pyver: str, path: str, install: bool = False) -> None:
 
 def install_on_windows(dist_path: str) -> None:
     """ Install downloaded binary on Windows """
-    # check HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem LongPathsEnabled
+    # check HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem LongPathsEnabled  # NOQA: E501
     # https://docs.python.org/3.11/using/windows.html#removing-the-max-path-limitation
     import winreg  # pylint: disable=C0415,import-outside-toplevel
     with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE,
@@ -186,9 +298,13 @@ def install_on_windows(dist_path: str) -> None:
         f'"{dist_path}" /passive InstallAllUsers=0 InstallLauncherAllUsers=0')
 
 
-def download_file(url, destination: Optional[str] = None) -> str:
+def download_file(
+        url,
+        destination: Union[str, pathlib.Path, None] = None) -> pathlib.Path:
     """ Download a file displaying progress """
     logging.info('Downloading %s...', url)
+    if isinstance(destination, str):
+        destination = pathlib.Path(destination)
     with urlopen(url) as dl:
         if dl.status != 200:
             logging.error('Failed to download %s, code %s %s', url, dl.status,
@@ -196,17 +312,17 @@ def download_file(url, destination: Optional[str] = None) -> str:
             raise HTTPError(url, dl.status, dl.reason, dl.getheaders(), None)
         if not destination:
             # cgi is deprecated
-            # server_filename = cgi.parse_header(dl.getheader('Content-Disposition',
+            # server_filename = cgi.parse_header(dl.getheader('Content-Disposition',  # NOQA: E501
             #                                       ''))[1].get('filename', '')
             server_filename = dl.headers.get_filename('')
-            destination = (
-                posixpath.basename(urlsplit(dl.url).path) or
-                posixpath.basename(server_filename) or tempfile.mktemp())
+            destination = pathlib.Path(
+                posixpath.basename(urlsplit(dl.url).path)
+                or posixpath.basename(server_filename) or tempfile.mktemp())
 
         last_modified = email.utils.parsedate(dl.getheader('last-modified'))
         # check that currently downloaded file is not the same as on the server
-        if last_modified and os.path.exists(destination):
-            if (abs(os.path.getmtime(destination) - time.mktime(last_modified))
+        if last_modified and destination.exists():
+            if (abs(destination.stat().st_mtime - time.mktime(last_modified))
                     < 60):  # 1 minute difference is ok
                 logging.info('File %s is already up-to-date', destination)
                 return destination
@@ -219,8 +335,8 @@ def download_file(url, destination: Optional[str] = None) -> str:
             full_len = int(dl.getheader('content-length', 0))
             acc_len = 0
             with Progress() as progress:
-                task = progress.add_task(
-                    os.path.basename(destination), total=full_len)
+                task = progress.add_task(os.path.basename(destination),
+                                         total=full_len)
                 while True:
                     data = dl.read1()
                     if not data:
@@ -241,6 +357,7 @@ def download_file(url, destination: Optional[str] = None) -> str:
 
 
 class PyVersion:
+    """ Python version class """
     name: str
     number: version.Version
     downloads_page_href: Optional[str]
@@ -269,9 +386,9 @@ def get_matching_python_versions(
         major_ver = str(sys.version_info.major)
 
     for ver in get_python_versions_unchecked(major_ver):
-        if (ver.name.startswith(prefix) and
-            (above_version is None or ver.number > above_version) and
-            (below_version is None or ver.number < below_version)):
+        if (ver.name.startswith(prefix)
+                and (above_version is None or ver.number > above_version)
+                and (below_version is None or ver.number < below_version)):
             yield ver
         else:
             logging.debug('Version %s is not suitable', ver)
@@ -302,7 +419,7 @@ def get_python_versions_unchecked(
     try:  # pylint: disable=W0717,too-many-try-statements
         assert isinstance(xpo, Iterable)  # for mypy
         for a in xpo:
-            # assert isinstance(a, lxml.html._Element)  # doesn't work without lxml stubs
+            # assert isinstance(a, lxml.html._Element)  # doesn't work without lxml stubs  # NOQA: E501
             t = a.text  # type: ignore
             if t:
                 assert isinstance(t, str)
@@ -322,14 +439,16 @@ def get_python_versions_unchecked(
 
 
 # Print iterations progress, from https://stackoverflow.com/a/34325723/1421036
-def update_progress(current,
-                    total,
-                    prefix='',
-                    suffix='',
-                    decimals=1,
-                    length=None,
-                    fill='█',
-                    printEnd="\r") -> None:
+def update_progress(
+        current,
+        total,
+        prefix='',
+        suffix='',
+        decimals=1,
+        length=None,
+        fill='█',
+        printEnd="\r"  # pylint: disable=invalid-name
+) -> None:
     """ Call in a loop to create terminal progress bar
     @params:
         iteration   - Required  : current iteration (Int)
@@ -340,7 +459,7 @@ def update_progress(current,
         length      - Optional  : character length of bar (Int)
         fill        - Optional  : bar fill character (Str)
         printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
-    """
+    """  # NOQA: E501
     if not total:
         print('.', end='', flush=True, file=sys.stderr)
     if length is None:
@@ -349,63 +468,18 @@ def update_progress(current,
                                                      (current / float(total)))
     length -= len(prefix) + len(suffix) + len(percent) + 7  # 7 is for the bars
     if length > 3:
-        filledLength = int(length * current // total)
-        progressbar = fill * filledLength + '-' * (length - filledLength)
+        filled_length = int(length * current // total)
+        progressbar = fill * filled_length + '-' * (length - filled_length)
     else:
         progressbar = r'/-\|'[current % 4]
-    print(
-        f'\r{prefix} |{progressbar}| {percent}% {suffix}',
-        end=printEnd,
-        flush=True,
-        file=sys.stderr)
+    print(f'\r{prefix} |{progressbar}| {percent}% {suffix}',
+          end=printEnd,
+          flush=True,
+          file=sys.stderr)
     # Print New Line on Complete
     if current == total:
         print()
 
-
-class ClumsyProgress:
-    """ Dummy progress bar for systems without rich """
-    # pylint: disable=W0613,unused-argument
-    total: Union[int, float]
-    __slots__ = tuple(__annotations__)
-
-    def __enter__(self) -> Self:
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback) -> None:
-        pass
-
-    def add_task(self,
-                 description: str,
-                 start: bool = True,
-                 total: Union[int, float] = 100,
-                 completed: int = 0,
-                 visible: bool = True,
-                 **fields) -> None:
-        self.total = total
-
-    def update(self,
-               task_id,
-               *,
-               total: float | None = None,
-               completed: float | None = None,
-               advance: float | None = None,
-               description: str | None = None,
-               visible: bool | None = None,
-               refresh: bool = False,
-               **fields) -> None:
-        update_progress(completed, self.total)
-
-
-try:  # pylint: disable=W0717,too-many-try-statements
-    from pip._vendor.packaging import version
-    from pip._vendor.rich.progress import Progress
-except ImportError:
-    from packaging import version
-    try:
-        from rich.progress import Progress  # pyright: ignore[reportMissingImports]
-    except ImportError:
-        Progress = ClumsyProgress
 
 if __name__ == '__main__':
     # This is executed when run from the command line
