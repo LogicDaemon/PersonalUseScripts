@@ -4,42 +4,61 @@ Downloads the last file from an appcast feed if it has been modified
 since the last download
 """
 
-# import modules used here -- sys is a very standard one
+# Python Standard Library modules https://docs.python.org/3/py-modindex.html
 import os
 import pathlib
 import re
 import sys
 from datetime import datetime
-from typing import Optional
+from typing import NoReturn, Optional, Union
+
+SCRIPT_PATH = pathlib.Path(__file__)
 
 
-def pip_install_req() -> None:
+def append_sys_path() -> None:
+    """ Add the dependencies directory to the path """
+    dep_dir = str(SCRIPT_PATH.with_suffix('.deps').absolute())
+    sys.path.append(dep_dir)
+    os.environ.setdefault('PYTHONUSERBASE', dep_dir)
+
+
+def restart_with_requirements(
+        req_file: Union[pathlib.Path, str, None] = None) -> NoReturn:
     """ Install the requirements """
-    import subprocess  # pylint: disable=C0415,import-outside-toplevel
-    script_path = pathlib.Path(__file__)
-    req_file = script_path.with_suffix(script_path.suffix +
-                                       ' requirements.txt')
-    dep_dir = script_path.with_suffix('.deps')
-    sys.path.append(str(dep_dir))
-    os.environ['PYTHONUSERBASE'] = str(dep_dir)
+    import ensurepip  # pylint: disable=import-outside-toplevel
+    ensurepip.bootstrap(user=True)
+    import subprocess  # pylint: disable=import-outside-toplevel
+    req_file = req_file or SCRIPT_PATH.with_suffix(SCRIPT_PATH.suffix +
+                                                   ' requirements.txt')
     python_executable = sys.executable
+    flag_envvar = f'RESTARTED_{SCRIPT_PATH.stem}'
+    if os.getenv(flag_envvar):
+        print('Restart already attempted', file=sys.stderr)
+        os.abort()
 
     subprocess.run([
         python_executable, '-m', 'pip', 'install', '--user', '-r',
         str(req_file)
     ],
                    check=True)
+    os.environ[flag_envvar] = '1'
+    print('Restarting:', sys.executable, *sys.argv, file=sys.stderr)
+    os.execl(sys.executable, sys.executable, *sys.argv)
 
 
 for try_no in range(2):
     try:
-        import httpx
-        import werkzeug
-        import werkzeug.http
-        import xmltodict
+        import httpx  # pyright: ignore[reportMissingImports]  # NOQA: E501
+        import werkzeug  # pyright: ignore[reportMissingImports]  # NOQA: E501
+        import werkzeug.http  # pyright: ignore[reportMissingImports]  # NOQA: E501
+        import xmltodict  # pyright: ignore[reportMissingImports,reportMissingModuleSource]  # NOQA: E501  # pylint: disable=line-too-long
         break
     except ImportError:
-        pip_install_req()
+        if try_no:
+            restart_with_requirements()
+        # Try adding the dependencies directory to the path first
+        append_sys_path()
+
 del try_no
 
 

@@ -1,4 +1,3 @@
-stubs
-xmltodict
-werkzeug
 httpx[http2]
+werkzeug
+xmltodict
