@@ -6,7 +6,7 @@
 EnvGet LocalAppData,LOCALAPPDATA
 EnvGet SystemRoot,SystemRoot
 
-awsDevAccId:="572304703581_Administrator"
+awsDevAccIds := {"572304703581_Administrator": "", "590183680591_Administrator": ""}
 
 cred := ParseClipCred(Clipboard)
 If (cred) {
@@ -49,7 +49,7 @@ SaveCredFromClip(data) {
     ; data[2]: section contents without title
     ; data[3]: full section text including title. Optional.
     local
-    global awsDevAccId
+    global awsDevAccIds
 
     If (!ContainAWSCred(data[2])) {
         Throw Exception("No AWS cred in data",,data[2])
@@ -58,7 +58,7 @@ SaveCredFromClip(data) {
     EnvGet UserProfile, USERPROFILE
     credPath := UserProfile "\.aws\credentials"
     Try {
-        If (data[1] = awsDevAccId) {
+        If (awsDevAccIds.HasKey(data[1])) {
             IniWriteSectionUnicode(credPath, ["default", data[2]], "UTF-8-RAW")
             exitAfter := true
         }

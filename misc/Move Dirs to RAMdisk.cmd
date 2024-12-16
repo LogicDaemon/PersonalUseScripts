@@ -63,6 +63,14 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
         MKDIR "%RAMDrive%\ProgramData\GOG.com\Galaxy\logs"
         MKDIR "%RAMDrive%\ProgramData\GOG.com\Galaxy\crashdumps"
     )
+    IF EXIST "%ProgramData%\NVIDIA Corporation\NVIDIA app" (
+        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\NVIDIA app\Installer\Logs"
+        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\NVIDIA app\Logs"
+        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\NVIDIA app\MessageBus"
+        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\NVIDIA app\NvContainer"
+        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\NVIDIA app\SessionLogs"
+        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\NVIDIA app\UXD"
+    )
     
     @REM CALL :MkDirsWithCopiedPermissions "%SystemRoot%" "%RAMDrive%" ServiceProfiles LocalService AppData Local Temp
     CALL :MoveLinkBack "%SystemRoot%\ServiceProfiles\LocalService\AppData\Local\Temp\TfsStore" "%RAMDrive%\ServiceProfiles\LocalService\AppData\Local\Temp\TfsStore"
@@ -95,6 +103,7 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
         )
     )
     
+    CALL :MoveToRAMDrive "%LOCALAPPDATA%\Google\YAPF\Cache"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Microsoft\Edge"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Microsoft\Internet Explorer"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Microsoft\Media Player"

@@ -63,20 +63,20 @@ Run "%A_AhkPath%" "%A_ScriptDir%\update_KeePass.ahk"
 Run "%A_AhkPath%" "%A_ScriptDir%\RemoveMicrosoftEdgeAutoLaunch.ahk"
 Run "%A_AhkPath%" "%A_ScriptDir%\scoop_update_apps.ahk"
 
-Run %comspec% /C "%A_ScriptDir%\Update_SysInternals.cmd",, Min
+Run %comspec% /C "%A_ScriptDir%\Update_SysInternals.cmd",, Hide
 
-RunWait %comspec% /C "%A_ScriptDir%\update-git-for-windows.cmd",, Min
-RunWait %comspec% /C "%A_ScriptDir%\update_aws_cli.cmd",, Min
-RunWait %comspec% /C "%A_ScriptDir%\update_obs.cmd",, Min
+RunWait %comspec% /C "%A_ScriptDir%\update-git-for-windows.cmd",, Hide
+RunWait %comspec% /C "%A_ScriptDir%\update_aws_cli.cmd",, Hide
+RunWait %comspec% /C "%A_ScriptDir%\update_obs.cmd",, Hide
 If (FileExist("%LOCALAPPDATA%\Programs\msys64\ucrt64.exe")) {
-    RunWait "%LOCALAPPDATA%\Programs\msys64\ucrt64.exe" pacman -Suy --noconfirm,, Min
-    RunWait "%LOCALAPPDATA%\Programs\msys64\ucrt64.exe" paccache -r --noconfirm,, Min
+    RunWait "%LOCALAPPDATA%\Programs\msys64\ucrt64.exe" pacman -Suy --noconfirm,, Hide
+    RunWait "%LOCALAPPDATA%\Programs\msys64\ucrt64.exe" paccache -r --noconfirm,, Hide
 }
 
 RegRead hostname, HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters, Hostname
 backupScript=%A_ScriptDir%\backup_%hostname%.cmd
 If (FileExist(backupScript))
-    Run %comspec% /C "%A_ScriptDir%\backup_%hostname%.cmd",, Min
+    Run %comspec% /C "%A_ScriptDir%\backup_%hostname%.cmd",, Hide
 
 comprDir := "w:\FileHistory\" A_UserName
 If (FileExist(comprDir)) {
@@ -102,7 +102,7 @@ KillProcesses(processesNames) {
             If (!ErrorLevel)
                 break
             If (prevPID == ErrorLevel) {
-                RunWait taskkill.exe /IM "%procName%" /F,, Min UseErrorLevel
+                RunWait taskkill.exe /IM "%procName%" /F,, Hide UseErrorLevel
                 break
             } Else {
                 prevPID := ErrorLevel
