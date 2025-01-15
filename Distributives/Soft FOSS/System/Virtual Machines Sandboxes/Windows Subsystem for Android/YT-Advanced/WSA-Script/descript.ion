@@ -1,0 +1,4 @@
+﻿
+WSA_2311.40000.5.0_x64_Release-Nightly-with-Magisk-27.0-stable-MindTheGapps-13.0-as-Pixel-5-RemovedAmazon.7z https://github.com/YT-Advanced/WSA-Script/releases/download/v2024-02-06/WSA_2311.40000.5.0_x64_Release-Nightly-with-Magisk-27.0-stable-MindTheGapps-13.0-as-Pixel-5-RemovedAmazon.7z
+WSA_2407.40000.0.0_x64.m4.zpaq zpaq x WSA_2407.40000.0.0_x64.m4.zpaq -only */WSA_2407.40000.0.0_x64_Release-Nightly-with-KernelSU-v1.0.2-Gapps-13.0-NoAmazon\nzpaq x WSA_2407.40000.0.0_x64.m4.zpaq -only */WSA_2407.40000.0.0_x64_Release-Nightly-with-magisk-27.0.27000.-stable-GApps-13.0-NoAmazon\nÂ
+pack.cmd "v:\\Distributives\\Soft FOSS\\System\\Virtual Machines Sandboxes\\Windows Subsystem for Android\\YT-Advanced\\WSA-Script\\pack.cmd" WSA_2407.40000.4.0_x64_Release\nor \npack.cmd WSA_2407.40000.4.0_x64_Release "v:\\Distributives\\Soft FOSS\\System\\Virtual Machines Sandboxes\\Windows Subsystem for Android\\YT-Advanced\\WSA-Script"\n(both should work)\nÂ

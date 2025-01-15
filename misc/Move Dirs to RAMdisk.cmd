@@ -155,9 +155,16 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Programs\Tor Browser\Browser\TorBrowser\Data\Browser\profile.default\storage"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Programs\jdownloader\logs"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Programs\jdownloader\tmp"
+    CALL :MoveToRAMDrive "%LOCALAPPDATA%\Programs\TeamSpeak\config\crashdumps"
+    CALL :MoveToRAMDrive "%LOCALAPPDATA%\Programs\TeamSpeak\config\logs"
+    CALL :MoveToRAMDrive "%LOCALAPPDATA%\Programs\TeamSpeak\config\qtwebengine_cache"
+    CALL :MoveToRAMDrive "%LOCALAPPDATA%\Programs\TeamSpeak\config\qtwebengine_persistant_storage\GPUCache"
+    CALL :MoveToRAMDrive "%LOCALAPPDATA%\Programs\TeamSpeak\config\qtwebengine_persistant_storage\Platform Notifications"
+    CALL :MoveToRAMDrive "%LOCALAPPDATA%\Programs\TeamSpeak\config\qtwebengine_persistant_storage\Session Storage"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\EpicGamesLauncher\Saved\Config\CrashReportClient"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\EpicGamesLauncher\Saved\Logs"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\EpicGamesLauncher\Saved\webcache_4430"
+    
     
 rem     CALL :MoveToRAMDrive 
     

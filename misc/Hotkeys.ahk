@@ -56,6 +56,8 @@ GroupAdd NonStandardLayoutSwitching, ahk_class ^OpusApp
 
 GroupAdd NoLayoutSwitching, ahk_exe CDViewer\.exe
 
+;GroupAdd OverrideMultimediaHotkeys, ahk_exe ts3client_win64.exe
+
 calcexe := FirstExisting(laPrograms "\speedcrunch-0.12-win32\speedcrunch.exe"
                        , laPrograms "\calculators\preccalc-32bit\preccalc.exe"
                        , SystemRoot "\System32\calc.exe" )
@@ -101,6 +103,12 @@ DllCall("psapi.dll\EmptyWorkingSet", "Int", -1, "Int")
 #include *i %A_ScriptDir%\Hotkeys_Custom.%A_USERNAME%.ahk
 #include *i %A_ScriptDir%\Hotkeys_Custom.ahk
 return
+
+;#IfWinExist ahk_group OverrideMultimediaHotkeys
+Launch_Media::F13
+Launch_App1::F14
+Launch_App2::F15
+;#IfWinExist
 
 #IfWinNotActive ahk_group ExcludedFromAutoReplace
     #Hotstring * ? C Z
@@ -514,7 +522,7 @@ FillDelayedRunGroups() {
                                             , "#!VK45":  ["shell:MyComputerFolder"]                              ;vk45=e #!e
                                             ;, "#^VK45":  [A_ScriptDir "\RemoveDrive.ahk"]                        ;vk45=e #^e
                                             , "#^VK45":  [A_ScriptDir "\PassPhrase\email.ahk"]                   ;vk45=e #^e
-                                            , "#^+VK45": [eject_all.cmd]                                         ;vk45=e #^+e
+                                            , "#^+VK45": [A_ScriptDir "\PassPhrase\pass_phrase.ahk"]             ;vk45=e #^+e
                                             , "#VK4A":   [A_ScriptDir "\JDownloader.ahk"]                        ;vk4A=j #j
                                             , "#!VK4B":  [keepassahk,,""]                                        ;vk4B=k #!k
                                             , "#!+VK4B": [laPrograms "\WinAuth\WinAuth.exe",,""]                 ;vk4B=k #!+k
@@ -532,7 +540,7 @@ FillDelayedRunGroups() {
                                 , "#VK51":  { "^VK45":   [notepad2exe, """" A_ScriptFullPath """"]               ;vk45=e ^e
                                             , "^+VK45":  [notepad2exe, """" hotkeys_custom_ahk """"]             ;vk45=e ^+e
                                             , "#VK57":   AU3_SpyExecArray                                        ;vk57=w #w
-                                            , "#VK52":   [A_ScriptDir "\LiceCapResize.ahk",,""]                  ;vk52=r #r
+                                            , "#VK52":   [A_ScriptDir "\ResizeOrRecord.ahk",,""]                 ;vk52=r #r
                                             , "#VK43":   [A_ScriptDir "\putty_connect.ahk"]                      ;vk43=c #c
                                             , "#VK50":   [A_ScriptDir "\putty_smartact.ahk"]                     ;vk50=p #p
                                             , "#+VK44":  [A_ScriptDir "\Dropbox.ahk"]                            ;vk44=d #+d

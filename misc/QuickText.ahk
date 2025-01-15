@@ -629,7 +629,7 @@ PasteOrSend(ByRef data) {
 }
 
 GetBoilerplate(ext) {
-	license := ";0BSD (https://opensource.org/license/0bsd) / public domain by LogicDaemon <https://www.logicdaemon.ru/>"
+	license := "0BSD (https://opensource.org/license/0bsd) / public domain by LogicDaemon <https://www.logicdaemon.ru/>"
 	ext := Format("{:L}", ext)
 	If (ext == "url")
 		v = [InternetShortcut]`nURL=`n

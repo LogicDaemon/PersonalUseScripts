@@ -13,7 +13,7 @@ XMLHTTP_Post(ByRef URL, ByRef POSTDATA, ByRef response:=0, ByRef reqmoreHeaders:
 	    moreHeaders := reqmoreHeaders.Clone()
 	    moreHeaders["Content-Type"] := "application/x-www-form-urlencoded"
 	}
-    } Else {
+    } Else If (reqmoreHeaders==0) {
 	moreHeaders := {"Content-Type": "application/x-www-form-urlencoded"}
     }
     return XMLHTTP_Request("POST", URL, POSTDATA, response, moreHeaders)

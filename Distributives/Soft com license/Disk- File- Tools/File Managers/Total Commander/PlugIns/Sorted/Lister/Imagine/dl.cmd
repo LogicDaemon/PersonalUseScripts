@@ -15,6 +15,7 @@ SETLOCAL ENABLEEXTENSIONS
 SET "noarchmasks=*.exe *.zip"
 SET "wgetextendedoptions= "
 SET "wgetwaitoptions= "
-CALL wget_the_site.cmd www.nyam.pe.kr https://www.nyam.pe.kr/dev/imagine
-ln -r "%workdir%\www.nyam.pe.kr" "%srcpath%www.nyam.pe.kr"
+CALL wget_the_site.cmd www.nyam.pe.kr https://www.nyam.pe.kr/dev/imagine -HDwww.nyam.pe.kr,raw.githubusercontent.com
+ln -r "%workdir%www.nyam.pe.kr" "%srcpath%www.nyam.pe.kr"
+ln -r "%workdir%raw.githubusercontent.com" "%srcpath%raw.githubusercontent.com"
 )

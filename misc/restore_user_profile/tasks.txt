@@ -1,0 +1,3 @@
+LogicDaemon\CreateTempDirs on RAM-drive
+LogicDaemon\CrystalDiskInfo monitoring
+LogicDaemon\Move dirs to RamDrive
