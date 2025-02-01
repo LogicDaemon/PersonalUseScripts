@@ -80,11 +80,11 @@ notepad2exe := FirstExisting(laPrograms "\Total Commander\notepad2.exe"
                            , LocalAppData "\Programs\VS Code\Code.exe"
                            , SystemRoot "\System32\notepad.exe")
 
-AU3_SpyExecArray := [ FirstExisting( AhkExeDir "\AU3_Spy.exe"
+AU3_Spy := FirstExisting( AhkExeDir "\AU3_Spy.exe"
                                    , AhkExeDir "\AU3_Spy.exe"
                                    , laPrograms "\AutoHotkey\AU3_Spy.exe"
                                    , AhkExeDir "\WindowSpy.ahk"
-                                   , laPrograms "\AutoHotkey\WindowSpy.ahk" ) ]
+                                   , laPrograms "\AutoHotkey\WindowSpy.ahk" )
 
 keepassahk := FirstExisting(A_ScriptDir "\KeePass_" A_UserName ".ahk", A_ScriptDir "\KeePass.ahk")
 
@@ -511,7 +511,7 @@ FillDelayedRunGroups() {
                                             , "#+VK57":  [A_ScriptDir "\alt_browser.ahk"]                        ;vk57=w #+w
                                             , "+SC132":  [A_ScriptDir "\alt_browser.ahk"]                        ;SC132=Homepage +Homepage
                                             , "^!+Esc":  [procexpexe]                                            ;^!+Esc
-                                            , "#SC132":  [A_ScriptDir "\ie.cmd",,,,7]                            ;#Homepage
+                                            ;, "#SC132":  [A_ScriptDir "\ie.cmd",,,,7]                            ;#Homepage
                                             , "#^!VK57": [A_ScriptDir "\WinActivateOrExec.ahk", """" laPrograms "\Tor Browser\Browser\firefox.exe"""] ;#^!w
                                             , "^!SC132": [A_ScriptDir "\WinActivateOrExec.ahk", """" laPrograms "\Tor Browser\Browser\firefox.exe"""] ;^!Homepage
                                             , "#F1":     [comspec, " /K ""CD /D """ A_ScriptDir """ & PUSHD ""%TEMP%"" & ECHO POPD to go to " A_ScriptDir """"] ;/U https://twitter.com/LogicDaemon/status/936259452617060354
@@ -520,13 +520,13 @@ FillDelayedRunGroups() {
                                             , "#VK45":   [A_ScriptDir "\WinActivateOrExec.ahk", """" totalcmdexe """",,""] ;vk45=e #e
                                             , "#+VK45":  [totalcmdexe,,,,-1]                                     ;vk45=e #+e
                                             , "#!VK45":  ["shell:MyComputerFolder"]                              ;vk45=e #!e
-                                            ;, "#^VK45":  [A_ScriptDir "\RemoveDrive.ahk"]                        ;vk45=e #^e
+                                            ;, "#^VK45":  [A_ScriptDir "\RemoveDrive.ahk"]                       ;vk45=e #^e
                                             , "#^VK45":  [A_ScriptDir "\PassPhrase\email.ahk"]                   ;vk45=e #^e
                                             , "#^+VK45": [A_ScriptDir "\PassPhrase\pass_phrase.ahk"]             ;vk45=e #^+e
                                             , "#VK4A":   [A_ScriptDir "\JDownloader.ahk"]                        ;vk4A=j #j
-                                            , "#!VK4B":  [keepassahk,,""]                                        ;vk4B=k #!k
-                                            , "#!+VK4B": [laPrograms "\WinAuth\WinAuth.exe",,""]                 ;vk4B=k #!+k
-                                            , "#VK50":   [notepad2exe]                                           ;vk50=p #p
+                                            , "#!VK4B":  [keepassahk,,,,-1]                  ;vk4B=k #!k
+                                            , "#!+VK4B": [laPrograms "\WinAuth\WinAuth.exe"]                     ;vk4B=k #!+k
+                                            , "#VK50":   [notepad2exe,""]                                        ;vk50=p #p
                                             , "#+VK50":  [notepad2exe,"/c /b"]                                   ;vk50=p #+p
                                             , "#!VK50":  [A_ScriptDir "\QuickText.ahk"]                          ;vk50=p #!p
                                             , "#VK54":   [A_ScriptDir "\WinActivateOrExec.ahk", laPrograms "\Telegram\telegram.exe"] ;vk54=t #t
@@ -539,7 +539,7 @@ FillDelayedRunGroups() {
                                 ; VK5A=Z, VK51=Q
                                 , "#VK51":  { "^VK45":   [notepad2exe, """" A_ScriptFullPath """"]               ;vk45=e ^e
                                             , "^+VK45":  [notepad2exe, """" hotkeys_custom_ahk """"]             ;vk45=e ^+e
-                                            , "#VK57":   AU3_SpyExecArray                                        ;vk57=w #w
+                                            , "#VK57":   [AU3_Spy]                                               ;vk57=w #w
                                             , "#VK52":   [A_ScriptDir "\ResizeOrRecord.ahk",,""]                 ;vk52=r #r
                                             , "#VK43":   [A_ScriptDir "\putty_connect.ahk"]                      ;vk43=c #c
                                             , "#VK50":   [A_ScriptDir "\putty_smartact.ahk"]                     ;vk50=p #p
@@ -747,7 +747,7 @@ RunDelayed(ByRef params*) { ; File [, Arguments, Directory, Operation, Show]; Sh
     If (IsObject(params) && nparams := params.Length()) {
         AlternateHotkeysOff()
         RunQueue.Push((nparams==1) ? params[1] : params)
-        SetTimer %A_ThisFunc%, 1
+        SetTimer %A_ThisFunc%, 100
         ToolTip % "Added " ((nparams==1) ? params[1] : params) " to launch queue"
         SetTimer RemoveToolTip, 1000
         return
@@ -760,9 +760,9 @@ RunDelayed(ByRef params*) { ; File [, Arguments, Directory, Operation, Show]; Sh
                     nprivRun(cmd*)
             } Else { ; only executable name, with no parameters or workdir
                 If (FileExist(cmd)) {
-                    SplitPath cmd,exename,wd,ext
+                    SplitPath cmd, exename, wd, ext
                     ; this does not find any window running under other user / non-admin :: UniqueID := WinExist("ahk_exe" exename)
-                    If (ext = "exe" && (UniqueID := WinExist("ahk_exe " exename)) && !WinActive("ahk_id " UniqueID)) {
+                    If (ext == "exe" && (UniqueID := WinExist("ahk_exe " exename)) && !WinActive("ahk_id " UniqueID)) {
                         WinGet state, MinMax, ahk_exe %exename%
                         If (state == -1)
                             WinRestore ahk_exe %exename%
@@ -770,12 +770,13 @@ RunDelayed(ByRef params*) { ; File [, Arguments, Directory, Operation, Show]; Sh
                         ToolTip % "Activated " cmd
                         SetTimer RemoveToolTip, 1000
                     } Else {
-                        RunAndActivate(  ext = "ahk" ? """" A_AhkPath """ """ cmd """"
-                                       : ext = "cmd" ? """" comspec """ /C """ cmd """"
-                                       : """" cmd """")
+                        cmdAndArgs := ext = "ahk" ? [A_AhkPath, """" cmd """"]
+                                       : ext = "cmd" ? [comspec, " /C """ cmd """"]
+                                       : ["", cmd]
+                        RunAndActivate(cmdAndArgs*)
                     }
                 } Else {
-                    RunAndActivate(cmd)
+                    RunAndActivate("", cmd)
                 }
             }
         } Else {
@@ -795,10 +796,15 @@ ObjectToText_nocheck(obj) {
     return SubStr(out, 1, -2)
 }
 
-RunAndActivate(ByRef tgt, ByRef wd:="", ByRef options:="") {
+RunAndActivate(tgt, ByRef args := "", ByRef wd := "", ByRef options := "") {
     If (!wd)
         wd := A_Temp
-    Run %tgt%, %wd%, %options%, r_PID
+    If (tgt) {
+        If (InStr(tgt, " "))
+            tgt = "%tgt%"
+        tgt .= A_Space
+    }
+    Run %tgt%%args%, %wd%, %options%, r_PID
     WinWait ahk_PID %r_PID%,,3
     If (!ErrorLevel)
         WinActivate
