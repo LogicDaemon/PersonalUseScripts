@@ -16,7 +16,7 @@ Process Wait, PAGEANT.EXE
 If (WinExist("ahk_group jumpnet")) {
     WinActivate
 } Else {
-    Run PUTTY.EXE -load "jnldev-va-2.serverpod.net" -N
+    Run PUTTY.EXE -load "jnldev-wa-2.serverpod.net" -N
     WinWait ahk_group jumpnet
 }
 ;Loop

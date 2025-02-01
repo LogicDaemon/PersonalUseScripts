@@ -1,6 +1,5 @@
 ﻿;0BSD (https://opensource.org/license/0bsd) / public domain by LogicDaemon <https://www.logicdaemon.ru/>
 #NoEnv
-#SingleInstance ignore
 
 ;IfNotExist O:\
 ;    RunWait %comspec% /C RestartO.cmd
