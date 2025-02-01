@@ -6,7 +6,7 @@ SETLOCAL ENABLEEXTENSIONS
     CALL find7zexe.cmd
     
     CALL :InitRemembering
-    FOR %%A IN ("%~dp0OBS-Studio-31.0.0-Windows-Installer.exe" "%~dp0OBS-Studio-*-Full-x64.zip" "%~dp0OBS-Studio-*-Full-Installer-x64.exe") DO CALL :RememberIfLatest dstfname "%%~A"
+    FOR %%A IN ("%~dp0OBS-Studio-*-Windows-Installer.exe" "%~dp0OBS-Studio-*-Full-x64.zip" "%~dp0OBS-Studio-*-Full-Installer-x64.exe") DO CALL :RememberIfLatest dstfname "%%~A"
     IF NOT DEFINED dstfname EXIT /B 1
 )
 @(
