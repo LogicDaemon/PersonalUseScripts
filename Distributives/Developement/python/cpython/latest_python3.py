@@ -67,7 +67,7 @@ def restart_with_requirements(
 
 # Installable modules https://pypi.org/
 for try_no in range(2):
-    try:
+    try:  # pylint: disable=too-many-try-statements
         import lxml  # pyright: ignore[reportMissingImports]
         import lxml.html  # pyright: ignore[reportMissingImports]
         break
@@ -243,7 +243,6 @@ def main() -> Optional[int]:
         assert 'src_path' in locals()
         build_source(ver, src_path, args.mode == 'install')
     else:  # if args.mode == 'install' and on_plain_windows:
-        assert 'windows_dist_path' in locals()
         install_on_windows(win_dist_path)
 
 
