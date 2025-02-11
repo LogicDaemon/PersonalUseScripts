@@ -1,7 +1,7 @@
 ﻿;0BSD (https://opensource.org/license/0bsd) / public domain by LogicDaemon <https://www.logicdaemon.ru/>
 
-WinHttpRequest(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=0, ByRef headers:=0, ByRef proxy:="") {
-    ; if rv_response is ByRef, it will be filled with response data and the request will return status code
+WinHttpRequest(ByRef method, ByRef URL, ByRef postData:="", ByRef rvResponse:="", ByRef headers:="", ByRef proxy:="") {
+    ; if rvResponse is ByRef, it will be filled with response data and the request will return status code
     ; otherwise, XMLHTTP_Request will return the response data
     local
     #Warn UseUnsetGlobal, Off
@@ -24,7 +24,7 @@ WinHttpRequest(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=0
         WebRequest.SetProxy(2,proxy)
 
     Try {
-        WebRequest.Send(POSTDATA)
+        WebRequest.Send(postData)
         resp := {status: WebRequest.Status, headers: WebRequest.getAllResponseHeaders, text: WebRequest.responseText}
         WebRequest := ""
 
@@ -38,8 +38,8 @@ WinHttpRequest(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=0
                     . resp.responseText "`n")
         }
 
-        If (IsByRef(rv_response)) {
-            rv_response := resp
+        If (IsByRef(rvResponse)) {
+            rvResponse := resp
             return resp.status
         }
         return resp

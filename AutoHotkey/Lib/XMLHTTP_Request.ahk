@@ -1,7 +1,7 @@
 ﻿;0BSD (https://opensource.org/license/0bsd) / public domain by LogicDaemon <https://www.logicdaemon.ru/>
 
-XMLHTTP_Request(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=0, ByRef requestHeaders:=0) {
-    ; if rv_response is ByRef, it will be filled with response data and the request will return status code
+XMLHTTP_Request(ByRef method, ByRef URL, ByRef postData:="", ByRef rvResponse:="", ByRef requestHeaders:="") {
+    ; if rvResponse is ByRef, it will be filled with response data and the request will return status code
     ; otherwise, XMLHTTP_Request will return the response data
     local
     global debug
@@ -9,7 +9,7 @@ XMLHTTP_Request(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=
     If (IsObject(debug))
         debug.url := URL
             , debug.method := method
-            , XMLHTTP_Request_DebugMsg(method " " URL . (POSTDATA ? " ← " POSTDATA : "")
+            , XMLHTTP_Request_DebugMsg(method " " URL . (postData ? " ← " postData : "")
             . ( requestHeaders ? "`n`tHeaders:`n" XMLHTTP_Request_ahk_ObjectToText(requestHeaders) : ""))
     xhr := XMLHTTP_Request_CreateXHRObject()
     ;xhr.open(bstrMethod, bstrUrl, varAsync, varUser, varPassword);
@@ -20,14 +20,14 @@ XMLHTTP_Request(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=
     For hName, hVal in requestHeaders
         xhr.setRequestHeader(hName, hVal)
     Try {
-        xhr.send(POSTDATA)
+        xhr.send(postData)
         If (IsObject(debug))
             For debugField, xhrField in {Headers: "getAllResponseHeaders", Response: "responseText", Status: "status"} ; status can be 200, 404 etc., including proxy responses
                 debug[debugField] := xhr[xhrField]
         resp := {status: xhr.status, headers: xhr.getAllResponseHeaders, text: xhr.responseText}
         xhr := ""
-        If (IsByRef(rv_response)) {
-            rv_response := resp
+        If (IsByRef(rvResponse)) {
+            rvResponse := resp
             Return resp.Status
         }
         Return resp

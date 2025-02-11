@@ -1,6 +1,6 @@
 ﻿;0BSD (https://opensource.org/license/0bsd) / public domain by LogicDaemon <https://www.logicdaemon.ru/>
 
-GetURL(ByRef URL, retries := 3, delay := 3000) {
+GetURL(ByRef URL, retries:=3, delay:=3000) {
     local
     exc := ""
     Loop

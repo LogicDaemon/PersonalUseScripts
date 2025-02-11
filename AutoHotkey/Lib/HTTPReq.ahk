@@ -1,6 +1,6 @@
 ﻿;0BSD (https://opensource.org/license/0bsd) / public domain by LogicDaemon <https://www.logicdaemon.ru/>
 
-HTTPReq(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=0, ByRef headers:="") {
+HTTPReq(ByRef method, ByRef URL, ByRef postData:="", ByRef rvResponse:="", ByRef headers:="") {
     local
     If (method = "POST") {
         If (!IsObject(headers))
@@ -8,11 +8,10 @@ HTTPReq(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=0, ByRef
         If (!headers.HasKey("Content-Type"))
             headers["Content-Type"] := "application/x-www-form-urlencoded"
     }
-    ;ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=0, ByRef headers:=0
     For _, func in ["XMLHTTP_Request", "WinHTTPReqWithProxies"] {
         Try {
-            rv := Func(func).Call(method, URL, POSTDATA, rv_response, headers)
-            If (IsObject(rv_response)) {
+            rv := Func(func).Call(method, URL, postData, rvResponse, headers)
+            If (IsObject(rvResponse)) {
                 If (rv.status)
                     Return rv
                 Continue
@@ -25,7 +24,7 @@ HTTPReq(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=0, ByRef
     Return rv
 }
 
-WinHTTPReqWithProxies(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_response:=0, ByRef headers:=0, ByRef TryProxies := "") {
+WinHTTPReqWithProxies(ByRef method, ByRef URL, ByRef postData:="", ByRef rvResponse:="", ByRef headers:="", ByRef TryProxies := "") {
     local
     static proxies := ""
     ;URLprotoInURL := RegexMatch(URL, "([^:]{3,6})://", URLproto)
@@ -56,7 +55,7 @@ WinHTTPReqWithProxies(ByRef method, ByRef URL, ByRef POSTDATA:="", ByRef rv_resp
 
     For i,proxy in proxies
         Try {
-        res := WinHttpRequest(method, URL, POSTDATA, rv_response, headers, proxy)
+        res := WinHttpRequest(method, URL, postData, rvResponse, headers, proxy)
         If (res > 0 && res < 400)
             Return res
     }
