@@ -1,0 +1,5 @@
+# packaging
+# rich
+httpx[http2]
+lxml
+werkzeug

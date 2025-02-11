@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<release>
+  <title>qBittorrent</title>
+  <date>Mon, 30 Sep 2024 00:37:49 GMT</date>
+  <link>https://www.fosshub.com/qBittorrent.html</link>
+  <items>
+    <item>
+      <title>qbittorrent_5.0.0_x64_setup.exe.asc</title>
+      <link>https://www.fosshub.com/qBittorrent.html?dwl=qbittorrent_5.0.0_x64_setup.exe.asc</link>
+      <type>PGP</type>
+      <version>5.0.0</version>
+    </item>
+    <item>
+      <title>qbittorrent_5.0.0_x64_setup.exe</title>
+      <link>https://www.fosshub.com/qBittorrent.html?dwl=qbittorrent_5.0.0_x64_setup.exe</link>
+      <type>Windows x64</type>
+      <version>5.0.0</version>
+    </item>
+    <item>
+      <title>qbittorrent_5.0.0_lt20_qt6_x64_setup.exe</title>
+      <link>https://www.fosshub.com/qBittorrent.html?dwl=qbittorrent_5.0.0_lt20_qt6_x64_setup.exe</link>
+      <type>Windows x64 (qt6 lt20)</type>
+      <version>5.0.0</version>
+    </item>
+    <item>
+      <title>qbittorrent_5.0.0_lt20_qt6_x64_setup.exe.asc</title>
+      <link>https://www.fosshub.com/qBittorrent.html?dwl=qbittorrent_5.0.0_lt20_qt6_x64_setup.exe.asc</link>
+      <type>PGP</type>
+      <version>5.0.0</version>
+    </item>
+    <item>
+      <title>qbittorrent-5.0.0.dmg</title>
+      <link>https://www.fosshub.com/qBittorrent.html?dwl=qbittorrent-5.0.0.dmg</link>
+      <type>Mac OS X</type>
+      <version>5.0.0</version>
+    </item>
+    <item>
+      <title>qbittorrent-5.0.0.dmg.asc</title>
+      <link>https://www.fosshub.com/qBittorrent.html?dwl=qbittorrent-5.0.0.dmg.asc</link>
+      <type>PGP</type>
+      <version>5.0.0</version>
+    </item>
+    <item>
+      <title>qbittorrent-5.0.0_lt20.dmg</title>
+      <link>https://www.fosshub.com/qBittorrent.html?dwl=qbittorrent-5.0.0_lt20.dmg</link>
+      <type>Mac OS X  (qt6 lt20)</type>
+      <version>5.0.0</version>
+    </item>
+    <item>
+      <title>qbittorrent-5.0.0_lt20.dmg.asc</title>
+      <link>https://www.fosshub.com/qBittorrent.html?dwl=qbittorrent-5.0.0_lt20.dmg.asc</link>
+      <type>PGP</type>
+      <version>5.0.0</version>
+    </item>
+    <item>
+      <title>qbittorrent-5.0.0_x86_64.AppImage</title>
+      <link>https://www.fosshub.com/qBittorrent.html?dwl=qbittorrent-5.0.0_x86_64.AppImage</link>
+      <type>AppImage</type>
+      <version>5.0.0</version>
+    </item>
+    <item>
+      <title>qbittorrent-5.0.0_x86_64.AppImage.asc</title>
+      <link>https://www.fosshub.com/qBittorrent.html?dwl=qbittorrent-5.0.0_x86_64.AppImage.asc</link>
+      <type>PGP</type>
+      <version>5.0.0</version>
+    </item>
+    <item>
+      <title>qbittorrent-5.0.0_lt20_x86_64.AppImage</title>
+      <link>https://www.fosshub.com/qBittorrent.html?dwl=qbittorrent-5.0.0_lt20_x86_64.AppImage</link>
+      <type>AppImage  (qt6 lt20)</type>
+      <version>5.0.0</version>
+    </item>
+    <item>
+      <title>qbittorrent-5.0.0_lt20_x86_64.AppImage.asc</title>
+      <link>https://www.fosshub.com/qBittorrent.html?dwl=qbittorrent-5.0.0_lt20_x86_64.AppImage.asc</link>
+      <type>PGP</type>
+      <version>5.0.0</version>
+    </item>
+  </items>
+</release>
