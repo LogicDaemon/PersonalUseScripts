@@ -34,7 +34,7 @@ WinHttpPOST(URL, POSTDATA, proxy:="") {
     global debug
     static WinHttpRequestObjectName
     If (IsObject(debug))
-	FileAppend Отправка через %proxy% на адрес %URL%`nзапроса`n%POSTDATA%`n, **
+	FileAppend POST over %proxy% to %URL%`ndata`n%POSTDATA%`n, **
     If (WinHttpRequestObjectName) {
         WebRequest := ComObjCreate(WinHttpRequestObjectName)
     } Else {
@@ -56,8 +56,8 @@ WinHttpPOST(URL, POSTDATA, proxy:="") {
 	    debug.Response := WebRequest.ResponseText
 	    debug.Status := WebRequest.Status	;can be 200, 404 etc., including proxy responses
 	    
-	    FileAppend % "Статус: " . debug.Status . "`n"
-		       . "Заголовки ответа: " . debug.Headers . "`n", **
+	    FileAppend % "Status: " . debug.Status . "`n"
+		       . "Response headers: " . debug.Headers . "`n", **
 	}
 	return WebRequest.Status >= 200 && WebRequest.Status < 300
     } catch e {
@@ -127,5 +127,5 @@ If (A_ScriptFullPath == A_LineFile) { ; this is direct call, not inclusion
 }
 
 EchoWrongArg(arg) {
-    FileAppend Неправильный аргумент: %arg%`n, **
+    FileAppend Invalid command line argument: %arg%`n, **
 }

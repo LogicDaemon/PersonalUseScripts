@@ -1,6 +1,4 @@
-﻿;by LogicDaemon <www.logicdaemon.ru>
-;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode.ru>.
-#NoEnv
+﻿;0BSD (https://opensource.org/license/0bsd) / public domain by LogicDaemon <https://www.logicdaemon.ru/>#NoEnv
 FileEncoding UTF-8
 
 stdin := FileOpen("*", "r")
@@ -9,12 +7,12 @@ stdin.Close()
 
 accname := A_Args[1]
 
-If (HTTPReq("POST", "https://file.io/", "text=" pw, response := "")) {
+If (HTTPReq("POST", "https://file.io/", "text=" pw, httpResponse := {}) < 300) {
     ;{"success":true,"key":"6lL5lq","link":"https://file.io/6lL5lq","expiry":"14 days"}
     ;https://temporary.pw/?key=6lL5lq
-    resp := JSON.Load(response)
-    FileAppend % resp.key "`n" response "`n", *
-    
+    resp := JSON.Load(httpResponse.text)
+    FileAppend % resp.key "`n" httpResponse "`n", *
+
     If (!accname)
         ExitApp 0
     For i, line in GetPseudoSecrets() {

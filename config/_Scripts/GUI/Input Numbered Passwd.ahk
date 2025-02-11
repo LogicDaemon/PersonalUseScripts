@@ -1,18 +1,17 @@
-﻿;by LogicDaemon <www.logicdaemon.ru>
-;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <http://creativecommons.org/licenses/by-sa/4.0/deed.ru>.
+﻿;0BSD (https://opensource.org/license/0bsd) / public domain by LogicDaemon <https://www.logicdaemon.ru/>
 #NoEnv
 If (A_LineFile==A_ScriptFullPath) {
     GetSecretURLs(0)
     FileEncoding CP1
     passwd = %1%
     If(!passwd) {
-	InputBox passwd
-	If(ErrorLevel)
-	    ExitApp
-	If(!passwd) {
-	    MsgBox Пароль для добавления не указан
-	    ExitApp
-	}
+        InputBox passwd
+        If(ErrorLevel)
+            ExitApp
+        If(!passwd) {
+            MsgBox Empty passwords are not allowed.
+            ExitApp
+        }
     }
     FileAppend % (passwordID := WriteAndShowPassword(passwd)) "`n", *
     If (passwordID)
@@ -23,22 +22,21 @@ If (A_LineFile==A_ScriptFullPath) {
 WriteAndShowPassword(ByRef passwd, ByRef fileToAppendPassword := -1) {
     global SystemRoot
     If (!SystemRoot)
-	EnvGet SystemRoot, SystemRoot ; not same as A_WinDir on Windows Server
-    
+        EnvGet SystemRoot, SystemRoot ; not same as A_WinDir on Windows Server
+
     passwordID := RecordPassword(passwd)
-    ;Соответствия в https://docs.google.com/a/mobilmir.ru/spreadsheets/d/1lUGVjDWEG3znDUKy-l59Ewt95eFrIgUO-L8dy3lxNWQ
-    
-    Gui Add, Button, xm section gCopypasswordID, Скопировать (&n)
+
+    Gui Add, Button, xm section gCopypasswordID, Copy (&n)
     Gui Font, , Consolas
     Gui Add, Edit, ys ReadOnly gSelectAllCopy, %passwordID%
     Gui Font
-    Gui Add, Button, xm section gCopypasswd, Скопировать (&p)
+    Gui Add, Button, xm section gCopypasswd, Copy (&p)
     Gui Font, , Consolas
     Gui Add, Edit, ys ReadOnly gSelectAllCopy, %passwd%
     Gui Font
-    Gui Add, Button, xm section gReload, Получить ещё один код&.
+    Gui Add, Button, xm section gReload, Get another code&.
     Gui Show
-    
+
     If (fileToAppendPassword) {
         If (fileToAppendPassword==-1)
             fileToAppendPassword = %A_Temp%\Numbered Passwords.e\%A_ScriptName%.txt
@@ -47,22 +45,22 @@ WriteAndShowPassword(ByRef passwd, ByRef fileToAppendPassword := -1) {
         RunWait %SystemRoot%\System32\cipher.exe /E /S "%outDir%",,Min
         FileAppend %passwd%`n, %fileToAppendPassword%
     }
-    
+
     return passwordID
 
     CopypasswordID:
     Copypasswd:
-        copyVarName:=SubStr(A_ThisLabel,5)
-        Clipboard:=%copyVarName%
-        return
+    copyVarName:=SubStr(A_ThisLabel,5)
+    Clipboard:=%copyVarName%
+    return
 
     SelectAllCopy:
-        EM_SETSEL := 0x00B1
-        ;A_Gui, A_GuiControl, A_GuiEvent, and A_EventInfo.
-        Gui +LastFound
-        ControlFocus %CtrlHwnd%
-        ;https://autohotkey.com/board/topic/39793-how-to-select-the-text-in-an-edit-control/
-        SendMessage %EM_SETSEL%, 0, -1, %CtrlHwnd%
+    EM_SETSEL := 0x00B1
+    ;A_Gui, A_GuiControl, A_GuiEvent, and A_EventInfo.
+    Gui +LastFound
+    ControlFocus %CtrlHwnd%
+    ;https://autohotkey.com/board/topic/39793-how-to-select-the-text-in-an-edit-control/
+    SendMessage %EM_SETSEL%, 0, -1, %CtrlHwnd%
     ;    MsgBox %ERRORLEVEL%
     return
 }
@@ -70,14 +68,16 @@ WriteAndShowPassword(ByRef passwd, ByRef fileToAppendPassword := -1) {
 GuiEscape:
 GuiClose:
 ButtonCancel:
-    ExitApp
+ExitApp
 
 Reload:
-    Reload
+Reload
 
 GetPswDbLocation() {
-    ;"\\Srv0.office0.mobilmir\Ограниченный доступ\4. Организационно-управленческий департамент\Служба ИТ\Отдел информационных технологий\Группа системного администрирования\генерируемые идентификаторы.txt"
-    return "\\Srv1S-B.office0.mobilmir\Users\Public\Shares\Ограниченный доступ\4. Организационно-управленческий департамент\Служба ИТ\Отдел информационных технологий\Группа системного администрирования\генерируемые идентификаторы.txt"
+    local
+    EnvGet LocalAppData, LOCALAPPDATA
+    FileReadLine path, %LOCALAPPDATA%\_sec\Numbered Passwords Path.txt, 1
+    Return path
 }
 
 GetSecretURLs(which) {
@@ -97,33 +97,33 @@ GenPasswordUID() {
     ;base62: 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
     ;Z85: 0...9, a...z, A...Z, ., -, :, +, =, ^, !, /, *, ?, &, <, >, (, ), [, ], {, }, @, %, $, #
     static alphabet := "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#"
-    , charCount := StrLen(alphabet)
-    
+        , charCount := StrLen(alphabet)
+
     passwordUID := ""
     Loop 2
     {
         Random rnd, 1, %charCount%
         passwordUID .= SubStr(alphabet, rnd, 1)
     }
-    
+
     daysSince := ""
     EnvSub daysSince, 20190722, Hours
     Loop 3 ; 85 ^ 3 = 25588 days ~= 70 years
         newDaysSince := daysSince // charCount
-        , rem := daysSince - newDaysSince * charCount
-        , passwordUID .= SubStr(alphabet, rem+1, 1)
-        , daysSince := newDaysSince
+            , rem := daysSince - newDaysSince * charCount
+            , passwordUID .= SubStr(alphabet, rem+1, 1)
+            , daysSince := newDaysSince
     return passwordUID
 }
 
 RecordPassword(passwd) {
     ErrorLevel := -1
     Try return FindPassword(passwd, 1)
-    
+
     Loop
     {
         found := 0, passwordID := GenPasswordUID()
-        ; проверка дубликатов
+        ; checking dupes
         Loop Parse, % GetURL(GetSecretURLs(1)), `n`r
         {
             If (A_LoopField) {
@@ -141,52 +141,55 @@ RecordPassword(passwd) {
             }
         }
     } Until !found
-    
-    While !HTTPReq("POST", GetSecretURLs(3), "ID=" UriEncode("'" passwordID) "&pwd=" UriEncode("'" passwd), response := "", {"Content-Type": "application/x-www-form-urlencoded"}) {
-        MsgBox 53, Запись пароля с ID %postID% в таблицу, При отправке пароля произошла ошибка.`n`n[Попытка %A_Index%`, автоповтор – 5 минут]`n`n%response%, 300
+
+    While HTTPReq("POST", GetSecretURLs(3)
+        , "ID=" UriEncode("'" passwordID) "&pwd=" UriEncode("'" passwd)
+        , response := ""
+        , {"Content-Type": "application/x-www-form-urlencoded"}) >= 300 {
+        MsgBox 53, Posting the password with ID %postID% to the table, Error sending.`n`n[Try %A_Index%`, retry – 5 minutes]`n`n%response%, 300
         IfMsgBox Cancel
-            Throw Exception("Отправка пароля отменена")
+            Throw Exception("Cancelled sending the password")
     }
-    
+
     While !IsObject(file := FileOpen(GetPswDbLocation(), "a-w")) {
-        MsgBox 5, %A_ScriptName%, Не удалось открыть файл с паролями для записи.`n(автоповтор через минуту`, попытка %A_Index%), 60
+        MsgBox 5, %A_ScriptName%, Unable to open the writing params file.`n(autoretry in a minute`, attempt %A_Index%), 60
         IfMsgBox Cancel
-            break
+            Break
     }
-    
+
     If (IsObject(file)) {
         written := file.Write("`r`n" passwordID A_Tab passwd)
         file.Close()
-        If (written  < (StrLen(passwd) + 2) )
-            Throw Exception("Файл с паролями открылся`, но пароль не записался",, "(записалось " . written . " байт).")
+        If (written < (StrLen(passwd) + 2) )
+            Throw Exception("Password file was opened`, but the password was not completely written",, "(wrote " . written . " bytes).")
         Else
             ErrorLevel := 0
     }
-    
+
     return passwordID
     ;Try return FindPassword(passwd, 1)
 }
 
 FindPassword(passwd, last=0) {
     pswDBfile := GetPswDbLocation()
-    
+
     If (last) {
-	passwordID := 0
-	Loop Read, %pswDBfile%
-	    If (A_LoopReadLine==passwd)
-		passwordID := A_Index
+        passwordID := 0
+        Loop Read, %pswDBfile%
+            If (A_LoopReadLine==passwd)
+                passwordID := A_Index
             Else If (newpasswordID := CheckPasswordFileLine(A_LoopReadLine, passwd))
                 passwordID := newpasswordID
-	If (!passwordID)
-	    Throw Exception("Пароль не найден")
-	return passwordID
+        If (!passwordID)
+            Throw Exception("Password not found")
+        return passwordID
     } Else {
-	Loop Read, %pswDBfile%
-	    If (A_LoopReadLine==passwd)
-		return A_Index
+        Loop Read, %pswDBfile%
+            If (A_LoopReadLine==passwd)
+                return A_Index
             Else If (newpasswordID := CheckPasswordFileLine(A_LoopReadLine, passwd))
                 return newpasswordID
-	return 0
+        return 0
     }
 }
 

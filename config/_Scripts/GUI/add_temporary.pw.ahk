@@ -1,5 +1,4 @@
-﻿;by LogicDaemon <www.logicdaemon.ru>
-;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode.ru>.
+﻿;0BSD (https://opensource.org/license/0bsd) / public domain by LogicDaemon <https://www.logicdaemon.ru/>
 #NoEnv
 FileEncoding UTF-8
 
@@ -10,7 +9,7 @@ InputBox pw,,,%hide%,,,,,,,%pw%
 If (ErrorLevel)
     ExitApp 2
 
-If (!HTTPReq("POST", "https://file.io/", "text=" pw, response := ""))
+If (HTTPReq("POST", "https://file.io/", "text=" pw, response := "") >= 300)
     ExitApp 1
 
 ;{"success":true,"key":"6lL5lq","link":"https://file.io/6lL5lq","expiry":"14 days"}
@@ -19,7 +18,7 @@ resp := JSON.Load(response)
 FileAppend % resp.key "`n" response "`n", *
 url := "https://temporary.pw/?key=" resp.key
 Clipboard := url
-MsgBox Ссылка %url% скопирована.
+MsgBox URL %url% copied.
 ExitApp 0
 
 #include %A_LineFile%\..\..\Lib\HTTPReq.ahk

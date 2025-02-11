@@ -4,7 +4,7 @@
 #include <find7zexe>
 
 Try {
-    goVerURL:="https://golang.org/VERSION?m=text"
+    goVerURL:="https://go.dev/VERSION?m=text"
     distDir := Find_Distributives_subpath("Developement\go")
     goVersion := GetURL(goVerURL)
     If (!goVersion)
