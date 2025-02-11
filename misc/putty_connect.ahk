@@ -46,6 +46,8 @@ ButtonCancel:
 
 EnsureProxiesRunning(port) {
     GroupAdd proxy1080, jnldev-va-2.serverpod.net - PuTTY ahk_class PuTTY ahk_exe PUTTY.EXE
+    GroupAdd proxy1080, jnldev-wa-2.serverpod.net - PuTTY ahk_class PuTTY ahk_exe PUTTY.EXE
+    GroupAdd proxy1080, jnldev-va-am-media.serverpod.net - PuTTY ahk_class PuTTY ahk_exe PUTTY.EXE
     GroupAdd proxy1081, cdn-jump.anymeeting.com - PuTTY ahk_class PuTTY ahk_exe PUTTY.EXE
     
     Loop

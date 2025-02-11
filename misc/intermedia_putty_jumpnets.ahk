@@ -6,18 +6,21 @@ EnvGet SecretDataDir,SecretDataDir
 EnvGet LocalAppData,LOCALAPPDATA
 EnvGet SystemRoot,SystemRoot
 
-GroupAdd jumpnet, jnldev-va-2.serverpod.net - PuTTY ahk_class PuTTY ahk_exe PUTTY.EXE
+GroupAdd proxy1080, jnldev-va-2.serverpod.net - PuTTY ahk_class PuTTY ahk_exe PUTTY.EXE
+GroupAdd proxy1080, jnldev-wa-2.serverpod.net - PuTTY ahk_class PuTTY ahk_exe PUTTY.EXE
+GroupAdd proxy1080, jnldev-va-am-media.serverpod.net - PuTTY ahk_class PuTTY ahk_exe PUTTY.EXE
 GroupAdd cdnjump, cdn-jump.anymeeting.com - PuTTY ahk_class PuTTY ahk_exe PUTTY.EXE
 
 WaitForSubnet(IMVPNSubnets()) ;wait for VPN connection
 Run PAGEANT.EXE "%SecretDataDir%\aderbenev-rsa-key-20210414.ppk"
 Process Wait, PAGEANT.EXE
 
-If (WinExist("ahk_group jumpnet")) {
+If (WinExist("ahk_group proxy1080")) {
     WinActivate
 } Else {
-    Run PUTTY.EXE -load "jnldev-wa-2.serverpod.net" -N
-    WinWait ahk_group jumpnet
+    ;Run PUTTY.EXE -load "jnldev-wa-2.serverpod.net" -N
+    Run PUTTY.EXE -load "jnldev-va-am-media.serverpod.net" -N
+    WinWait ahk_group proxy1080
 }
 ;Loop
 ;{
