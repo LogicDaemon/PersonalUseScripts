@@ -15,6 +15,8 @@ Try {
         goVer := Trim(A_LoopField, "`r`n `t")
         break
     }
+    If (!goVer)
+        Throw Exception("Error parsing go version",, goVersion)
     
     Try {
         f := FileOpen(distDir "\VERSION", "r")

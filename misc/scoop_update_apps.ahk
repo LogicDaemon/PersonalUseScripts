@@ -12,7 +12,7 @@ logPath := scoopBaseDir "\apps\update.log"
 FileMove %logPath%, %logPath%_old, 1
 RunScoopUpdates(scoopBaseDir, logPath, GetScoopPostUpdateScripts(), GetNoAutoUpdateApps())
 
-Run "%A_AhkPath%" "%A_ScriptDir%\scoop_cleanup_cache.ahk"
+Run "%A_AhkPath%" "%A_ScriptDir%\scoop_clean_cache.ahk"
 Run DFHL.exe /l ., %LocalAppData%\Programs\scoop\shims, Min
 Run DFHL.exe /l ., %scoopBaseDir%\cache, Min
 ExitApp 
