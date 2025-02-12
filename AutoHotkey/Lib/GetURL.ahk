@@ -11,7 +11,7 @@ GetURL(ByRef URL, retries:=3, delay:=3000) {
             Continue
         }
         If (st < 300) ; up to 300 are OK
-            Return resp
+            Return resp.text
         If (st >= 500 || st == 408 || st == 409 || st == 423 || st == 424) { ; repeat on server errors
             Sleep delay
             Continue
