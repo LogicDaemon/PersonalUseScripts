@@ -742,7 +742,7 @@ lMaximizeWindow:
     return
 
 RunDelayed(ByRef params*) { ; File [, Arguments, Directory, Operation, Show]; Show is as in ShellRun or -1 to run as ahk script (w/o ShellRun)
-    static runQueue := Object()
+    static runQueue := []
     
     If (IsObject(params) && nparams := params.Length()) {
         AlternateHotkeysOff()

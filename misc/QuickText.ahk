@@ -11,7 +11,7 @@ GroupAdd SendKeys, ahk_exe spring.exe
 GroupAdd SendKeys, ahk_class SDL_app
 sendKeysInsteadOfPasting := WinActive("ahk_group SendKeys")
 
-For _, exe in ["cmd.exe","putty.exe","spring.exe"]
+For _, exe in ["cmd.exe","putty.exe","spring.exe","firefox.exe"]
 	GroupAdd PasteViaShiftInsert, ahk_exe i)\b\Q%exe%\E\b
 
 useShiftInsert := WinActive("ahk_group PasteViaShiftInsert")

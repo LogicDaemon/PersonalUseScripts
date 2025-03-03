@@ -8,7 +8,9 @@ EnvGet SystemRoot,SystemRoot
 
 GroupAdd proxy1080, jnldev-va-2.serverpod.net - PuTTY ahk_class PuTTY ahk_exe PUTTY.EXE
 GroupAdd proxy1080, jnldev-wa-2.serverpod.net - PuTTY ahk_class PuTTY ahk_exe PUTTY.EXE
+GroupAdd proxy1080, 10.112.202.208 - PuTTY ahk_class PuTTY ahk_exe PUTTY.EXE
 GroupAdd proxy1080, jnldev-va-am-media.serverpod.net - PuTTY ahk_class PuTTY ahk_exe PUTTY.EXE
+GroupAdd proxy1080, 10.216.209.49 - PuTTY ahk_class PuTTY ahk_exe PUTTY.EXE
 GroupAdd cdnjump, cdn-jump.anymeeting.com - PuTTY ahk_class PuTTY ahk_exe PUTTY.EXE
 
 WaitForSubnet(IMVPNSubnets()) ;wait for VPN connection
@@ -18,8 +20,8 @@ Process Wait, PAGEANT.EXE
 If (WinExist("ahk_group proxy1080")) {
     WinActivate
 } Else {
-    ;Run PUTTY.EXE -load "jnldev-wa-2.serverpod.net" -N
-    Run PUTTY.EXE -load "jnldev-va-am-media.serverpod.net" -N
+    Run PUTTY.EXE -load "jnldev-wa-2.serverpod.net" -N
+    ;Run PUTTY.EXE -load "jnldev-va-am-media.serverpod.net" -N
     WinWait ahk_group proxy1080
 }
 ;Loop

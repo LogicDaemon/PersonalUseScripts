@@ -39,12 +39,13 @@ If (!baseWorkdir) {
     EnvSet baseWorkdir, %baseWorkdir%
 }
 FileCreateDir %baseWorkdir%
-FileDelete %baseWorkdir%\new_version.log
 pids := {}
 For filename, url in URLs {
     url := StrReplace(url, "*", ver)
+    ; Depending on the mirror, filename could include a suffix like KeePass-1.43.zip@ts=gAAAAABnxdI1ew5ZwQwW8VHEbPZGG88yXtYiUpfXZm6fbzWznjWva87bl5pNK3SnkMYtEv3iBGiOapAgrjVA6Gv-lRmeCwA7KQ==&use_mirror=yer&r=
     EnvSet dstrename, % StrReplace(filename, "*", ver)
-    Run %comspec% /C "PUSHD "`%srcpath`%" && CALL "`%baseScripts`%\_DistDownload.cmd" "%url%" "%filename%" %wget_args% >"`%baseWorkdir`%\`%dstrename`%.log" 2>&1", %A_Temp%, Min UseErrorLevel, rPID
+    ; PUSHD will create a temporary drive letter substitution if the srcpath in on a network share
+    Run %comspec% /C "PUSHD "`%srcpath`%" && CALL "`%baseScripts`%\_DistDownload.cmd" "%url%" "%filename%" %wget_args% >>"`%baseWorkdir`%\`%dstrename`%.log" 2>&1", %A_Temp%, Min UseErrorLevel, rPID
     pids[rPID] := ""
     FileAppend %ver%`tDistDownload %url%`tPID %rPID%`n, %baseWorkdir%\download.log
 }
@@ -57,6 +58,7 @@ Loop {
     }
 } Until !pids.Count()
 
+FileMove %baseWorkdir%\download.log %baseWorkdir%\downloaded.log, 1
 ExitApp
 
 EnvSetIfUnset(ByRef name, ByRef val) {

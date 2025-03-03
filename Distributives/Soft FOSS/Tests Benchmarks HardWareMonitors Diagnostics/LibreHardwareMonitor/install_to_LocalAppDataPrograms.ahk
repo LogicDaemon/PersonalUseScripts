@@ -15,9 +15,10 @@ destBase = %LocalAppData%\Programs
 ;mask := distName . (A_Is64bitOs ? "-*-win-64bit-build*.zip" : "-*-win-32bit-build*.zip")
 
 latestPath := latestVer := latestbuild := ""
-Loop Files, %distName%-*.zip
+Loop Files, %A_ScriptDir%\%distName%-*.zip
 {
     ; LibreHardwareMonitor-net472-0.9.2.0.zip
+    ; LibreHardwareMonitor-net472-0.9.4.0.zip
     If (RegexMatch(A_LoopFileName, "^" distName "-(net(?P<dotnetver>\d+(?:\.\w+)*)-)?(?P<ver>\d*(?:[\.]\d+)+)\.zip$", m)) {
         If (VerCompare(mver, latestVer) > 0) {
             latestVer := mver, latestPath := A_LoopFileFullPath
@@ -47,9 +48,13 @@ Loop Files, %destBase%\%distName%-*, D
 {
     If (skipDirs.HasKey(A_LoopFileLongPath))
         Continue
+    srcConfig := A_LoopFileLongPath "\LibreHardwareMonitor.config"
     Try {
+        If (FileExist(srcConfig))
+            FileMove %srcConfig%, % installedDirs[1] "\LibreHardwareMonitor.config"
         FileRemoveDir %A_LoopFileFullPath%, 1
     } Catch {
+        MsgBox Error: Failed to remove the old version %A_LoopFileName%
         FileAppend Error: Failed to remove the old version %A_LoopFileName%`n, **, CP1
     }
 }
@@ -73,10 +78,10 @@ InstallDist(ByRef archivePath, ByRef distName, archiveWithSubdir:=True) {
         If (FileExist(destBase "\" unpackedDirName))
             Throw Exception("Error: The destination directory already exists",, destBase "\" unpackedDirName)
     }
+    removeTemp := True
+    FileAppend Running %exe7z%`n, **, CP1
     Try {
-        removeTemp := True
-        FileAppend Running %exe7z%`n, **, CP1
-        RunWait "%exe7z%" x -aoa -y -o"%tempDir%" -- "%archivePath%",, Min UseErrorLevel
+        RunWait "%exe7z%" x -x!*.pdb -aoa -y -o"%tempDir%" -- "%archivePath%",, Min UseErrorLevel
         If (ErrorLevel)
             Throw Exception("Failed to extract the distributive to temp dir",, archivePath " to " tempDir)
         

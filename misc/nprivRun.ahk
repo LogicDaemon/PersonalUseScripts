@@ -5,10 +5,11 @@ FileEncoding UTF-8
 EnvGet LocalAppData,LOCALAPPDATA
 EnvGet SystemRoot,SystemRoot
 
+fileName := A_Args[1]
+
 If (A_Args.Length() == 1)
     Exit nprivRun(fileName)
 
-fileName := A_Args[1]
 otherArgs := ""
 For i, arg in A_Args {
     If (i > 1)

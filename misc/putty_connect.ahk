@@ -44,12 +44,31 @@ GuiClose:
 ButtonCancel:
     ExitApp
 
-EnsureProxiesRunning(port) {
-    GroupAdd proxy1080, jnldev-va-2.serverpod.net - PuTTY ahk_class PuTTY ahk_exe PUTTY.EXE
-    GroupAdd proxy1080, jnldev-wa-2.serverpod.net - PuTTY ahk_class PuTTY ahk_exe PUTTY.EXE
-    GroupAdd proxy1080, jnldev-va-am-media.serverpod.net - PuTTY ahk_class PuTTY ahk_exe PUTTY.EXE
-    GroupAdd proxy1081, cdn-jump.anymeeting.com - PuTTY ahk_class PuTTY ahk_exe PUTTY.EXE
+CreateProxyGroups(port) {
+    Local
+    Static createdGroups := {}
     
+    If (createdGroups.HasKey(port))
+        Return
+    
+    suffix := "- PuTTY ahk_class PuTTY ahk_exe PUTTY.EXE"
+    
+    If (port==1080) {
+        GroupAdd proxy1080, jnldev-va-2.serverpod.net %suffix%
+        GroupAdd proxy1080, jnldev-wa-2.serverpod.net %suffix%
+        GroupAdd proxy1080, 10.112.202.208 %suffix%
+        GroupAdd proxy1080, jnldev-va-am-media.serverpod.net %suffix%
+        GroupAdd proxy1080, 10.216.209.49 %suffix%
+    } Else If (port==1081) {
+        GroupAdd proxy1081, cdn-jump.anymeeting.com %suffix%
+    } Else {
+        Return
+    }
+    
+    createdGroups[port] := ""
+}
+
+EnsureProxiesRunning(port) {
     Loop
     {
         portState := TCP_PortExist(port)
@@ -57,6 +76,7 @@ EnsureProxiesRunning(port) {
             ToolTip port %port% is open (%portState%)
             return
         }
+        CreateProxyGroups(port)
         If (WinExist("ahk_group proxy" port)) {
             ToolTip putty for proxying port %port% is running
             return
@@ -65,6 +85,8 @@ EnsureProxiesRunning(port) {
         RunWait "%A_AhkPath%" "%A_ScriptDir%\intermedia_putty_jumpnets.ahk"
         WinWait ahk_group proxy%port%
         Sleep 1000
+        IfWinActive
+            WinWaitNotActive
     }
 }
 
