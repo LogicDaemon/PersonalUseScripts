@@ -6,7 +6,7 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
 
     VOL R: | FIND " Volume in drive R is RamDisk" && SET "RAMDrive=r:"
     IF NOT DEFINED RAMDrive VOL R: | FIND " Volume in drive R is RAM disk" && SET "RAMDrive=r:"
-    IF NOT DEFINED RAMDrive EXIT /B
+    IF NOT DEFINED RAMDrive EXIT /B 1
     
     rem SET "USERPROFILE=d:\Users\LogicDaemon"
     rem SET "APPDATA=%USERPROFILE%\AppData\Roaming"
@@ -170,16 +170,19 @@ rem     CALL :MoveToRAMDrive
     
     FOR /D %%P IN ("%LOCALAPPDATA%\Mozilla\Firefox\Profiles\*") DO @CALL :MoveToRAMDrive "%%~P"
     
-    FOR %%B IN ("%LOCALAPPDATA%\Google\Chrome" "%LOCALAPPDATA%\Google\Chrome Beta" "%LOCALAPPDATA%\Chromium" "%LOCALAPPDATA%\Vivaldi") DO @(
-        FOR /D %%P IN ("%%~B\User Data\Default" "%%~B\User Data\Profile *" "%%~B\User Data\Guest Profile" "%%~B\User Data\Guest Profile") DO @(
+    FOR %%B IN ("%LOCALAPPDATA%\Google\Chrome" ^
+                "%LOCALAPPDATA%\Google\Chrome Beta" ^
+                "%LOCALAPPDATA%\Chromium" ^
+                "%LOCALAPPDATA%\Vivaldi") DO @(
+        FOR /D %%P IN ("%%~B\User Data\Default" "%%~B\User Data\Profile *") DO @(
             FOR /D %%E IN ("%%~P" "%%~P\Storage\ext\*") DO (
                 FOR /F "usebackq delims=" %%A IN ("%~dp0Chrome_Profile_Temporary.txt") DO @IF EXIST "%%~E\%%~A" CALL :MoveToRAMDrive "%%~E\%%~A"
             )
         )
+        CALL :MoveToRAMDrive "%%~B\User Data\Guest Profile"
         FOR /D %%C IN ("%%~B\User Data\Crashpad" "%%~B\User Data\ShaderCache") DO @(
             IF EXIST "%%~C" CALL :MoveToRAMDrive "%%~C"
         )
-        IF EXIST "%%~P\User Data\Crashpad" CALL :MoveToRAMDrive "%%~B\User Data\Crashpad"
     )
 
     SET "tryRenaming="
@@ -219,25 +222,35 @@ EXIT /B
 EXIT /B
 )
 :MkdirMissingTreeWithPermissions <source> <destination>
-(
+@(
     SET "sourceDir=%~dp1"
     SET "destinationDir=%~dp2"
 )
-(
+@(
     IF "%sourceDir:~-1%"=="\" SET "sourceDir=%sourceDir:~0,-1%"
     IF "%destinationDir:~-1%"=="\" SET "destinationDir=%destinationDir:~0,-1%"
 )
-IF NOT EXIST "%destinationDir%" CALL :MkdirMissingTreeWithPermissions "%sourceDir%" "%destinationDir%"
+@IF NOT EXIST "%destinationDir%" CALL :MkdirMissingTreeWithPermissions "%sourceDir%" "%destinationDir%"
 :CopyDirPermissions <source> <destination>
-(
+@(
+    IF DEFINED acfile GOTO :CopyDirPermissionsTmpPathDefined
+    SET "s=%RANDOM%"
+)
+@(
+    IF EXIST "%RAMDrive%\Temp\acl%s%.tmp" GOTO :CopyDirPermissions
+    SET "aclfile=%RAMDrive%\Temp\acl%s%.tmp"
+    SET s=
+)
+:CopyDirPermissionsTmpPathDefined
+@(
     IF NOT EXIST %2 MKDIR %2
     PUSHD "%~1" && (
-        icacls . /save "%RAMDrive%\Temp\acl.tmp"
+        icacls . /save "%aclfile%"
         POPD
         PUSHD "%~2" || EXIT /B
-        icacls . /restore "%RAMDrive%\Temp\acl.tmp"
+        icacls . /restore "%aclfile%"
         POPD
-        DEL "%RAMDrive%\Temp\acl.tmp"
+        DEL "%aclfile%"
     )
     EXIT /B
 )

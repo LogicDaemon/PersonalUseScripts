@@ -12,7 +12,8 @@
                         "console": "integratedTerminal",
                         "justMyCode": true,
                         "env": {
-                                // "GEVENT_SUPPORT": "True"
+                                // "GEVENT_SUPPORT": "True",
+                                "DEBUG": "1",
                         },
                 },
                 {
@@ -27,6 +28,7 @@
                         "justMyCode": true,
                         "env": {
                                 // "GEVENT_SUPPORT": "True"
+                                "DEBUG": "1",
                         },
                 }
         ]
