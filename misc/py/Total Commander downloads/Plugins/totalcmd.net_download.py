@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-'''
-Download plugins from totalcmd.net
-'''
+""" Download plugins from totalcmd.net """
 
 from __future__ import annotations, generator_stop
 
+import argparse
 import email.utils
 import logging
 import os
@@ -12,17 +11,18 @@ import posixpath
 import re
 import sys
 import time
-from enum import Enum
+from enum import StrEnum
 from typing import NoReturn, Optional, Tuple, TypedDict, Union, Unpack
 
 import httpx
-import lxml
-import lxml.html
+import lxml  # type: ignore
+import lxml.html  # type: ignore
 from packaging import version
 
-from rich import progress
-# except ImportError:
-#     from pip._vendor.rich import progress
+try:
+    from rich import progress
+except ImportError:
+    from pip._vendor.rich import progress
 
 log = logging.getLogger(
     os.path.basename(__file__) if __name__ == '__main__' else __name__)
@@ -49,18 +49,18 @@ def init_httpx_client(**kwargs: Unpack[HttpxArgs]) -> httpx.Client:
 
 def get_env_log_level(
         default=logging.DEBUG if __debug__ else logging.INFO) -> int:
-    ''' Get the log level from the environment variable LOG_LEVEL '''
+    """ Get the log level from the environment variable LOG_LEVEL """
     env_log_level = os.environ.get('LOG_LEVEL')
     if env_log_level not in ('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'):
         return default
     return getattr(logging, env_log_level.upper())
 
 
-class PluginCategory(Enum):
-    content = 'Content'
-    filesystem = 'Filesystem'
-    lister = 'Lister'
-    packer = 'Packer'
+class PluginCategory(StrEnum):
+    CONTENT = 'Content'
+    FILESYSTEM = 'Filesystem'
+    LISTER = 'Lister'
+    PACKER = 'Packer'
 
 
 class TotalcmdNetPluginData:
@@ -110,11 +110,11 @@ class TotalcmdNetPluginData:
             url.join(short_url) for short_url in page.xpath(  # type: ignore
                 '//ul[contains(@class, "download_links")]//a/@href')
         ]
-        # self.whatsnew = page.xpath('/html/body/table/tbody/tr/td/table[2]/tbody/tr/td[1]/center[2]/textarea')[0].text_content()
+        # self.whatsnew = page.xpath('/html/body/table/tbody/tr/td/table[2]/tbody/tr/td[1]/center[2]/textarea')[0].text_content()  # NOQA: E501
         whatsnew_elem_title = "What's new"
         try:
             self.whatsnew = page.xpath(
-                f'//center/b[contains(text(), "{whatsnew_elem_title}")]/following::textarea'
+                f'//center/b[contains(text(), "{whatsnew_elem_title}")]/following::textarea'  # NOQA: E501
             )[0].text  # type: ignore
         except IndexError:
             self.whatsnew = None
@@ -124,7 +124,7 @@ class TotalcmdNetPluginData:
         return f'{self.__class__.__name__}({self.name} {self.version})'
 
     def __str__(self) -> str:
-        return f'{self.name} {self.version} ({self.category})\n{self.download_urls}\n{self.whatsnew}'
+        return f'{self.name} {self.version} ({self.category})\n{self.download_urls}\n{self.whatsnew}'  # NOQA: E501
 
 
 def download_file(
@@ -153,7 +153,7 @@ def download_file(
             destination_fname: str = posixpath.basename(server_filename)
             if not destination_fname:
                 raise ValueError(
-                    f'Cannot determine destination filename from {server_filename}'
+                    f'Cannot determine destination filename from {server_filename}'  # NOQA: E501
                 )
 
             destination = os.path.join(dest_dir, destination_fname)
@@ -162,7 +162,7 @@ def download_file(
             logging.info('Saving %i bytes to %s...', full_len, destination)
             last_modified = email.utils.parsedate(
                 dl.headers.get('last-modified'))
-            # check that currently downloaded file is not the same as on the server
+            # check that currently downloaded file is not the same as on the server  # NOQA: E501
             if last_modified and os.path.exists(destination):
                 if abs(
                         os.path.getmtime(destination) -
@@ -204,7 +204,7 @@ def download_file(
 
 
 def update_descript_ion(path: str, description: str, encoding='utf-8') -> None:
-    ''' Update descript.ion file for the given path with the given description
+    """ Update descript.ion file for the given path with the given description
         Accroding to https://stackoverflow.com/a/15808848/1421036, descript.ion
         file format is:
         ```
@@ -218,7 +218,7 @@ def update_descript_ion(path: str, description: str, encoding='utf-8') -> None:
         Apparently, the two extra characters at the end of the line signal the
         end of a multiline comment. If removed, the comment is rendered as a
         single line in the GUI, and the '\n' sequences are displayed literally.
-    '''
+    """  # NOQA: E501
     dirname = path
     while dirname:
         dirname, described_file_name = os.path.split(dirname)
@@ -286,7 +286,6 @@ def update_descript_ion(path: str, description: str, encoding='utf-8') -> None:
 
 
 def main() -> NoReturn:
-    import argparse
     parser = argparse.ArgumentParser(
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter)
