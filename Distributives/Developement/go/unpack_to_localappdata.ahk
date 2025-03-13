@@ -27,7 +27,7 @@ Loop Files, go1.*.windows-amd64.*
 }
 If (VersionCompare(verLatest, verInstalled, False)) {
     newVerDir = %LocalAppData%\Programs\go-%verLatest%
-    Run "%exe7z%" x -aoa -o"%newVerDir%" -- "%pathLatest%"
+    RunWait "%exe7z%" x -aoa -o"%newVerDir%" -- "%pathLatest%"
     UpdateJunction(newVerDir "\go", LocalAppData "\Programs\go")
     ; SetEnvVarIfDiffers("GOROOT", "%LOCALAPPDATA%\Programs\go")
     Run compact.exe /C /S /EXE:LZX "%newVerDir%", %newVerDir%, Min
