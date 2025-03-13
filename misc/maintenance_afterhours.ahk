@@ -44,7 +44,12 @@ definitelyIgnore := { "7z": ""
                     , "wmv": ""
                     , "xz": ""
                     , "zip": "" }
+                    
+; --- Cleanup ---
+; Remove Microsoft Edge auto-launch
+Run "%A_AhkPath%" "%A_ScriptDir%\RemoveMicrosoftEdgeAutoLaunch.ahk"
 
+; Check if VS Code is running
 For i, procName in ["Code.exe", "Code - Insiders.exe", "code-insiders.exe"] {
     Process Exist, %procName%
     If (ErrorLevel) {
@@ -52,44 +57,55 @@ For i, procName in ["Code.exe", "Code - Insiders.exe", "code-insiders.exe"] {
         break
     }
 }
-If (!foundVSCode)
-    KillProcesses([ "git.exe" ])
+If (!foundVSCode) {; VS Code is not running
+    KillProcesses([ "git.exe" ]) ; Kill git.exe to avoid update issues
+}
+
+; Hard link duplicates between VS Code and VS Code Insiders extensions and compact them
+RunWait "%LocalAppData%\Programs\DFHL_2.6\DFHL.exe" /r /l /o .vscode .vscode-insiders, %USERPROFILE%, Hide
+For _, comprDir in [ USERPROFILE "\.vscode"
+                , USERPROFILE "\.vscode-insiders\" ] {
+    If (FileExist(comprDir)) {
+        CompactCompressible(A_LoopFileFullPath "\Data")
+    }
+}
 
 SetWorkingDir %A_ScriptDir%
-Run "%A_AhkPath%" "%A_ScriptDir%\vscode-update.ahk"
-Run "%A_AhkPath%" "%A_ScriptDir%\vscode-insiders-update.ahk"
-Run "%A_AhkPath%" "%A_ScriptDir%\update_go.ahk"
-Run "%A_AhkPath%" "%A_ScriptDir%\update_KeePass.ahk"
-Run "%A_AhkPath%" "%A_ScriptDir%\RemoveMicrosoftEdgeAutoLaunch.ahk"
-Run "%A_AhkPath%" "%A_ScriptDir%\scoop_update_apps.ahk"
 
+; --- Update ---
+; Start updates without administrator privileges
+For script in [ "vscode-update.ahk"
+              , "vscode-insiders-update.ahk"
+              , "update_go.ahk"
+              , "update_KeePass.ahk"
+              , "scoop_update_apps.ahk" ] {
+    RunWait "%A_AhkPath%" "%A_ScriptDir%\nprivRun.ahk" "%A_ScriptDir%\%script%"
+}
+
+; These also do not require admin privileges, but their window will appear
+; and steal focus if started through nprivRun.ahk
 Run %comspec% /C "%A_ScriptDir%\Update_SysInternals.cmd",, Hide
-
 RunWait %comspec% /C "%A_ScriptDir%\update-git-for-windows.cmd",, Hide
 RunWait %comspec% /C "%A_ScriptDir%\update_aws_cli.cmd",, Hide
 RunWait %comspec% /C "%A_ScriptDir%\update_obs.cmd",, Hide
+
 If (FileExist("%LOCALAPPDATA%\Programs\msys64\ucrt64.exe")) {
     RunWait "%LOCALAPPDATA%\Programs\msys64\ucrt64.exe" pacman -Suy --noconfirm,, Hide
     RunWait "%LOCALAPPDATA%\Programs\msys64\ucrt64.exe" paccache -r --noconfirm,, Hide
 }
 
+; --- Backup ---
+; Start the host-specific backup script
 RegRead hostname, HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters, Hostname
 backupScript=%A_ScriptDir%\backup_%hostname%.cmd
 If (FileExist(backupScript))
     Run %comspec% /C "%A_ScriptDir%\backup_%hostname%.cmd",, Hide
 
+; If the file history is local, compact files in it
 comprDir := "w:\FileHistory\" A_UserName
 If (FileExist(comprDir)) {
     Loop Files, %comprDir%\*.*, D
         CompactCompressible(A_LoopFileFullPath "\Data")
-}
-
-RunWait "%LocalAppData%\Programs\DFHL_2.6\DFHL.exe" /r /l /o .vscode .vscode-insiders, %USERPROFILE%, Min
-For _, comprDir in [ USERPROFILE "\.vscode"
-                   , USERPROFILE "\.vscode-insiders\" ] {
-    If (FileExist(comprDir)) {
-        CompactCompressible(A_LoopFileFullPath "\Data")
-    }
 }
 
 ExitApp
