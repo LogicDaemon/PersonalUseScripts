@@ -19,23 +19,50 @@ ExitApp
 
 RunScoopUpdates(scoopBaseDir, logPath, scoopPostUpdateScripts, scoopNoAutoUpdate) {
     local
+    
+    If (scoopNoAutoUpdate.Count() == 0) {
+        ; Use scoop update all if there are no exceptions
+        updateAll := True
+    } Else {
+        ; Check if any of the excepted apps actually installed.
+        ; If not, use scoop update all.
+        updateAll := True
+        For appName in scoopNoAutoUpdate {
+            If (FileExist(scoopBaseDir "\apps\" appName)) {
+                updateAll := False
+                Break
+            }
+
+        }
+    }
+
+    If (updateAll) {
+        FileAppend Updating all apps...`n, %logPath%, CP1
+        RunWait %comspec% /C "scoop.cmd update -a >>"%logPath%" 2>&1",, Hide
+        If (ErrorLevel)
+            Return
+        FileAppend Cleaning up all apps...`n, %logPath%, CP1
+        RunWait %comspec% /C "scoop.cmd cleanup -a >>"%logPath%" 2>&1",, Hide
+    }
 
     Loop Files, %scoopBaseDir%\apps\*.*, D
     {
         If (scoopNoAutoUpdate.HasKey(A_LoopFileName))
             Continue
-        FileAppend Updating %A_LoopFileName%...`n, %logPath%, CP1
-        RunWait %comspec% /C "scoop.cmd update "%A_LoopFileName%" >>"%logPath%" 2>&1",, Min
-        If (ErrorLevel)
-            Continue
-        FileAppend Cleaning up %A_LoopFileName%...`n, %logPath%, CP1
-        RunWait %comspec% /C "scoop.cmd cleanup "%A_LoopFileName%" >>"%logPath%" 2>&1",, Min
+        If (!updateAll) {
+            FileAppend Updating %A_LoopFileName%...`n, %logPath%, CP1
+            RunWait %comspec% /C "scoop.cmd update "%A_LoopFileName%" >>"%logPath%" 2>&1",, Hide
+            If (ErrorLevel)
+                Continue
+            FileAppend Cleaning up %A_LoopFileName%...`n, %logPath%, CP1
+            RunWait %comspec% /C "scoop.cmd cleanup "%A_LoopFileName%" >>"%logPath%" 2>&1",, Hide
+        }
         postUpdateScript := scoopPostUpdateScripts[A_LoopFileName]
         If (postUpdateScript) {
             FileAppend Running post-update script %postUpdateScript%...`n, %logPath%, CP1
             SplitPath postUpdateScript,,, scriptExt
             If (scriptExt = "reg")
-                RunWait %comspec% /C "REG IMPORT "%A_LoopFileFullPath%\current\%postUpdateScript%" >>"%logPath%" 2>&1",, Min
+                RunWait %comspec% /C "REG IMPORT "%A_LoopFileFullPath%\current\%postUpdateScript%" >>"%logPath%" 2>&1",, Hide
             Else If (scriptExt = "ahk")
                 Run %comspec% /C ""%A_AhkPath%" "%A_LoopFileFullPath%\current\%postUpdateScript%" >>"%logPath%" 2>&1"
             Else
@@ -43,7 +70,7 @@ RunScoopUpdates(scoopBaseDir, logPath, scoopPostUpdateScripts, scoopNoAutoUpdate
         }
     }
     
-    RunWait compact.exe /C "%logPath%",, Min UseErrorLevel
+    RunWait compact.exe /C "%logPath%",, Hide
 }
 
 GetScoopPostUpdateScripts() {
