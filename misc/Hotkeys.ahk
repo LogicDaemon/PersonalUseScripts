@@ -405,7 +405,7 @@ return
 #!Numpad9::
     If (WinActive("ahk_group WindowsActionCenter")) {
         MoveActionCenter(SubStr(A_ThisLabel,0))
-        return
+        Return
     }    
     If ( A_TimeSincePriorHotkey < 1000) {
         If (A_PriorHotkey == A_ThisHotkey)
@@ -646,7 +646,7 @@ MoveToCorner(HorizSplit, VertSplit, MonNum := -1) {
     ; -1 for monitor of current window, "" for primary monitor
     
     IfWinNotExist A
-        return
+        Return
     
     ; Now get window position
     WinGetPos newX, newY, newW, newH
@@ -703,15 +703,15 @@ lReload:
     MsgBox 4,, The script could not be reloaded. Would you like to open it for editing?
     IfMsgBox, Yes
         RunDelayed(notepad2exe " """ A_ScriptFullPath """")
-return
+Return
     
 lToggleWindowMonitor:
     If (WinActive("ahk_group WindowsActionCenter")) {
         MoveActionCenter()
-        return
+        Return
     }
     IfWinNotExist A
-        return
+        Return
     KeyWait LWin, L
     KeyWait RWin, L
     ;~ Send {LWin Up}{RWin Up}
@@ -739,49 +739,58 @@ lMaximizeWindow:
     Else
         PostMessage 0x112, 0xF030,,, A  ; 0x112 = WM_SYSCOMMAND, 0xF030 = SC_MAXIMIZE
     ; ToDo: restore window original position
-    return
+    Return
 
-RunDelayed(ByRef params*) { ; File [, Arguments, Directory, Operation, Show]; Show is as in ShellRun or -1 to run as ahk script (w/o ShellRun)
+RunDelayed(ByRef params*) {
+    ; File [, Arguments, Directory, Operation, Show]; for ShellRun
+    ; File [, Arguments, Directory, Options, -1]; for Run
     static runQueue := []
     
     If (IsObject(params) && nparams := params.Length()) {
         AlternateHotkeysOff()
         RunQueue.Push((nparams==1) ? params[1] : params)
         SetTimer %A_ThisFunc%, 100
-        ToolTip % "Added " ((nparams==1) ? params[1] : params) " to launch queue"
+        textAdded := params[1]
+        SplitPath textAdded, textAdded
+        textAdded .= " " params[2]
+        ToolTip % "Added " textAdded " to launch queue"
         SetTimer RemoveToolTip, 1000
-        return
+        Return
+    }
+    If (!runQueue.Length()) {
+        SetTimer ,,Off
+        Return
+    }
+    ToolTip
+
+    cmd := runQueue.Pop()
+    If (IsObject(cmd)) { ; an array
+        If (cmd[5] == -1) ; [executable name, args, workdir, options, -1]
+            RunAndActivate(cmd*)
+        Else ; [executable name, args, workdir, operation, show]
+            nprivRun(cmd*)
+        Return
+    }
+    ; Just a string
+    If (!FileExist(cmd)) { ; unknown contents, try to run it as is
+        RunAndActivate("", cmd)
+        Return
+    }
+    ; Executable name, with no parameters or workdir
+    SplitPath cmd, exename, wd, ext
+    ; this does not find any window running under other user / non-admin :: UniqueID := WinExist("ahk_exe" exename)
+    If (ext == "exe" && (UniqueID := WinExist("ahk_exe " exename)) && !WinActive("ahk_id " UniqueID)) {
+        WinGet state, MinMax, ahk_exe %exename%
+        If (state == -1)
+            WinRestore ahk_exe %exename%
+        WinActivate
+        ToolTip % "Activated " cmd
+        SetTimer RemoveToolTip, 1000
     } Else {
-        If (cmd := runQueue.Pop()) {
-            If (IsObject(cmd)) { ; not only executable name
-                If (cmd[5] == -1)
-                    RunAndActivate(cmd*)
-                Else
-                    nprivRun(cmd*)
-            } Else { ; only executable name, with no parameters or workdir
-                If (FileExist(cmd)) {
-                    SplitPath cmd, exename, wd, ext
-                    ; this does not find any window running under other user / non-admin :: UniqueID := WinExist("ahk_exe" exename)
-                    If (ext == "exe" && (UniqueID := WinExist("ahk_exe " exename)) && !WinActive("ahk_id " UniqueID)) {
-                        WinGet state, MinMax, ahk_exe %exename%
-                        If (state == -1)
-                            WinRestore ahk_exe %exename%
-                        WinActivate
-                        ToolTip % "Activated " cmd
-                        SetTimer RemoveToolTip, 1000
-                    } Else {
-                        cmdAndArgs := ext = "ahk" ? [A_AhkPath, """" cmd """"]
-                                       : ext = "cmd" ? [comspec, " /C """ cmd """"]
-                                       : ["", cmd]
-                        RunAndActivate(cmdAndArgs*)
-                    }
-                } Else {
-                    RunAndActivate("", cmd)
-                }
-            }
-        } Else {
-            SetTimer ,,Off
-        }
+        cmdAndArgs := ext = "ahk" ? [A_AhkPath, """" cmd """"]
+                       : ext = "cmd" ? [comspec, " /C """ cmd """"]
+                       : ["", cmd]
+        RunAndActivate(cmdAndArgs*)
     }
 }
 
