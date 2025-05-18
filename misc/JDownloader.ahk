@@ -29,16 +29,21 @@ If (FileExist(jdDir "\cfg\uid")) {
 }
 If (!backupFailed)
     SetTimer BackupConfig, 1800000 ; 30 minutes
-Loop Files, %ProgramFiles%\Java\jre*, D
-{
-    jreDir := A_LoopFileFullPath
-    break
+For jreDirMask in [ ProgramFiles "\Java\jre*"
+                  , FindScoopBaseDir() "\apps\openjdk\current" ] {
+    Loop Files, %jreDirMask%, D
+    {
+        If (FileExist(jreExePath := A_LoopFileFullPath "\bin\javaw.exe"))
+            break
+        jreExePath := ""
+    }
 }
+
 jdWinHID := WinExist(jdWinTitle)
 If (args || !jdWinHID) {
     TrayTip JDownloader starter, Starting JDownloader...
     Menu Tray, Tip, Starting JDownloader...
-    Run "%jreDir%\bin\javaw.exe" -Xmx8G -jar "%jdDir%\JDownloader.jar" %args%, %jdDir%, jdPID
+    Run "%jreExePath%" -Xmx8G -jar "%jdDir%\JDownloader.jar" %args%, %jdDir%, jdPID
     Sleep 5000
 } Else If (jdWinHID) {
     TrayTip JDownloader starter, JDownloader is already running
@@ -148,3 +153,4 @@ Process_mode_background_end() {
 #include <ParseScriptCommandLine>
 #include <find7zexe>
 #include <GetDropboxDir>
+#include <FindScoopBaseDir>
