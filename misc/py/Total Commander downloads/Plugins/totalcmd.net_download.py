@@ -27,11 +27,11 @@ except ImportError:
 log = logging.getLogger(
     os.path.basename(__file__) if __name__ == '__main__' else __name__)
 
-HttpxArgs = TypedDict('HttpxArgs', {
-    'http2': bool,
-    'follow_redirects': bool,
-},
-                      total=False)
+HttpxArgs = TypedDict(
+    'HttpxArgs', {
+        'http2': bool,
+        'follow_redirects': bool,
+    }, total=False)
 
 httpx_client_default_args = HttpxArgs(
     http2=True,
@@ -79,8 +79,7 @@ class TotalcmdNetPluginData:
         if httpx_client is None:
             httpx_client = init_httpx_client(follow_redirects=True)
         self.urlname = name_in_url
-        url = httpx.URL(
-            f'https://www.totalcmd.net/plugring/{name_in_url}.html')
+        url = httpx.URL(f'https://www.totalcmd.net/plugring/{name_in_url}.html')
         page = lxml.html.fromstring(httpx_client.get(url).content)
 
         assert isinstance(page, lxml.html.HtmlElement)
@@ -172,9 +171,9 @@ def download_file(
                     break
             # save the file
             with open(destination, 'wb'), open(tmp_destination, 'wb') as f:
-                progress_task_id = (progressbar.add_task(
-                    destination_fname, total=full_len) if full_len
-                                    and progressbar is not None else None)
+                progress_task_id = (
+                    progressbar.add_task(destination_fname, total=full_len)
+                    if full_len and progressbar is not None else None)
                 accumulated_len = 0
                 for chunk in dl.iter_bytes():
                     inc_len = f.write(chunk)
@@ -184,8 +183,8 @@ def download_file(
                     else:
                         assert progressbar is not None
                         # print_progress(current=acc_len, total=full_len)
-                        progressbar.update(progress_task_id,
-                                           completed=accumulated_len)
+                        progressbar.update(
+                            progress_task_id, completed=accumulated_len)
             os.replace(tmp_destination, destination)
             if progress_task_id is None:
                 print(file=sys.stderr)
@@ -197,8 +196,7 @@ def download_file(
 
             # set file time to last modified time on server
             if last_modified:
-                os.utime(destination,
-                         (time.time(), time.mktime(last_modified)))
+                os.utime(destination, (time.time(), time.mktime(last_modified)))
             break
     return destination, dl.url
 
@@ -251,8 +249,8 @@ def update_descript_ion(path: str, description: str, encoding='utf-8') -> None:
     else:
         curr_desc_line_pos = -1
     if curr_desc_line_pos >= 0:
-        curr_desc_offset = (curr_desc_line_pos + len(desc_filename_enc) +
-                            len(space))
+        curr_desc_offset = (
+            curr_desc_line_pos + len(desc_filename_enc) + len(space))
         next_desc_pos = orig.find(lf, curr_desc_offset) + len(lf)
         current_desc = orig[curr_desc_offset:next_desc_pos].rstrip(b'\r' + lf)
         if enc_description in current_desc:
@@ -290,17 +288,14 @@ def main() -> NoReturn:
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('plugin_name')
-    parser.add_argument('--debug',
-                        '-d',
-                        action='store_true',
-                        help='Debug mode')
+    parser.add_argument('--debug', '-d', action='store_true', help='Debug mode')
     args = parser.parse_args()
     logging.basicConfig(
         level=logging.DEBUG if args.debug else get_env_log_level())
 
     with init_httpx_client() as httpx_client:
-        plugin_data = TotalcmdNetPluginData(args.plugin_name,
-                                            httpx_client=httpx_client)
+        plugin_data = TotalcmdNetPluginData(
+            args.plugin_name, httpx_client=httpx_client)
         dest_dir = os.path.join(
             os.path.realpath(os.path.dirname(__file__)),
             'Sorted',
@@ -316,8 +311,7 @@ def main() -> NoReturn:
                 f.write(plugin_data.whatsnew)
             os.replace(whatsnew_fname_tmp, whatsnew_fname)
         with progress.Progress(
-                progress.TextColumn(
-                    '[progress.description]{task.description}'),
+                progress.TextColumn('[progress.description]{task.description}'),
                 progress.BarColumn(),
                 progress.TextColumn(
                     '[progress.percentage]{task.percentage:>3.0f}%'),

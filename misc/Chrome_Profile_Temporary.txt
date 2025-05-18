@@ -28,3 +28,4 @@ Service Worker\ScriptCache
 Session Storage
 VideoDecodeStats
 WebRTC Logs
+

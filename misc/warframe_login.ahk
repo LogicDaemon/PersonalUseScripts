@@ -18,7 +18,7 @@ Exit
 #!+F4::
     SendLoginPassword(SubStr(A_ThisHotkey, 0))
 Exit
-!F4:: Run taskmgr.exe
+>!F4:: Run taskmgr.exe
 #IfWinActive
 
 PrepareLogin(index) {

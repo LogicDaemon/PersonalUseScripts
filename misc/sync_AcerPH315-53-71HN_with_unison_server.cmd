@@ -13,20 +13,23 @@ SETLOCAL ENABLEEXTENSIONS
     rem "%LocalAppData%\Programs\msys64\ucrt64.exe" 
     SET "PATH=%LocalAppData%\Programs\msys64\usr\bin;%PATH"
 
-    %unisontext% Distributives_u327016.your-storagebox.de -path "Soft/Keyboard Tools/AutoHotkey/ver.zip.txt" -prefer "socket://localhost:10355/v:/Distributives" -auto -batch
+    %unisontext% "Distributives@u327016.your-storagebox.de" ^
+        -root "%unisonServer%v:/Distributives" ^
+        -path "Soft/Keyboard Tools/AutoHotkey/ver.zip.txt" ^
+        -prefer "%unisonServer%v:/Distributives" -auto -batch
     
     IF DEFINED filterSyncs IF NOT "%filterSyncs%"=="0" (
         ECHO Checking for changes
-        <NUL %unisontext% Distributives_u327016.your-storagebox.de "-auto=false" && (
+        <NUL %unisontext% "Distributives@u327016.your-storagebox.de" -root "%unisonServer%v:/Distributives" -auto=false && (
             ECHO No changes, exiting
             PING 127.0.0.1 >NUL
             EXIT /B
         )
     ) ELSE (
         rem ECHO Synchronizing Soft and drivers without updates
-        rem %unisontext% Distributives_u327016.your-storagebox.de %unisonopt% -noupdate -batch -path Soft -path Drivers -path "Soft com freeware" -path "Soft com license" -path "Soft FOSS" -path "Soft private use only" socket://localhost:10355/v:/Distributives
+        rem %unisontext% Distributives_u327016.your-storagebox.de %unisonopt% -noupdate -batch -path Soft -path Drivers -path "Soft com freeware" -path "Soft com license" -path "Soft FOSS" -path "Soft private use only" %unisonServer%v:/Distributives
         rem -noupdate is ineffective, and rsync will add new files anyway
     )
     ECHO Starting full sync with manual confirmation
-    %syncprog% Distributives_u327016.your-storagebox.de %unisonopt%
+    %syncprog% "Distributives@u327016.your-storagebox.de" -root "%unisonServer%v:/Distributives" %unisonopt%
 )
