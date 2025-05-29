@@ -72,7 +72,7 @@ For i, exe64suffix in (A_Is64bitOS ? ["64", ""] : [""]) {
                                   , SystemDrive "\SysUtils\SysInternals\procexp" exe64suffix ".exe")
 }
 vscode := A_ScriptDir "\vscode-any.ahk"
-notepad2exe := FirstExisting(laPrograms "\Total Commander\notepad2.exe"
+notepad2exe := FirstExisting(laPrograms "\Total Commander\bin\notepad2.exe"
                            , totalcmdexe "\..\notepad2.exe"
                            , ProgramFiles "\notepad2\notepad2.exe"
                            , ProgramFilesx86 "\notepad2\notepad2.exe"
@@ -152,6 +152,9 @@ Launch_App2::F15
     ::[~~] ::≈ `
     ::[+-] ::± `
     ;physics
+    ::[mu] ::μ ` ; U+03BC ce bc 	GREEK SMALL LETTER MU
+    ::[deg] ::° ` ; U+00B0 c2 b0	DEGREE SIGN
+    ::[degC] ::℃ ` ; U+2103 e2 84 83    DEGREE CELSIUS
     ::[ps] ::㎰ ` ; U+33B0 e3 8e b0 	SQUARE PS
     ::[ns] ::㎱ ` ; U+33B1 e3 8e b1 	SQUARE NS
     ::[us] ::㎲ ` ; U+33B2 e3 8e b2 	SQUARE MU L
@@ -405,7 +408,7 @@ return
 #!Numpad9::
     If (WinActive("ahk_group WindowsActionCenter")) {
         MoveActionCenter(SubStr(A_ThisLabel,0))
-        Return
+        return
     }    
     If ( A_TimeSincePriorHotkey < 1000) {
         If (A_PriorHotkey == A_ThisHotkey)
@@ -646,7 +649,7 @@ MoveToCorner(HorizSplit, VertSplit, MonNum := -1) {
     ; -1 for monitor of current window, "" for primary monitor
     
     IfWinNotExist A
-        Return
+        return
     
     ; Now get window position
     WinGetPos newX, newY, newW, newH
@@ -702,16 +705,16 @@ lReload:
     Sleep 300 ; if successful, the reload will close this instance during the Sleep, so the line below will never be reached.
     MsgBox 4,, The script could not be reloaded. Would you like to open it for editing?
     IfMsgBox, Yes
-        RunDelayed(notepad2exe " """ A_ScriptFullPath """")
-Return
+        RunDelayed(notepad2exe, """" A_ScriptFullPath """")
+return
     
 lToggleWindowMonitor:
     If (WinActive("ahk_group WindowsActionCenter")) {
         MoveActionCenter()
-        Return
+        return
     }
     IfWinNotExist A
-        Return
+        return
     KeyWait LWin, L
     KeyWait RWin, L
     ;~ Send {LWin Up}{RWin Up}
@@ -739,7 +742,7 @@ lMaximizeWindow:
     Else
         PostMessage 0x112, 0xF030,,, A  ; 0x112 = WM_SYSCOMMAND, 0xF030 = SC_MAXIMIZE
     ; ToDo: restore window original position
-    Return
+    return
 
 RunDelayed(ByRef params*) {
     ; File [, Arguments, Directory, Operation, Show]; for ShellRun

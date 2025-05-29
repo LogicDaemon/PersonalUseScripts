@@ -1,0 +1,2 @@
+path = "%LOCALAPPDATA%\Programs\scoop\apps\git\current\usr\bin\less.exe"
+args = -fr

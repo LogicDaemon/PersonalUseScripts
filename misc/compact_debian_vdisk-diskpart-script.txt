@@ -1,0 +1,2 @@
+select vdisk file="c:\Users\aderbenev\AppData\Local\Packages\TheDebianProject.DebianGNULinux_76v4gfsz19hv4\LocalState\ext4.vhdx"
+compact vdisk
