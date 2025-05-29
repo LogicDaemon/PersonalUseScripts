@@ -3,7 +3,8 @@ REM by LogicDaemon <www.logicdaemon.ru>
 REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <http://creativecommons.org/licenses/by-sa/4.0/deed.ru>.
 
     IF "%~1"=="" GOTO :find7zexe
-    CALL :find7zexe & IF NOT DEFINED exe7z EXIT /B
+    CALL :find7zexe || EXIT /B
+    IF NOT DEFINED exe7z EXIT /B 1
 )
 @IF EXIST "%LocalAppData%\Programs\7-max\7maxc.exe" SET "exe7z="%LocalAppData%\Programs\7-max\7maxc.exe" %exe7z%"
 (
@@ -13,7 +14,8 @@ REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 In
 
 :find7zexe
 @(
-    IF NOT "%exe7z%"=="" CALL :Check7zDir "%exe7z%" && EXIT /B
+    IF NOT "%exe7z%"=="" CALL :Check7zexe %exe7z% && EXIT /B 0
+    CALL :Check7zexe 7z.exe && EXIT /B 0
     FOR /F "usebackq tokens=2*" %%A IN (`REG QUERY "HKEY_CURRENT_USER\Software\7-Zip" /v "Path"`) DO @CALL :Check7zDir "%%~B" && EXIT /B
     FOR /F "usebackq tokens=2*" %%A IN (`REG QUERY "HKEY_LOCAL_MACHINE\Software\7-Zip" /v "Path"`) DO @CALL :Check7zDir "%%~B" && EXIT /B
     FOR /F "usebackq tokens=2*" %%A IN (`REG QUERY "HKEY_LOCAL_MACHINE\Software\7-Zip" /v "Path" /reg:64`) DO @CALL :Check7zDir "%%~B" && EXIT /B
@@ -27,13 +29,22 @@ REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 In
     FOR /F "usebackq tokens=2*" %%A IN (`REG QUERY "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\7-Zip" /v "UninstallString" /reg:64`) DO @CALL :Check7zDir "%%~dpB" && EXIT /B
     FOR /F "usebackq tokens=2*" %%A IN (`REG QUERY "HKEY_CLASSES_ROOT\7-Zip.7z\shell\open\command" /ve`) DO @CALL :checkDirFrom1stArg %%B && EXIT /B
     
+    CALL "%~dp0find_exe.cmd" exe7z 7z.exe "%LOCALAPPDATA%\Programs\7-Zip\7z.exe"
+                                          "%ProgramFiles%\7-Zip\7z.exe" ^
+                                          "%ProgramFiles(x86)%\7-Zip\7z.exe" ^
+                                          "%SystemDrive%\Program Files\7-Zip\7z.exe" ^
+                                          "%SystemDrive%\Arc\7-Zip\7z.exe" ^
+                                          && EXIT /B 0
+
+    CALL :Check7zexe 7za.exe && EXIT /B 0
     SET "OS64Bit="
     IF /I "%PROCESSOR_ARCHITECTURE%"=="AMD64" SET "OS64Bit=1"
     IF DEFINED PROCESSOR_ARCHITEW6432 SET "OS64Bit=1"
-
-    CALL "%~dp0find_exe.cmd" exe7z 7z.exe "%ProgramFiles%\7-Zip\7z.exe" "%ProgramFiles(x86)%\7-Zip\7z.exe" "%SystemDrive%\Program Files\7-Zip\7z.exe" "%SystemDrive%\Arc\7-Zip\7z.exe"
-    IF ERRORLEVEL 1 IF DEFINED OS64Bit CALL "%~dp0find_exe.cmd" exe7z 7za64.exe
-    IF ERRORLEVEL 1 CALL "%~dp0find_exe.cmd" exe7z 7za.exe || (ECHO  & EXIT /B 9009)
+    IF DEFINED OS64Bit (
+        CALL :Check7zexe 7za64.exe && EXIT /B 0
+        CALL "%~dp0find_exe.cmd" exe7z 7za64.exe && EXIT /B 0
+    )
+    CALL "%~dp0find_exe.cmd" exe7z 7za.exe || (ECHO  & EXIT /B 9009)
 EXIT /B
 )
 :checkDirFrom1stArg <arg1> <anything else>
@@ -47,6 +58,14 @@ EXIT /B
 @(
     IF NOT EXIST "%dir7z%\7z.exe" EXIT /B 9009
     "%dir7z%\7z.exe" <NUL >NUL 2>&1 || IF ERRORLEVEL 9009 IF NOT ERRORLEVEL 9010 EXIT /B
+    ECHO Using exe7z="%dir7z%\7z.exe" >&2
     SET exe7z="%dir7z%\7z.exe"
 EXIT /B
+)
+:Check7zexe <exename>
+@(
+    %* <NUL >NUL 2>&1 || IF ERRORLEVEL 9009 IF NOT ERRORLEVEL 9010 EXIT /B
+    ECHO Using exe7z=%* >&2
+    SET "exe7z=%*"
+    EXIT /B 0
 )
