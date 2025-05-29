@@ -2,6 +2,11 @@
     SETLOCAL ENABLEEXTENSIONS
     IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     IF NOT DEFINED baseScripts SET "baseScripts=\Distributives\Local_Scripts\software_update\Downloader"
+    IF "%~d0"=="\\" (
+        SET "VENVPATH=%TEMP%\OBS-downloader.venv"
+    ) ELSE (
+        SET "VENVPATH=%~dp0.venv""
+    )
 )
 (
     rem aria2c --allow-overwrite=true https://obsproject.com/downloads/torrents/OBS-Studio-28.1.2-Full-Installer-x64.exe.torrent
@@ -10,8 +15,12 @@
     SET distcleanup=1
     rem CALL "%baseScripts%\_DistDownload.cmd" https://obsproject.com/download OBS-Studio-*-Full-x64.zip -ml1 -nd -p -A.zip
     rem FOR /F "usebackq delims=" %%A IN (`CURL -s "https://obsproject.com/download" ^| grep -P -o "\/\/[^^"">]+?OBS-Studio-[\d\.]+-Full-(Installer-x64\.exe\.torrent|x64\.zip)"`) DO CALL :download "https:%%~A"
-    IF NOT EXIST "%~dp0.venv" (CALL py.cmd -m venv "%~dp0.venv" || py -m venv "%~dp0.venv")
-    CALL "%~dp0.venv\Scripts\activate"
+    IF NOT EXIST "%VENVPATH%" (
+        CALL py.cmd -m venv "%VENVPATH%" || py -m venv "%VENVPATH%"
+        CALL "%VENVPATH%\Scripts\activate"
+        pip install -r "%~dp0requirements.txt"
+    )
+    CALL "%VENVPATH%\Scripts\activate"
     python "%~dp0download_from_main_page.py"
     EXIT /B
 )

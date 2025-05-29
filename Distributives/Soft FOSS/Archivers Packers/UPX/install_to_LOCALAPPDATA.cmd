@@ -6,14 +6,12 @@ SETLOCAL ENABLEEXTENSIONS
     CALL find7zexe.cmd
     CALL :IsOS64Bit && SET "distOSSuffix=win64" || SET "distOSSuffix=win32"
 )
-(
+@(
     CALL :InitRemembering
     FOR %%A IN ("%~dp0upx-*-%distOSSuffix%.zip") DO CALL :RememberIfLatest dstfname "%%~A"
     IF NOT DEFINED dstfname EXIT /B 1
 )
-@(
-    CALL :install "%dstfname%" "%LOCALAPPDATA%\Programs\" upx "upx-*-%distOSSuffix%" || EXIT /B
-)
+@CALL :install "%dstfname%" "%LOCALAPPDATA%\Programs\" upx "upx-*-%distOSSuffix%" || EXIT /B
 @(
     IF DEFINED installDest COMPACT /C /S:"%installDest%" /EXE:LZX
 EXIT /B
@@ -28,9 +26,22 @@ SET "unpSubdirMask=%~4"
 SET "unpTmp=%~2%~3.tmp"
 )
 @(
+    IF EXIST "%dstUnpName%" ECHO "%dstUnpName%" already exists
     RD /S /Q "%unpTmp%"
     %exe7z% x -xr!*.pdb -x!"$APPDATA" -x!"$PLUGINSDIR" -x!"uninstall.exe.nsis" -aos -y -o"%unpTmp%" -- "%src%" || EXIT /B
     SET "unpackedDir="
+    IF EXIST "%dstUnpName%" (
+        IF EXIST "%dstUnpName%.bak" RD /S /Q "%dstUnpName%.bak"
+        MOVE /Y "%dstUnpName%" "%dstUnpName%.bak"
+    )
+    IF NOT DEFINED unpSubdirMask (
+        MOVE "%unpTmp%" "%dstUnpName%"
+        ECHO N|RMDIR "%destFullName%"
+        ECHO N|DEL "%destFullName%"
+        MKLINK /J "%destFullName%" "%dstUnpName%"
+        SET "installDest=%dstUnpName%"
+        EXIT /B
+    )
     FOR /D %%A IN ("%unpTmp%\%unpSubdirMask%") DO @(
         IF DEFINED unpackedDir (
             ECHO Found multiple directories matching "%unpSubdirMask%" in "%src%". Cannot proceed.
@@ -41,11 +52,7 @@ SET "unpTmp=%~2%~3.tmp"
     )
 )
 @(
-    IF EXIST "%dstUnpName%" (
-        ECHO "%dstUnpName%" already exists
-    ) ELSE (
-        MOVE "%unpackedDir%" "%dstUnpName%"
-    )
+    MOVE "%unpackedDir%" "%dstUnpName%"
     RD /S /Q "%unpTmp%"
     ECHO N|RMDIR "%destFullName%"
     ECHO N|DEL "%destFullName%"
