@@ -1,8 +1,8 @@
 ﻿FirstExisting(paths*) {
-    local
+    Local
     For i,path in paths {
         If (FileExist(path))
-            return path
+            Return path
     }
-    return ""
+    Return ""
 }
