@@ -35,29 +35,31 @@ return
 RWin::
     ExitApp
 
-~*LButton::
-~*RButton::
+~*LButton:: MouseTooltip("🞀🖰", 1)
+~*RButton:: MouseTooltip("🖰🞂", 1)
 ~*MButton::
 ~*XButton1::
 ~*XButton2::
     MouseTooltip(SubStr(A_ThisHotkey, 3), 1)
     return
 
-~*LButton Up::
-~*RButton Up::
+~*LButton Up:: MouseTooltip("⯇🖰", 0)
+~*RButton Up:: MouseTooltip("🖰🞂", 0)
 ~*MButton Up::
 ~*XButton1 Up::
 ~*XButton2 Up::
     MouseTooltip(SubStr(A_ThisHotkey, 3, -3), 0)
     return
 
-~*WheelDown::
-~*WheelUp::
-~*WheelLeft::
-~*WheelRight::
-    MouseTooltip(SubStr(A_ThisHotkey, 3), 1)
-    MouseTooltip(SubStr(A_ThisHotkey, 3), 0)
-    return
+~*WheelDown::  ScrollTooltip("🢗")  ; DOWNWARDS WHITE ARROW WITHIN TRIANGLE ARROWHEAD
+~*WheelUp::    ScrollTooltip("🢕")  ; UPWARDS WHITE ARROW WITHIN TRIANGLE ARROWHEAD
+~*WheelLeft::  ScrollTooltip("🢔")  ; LEFTWARDS WHITE ARROW WITHIN TRIANGLE ARROWHEAD
+~*WheelRight:: ScrollTooltip("🢖")  ; RIGHTWARDS WHITE ARROW WITHIN TRIANGLE ARROWHEAD
+
+ScrollTooltip(name) {
+    RegisterKey("📜" name, 1)
+    RegisterKey("📜" name, 0)
+}
 
 MouseTooltip(mbuttons, state){
     RegisterKey(mbuttons, state)
@@ -83,9 +85,13 @@ RegisterKey(inputHook, kstate := 1, VK := 0, SC := 0) {
     local
     global IdleDelay, lastStatesText, inputString
     static keyStates := {}, prevKey, lastPressed, prevState, repeated := 0
-         , KeyMappingToName := { (Chr(27)): "Escape"
-                               , (Chr(32)): "Space"
-                               , (Chr(10)): "Enter" }
+         , SCMappingToName := { 1: "␛"      ; Escape
+                              , 14: "🔙"     ; Backspace
+                              , 28: "⌨️⏎"    ; Normal Enter
+                              , 284: "🔢↵" } ; KeyPad Enter
+         , VKMappingToName := { 13: "⏎"   ; Enter
+                              , 27: "␛"   ; Escape
+                              , 32: "␠" } ; Space
          , SkipRepeat := { "LShift": ""
                          , "RShift": ""
                          , "LControl": ""
@@ -102,12 +108,21 @@ RegisterKey(inputHook, kstate := 1, VK := 0, SC := 0) {
                             , "{PgUp}": ""
                             , "{PgDn}": "" }
     
+    textKey := ""
     If (VK || SC) {
-        singleKey := GetKeyName(Format("vk{:02x}sc{:02x}", VK, SC))
+        ;ToolTip % Format("VK{:02} SC{:02}", VK, SC)
+        singleKey := SCMappingToName.HasKey(SC) ? SCMappingToName[SC]
+                     : VKMappingToName.HasKey(VK) ? VKMappingToName[VK]
+                     : ""
+        If (singleKey == "") {
+            singleKey := GetKeyName(Format("vk{:02x}sc{:02x}", VK, SC))
+        } Else {
+            textKey := singleKey
+        }
     } Else If (!IsObject(inputHook)) {
         singleKey := inputHook
     }
-    textKey := StrLen(singleKey) == 1 ? singleKey : "{" singleKey "}"
+    textKey := !(textKey == "") ? textKey : StrLen(singleKey) == 1 ? singleKey : "{" singleKey "}"
     keyStatesText := ""
     For key, state in keyStates
         If (state && key != singleKey)
@@ -131,7 +146,7 @@ RegisterKey(inputHook, kstate := 1, VK := 0, SC := 0) {
             lastPressed := textKey
         }
     }
-    ShowKeys((lstate ? keyStatesText : lastStatesText) . inputString . (repeated ? ("×" . repeated+1) : (kstate ? "↓" : "↑")))
+    ShowKeys((lstate ? keyStatesText : lastStatesText) . inputString . (repeated ? ("×" . repeated+1) : (kstate ? "◼︎" : "◻︎")))
     prevKey := singleKey, prevState := kstate
     
     SetTimer TooltipOff, % -IdleDelay
