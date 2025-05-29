@@ -5,15 +5,17 @@ FileEncoding UTF-8
 EnvGet LocalAppData,LOCALAPPDATA
 EnvGet SystemRoot,SystemRoot
 
-GroupAdd st, ahk_exe SnippingTool.exe
+Run ms-screenclip:
+
+;GroupAdd st, ahk_exe SnippingTool.exe
 
 ;RunDelayed([A_WinDir "\system32\SnippingTool.exe", "/clip"])
-If (!WinExist("ahk_group st")) {
+;If (!WinExist("ahk_group st")) {
     ;4 Open the application with its window at its most recent size and position. The active window remains active.
-    ShellRun(A_WinDir "\system32\SnippingTool.exe",,,, 4)
-}
-WinWait ahk_group st
+;    ShellRun(A_WinDir "\system32\SnippingTool.exe",,,, 4)
+;}
+;WinWait ahk_group st
 ;ControlSend ToolbarWindow321, !n
-ControlClick X45 Y55
+;ControlClick X45 Y55
 
-#include <ShellRun by Lexikos>
+;#include <ShellRun by Lexikos>

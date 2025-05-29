@@ -29,7 +29,7 @@ If (FileExist(jdDir "\cfg\uid")) {
 }
 If (!backupFailed)
     SetTimer BackupConfig, 1800000 ; 30 minutes
-For jreDirMask in [ ProgramFiles "\Java\jre*"
+For i, jreDirMask in [ ProgramFiles "\Java\jre*"
                   , FindScoopBaseDir() "\apps\openjdk\current" ] {
     Loop Files, %jreDirMask%, D
     {
@@ -37,6 +37,11 @@ For jreDirMask in [ ProgramFiles "\Java\jre*"
             break
         jreExePath := ""
     }
+}
+
+If (!jreExePath) {
+    MsgBox, 16, JDownloader starter, Java not found. Please install it and restart JDownloader
+    ExitApp
 }
 
 jdWinHID := WinExist(jdWinTitle)

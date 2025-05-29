@@ -97,8 +97,32 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     CALL :MoveToRAMDrive "%APPDATA%\obs-studio\updates"
     
     rem Electron apps
-    FOR /D %%B IN ("%APPDATA%\Beyond-All-Reason" "%APPDATA%\Dropbox" "%APPDATA%\Code" "%APPDATA%\Code - Insiders" "%APPDATA%\update-hub" "%APPDATA%\discord" "%APPDATA%\obs-studio\plugin_config\obs-browser" "%AppData%\Dropbox\Partitions\*.*" "%APPDATA%\obs-studio\plugin_config\obs-browser\obs_profile_cookies\*") DO @(
-        IF EXIST "%%~B" FOR %%C IN ("Cache" "CachedData" "CachedExtensions" "CachedProfilesData" "Code Cache" "Crashpad" "DawnCache" "GPUCache" "logs" "Service Worker\CacheStorage" "Service Worker\ScriptCache" "Session Storage") DO @(
+    FOR /D %%B IN ("%APPDATA%\Beyond-All-Reason" ^
+                   "%APPDATA%\Dropbox" ^
+                   "%APPDATA%\Code" ^
+                   "%APPDATA%\Code - Insiders" ^
+                   "%APPDATA%\update-hub" ^
+                   "%APPDATA%\discord" ^
+                   "%APPDATA%\obs-studio\plugin_config\obs-browser" ^
+                   "%AppData%\Dropbox\Partitions\*.*" ^
+                   "%APPDATA%\obs-studio\plugin_config\obs-browser\obs_profile_cookies\*") DO @(
+        IF EXIST "%%~B" FOR %%C IN ("Cache" ^
+                                    "CachedData" ^
+                                    "CachedExtensions" ^
+                                    "CachedProfilesData" ^
+                                    "Code Cache" ^
+                                    "Crashpad" ^
+                                    "DawnCache" ^
+                                    "DawnGraphiteCache" ^
+                                    "DawnWebGPUCache" ^
+                                    "GPUCache" ^
+                                    "GrShaderCache" ^
+                                    "logs" ^
+                                    "Service Worker\CacheStorage" ^
+                                    "Service Worker\ScriptCache" ^
+                                    "Session Storage" ^
+                                    "ShaderCache" ^
+                                   ) DO @(
             IF EXIST "%%~B\%%~C" CALL :MoveToRAMDrive "%%~B\%%~C"
         )
     )
@@ -112,6 +136,11 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Microsoft\Windows\INetCookies"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Microsoft\Windows\Notifications"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\Microsoft\Windows\WebCache"
+    CALL :MoveToRAMDrive "%LOCALAPPDATA%\Microsoft\Olk\cache"
+    CALL :MoveToRAMDrive "%LOCALAPPDATA%\Microsoft\Olk\logs"
+    CALL :MoveToRAMDrive "%LOCALAPPDATA%\Microsoft\Olk\logs"
+    CALL :MoveToRAMDrive "%LOCALAPPDATA%\Microsoft\OneDrive\setup\logs"
+    CALL :MoveToRAMDrive "%LOCALAPPDATA%\Microsoft\OneDrive\logs"
 
     rem CALL :MoveToRAMDrive "%APPDATA%\AppData\LocalLow\LocalLow"
     CALL :MoveToRAMDrive "%USERPROFILE%\AppData\LocalLow\webviewdata"
@@ -164,7 +193,7 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\EpicGamesLauncher\Saved\Config\CrashReportClient"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\EpicGamesLauncher\Saved\Logs"
     CALL :MoveToRAMDrive "%LOCALAPPDATA%\EpicGamesLauncher\Saved\webcache_4430"
-    
+    CALL :MoveToRAMDrive "%LOCALAPPDATA%\nomic.ai\GPT4All"
     
 rem     CALL :MoveToRAMDrive 
     
@@ -173,10 +202,15 @@ rem     CALL :MoveToRAMDrive
     FOR %%B IN ("%LOCALAPPDATA%\Google\Chrome" ^
                 "%LOCALAPPDATA%\Google\Chrome Beta" ^
                 "%LOCALAPPDATA%\Chromium" ^
-                "%LOCALAPPDATA%\Vivaldi") DO @(
+                "%LOCALAPPDATA%\Vivaldi" ^
+                "%LOCALAPPDATA%\Microsoft\Olk\EBWebView" ^
+               ) DO @(
         FOR /D %%P IN ("%%~B\User Data\Default" "%%~B\User Data\Profile *") DO @(
             FOR /D %%E IN ("%%~P" "%%~P\Storage\ext\*") DO (
-                FOR /F "usebackq delims=" %%A IN ("%~dp0Chrome_Profile_Temporary.txt") DO @IF EXIST "%%~E\%%~A" CALL :MoveToRAMDrive "%%~E\%%~A"
+                FOR /F "usebackq delims=" %%A IN ("%~dp0Chrome_Profile_Temporary.txt") DO @(
+                    MKDIR "%%~E\%%~A"
+                    CALL :MoveToRAMDrive "%%~E\%%~A"
+                )
             )
         )
         CALL :MoveToRAMDrive "%%~B\User Data\Guest Profile"

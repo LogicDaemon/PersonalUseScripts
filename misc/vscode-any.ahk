@@ -18,7 +18,11 @@ If (!scriptcmdln && WinExist("ahk_group vscode")) {
     ExitApp
 }
 
-Run "%A_AhkPath%" "%A_ScriptDir%\vscode-insiders.ahk" %scriptcmdln%
+EnvGet LocalAppData, LOCALAPPDATA
+If (FileExist(LocalAppData "\Programs\VS Code Insiders"))
+    Run "%A_AhkPath%" "%A_ScriptDir%\vscode-insiders.ahk" %scriptcmdln%
+Else
+    Run "%A_AhkPath%" "%A_ScriptDir%\vscode.ahk" %scriptcmdln%
 
 ExitApp
 

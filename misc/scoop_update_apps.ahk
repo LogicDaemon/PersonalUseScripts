@@ -58,7 +58,10 @@ RunScoopUpdates(scoopBaseDir, logPath, scoopPostUpdateScripts, scoopNoAutoUpdate
             RunWait %comspec% /C "scoop.cmd cleanup "%A_LoopFileName%" >>"%logPath%" 2>&1",, Hide
         }
         postUpdateScript := scoopPostUpdateScripts[A_LoopFileName]
-        If (postUpdateScript) {
+        If (IsFunc(postUpdateScript)) {
+            FileAppend Running post-update script for %A_LoopFileName%...`n, %logPath%, CP1
+            postUpdateScript()
+        } Else If (postUpdateScript) {
             FileAppend Running post-update script %postUpdateScript%...`n, %logPath%, CP1
             SplitPath postUpdateScript,,, scriptExt
             If (scriptExt = "reg")
@@ -74,7 +77,8 @@ RunScoopUpdates(scoopBaseDir, logPath, scoopPostUpdateScripts, scoopNoAutoUpdate
 }
 
 GetScoopPostUpdateScripts() {
-    Return {"python": "install-pep-514.reg"}
+    Return { "python": "install-pep-514.reg"
+           , "qbittorrent": Func("DeleteFiles").Bind("*.pdb") }
 }
 
 GetNoAutoUpdateApps() {
@@ -91,6 +95,26 @@ ReadTxtToSet(path) {
         If (line)
             scoopNoAutoupdate[line] := ""
     Return scoopNoAutoupdate
+}
+
+DeleteFiles(masks*) {
+    local
+    
+    For _, mask in masks {
+        If (!InStr(mask, "*") && !InStr(mask, "?")
+            && InStr(FileExist(mask), "D")) {
+            MsgBox 0x24, %A_ScriptName%, Delete %mask%?
+            IfMsgBox Yes
+                FileRemoveDir %mask%
+            Continue
+        }
+        Loop Files, %mask%
+        {
+            MsgBox 0x24, %A_ScriptName%, Delete %A_LoopFileFullPath%?
+            IfMsgBox Yes
+                FileDelete %A_LoopFileFullPath%
+        }
+    }
 }
 
 #include <FindScoopBaseDir>

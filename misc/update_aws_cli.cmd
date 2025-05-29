@@ -8,7 +8,10 @@ SETLOCAL ENABLEEXTENSIONS
 SET "lastInstLogDir=%LOCALAPPDATA%\LogicDaemon\Distributives\%distSubdir%"
 SET "lastInstLogPath=%lastInstLogDir%\lastInstalled.txt"
 @(
-    IF NOT EXIST "%lastInstLogDir%" MKDIR "%lastInstLogDir%"
+    IF NOT EXIST "%lastInstLogPath%" (
+        aws.exe || IF ERRORLEVEL 9009 IF NOT ERRORLEVEL 9010 EXIT /B
+        MKDIR "%lastInstLogDir%"
+    )
     CALL "%~dp0_Distributives.find_subpath.cmd" Distributives "%distSubdir%\install.cmd"
     FOR /F "usebackq delims=" %%A IN ("%lastInstLogPath%") DO @(
         SET "lastInstalled=%%~A"

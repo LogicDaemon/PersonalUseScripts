@@ -10,6 +10,6 @@ SETLOCAL ENABLEEXTENSIONS
     )
 )
 (
-    FOR %%A IN ("%Distributives%\Soft FOSS\MultiMedia\Capture\OBS\.Distributives_Update_Run.*.cmd") DO CALL "%%~A"
+    FOR %%A IN ("%Distributives%\Soft FOSS\MultiMedia\Capture\OBS\.Distributives_Update_Run.*.cmd") DO START "" /B /WAIT %comspec% /C ""%%~A""
     CALL "%Distributives%\Soft FOSS\MultiMedia\Capture\OBS\install_to_LOCALAPPDATA.cmd"
 )

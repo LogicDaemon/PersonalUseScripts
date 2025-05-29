@@ -9,7 +9,7 @@
                         "request": "launch",
                         "name": "AutoHotkey Debugger",
                         "program": "${file}",
-                        "stopOnEntry": true
+                        "stopOnEntry": false,
                 }
         ]
 }

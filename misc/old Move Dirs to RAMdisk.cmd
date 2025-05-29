@@ -25,7 +25,7 @@ EXIT /B
             RD /S /Q "%sd%\%sp%\%~1"
         )
     )
-    "%LocalAppData%\Programs\Total Commander\xln.exe" -n "%rd%\%sp%\%~1" "%sd%\%sp%\%~1"
+    MKLINK /J "%sd%\%sp%\%~1" "%rd%\%sp%\%~1"
 EXIT /B
 
 REM Dir list

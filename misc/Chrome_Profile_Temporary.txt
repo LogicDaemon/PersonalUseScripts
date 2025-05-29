@@ -17,15 +17,18 @@ Download Service
 Feature Engagement Tracker
 GCM Store
 GPUCache
+GrShaderCache
 Local App Settings
 Local Extension Settings
 Media Cache
 optimization_guide_hint_cache_store
 optimization_guide_model_and_features_store
+optimization_guide_model_metadata_store
+optimization_guide_prediction_model_downloads
 Safe Browsing Network
 Service Worker\CacheStorage
 Service Worker\ScriptCache
 Session Storage
+Site Characteristics Database
 VideoDecodeStats
 WebRTC Logs
-

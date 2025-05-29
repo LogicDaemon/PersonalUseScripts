@@ -10,18 +10,21 @@ SETLOCAL ENABLEEXTENSIONS
     ) ELSE (
         SET unisonopt=%unisonopt% %*
     )
+    
+    IF NOT DEFINED unisonPort SET /A unisonPort=%RANDOM%/2+16384
 )
+SET unisonServer=socket://localhost:%unisonPort%/
 IF NOT DEFINED syncprog SET "syncprog=%unisontext%"
 (
 PUSHD "%TEMP%" || EXIT /B
-START "Distributives Unison server" /MIN %unisontext% -socket 10355
+START "Distributives Unison server" /MIN %unisontext% -socket %unisonPort%
 PING -n 2 127.0.0.1 >NUL
 
 START "" /B /WAIT %comspec% /C "%~dp0sync_%hostname%_with_unison_server.cmd"
 
 REM lock files remain if started too soon
 @PING 127.0.0.1 -n 5 >NUL
-%unisontext% "%TEMP%" "socket://localhost:10355/%TEMP:\=/%" -testserver -killserver
+%unisontext% "%TEMP%" "%unisonServer%%TEMP:\=/%" -testserver -killserver
 EXIT /B
 )
 :ReadRegHostname <var>
