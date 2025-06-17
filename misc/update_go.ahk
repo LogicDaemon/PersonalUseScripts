@@ -73,8 +73,7 @@ Try {
     }
 
 
-    EnvGet LocalAppData, LOCALAPPDATA
-    destDir := LocalAppData "\Programs\go"
+    destDir := ExpandEnvVars("%LocalAppData%\Programs\go") 
     If (IsObject(InstallUpdate(distDir, goDistFName, destDir, SubStr(goVer, 1, 2) == "go" ? SubStr(goVer, 3) : goVer, "go", "bin\go.exe"))) {
         errLog = %A_Temp%\%A_ScriptName%.log
         FileAppend % ObjectToText(updDirOrErrors) "`n", %errLog%

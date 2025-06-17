@@ -30,6 +30,7 @@ DownloadAndUpdateVSCode(ByRef distDir := "", ByRef vsCodeDest := "", insiders :=
         Throw Exception("Update errors",, errorsText)
     } Else {
         CleanOldInstallations(updDirOrErrors, vsCodeDest)
+        DedupInstallations(vsCodeDest)
     }
 }
 
@@ -269,21 +270,41 @@ UpdateVSCode(ByRef destDir, ByRef updInfo, additionalArchives := "") {
     Return errors.Count() ? errors : destDirWithVer
 }
 
-CleanOldInstallations(ByRef newVerDir, ByRef destDir) {
-    local
+CleanOldInstallations(ByRef newVerDir, ByRef destDir, minAgeDays := 7) {
+    Local
     Loop Files, %destDir%-*, D
     {
-        If ( A_LoopFileFullPath <> newVerDir ) {
-            mainexe := FirstExistingFilePath( A_LoopFileFullPath "\Code.exe"
-                , A_LoopFileFullPath "\Code - Insiders.exe" )
-            If (!mainexe)
-                Continue
-            Try {
-                FileDelete %mainexe%
+        Try {
+            If ( A_LoopFileFullPath <> newVerDir ) {
+                If (A_LoopFileExt == "old") {
+                    oldDir := A_LoopFileFullPath
+                } Else {
+                    dirAge := ""
+                    dirAge -= A_LoopFileTimeModified, Days
+                    If (dirAge < minAgeDays)
+                        Continue
+
+                    mainexe := FirstExistingFilePath( A_LoopFileFullPath "\Code.exe"
+                                                    , A_LoopFileFullPath "\Code - Insiders.exe"
+                                                    , A_LoopFileFullPath "\Code-Insiders.exe" )
+                    If (!mainexe)
+                        Continue
+                    FileMoveDir %A_LoopFileFullPath%, %A_LoopFileFullPath%.old, R
+                    SplitPath mainexe, mainexeName
+                    oldDir := A_LoopFileFullPath ".old"
+                    mainexe := oldDir "\" mainexeName
+                }
+                If (mainexe)
+                    FileDelete %mainexe%  ; To check if the directory is still in use
                 FileRemoveDir %A_LoopFileFullPath%, 1
             }
         }
     }
+}
+
+DedupInstallations(ByRef destDir) {
+    Local
+    Run dfhl.exe /r /l "%destDir%", %A_Temp%, Min UseErrorLevel
 }
 
 SplitFileNameInUpdInfo(updInfo) {

@@ -30,6 +30,7 @@ DownloadAndUpdateVSCodeInsiders(ByRef distDir := "", ByRef vsCodeDest := "", ins
     } Else {
         RunWait %comspec% /C "MKLINK /H "%vsCodeDest%\code-insiders.exe" "%vsCodeDest%\Code - Insiders.exe"", %vsCodeDest%, Min
         CleanOldInstallations(updDirOrErrors, vsCodeDest)
+        DedupInstallations(vsCodeDest)
     }
 }
 

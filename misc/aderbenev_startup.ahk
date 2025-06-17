@@ -33,7 +33,7 @@ Loop
 
 Process Priority, %selfPID%, B
 For dirName, params in { A_ProgramFiles "\NVIDIA Corporation\NVIDIA Broadcast": ["NVIDIA Broadcast.exe", ""] ; "--process-start-args ""--launch-hidden""" makes impossible to open camera settings
-                       , A_ProgramFiles "\NVIDIA Corporation\NVIDIA Broadcast": ["NVIDIA Broadcast UI.exe", "-minimized"]} {
+                  , A_ProgramFiles "\NVIDIA Corporation\NVIDIA Broadcast": ["NVIDIA Broadcast UI.exe", "-minimized"]} {
     fileName := params[1]
     If (!FileExist(dirName "\" fileName))
         Continue

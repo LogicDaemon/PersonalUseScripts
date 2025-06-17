@@ -64,8 +64,8 @@ EXIT /B
 )
 :Check7zexe <exename>
 @(
-    %* <NUL >NUL 2>&1 || IF ERRORLEVEL 9009 IF NOT ERRORLEVEL 9010 EXIT /B
-    ECHO Using exe7z=%* >&2
-    SET "exe7z=%*"
+    %1 <NUL >NUL 2>&1 || IF ERRORLEVEL 9009 IF NOT ERRORLEVEL 9010 EXIT /B
+    ECHO Using exe7z=%1 >&2
+    SET exe7z=%1
     EXIT /B 0
 )

@@ -60,7 +60,7 @@ RunScoopUpdates(scoopBaseDir, logPath, scoopPostUpdateScripts, scoopNoAutoUpdate
         postUpdateScript := scoopPostUpdateScripts[A_LoopFileName]
         If (IsFunc(postUpdateScript)) {
             FileAppend Running post-update script for %A_LoopFileName%...`n, %logPath%, CP1
-            postUpdateScript()
+            postUpdateScript.Call()
         } Else If (postUpdateScript) {
             FileAppend Running post-update script %postUpdateScript%...`n, %logPath%, CP1
             SplitPath postUpdateScript,,, scriptExt

@@ -99,7 +99,8 @@ class Config:
     # pylint: disable=R0801,duplicate-code,R0902,too-many-instance-attributes  # NOQA: E501
     domains_config_file_path: pathlib.Path = dc_field(
         metadata=ConfigOption(
-            default=pathlib.Path(__file__).parent / 'domains.yml',
+            #default=pathlib.Path(__file__).parent / 'domains.yml',
+            default=pathlib.Path(appdirs.user_config_dir('LogicDaemon', 'inwx-refresher', shared=True)) / 'domains.yml',
             help='Path to the yamls domains configuration file',
             short_name='c'))
     inwx_auth_file_path: pathlib.Path = dc_field(
