@@ -1,0 +1,2 @@
+@REM coding:CP866
+CALL "%~dp07z_am.cmd" /DELETEAFTER /SMALLESTNOSUFFIX %*

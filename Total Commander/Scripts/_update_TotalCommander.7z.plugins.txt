@@ -1,0 +1,2 @@
+PlugIns
+PlugIns\wdx\TrID_Identifier\TrID\trid.exe

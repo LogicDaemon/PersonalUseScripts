@@ -1,0 +1,5 @@
+APPDATA.DEF\GHISLER\pci.db
+PlugIns\wdx\TrID_Identifier\TrID\readme.txt
+PlugIns\wdx\TrID_Identifier\TrID\triddefs.trd
+PlugIns\wlx\PEViewer\Signs.txt
+PlugIns\wlx\PEViewer\UserDB.txt

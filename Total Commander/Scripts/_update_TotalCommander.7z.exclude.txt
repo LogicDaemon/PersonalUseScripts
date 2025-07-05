@@ -1,0 +1,19 @@
+bin
+PlugIns\wcx\CopyTree\Language
+PlugIns\wcx\Total7zip\64
+PlugIns\wcx\Total7zip\7z.dll
+PlugIns\wcx\Total7zip\7z.sfx
+PlugIns\wcx\Total7zip\7zG.exe
+PlugIns\wcx\Total7zip\7-Zip History.txt
+PlugIns\wcx\Total7zip\7-zip.chm
+PlugIns\wcx\Total7zip\Lang
+PlugIns\wcx\Total7zip\License.txt
+PlugIns\wcx\zpaq\non-SSE2
+PlugIns\wdx\TrID_Identifier\TrID\*.zip
+PlugIns\wlx\OOoViewer
+TCUNIN64.EXE
+TCUNIN64.WUL
+TCUNINST.EXE
+TCUNINST.WUL
+Total Updater
+WCUNINST.WUL
