@@ -8,16 +8,27 @@ EnvGet SystemRoot,SystemRoot
 scoopBaseDir := FindScoopBaseDir()
 logPath := scoopBaseDir "\apps\update.log"
 
+mode = Min
+For _, v in A_Args {
+    If (v == "/hide") {
+        mode := "Hide"
+    } Else {
+        FileAppend Unknown argument: %v%, **
+        If (mode != "Hide")
+            MsgBox 0x10, %A_ScriptName%, Unknown argument: %v%
+    }
+}
+
 ;RunWait scoop.cmd update -a,, Min
 FileMove %logPath%, %logPath%_old, 1
-RunScoopUpdates(scoopBaseDir, logPath, GetScoopPostUpdateScripts(), GetNoAutoUpdateApps())
+RunScoopUpdates(scoopBaseDir, logPath, GetScoopPostUpdateScripts(), GetNoAutoUpdateApps(), mode)
 
-Run "%A_AhkPath%" "%A_ScriptDir%\scoop_clean_cache.ahk"
+RunWait "%A_AhkPath%" "%A_ScriptDir%\scoop_clean_cache.ahk"
 Run DFHL.exe /l ., %LocalAppData%\Programs\scoop\shims, Min
 Run DFHL.exe /l ., %scoopBaseDir%\cache, Min
 ExitApp 
 
-RunScoopUpdates(scoopBaseDir, logPath, scoopPostUpdateScripts, scoopNoAutoUpdate) {
+RunScoopUpdates(scoopBaseDir, logPath, scoopPostUpdateScripts, scoopNoAutoUpdate, runMode:="Hide") {
     local
     
     If (scoopNoAutoUpdate.Count() == 0) {
@@ -38,11 +49,11 @@ RunScoopUpdates(scoopBaseDir, logPath, scoopPostUpdateScripts, scoopNoAutoUpdate
 
     If (updateAll) {
         FileAppend Updating all apps...`n, %logPath%, CP1
-        RunWait %comspec% /C "scoop.cmd update -a >>"%logPath%" 2>&1",, Hide
+        RunWait %comspec% /C "scoop.cmd update -a >>"%logPath%" 2>&1",, %runMode%
         If (ErrorLevel)
             Return
         FileAppend Cleaning up all apps...`n, %logPath%, CP1
-        RunWait %comspec% /C "scoop.cmd cleanup -a >>"%logPath%" 2>&1",, Hide
+        RunWait %comspec% /C "scoop.cmd cleanup -a >>"%logPath%" 2>&1",, %runMode%
     }
 
     Loop Files, %scoopBaseDir%\apps\*.*, D
@@ -51,11 +62,11 @@ RunScoopUpdates(scoopBaseDir, logPath, scoopPostUpdateScripts, scoopNoAutoUpdate
             Continue
         If (!updateAll) {
             FileAppend Updating %A_LoopFileName%...`n, %logPath%, CP1
-            RunWait %comspec% /C "scoop.cmd update "%A_LoopFileName%" >>"%logPath%" 2>&1",, Hide
+            RunWait %comspec% /C "scoop.cmd update "%A_LoopFileName%" >>"%logPath%" 2>&1",, %runMode%
             If (ErrorLevel)
                 Continue
             FileAppend Cleaning up %A_LoopFileName%...`n, %logPath%, CP1
-            RunWait %comspec% /C "scoop.cmd cleanup "%A_LoopFileName%" >>"%logPath%" 2>&1",, Hide
+            RunWait %comspec% /C "scoop.cmd cleanup "%A_LoopFileName%" >>"%logPath%" 2>&1",, %runMode%
         }
         postUpdateScript := scoopPostUpdateScripts[A_LoopFileName]
         If (IsFunc(postUpdateScript)) {
@@ -65,7 +76,7 @@ RunScoopUpdates(scoopBaseDir, logPath, scoopPostUpdateScripts, scoopNoAutoUpdate
             FileAppend Running post-update script %postUpdateScript%...`n, %logPath%, CP1
             SplitPath postUpdateScript,,, scriptExt
             If (scriptExt = "reg")
-                RunWait %comspec% /C "REG IMPORT "%A_LoopFileFullPath%\current\%postUpdateScript%" >>"%logPath%" 2>&1",, Hide
+                RunWait %comspec% /C "REG IMPORT "%A_LoopFileFullPath%\current\%postUpdateScript%" >>"%logPath%" 2>&1",, %runMode%
             Else If (scriptExt = "ahk")
                 Run %comspec% /C ""%A_AhkPath%" "%A_LoopFileFullPath%\current\%postUpdateScript%" >>"%logPath%" 2>&1"
             Else
@@ -73,7 +84,7 @@ RunScoopUpdates(scoopBaseDir, logPath, scoopPostUpdateScripts, scoopNoAutoUpdate
         }
     }
     
-    RunWait compact.exe /C "%logPath%",, Hide
+    RunWait compact.exe /C "%logPath%",, %runMode%
 }
 
 GetScoopPostUpdateScripts() {

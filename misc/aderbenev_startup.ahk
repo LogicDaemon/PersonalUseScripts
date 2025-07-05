@@ -32,23 +32,6 @@ Loop
 } Until !ErrorLevel
 
 Process Priority, %selfPID%, B
-For dirName, params in { A_ProgramFiles "\NVIDIA Corporation\NVIDIA Broadcast": ["NVIDIA Broadcast.exe", ""] ; "--process-start-args ""--launch-hidden""" makes impossible to open camera settings
-                  , A_ProgramFiles "\NVIDIA Corporation\NVIDIA Broadcast": ["NVIDIA Broadcast UI.exe", "-minimized"]} {
-    fileName := params[1]
-    If (!FileExist(dirName "\" fileName))
-        Continue
-    Process Exist, %fileName%
-    If (ErrorLevel)
-        Continue
-    args := params[2]
-    Run "%fileName%" %args%, %dirName%,, nbvPID
-    WinWait ahk_pid %nbvPID%,, 10
-    If (!ErrorLevel) {
-        WinGet r, MinMax
-        If (r != -1)
-            PostMessage 0x0112, 0xF060  ; 0x0112 = WM_SYSCOMMAND, 0xF060 = SC_CLOSE
-    }
-}
 
 ProcPri :=  { "LMS.exe": "L"
             , "AeXNSAgent.exe": "L"
@@ -69,6 +52,8 @@ For pid, path in ProcessList("FilterProcess") {
     SplitPath path, name
     Process Priority, %pid%, % ProcPri[name]
 }
+
+Run "%A_AhkPath%" "%A_ScriptDir%\dismiss nVidia Broadcast update.ahk"
 
 ExitApp
 

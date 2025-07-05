@@ -11,7 +11,7 @@ If (!workdir)
     workdir := A_ScriptDir "\temp"
 
 For i, asset in JSON.Load(GetUrl("https://api.github.com/repos/ventoy/Ventoy/releases/latest")).assets
-1.0.55.zip
+;1.0.55.zip
     If (asset.name ~= "ventoy-(?P<ver>.+)-windows\.zip") {
         FileCreateDir %workdir%
         If (FileExist(A_ScriptDir "\" asset.name))

@@ -221,7 +221,7 @@ def main() -> Optional[int]:
                     prev_dir = os.path.curdir
                     # win_dist_path = win_dist_path.resolve()
                     os.chdir(win_dist_path.parent)
-                    log.info('Downloading components...`nStarting %s',
+                    log.info('Downloading components...\nStarting %s',
                              win_dist_path)
                     os.system(f'"{win_dist_path.name}" /layout .')
                     os.chdir(prev_dir)

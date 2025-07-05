@@ -11,5 +11,4 @@ REM TODO: cipher /U /N /H ., and parse the output to skip encrypted files instea
 @REM ln --excludedir old --exclude *.lnk --exclude "Copy photos from flash cards.destinations.txt" --unroll --recursive --mirror  "%LOCALAPPDATA%\Scripts\Photo" "%~dp0Photo"
 robocopy "%LOCALAPPDATA%\Scripts" "%~dp0misc" /MIR /S /XD .mypy_cache .venv connect-asg-host helper_shortcuts Photo temp-backup-scripts software_update /XF Hotkeys_Custom.ahk Hotkeys_Custom.*.ahk *.lnk _Distributives.base_dirs.txt aws_s.cmd aws_t.cmd
 robocopy "%LOCALAPPDATA%\Scripts\Photo" "%~dp0Photo" /MIR /S /XD old /XF *.lnk "Copy photos from flash cards.destinations.txt"
-CALL "%~dp0update.finalize.cmd"
 )

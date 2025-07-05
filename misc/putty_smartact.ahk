@@ -20,6 +20,7 @@ GroupAdd puttyReconnectMsgBox, ^PuTTY Fatal Error$ ahk_class ^#32770$, Remote si
 
 If (WinActive("ahk_group puttyReconnectMsgBox") || WinActive("ahk_group puttyInactiveMainWindow")) {
     Reconnect()
+    ExitApp
 }
 
 If (WinActive("ahk_group puttyMainWindow")) {
@@ -48,7 +49,20 @@ Reconnect() {
     While WinExist("ahk_group puttyInactiveMainWindow") {
         While WinExist("ahk_group puttyInactiveMainWindow") {
             WinActivateBottom ahk_group puttyInactiveMainWindow
-            WinMenuSelectItem ,,, 0&, &Restart Session
+            WinMenuSelectItem,,, 0&, &Restart Session
+
+            ; Sleep 0.1
+            ; WinGetTitle title, A
+            ; MsgBox % title
+            ; If (title == "PuTTY (inactive)") {
+            ;     ; if it is still inactive, 
+            ;     ToolTip the menu action failed
+            ;     Send {AltDown}{Space}
+            ;     Sleep 0.2
+            ;     Send {AltUp}R
+            ;     Sleep 1000
+            ;     ToolTip
+            ; }
         }
         
         WinWait ahk_group puttyJumpboxWindow,, 1
