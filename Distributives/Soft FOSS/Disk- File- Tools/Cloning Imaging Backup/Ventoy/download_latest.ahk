@@ -20,7 +20,7 @@ For i, asset in JSON.Load(GetUrl("https://api.github.com/repos/ventoy/Ventoy/rel
         If (FileExist(workdir "\" asset.name))
             FileMove % workdir "\" asset.name, % A_ScriptDir "\" asset.name, 1
     }
-    FileRemoveDir %workdir%
+FileRemoveDir %workdir%
 ExitApp
 
 #include <JSON>

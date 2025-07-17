@@ -53,7 +53,7 @@ For pid, path in ProcessList("FilterProcess") {
     Process Priority, %pid%, % ProcPri[name]
 }
 
-Run "%A_AhkPath%" "%A_ScriptDir%\dismiss nVidia Broadcast update.ahk"
+Run "%A_AhkPath%" "%A_ScriptDir%\nVidia Broadcast.ahk"
 
 ExitApp
 

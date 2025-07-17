@@ -44,7 +44,7 @@ DismissUpdate(nvbPID) {
         titleSuffix = ahk_pid %nvbPID%
     Else
         titleSuffix = ahk_exe NVIDIA Broadcast UI.exe
-    WinWait %titleSuffix%,REMIND ME LATER, 60
+    WinWait %titleSuffix%,REMIND ME LATER, 300
     If (ErrorLevel)
         Return
     ControlClick REMIND ME LATER
