@@ -3,17 +3,23 @@ REM by LogicDaemon <www.logicdaemon.ru>
 REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <http://creativecommons.org/licenses/by-sa/4.0/deed.ru>.
     IF EXIST "%LOCALAPPDATA%\Programs\bin\ahk.exe" (
         CALL "%LOCALAPPDATA%\Programs\bin\ahk.exe" /ErrorStdOut "%~dp0FindAutoHotkeyExe_CheckVer.ahk" && SET AutohotkeyExe="%LOCALAPPDATA%\Programs\bin\ahk.exe"
-    ) ELSE IF DEFINED AutohotkeyExe (IF EXIST %AutohotkeyExe% CALL %AutohotkeyExe% /ErrorStdOut "%~dp0FindAutoHotkeyExe_CheckVer.ahk" || SET AutohotkeyExe=
+    ) ELSE IF DEFINED AutohotkeyExe (
+        IF EXIST %AutohotkeyExe% CALL %AutohotkeyExe% /ErrorStdOut "%~dp0FindAutoHotkeyExe_CheckVer.ahk" || SET AutohotkeyExe=
         IF NOT DEFINED AutohotkeyExe (
+            ECHO Checking AutoHotkeyScript type>&2
             FOR /F "usebackq tokens=2 delims==" %%I IN (`ftype AutoHotkeyScript`) DO @CALL :CheckAutohotkeyExe %%I
             rem continuing if AutoHotkeyScript type isn't defined or specified path points to incorect location
             IF NOT DEFINED AutohotkeyExe CALL :FindAutohotkeyExeViaFindExe
         )
     )
-    IF NOT DEFINED AutohotkeyExe EXIT /B 9009
+    IF NOT DEFINED AutohotkeyExe (
+        ECHO AutoHotkey executable not found.>&2
+        EXIT /B 9009
+    )
     IF "%~1"=="" EXIT /B 0
 )
 (
+    ECHO Starting "%~1" with "%AutohotkeyExe%">&2
     %AutohotkeyExe% %*
     @EXIT /B
 )
@@ -67,7 +73,9 @@ EXIT /B
 :CheckAutohotkeyExe <path>
 @(
     IF NOT EXIST %1 EXIT /B 1
+    ECHO Checking "%~1">&2
     CALL %1 /ErrorStdOut "%~dp0FindAutoHotkeyExe_CheckVer.ahk" || EXIT /B
+    ECHO Found a matching autohotkey: "%~1">&2
     SET "AutohotkeyExe=%1"
     SET "AutohotkeyUnquotedExe=%~1"
 )
