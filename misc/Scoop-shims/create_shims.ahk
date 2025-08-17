@@ -58,7 +58,7 @@ ProcessShim(ByRef shim) {
 
     If A_Space in name
         name := """" name """"
-    RunWait %comspec% /C "scoop shim add %name% "%path%" %args% >"%A_Temp%\shim_add_%name%.log" 2>&1",, Min
+    RunWait %comspec% /C "scoop shim add %name% "%path%" -- %args% >"%A_Temp%\shim_add_%name%.log" 2>&1",, Hide
     If (ErrorLevel) {
         Run *Open "%A_Temp%\shim_add_%name%.log"
         Throw Exception("Error adding shim for " name,, "ErrorLevel=" ErrorLevel)
