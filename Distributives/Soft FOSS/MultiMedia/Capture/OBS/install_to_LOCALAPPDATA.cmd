@@ -4,11 +4,21 @@ REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 In
 SETLOCAL ENABLEEXTENSIONS
 
     CALL find7zexe.cmd
-    
-    CALL :InitRemembering
-    FOR %%A IN ("%~dp0OBS-Studio-*-Windows-Installer.exe" "%~dp0OBS-Studio-*-Full-x64.zip" "%~dp0OBS-Studio-*-Full-Installer-x64.exe") DO CALL :RememberIfLatest dstfname "%%~A"
-    IF NOT DEFINED dstfname EXIT /B 1
+
+    rem OBS-Studio-31.0.2-Windows-Installer.exe
+    rem OBS-Studio-31.1.1-Windows-x64-Installer.exe
+    FOR /F "usebackq delims=" %%A IN (`DIR /B /O-D ^
+                                        "%~dp0OBS-Studio-*-Windows-x64-Installer.exe" ^
+                                        "%~dp0OBS-Studio-*-Windows-Installer.exe" ^
+                                        "%~dp0OBS-Studio-*-Full-x64.zip" ^
+                                        "%~dp0OBS-Studio-*-Full-Installer-x64.exe"^
+                                      `) DO @(
+        SET "dstfname=%%~A"
+        GOTO :found
+    )
+    EXIT /B 1
 )
+:found
 @(
     CALL :install "%dstfname%"
     FOR /D %%A IN ("%~dp0plugins\*") DO CALL :installplugin "%%~A"
@@ -27,37 +37,13 @@ EXIT /B
 :installplugin
 @(
     SET "dstfname="
-    CALL :InitRemembering
-    FOR %%A IN ("%~1\*-win64.zip" "%~1\*-win64.7z" "%~1\*-win64.rar") DO CALL :RememberIfLatest dstfname "%%~A"
-    IF NOT DEFINED dstfname EXIT /B 1
-)
-@(
-    %exe7z% x -xr!*.pdb -aos -y -o"%installDest%" -- "%dstfname%"
-EXIT /B
-)
-
-:InitRemembering
-@(
-    SET "LatestFile="
-    SET "LatestDate=0000000000:00"
-EXIT /B
-)
-:RememberIfLatest
-@(
-    SET "current_file=%~2"
-    SET "current_date=%~t2"
-)
-@(
-    rem     01.12.2011 21:29
-    IF "%current_date:~2,1%"=="." IF "%current_date:~5,1%"=="." SET "current_date=%current_date:~6,4%%current_date:~3,2%%current_date:~0,2%%current_date:~11%"
-    rem     01.12.2011 21:29
-    IF "%current_date:~2,1%"=="." IF "%current_date:~5,1%"=="." SET "current_date=%current_date:~6,4%%current_date:~3,2%%current_date:~0,2%%current_date:~11%"
-)
-@IF "%current_date%" GEQ "%LatestDate%" (
-    SET "LatestFile=%current_file%"
-    SET "LatestDate=%current_date%"
-)
-@(
-    SET "%~1=%LatestFile%"
-    EXIT /B
+    FOR /F "usebackq delims=" %%A IN (`DIR /B /O-D ^
+                                        "%~1\*-win64.zip" ^
+                                        "%~1\*-win64.7z" ^
+                                        "%~1\*-win64.rar" ^
+                                      `) DO @(
+        %exe7z% x -xr!*.pdb -aos -y -o"%installDest%" -- "%%~A"
+        EXIT /B
+    )
+    EXIT /B 1
 )
