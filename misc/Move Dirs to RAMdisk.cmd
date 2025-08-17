@@ -71,6 +71,7 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
         MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\NVIDIA app\SessionLogs"
         MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\NVIDIA app\UXD"
     )
+    IF EXIST "%ProgramData%\Dropbox" MKDIR "%RAMDrive%\ProgramData\Dropbox\Update\Log"
     
     @REM CALL :MkDirsWithCopiedPermissions "%SystemRoot%" "%RAMDrive%" ServiceProfiles LocalService AppData Local Temp
     CALL :MoveLinkBack "%SystemRoot%\ServiceProfiles\LocalService\AppData\Local\Temp\TfsStore" "%RAMDrive%\ServiceProfiles\LocalService\AppData\Local\Temp\TfsStore"

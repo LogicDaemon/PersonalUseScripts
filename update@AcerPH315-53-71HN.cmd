@@ -1,6 +1,6 @@
 @(REM coding:CP866
 SETLOCAL ENABLEEXTENSIONS
-rem CALL "%~dp0update_Distributives_scripts.cmd" "d:\Distributives" "%~dp0Distributives"
+rem START "" /B %comspec% /C "%~dp0update_Distributives_scripts.cmd" "v:\Distributives" "%~dp0Distributives"
 
 ln --unroll --recursive --mirror "%USERPROFILE%\Documents\AutoHotkey\Lib" "%~dp0AutoHotkey\Lib"
 ln --excludedir bin --excludedir PlugIns --excludedir reg --unroll --recursive --mirror  "%USERPROFILE%\Dropbox\Projects\LocalAppData\Programs\Total Commander" "%~dp0Total Commander"
