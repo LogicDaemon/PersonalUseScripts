@@ -1,7 +1,7 @@
 @(REM coding:CP866
 SETLOCAL ENABLEEXTENSIONS
 CALL "%~dp0update_Distributives_scripts.cmd" "d:\Distributives" "%~dp0Distributives"
-ahk "%~dp0unpack_Distributives_config.ahk"
+@REM ahk "%~dp0unpack_Distributives_config.ahk"
 
 robocopy "%USERPROFILE%\Dropbox\Projects\AutoHotkey\Lib" "%~dp0AutoHotkey\Lib" /MIR
 robocopy "%USERPROFILE%\Dropbox\Projects\Setup\Win10" "%~dp0Setup\Win10" /MIR
