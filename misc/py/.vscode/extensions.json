@@ -18,6 +18,7 @@
                 "samuelcolvin.jinjahtml",
                 "tobias-faller.vt100-syntax-highlighting",
                 "weijunyu.vscode-json-path",
-                "wraith13.multi-encode"
+                "wraith13.multi-encode",
+                "charliermarsh.ruff"
         ]
 }

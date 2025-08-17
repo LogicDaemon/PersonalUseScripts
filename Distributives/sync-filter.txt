@@ -1,1 +1,1 @@
-*.*|**\temp\**\**;**\bat\**\**;**\sf.net\**\**;**\.mypy_cache\**\**;*.log;*.bak;rclone-filters.txt.md5..path1;rclone-filters.txt.md5..path2
+*.*|.venv\**\**;temp\**\**;**\bat\**\**;**\sf.net\**\**;**\.mypy_cache\**\**;*.log;*.bak;rclone-filters.txt.md5..path1;rclone-filters.txt.md5..path2

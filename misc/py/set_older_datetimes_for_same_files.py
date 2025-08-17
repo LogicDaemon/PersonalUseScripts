@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-'''
+"""
 Scan two directory trees,
 and set the modification time of files
 located in the same relative path and having the same contents
 to the oler of the two.
-'''
+"""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ import os
 import re
 import stat
 from collections import deque
-from typing import Any, Callable, Coroutine, Deque, Generator, Optional, ParamSpec, Tuple, TypeVar, Union
+from typing import Callable, Deque, Generator, Optional, ParamSpec, Tuple, TypeVar, Union
 
 import aiofiles
 
@@ -30,9 +30,7 @@ def scandir_walk(
     filename_regex: Optional[Union[str, re.Pattern]] = None,
     follow_symlinks: bool = False,
 ) -> Generator[os.DirEntry, None, None]:
-    '''
-    Walk a directory tree using os.scandir()
-    '''
+    """ Walk a directory tree using os.scandir() """
     for entry in os.scandir(path):
         if entry.is_dir():
             yield from scandir_walk(entry.path,
@@ -46,9 +44,7 @@ def scandir_walk(
 
 
 async def files_have_same_contents(firstpath: str, secondpath: str) -> bool:
-    '''
-    Check if all the files have the same contents.
-    '''
+    """ Check if all the files have the same contents """
 
     blocksize: int = 2 * 1024 * 1024
 
@@ -66,9 +62,7 @@ async def files_have_same_contents(firstpath: str, secondpath: str) -> bool:
 
 
 class QueueGetContext:
-    '''
-    Context manager to get an item from a queue.
-    '''
+    """ Context manager to get an item from a queue """
 
     def __init__(self, queue: _QUEUE_TYPE) -> None:
         self.queue = queue
@@ -82,9 +76,7 @@ class QueueGetContext:
 
 async def coproc_compare_files(queue: _QUEUE_TYPE,
                                call_if_same: Callable) -> None:
-    '''
-    Compare files in the queue.
-    '''
+    """ Compare files in the queue """
 
     while True:
         async with QueueGetContext(queue) as (path1, path2, path1stat, path2stat):
@@ -131,12 +123,11 @@ async def compare_dirs_update_mtimes(  # pylint: disable=too-many-locals
         dir2: str,
         filename_regex: Optional[Union[str, re.Pattern]] = None,
         dry_run: bool = False) -> None:
-    '''
-    Scan two directory trees,
-    and set the modification time of files
-    located in the same relative path and having the same contents
-    to the oler of the two.
-    '''
+    """ Scan two directory trees,
+        and set the modification time of files
+        located in the same relative path and having the same contents
+        to the oler of the two
+    """
 
     dir1 = os.path.abspath(dir1)
     dir2 = os.path.abspath(dir2)

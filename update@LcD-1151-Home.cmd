@@ -7,6 +7,6 @@ robocopy "%USERPROFILE%\Dropbox\Projects\AutoHotkey\Lib" "%~dp0AutoHotkey\Lib" /
 robocopy "%USERPROFILE%\Dropbox\Projects\Setup\Win10" "%~dp0Setup\Win10" /MIR
 robocopy "%USERPROFILE%\Dropbox\Projects\Setup" "%~dp0Setup" "Logitech Gaming Software en-US.reg"
 @REM TODO: cipher /U /N /H ., and parse the output to skip encrypted files instead of hardcoding them here
-robocopy "%LOCALAPPDATA%\Scripts" "%~dp0misc" /MIR /XD .mypy_cache Photo temp-backup-scripts software_update /XF Hotkeys_Custom.ahk Hotkeys_Custom.*.ahk KeePass_*.ahk *.lnk
+robocopy "%LOCALAPPDATA%\Scripts" "%~dp0misc" /MIR /XD .mypy_cache Photo temp-backup-scripts /XF Hotkeys_Custom.ahk Hotkeys_Custom.*.ahk KeePass_*.ahk *.lnk
 robocopy "%LOCALAPPDATA%\Scripts\Photo" "%~dp0Photo" /MIR /XD old /XF *.lnk "Copy photos from flash cards.destinations.txt"
 )

@@ -1,5 +1,0 @@
-- **/temp/**
-- Soft_old/**
-- rclone_to_YD.log
-- rclone_to_YD.log.bak
-- rclone_to_YD.last_ok.log

@@ -33,6 +33,7 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     MKDIR "%RAMDrive%\Temp\NVIDIA Corporation\NV_Cache"
     COMPACT /U "%RAMDrive%\Temp\NVIDIA Corporation"
 
+    MKDIR "%RAMDrive%\Temp\.mypy_cache"
     MKDIR "%RAMDrive%\Temp\obs-studio\crashes"
     MKDIR "%RAMDrive%\Temp\obs-studio\plugin_config\obs-browser"
     MKDIR "%RAMDrive%\Temp\obs-studio\plugin_config\obs-browsers"
