@@ -1,0 +1,5 @@
+lxml
+httpx[http2]
+rich
+python-certifi-win32
+# pip-system-certs
