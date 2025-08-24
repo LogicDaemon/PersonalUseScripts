@@ -1,6 +1,4 @@
 @(REM coding:CP866
-REM by LogicDaemon <www.logicdaemon.ru>
-REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <http://creativecommons.org/licenses/by-sa/4.0/deed.ru>.
 SETLOCAL ENABLEEXTENSIONS
 IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
 
@@ -33,30 +31,31 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     MKDIR "%RAMDrive%\Temp\NVIDIA Corporation\NV_Cache"
     COMPACT /U "%RAMDrive%\Temp\NVIDIA Corporation"
 
-    MKDIR "%RAMDrive%\Temp\.mypy_cache"
-    MKDIR "%RAMDrive%\Temp\obs-studio\crashes"
-    MKDIR "%RAMDrive%\Temp\obs-studio\plugin_config\obs-browser"
-    MKDIR "%RAMDrive%\Temp\obs-studio\plugin_config\obs-browsers"
     MKDIR "%RAMDrive%\Steam\appcache\httpcache"
     MKDIR "%RAMDrive%\Steam\depotcache"
     MKDIR "%RAMDrive%\Steam\dumps"
-    MKDIR "%RAMDrive%\Steam\logs"
     MKDIR "%RAMDrive%\Steam\GPUCache"
     MKDIR "%RAMDrive%\Steam\htmlcache"
-    MKDIR "%RAMDrive%\Temp\RivetNetworks\ImageCache"
-    MKDIR "%RAMDrive%\Temp\RivetNetworks\Killer\ActivityLog"
-    
+    MKDIR "%RAMDrive%\Steam\logs"
+    MKDIR "%RAMDrive%\Temp\.mypy_cache"
+    MKDIR "%RAMDrive%\Temp\_tc"
+    MKDIR "%RAMDrive%\Temp\cache"
+    MKDIR "%RAMDrive%\Temp\Diagnostics"
+    MKDIR "%RAMDrive%\Temp\DiagOutputDir"
+    MKDIR "%RAMDrive%\Temp\GHISLER"
+    MKDIR "%RAMDrive%\Temp\NvTelemetry_WD"
+    MKDIR "%RAMDrive%\Temp\obs-studio\crashes"
+    MKDIR "%RAMDrive%\Temp\obs-studio\plugin_config\obs-browser"
+    MKDIR "%RAMDrive%\Temp\obs-studio\plugin_config\obs-browsers"
     MKDIR "%RAMDrive%\Temp\OEM\AcerLogs"
     MKDIR "%RAMDrive%\Temp\OEM\CareCenter"
     MKDIR "%RAMDrive%\Temp\OEM\Preload"
-    MKDIR "%RAMDrive%\Temp\cache"
     MKDIR "%RAMDrive%\Temp\Outlook Logging"
+    MKDIR "%RAMDrive%\Temp\RivetNetworks\ImageCache"
+    MKDIR "%RAMDrive%\Temp\RivetNetworks\Killer\ActivityLog"
     MKDIR "%RAMDrive%\Temp\SecuriSyncDiagnosticReport"
-    MKDIR "%RAMDrive%\Temp\DiagOutputDir"
-    MKDIR "%RAMDrive%\Temp\Diagnostics"
-    MKDIR "%RAMDrive%\Temp\_tc"
-    MKDIR "%RAMDrive%\Temp\NvTelemetry_WD"
-    MKDIR "%RAMDrive%\Temp\GHISLER"
+    
+    IF EXIST "c:\Intel" MKDIR "%RAMDrive%\Intel\IntelOptaneData"
 
     IF EXIST "%ProgramData%\GOG.com" (
         MKDIR "%RAMDrive%\ProgramData\GOG.com\Galaxy\webcache\common"
