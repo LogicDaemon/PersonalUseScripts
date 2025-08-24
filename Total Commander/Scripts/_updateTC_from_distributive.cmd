@@ -4,10 +4,10 @@ SETLOCAL ENABLEEXTENSIONS
 
 	IF NOT DEFINED dist (
 		IF "%~1"=="" (
-                    CALL :FindDistributive || EXIT /B
+			CALL :FindDistributive || EXIT /B
 		) ELSE (
-                    SET "dist=%~1"
-                    SET "ext=%~x1"
+			SET "dist=%~1"
+			SET "ext=%~x1"
 		)
 	)
 	IF NOT DEFINED ext EXIT /B 1
@@ -29,8 +29,13 @@ SETLOCAL ENABLEEXTENSIONS
 	)
 	SET "dest=%baseDest%"
 	FOR %%A IN ("%TEMP%\TC_new\*.*" "%TEMP%\TC_new\e\*.*") DO @CALL :TryMove "%%~A"
+	FOR /D %%B IN ("%TEMP%\TC_new\FILTER*") DO @(
+		MKDIR "%baseDest%\%%~nxB"
+		SET "dest=%baseDest%\%%~nxB\"
+		FOR %%A IN ("%%~B\*.*") DO @CALL :TryMove "%%~A"
+	)
 	SET "dest=%baseDest%LANGUAGE\"
-	FOR %%A IN ("%baseDest%LANGUAGE\*.*") DO @CALL :TryMove "%%~A"
+	FOR %%A IN ("%TEMP%\TC_new\LANGUAGE\WCMD_ENG.*") DO @CALL :TryMove "%%~A"
 	RD /S /Q "%TEMP%\TC_new"
 EXIT /B
 )
