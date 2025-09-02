@@ -40,8 +40,14 @@ ParseVersionInfo(ByRef rawupdateinfo) {
             value := kv[2]
             Switch sectName {
                 Case "package":
-                    If (key ~= "url\d*" && !(value ~= "Trial\.exe"))
-                        sect[key] := value
+                    If (key ~= "url\d*"
+                        && (EndsWith(value, "/ABProTrial.exe")
+                            || !(value ~= "i)Trial\.exe"))) {
+                            If (sect.HasKey(value))
+                                sect[value] .= "," key
+                            Else
+                                sect[value] := key
+                        }
                 Case "version":
                     verPartName := { "maj": "major"
                         , "min": "minor"
@@ -68,11 +74,12 @@ Download(verdata) {
     outDir := A_ScriptDir "\" vername
     FileCreateDir %outDir%
     
-    For _, url in verdata.package {
+    For url in verdata.package {
         SplitPath url, outFileName
-        ;RunWait %comspec% /C "curl -v --no-progress-meter -R -l -z "%outFileName%" --output "%outFileName%" "%url%" >>"%outFileName%.log" 2>&1", %outDir%, Min
-        RunWait %comspec% /C "wget -N "%url%" >>"%outFileName%.log" 2>&1", %outDir%, Min
+        RunWait %comspec% /C "curl --no-progress-meter -RL -l -z "%outFileName%" --output "%outDir%\%outFileName%" "%url%" >>"%outDir%\%outFileName%.log" 2>&1", %outDir%, Min
+        ;RunWait %comspec% /C "PUSHD "%outDir%" && wget -N "%url%" >>"%outDir%\%outFileName%.log" 2>&1", %outDir%, Min
     }
 }
 
 #Include <GetURL>
+#Include <EndsWith>

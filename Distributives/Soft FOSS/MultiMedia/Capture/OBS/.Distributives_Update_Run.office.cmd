@@ -5,7 +5,7 @@
     IF "%~d0"=="\\" (
         SET "VENVPATH=%TEMP%\OBS-downloader.venv"
     ) ELSE (
-        SET "VENVPATH=%~dp0.venv""
+        SET "VENVPATH=%~dp0.venv"
     )
 )
 (
