@@ -1,1 +1,2 @@
 path = "%LOCALAPPDATA%\Programs\AutoHotkey\AutoHotkeyU64.exe"
+path = "%ProgramFiles%\AutoHotkey\AutoHotkeyU64.exe"

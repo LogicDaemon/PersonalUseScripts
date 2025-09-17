@@ -102,6 +102,7 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
                    "%APPDATA%\Dropbox" ^
                    "%APPDATA%\Code" ^
                    "%APPDATA%\Code - Insiders" ^
+                   "%APPDATA%\Cursor" ^
                    "%APPDATA%\update-hub" ^
                    "%APPDATA%\discord" ^
                    "%APPDATA%\obs-studio\plugin_config\obs-browser" ^
@@ -121,9 +122,11 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
                                     "logs" ^
                                     "Service Worker\CacheStorage" ^
                                     "Service Worker\ScriptCache" ^
+                                    "Shared Dictionary\cache" ^
                                     "Session Storage" ^
                                     "ShaderCache" ^
                                    ) DO @(
+rem                                     "WebStorage" ^
             IF EXIST "%%~B\%%~C" CALL :MoveToRAMDrive "%%~B\%%~C"
         )
     )
