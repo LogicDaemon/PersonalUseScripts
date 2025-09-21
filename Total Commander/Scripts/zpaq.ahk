@@ -20,7 +20,7 @@ EnvGet SystemDrive,SYSTEMDRIVE
 zpaqexe := """" Findzpaqexe() """"
 
 If (FileExist(sevenMaxExe := LocalAppData "\Programs\7-max\7maxc.exe"))
-    zpaqexe = "%sevenMaxExe%" %zpaqexe%
+    zpaqexe = "%sevenMaxExe%" -t %zpaqexe%
 
 Try {
     teeexe := FindTeeExe()
@@ -210,7 +210,7 @@ GetIdleTime() ;idle time fraction
 
 ProcessExist(pid) {
     Process Exist, %pid%
-    return ErrorLevel
+    Return ErrorLevel
 }
 
 CommonPath(dir1, dir2) {
@@ -231,6 +231,7 @@ CommonPath(dir1, dir2) {
 }
 
 Findzpaqexe() {
+    Local
     If (A_Is64bitOS)
         namezpexe=zpaq64.exe
     Else
@@ -238,23 +239,24 @@ Findzpaqexe() {
 
     dirs=
     (LTrim Join;
-        %A_ScriptDir%
+        %A_ScriptDir%\..\bin
         %LocalAppData%\Programs\zpaq
         %LocalAppData%\Programs\zpaq*\*
         %Path%
     )
 
-    return FindExeInDirs(namezpexe, dirs)
+    Return FindExeInDirs(namezpexe, dirs)
 }
 
 FindTeeExe() {
+    Local
     dirs=
     (LTrim Join;
         %A_ScriptDir%
         %SystemDrive%\SysUtils\UnxUtils
         %Path%
     )
-    return FindExeInDirs("tee.exe", dirs)
+    Return FindExeInDirs("tee.exe", dirs)
 }
 
 FindExeInDirs(exe, dirs) {
@@ -273,13 +275,13 @@ FindExeInDirs(exe, dirs) {
             If (FileExist(curPath)) {
                 FileGetTime curTime, %curPath%
                 If (curTime > maxTime) {
-                    maxPath:=curPath, maxTime:=curTime
+                    out:=curPath, maxTime:=curTime
                 }
             }
         }
     }
 
-    If (!maxPath)
+    If (!out)
         Throw Exception("Requested executable not found",, exe . " not found in " . dirs)
-    return maxPath
+    return out
 }
