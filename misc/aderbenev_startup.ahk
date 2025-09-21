@@ -6,14 +6,7 @@ EnvGet LocalAppData, LocalAppData
 selfPID := DllCall("GetCurrentProcessId")
 Process Priority, %selfPID%, H
 
-Loop
-{
-    UnlockBDE("d:")
-    If (FileExist("d:\Distributives"))
-        Break
-    MsgBox 0x10, BDE unlock failed, D:\Distributives not found, 10
-}
-
+RunWait "%A_AhkPath%" "%A_ScriptDir%\unlockBDE.ahk"
 Run "%A_AhkPath%" "%A_ScriptDir%\Hotkeys.ahk"
 
 Run wsl.exe echo init complete,, Min
@@ -63,5 +56,5 @@ FilterProcess(ByRef fullPath) {
     SplitPath fullPath, name
     Return ProcPri.HasKey(name)
 }
-#include %A_LineFile%\..\unlockBDE.ahk
+
 #include <ProcessList>

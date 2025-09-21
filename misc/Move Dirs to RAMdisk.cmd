@@ -125,8 +125,8 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
                                     "Shared Dictionary\cache" ^
                                     "Session Storage" ^
                                     "ShaderCache" ^
-                                   ) DO @(
 rem                                     "WebStorage" ^
+                                   ) DO @(
             IF EXIST "%%~B\%%~C" CALL :MoveToRAMDrive "%%~B\%%~C"
         )
     )

@@ -1,8 +1,18 @@
-﻿If (A_LineFile == A_ScriptFullPath)
-    UnlockBDE("d:")
+﻿If (A_LineFile == A_ScriptFullPath) {
+    Loop
+    {
+	UnlockBDE("d:")
+	If (FileExist("d:\Distributives"))
+	    Break
+	MsgBox 0x14, BDE unlock failed, D:\Distributives not found`nTry again?, 10
+	IfMsgBox No
+	    Break
+    }
+    ExitApp
+}
 
 GetBDEKey(mountPoint) {
-    local
+    Local
     static key
     EnvGet LocalAppData, LOCALAPPDATA
     If (IsSet(key))
@@ -31,7 +41,9 @@ GetBDEKey(mountPoint) {
 UnlockBDE(mountPoint) {
     local
     key := GetBDEKey(mountPoint)
-    cl = manage-bde -unlock %mountPoint% -RecoveryPassword "%key%"
+    ;cl = manage-bde -unlock %mountPoint% -RecoveryPassword "%key%"
+    ;cl = powershell.exe -c "Unlock-BitLocker d: -Password $('%pass%' | ConvertTo-SecureString -AsPlainText -Force)"
+    cl = powershell.exe -c "Unlock-BitLocker d: -RecoveryPassword '%key%'"
     RunWait %cl%,, Min
     If (ErrorLevel)
         RunWait %comspec% /C "%cl% & manage-bde -unlock %mountPoint% -Password"
