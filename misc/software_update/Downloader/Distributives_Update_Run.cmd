@@ -11,12 +11,8 @@ ECHO %DATE% %TIME% Starting distributives download
 IF NOT DEFINED PROGRAMDATA SET "PROGRAMDATA=%ALLUSERSPROFILE%\Application Data"
 IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%USERPROFILE%\Application Data"
 )
-CALL "%PROGRAMDATA%\Common_Scripts\_get_SoftUpdateScripts_source.cmd"
 (
 IF NOT DEFINED s_uscripts SET "s_uscripts=%~dp0..\client_exec"
-REM depts SET "s_uscripts=%DistUpdRunDir%software_update\scripts"
-rem old office SET "s_uscripts=x:\Shares\profiles$\Share\software_update\scripts"
-
 SET "baseScripts=%~dp0"
 )
 (
