@@ -1,0 +1,2 @@
+﻿
+pack.cmd %packDirFullPath%\\pack.cmd WSA_2407.40000.4.0_x64_Release\nor \npack.cmd WSA_2407.40000.4.0_x64_Release "%packBaseDir%"\n(both should work)\nÂ
