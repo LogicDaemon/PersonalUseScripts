@@ -1,7 +1,6 @@
 @(REM coding:CP866
 ECHO %DATE% %TIME% Running %0
 
-START "Collecting inventory information" /MIN /I %comspec% /C ""\\Srv1S-B.office0.mobilmir\Users\Public\Shares\profiles$\Share\Inventory\collector-script\SaveArchiveReport.cmd" >"%TEMP%\SaveArchiveReport.cmd.lock" 2>&1 & DEL "%TEMP%\SaveArchiveReport.cmd.lock""
 CALL "%~dp0FindAutoHotkeyExe.cmd"
 
 SET "dismLockFile=%TEMP%\WindowsComponentsSetup.lock"
@@ -18,8 +17,8 @@ SET /A "lock_file_idx=1"
     START "Compacting %SystemRoot%\Logs" /MIN /LOW "%SystemRoot%\System32\COMPACT.exe" /Q /C /I /S:"%SystemRoot%\Logs"
     START "Compacting %SystemRoot%\SoftwareDistribution\DataStore" /MIN /LOW %comspec% /C "FOR /R "%SystemRoot%\SoftwareDistribution" %%I IN (.) DO COMPACT /Q /C /I "%%~I""
 
-    %SystemRoot%\System32\reg.exe ADD "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" /v "NV Domain" /d "office0.mobilmir" /f
-    rem %SystemRoot%\System32\reg.exe ADD "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" /v "Domain" /d "office0.mobilmir" /f
+    %SystemRoot%\System32\reg.exe ADD "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" /v "NV Domain" /d "office0" /f
+    rem %SystemRoot%\System32\reg.exe ADD "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" /v "Domain" /d "office0" /f
     %SystemRoot%\System32\wbem\wmic.exe computersystem where name="%COMPUTERNAME%" call joindomainorworkgroup name="OFFICE0"
     %SystemRoot%\System32\wbem\WMIC.exe recoveros set DebugInfoType = 0
 
