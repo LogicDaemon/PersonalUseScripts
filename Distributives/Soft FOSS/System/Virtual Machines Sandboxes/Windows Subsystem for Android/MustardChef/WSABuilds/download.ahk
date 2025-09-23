@@ -11,13 +11,19 @@ If (!workdir)
     workdir := A_ScriptDir "\temp"
 
 ver=%1%
-ver=Windows_11_2407.40000.4.0_v2
+;ver=Windows_11_2407.40000.4.0_v2
 If (ver)
-    var=tags/%ver%
+    ver=tags/%ver%
 Else
     ver=latest
-rawData := GetUrl("https://api.github.com/repos/MustardChef/WSABuilds/releases/" ver)
-varData := JSON.Load(rawData)
+EnvGet token, GITHUB_TOKEN
+headers := token ? {"Authorization": "Bearer " token} : ""
+verData := JSON.Load(GetUrl("https://api.github.com/repos/MustardChef/WSABuilds/releases/" ver, headers))
+If (!verData || verData.status == "404" || StartsWith(verData.message, "API rate limit exceeded")) {
+    FileAppend %A_Now% Error loading release data`n, **
+    FileAppend % verData.message "`n", **
+    ExitApp 0x11
+}
 For i, asset in verData.assets {
     ; If (asset.name ~= "aria2-(?P<ver>.+)-win-(?P<arch>\d\dbit)-build(?P<buildNo>\d*)\.zip") {
     ; WSA_2407.40000.4.0_x64_Release-Nightly-GApps-13.0.7z
@@ -34,8 +40,8 @@ For i, asset in verData.assets {
         Continue
     If (march != "x64")
         Continue
-    If (!RegexMatch(mnamesuffix, "-with-(?P<oottype>\w+)-v?(?P<ootver>\d+(\..\w*)+)", r))
-        Continue
+    ; If (!RegexMatch(mnamesuffix, "-with-(?P<oottype>\w+)-v?(?P<ootver>\d+(\..\w*)+)", r))
+    ;     Continue
     ;If (roottype != "magisk")
     ;    Continue
     ;If (!RegexMatch(mnamesuffix, "-(?P<apps>(No)?GApps)(-(?P<appsver>[^-]+))?", g))
@@ -58,8 +64,9 @@ For i, asset in verData.assets {
     destPath := destDir "\" asset.name
     timeCond := FileExist(destPath) ? " -z """ destPath """" : ""
     dlCmd := "curl -RLo""" tmpPath """" timeCond " """ asset.browser_download_url """"
-    logPath=%tmpPath%\.log
-    RunWait %ComSpec% /C ""%dlCmd%" >"%logPath%" 2>&1", %workdir%, Hide UseErrorLevel
+    logPath=%tmpPath%.log
+    FileAppend %A_Now% %dlCmd%`n, %logPath%
+    RunWait %ComSpec% /C "%dlCmd% >>"%logPath%" 2>&1", %workdir%, Hide UseErrorLevel
     If (ErrorLevel) {
         FileAppend `n%A_Now% error %ErrorLevel%`n, %logPath%
     } Else {
@@ -72,8 +79,13 @@ For i, asset in verData.assets {
     }
 }
 If (!asset) {
-    MsgBox, 16, Error, No suitable assets found!
+    FileAppend %A_Now% No suitable asset found`n, **
+    ExitApp 1
 }
 ExitApp
+
+StartsWith(haystack, needle) {
+    Return SubStr(haystack, 1, StrLen(needle)) = needle
+}
 
 #include <JSON>

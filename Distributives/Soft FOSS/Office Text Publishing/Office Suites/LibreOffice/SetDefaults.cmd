@@ -25,7 +25,8 @@ CALL :GetName nameLO "%dirLO:~0,-1%"
 EXIT /B
 )
 :findConfigDir
-IF NOT DEFINED DefaultsSource CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" || CALL "%LOCALAPPDATA%\Scripts\_get_defaultconfig_source.cmd"
+IF NOT DEFINED DefaultsSource CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" ^
+    || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
 (
     CALL :GetDir configDir "%DefaultsSource%"
 EXIT /B

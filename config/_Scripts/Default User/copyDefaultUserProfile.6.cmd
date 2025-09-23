@@ -9,7 +9,8 @@ SETLOCAL ENABLEEXTENSIONS
     IF NOT DEFINED exe7z CALL "%~dp0..\find7zexe.cmd" || %ErrorCmd%
     IF NOT DEFINED xln CALL "%~dp0..\find_exe.cmd" xln xln.exe || %ErrorCmd%
 
-    IF NOT DEFINED DefaultsSource CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" || CALL "%LOCALAPPDATA%\Scripts\_get_defaultconfig_source.cmd"
+    IF NOT DEFINED DefaultsSource CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" ^
+        || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
     IF NOT DEFINED DefaultsSource EXIT /B
 
     rem Getting DefaultUserProfile location

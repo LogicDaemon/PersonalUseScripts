@@ -15,7 +15,8 @@ EXIT /B 1
 :ProceedWithInstall
     "%~dp0%distName%" /S
     SET "InstallErrorLevel=%ERRORLEVEL%"
-    CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd"
+    IF NOT DEFINED DefaultsSource CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" ^
+        || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
     IF DEFINED DefaultsSource CALL :HideDesktopShortcut
 EXIT /B %InstallErrorLevel%
 

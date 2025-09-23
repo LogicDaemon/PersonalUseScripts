@@ -28,7 +28,7 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     SET "distNotepad2Mask=Notepad2-mod.*"
     IF DEFINED OS64Bit ( SET "Notepad2DistSuffix=_x64.zip" ) ELSE SET "Notepad2DistSuffix=_x86.zip"
 
-    FOR %%A IN ("%~dp0..\.." "\\localhost\Distributives\Soft" "D:\Distributives\Soft") DO (
+    FOR %%A IN ("%~dp0..\.." "\Distributives\Soft" "D:\Distributives\Soft") DO (
         SET "findMoreDist="
         IF NOT DEFINED dist7zDir SET "findMoreDist=1" & IF EXIST "%%~A\Archivers Packers\7Zip" SET "dist7zDir=%%~A\Archivers Packers\7Zip"
         IF NOT DEFINED distzpaqDir SET "findMoreDist=1" & IF EXIST "%%~A\..\Soft FOSS\Archivers Packers\zpaq" SET "distzpaqDir=%%~A\..\Soft FOSS\Archivers Packers\zpaq"

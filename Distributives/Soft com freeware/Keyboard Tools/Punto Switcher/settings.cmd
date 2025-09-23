@@ -4,7 +4,8 @@ REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 In
 SETLOCAL ENABLEEXTENSIONS
 SET "LocalPSSettingRel=Yandex\Punto Switcher"
 IF NOT DEFINED DefaultsSource CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" ^
-    || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"IF NOT DEFINED DefaultsSource EXIT /B 129
+    || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
+IF NOT DEFINED DefaultsSource EXIT /B 129
 IF NOT DEFINED exe7z CALL :find7zexe
 )
 (
