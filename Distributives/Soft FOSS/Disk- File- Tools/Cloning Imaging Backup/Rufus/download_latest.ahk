@@ -52,7 +52,7 @@ GetNewRufusVerURL() {
                     , "https://rufus.ie/Rufus_win_x64_10.ver"
                     , "https://rufus.ie/Rufus_win_x64.ver"
                     , "https://rufus.ie/Rufus_win.ver" ]
-        Try return GetURL(url, 1)
+        Try return GetURL(url,, 1)
 }
 
 EnvSetIfUnset(ByRef name, ByRef val) {

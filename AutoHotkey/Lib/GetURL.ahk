@@ -1,12 +1,12 @@
 ﻿;0BSD (https://opensource.org/license/0bsd) / public domain by LogicDaemon <https://www.logicdaemon.ru/>
 
-GetURL(ByRef URL, retries:=3, delay:=3000) {
+GetURL(ByRef URL, headers:="", retries:=3, delay:=3000) {
     local
     exc := ""
     Loop
     {
         Try {
-            st := HTTPReq("GET", URL,, resp := "")
+            st := HTTPReq("GET", URL,, resp := "", headers)
         } Catch exc {
             Continue
         }
@@ -19,7 +19,7 @@ GetURL(ByRef URL, retries:=3, delay:=3000) {
         If (st >= 400)
             Break ; errors 400…500 are fatal
         ; 300-399 are redirects, normally never returned by HTTPReq
-        If (RegExMatch(headers, "^Location: (.+)", newURL)) {
+        If (RegExMatch(resp.headers, "^Location: (.+)", newURL)) {
             URL := newURL1
             retries++ ; do not count redirects as retries
             Continue
