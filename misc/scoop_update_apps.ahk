@@ -6,7 +6,7 @@ EnvGet LocalAppData,LOCALAPPDATA
 EnvGet SystemRoot,SystemRoot
 
 scoopBaseDir := FindScoopBaseDir()
-logPath := scoopBaseDir "\apps\update.log"
+logPath := scoopBaseDir "\apps_update.log"
 
 mode = Min
 For _, v in A_Args {
