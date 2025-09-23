@@ -10,7 +10,7 @@ FOR /F "usebackq delims=" %%W IN (`ver`) DO SET "VW=%%~W"
 IF "%VW:~0,22%"=="Microsoft Windows XP [" SET "OSCapacity=xp"
 
 FOR /F "usebackq tokens=2 delims==" %%I IN (`FTYPE AutoHotkeyScript`) DO CALL :GetFirstArg AutohotkeyExe %%I
-IF NOT DEFINED AutohotkeyExe CALL "\\Server.local\profiles$\Share\config\_Scripts\FindAutoHotkeyExe.cmd" || EXIT /B
+IF NOT DEFINED AutohotkeyExe CALL FindAutoHotkeyExe.cmd || EXIT /B
 )
 (
 CALL :InitRemembering
