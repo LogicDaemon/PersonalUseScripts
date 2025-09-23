@@ -9,4 +9,6 @@
     CALL "%baseScripts%\_DistDownload.cmd" "http://www2.aomeisoftware.com/download/pa/PAssist_Lite.exe" PAssist_Lite.exe -N
     rem CALL "%baseScripts%\_DistDownload.cmd" http://www.aomeisoftware.com/download/pa/PAssist_Std.exe PAssist_Std.exe -N
     CALL "%baseScripts%\_DistDownload.cmd" "http://www2.aomeisoftware.com/download/pa/PAssist_Std.exe" PAssist_Std.exe -N
+    
+    CALL FindAutoHotkeyExe.cmd "%~dp0link_to_version_subdir.ahk"
 )
