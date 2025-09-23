@@ -5,18 +5,24 @@ REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 In
 REM Find software source
 
 REM trySoftUpdateScripts first
-CALL "%ProgramData%\mobilmir.ru\_get_SoftUpdateScripts_source.cmd" || CALL "%SystemDrive%\Local_Scripts\_get_SoftUpdateScripts_source.cmd"
+CALL "%SystemDrive%\Local_Scripts\_get_SoftUpdateScripts_source.cmd"
 )
 (
 IF DEFINED Distributives CALL :CheckSetSoftSource "%Distributives%" && GOTO :found
 
 REM then %configDir%..
-IF NOT DEFINED DefaultsSource CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd" || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
+IF NOT DEFINED DefaultsSource CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" ^
+    || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
 )
 CALL :GetDir configDir "%DefaultsSource%"
 (
-REM first try configdir\.., then fallback to localhost, Srv0 and Srv1S-B
-CALL :CheckSetSoftSource "%configDir%.." && CALL :CheckSetSoftSource "%COMPUTERNAME:~0,-2%-K\Distributives" || CALL :CheckSetSoftSource "%~d0\Distributives" || CALL :CheckSetSoftSource "%~dp0..\.." || CALL :CheckSetSoftSource "D:\Distributives" || CALL :CheckSetSoftSource "\\localhost\Distributives" || CALL :CheckSetSoftSource "\\Srv0.office0.mobilmir\Distributives" || CALL :CheckSetSoftSource "\\Srv1S-B.office0.mobilmir\Distributives" || CALL :AskSoftSource || EXIT /B
+CALL :CheckSetSoftSource "%configDir%.." && CALL :CheckSetSoftSource "%COMPUTERNAME:~0,-2%-K\Distributives" ^
+	|| CALL :CheckSetSoftSource "%~d0\Distributives" ^
+	|| CALL :CheckSetSoftSource "%~dp0..\.." ^
+	|| CALL :CheckSetSoftSource "D:\Distributives" ^
+	|| CALL :CheckSetSoftSource "\\localhost\Distributives" ^
+	|| CALL :AskSoftSource ^
+	|| EXIT /B
 )
 :found
 (

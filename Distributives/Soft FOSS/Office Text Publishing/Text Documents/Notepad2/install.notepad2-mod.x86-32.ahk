@@ -172,8 +172,7 @@ findexe(exe, paths*) {
     Try return GetPathForFile(exe, A_ScriptDir . "..\..\..\Distributives\Soft\PreInstalled\utils"
 				 , A_ScriptDir . "..\..\Soft\PreInstalled\utils"
 				 , "\Distributives\Soft\PreInstalled\utils"
-				 , "\\localhost\Distributives\Soft\PreInstalled\utils"
-				 , "\\Srv0.office0.mobilmir\Distributives\Soft\PreInstalled\utils" )
+				 , "\\localhost\Distributives\Soft\PreInstalled\utils" )
     
     Throw 0
 }

@@ -185,5 +185,5 @@ TryInvokeFunc(fnNames*) {
 	    Try return rv
 }
 
-#include *i <find7zexe> ; only available when running from Srv0
+#include *i <find7zexe> ; only available when running from server
 ;#include *i %A_LineFile%\..\..\..\config\_Scripts\Lib\find7zexe.ahk ; only available when running local copy (with Distributives\config)

@@ -13,7 +13,7 @@ If (atPos := InStr(mailUserID, "@"))
 If (!mailUserId) {
     EnvGet GetSharedmailUserIdScript,GetSharedmailUserIdScript
     If (!GetSharedmailUserIdScript)
-	GetSharedmailUserIdScript := A_AppDataCommon "\mobilmir.ru\_get_SharedmailUserId.cmd"
+	GetSharedmailUserIdScript := A_AppDataCommon "\Common_Scripts\_get_SharedmailUserId.cmd"
     
     If (FileExist(GetSharedmailUserIdScript))
 	Try mailUserId := Func("ReadSetVarFromBatchFile").Call(GetSharedmailUserIdScript, "mailUserId")
@@ -47,7 +47,7 @@ If (mailUserId) { ; Компьютер в рознице либо другой �
 If (!destPath)
     destPath = %UserProfile%\Mail\Thunderbird\profile
 If (!mailDomain)
-    mailDomain = mobilmir.ru
+    mailDomain = company.com
 
 Gui -Resize -MaximizeBox  
 Gui Add, Text, Section, Полный адрес email: 

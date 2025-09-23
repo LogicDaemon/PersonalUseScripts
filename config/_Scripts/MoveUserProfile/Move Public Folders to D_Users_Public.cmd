@@ -11,7 +11,7 @@ rem
 rem HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList
 rem Public
 
-SET "destDir=%ProgramData%\mobilmir.ru\reg-backup"
+SET "destDir=%PROGRAMDATA%\reg-backup"
 
 SET "now=%DATE:~-4,4%-%DATE:~-7,2%-%DATE:~-10,2%_%TIME::=%"
 )

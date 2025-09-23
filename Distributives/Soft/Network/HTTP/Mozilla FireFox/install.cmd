@@ -19,7 +19,8 @@ SETLOCAL ENABLEEXTENSIONS
 
     SET "TempIni=%TEMP%\FirefoxInstall.ini"
     FOR /F "usebackq delims=" %%I IN (`ver`) DO SET "winVer=%%~I"
-    CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd"
+    IF NOT DEFINED DefaultsSource CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" ^
+        || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
 
     SET "ErrorMemory="
 )

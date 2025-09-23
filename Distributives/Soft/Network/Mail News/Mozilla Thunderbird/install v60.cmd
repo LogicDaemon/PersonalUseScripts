@@ -2,7 +2,8 @@
 REM by LogicDaemon <www.logicdaemon.ru>
 REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <http://creativecommons.org/licenses/by-sa/4.0/deed.ru>.
 SETLOCAL ENABLEEXTENSIONS
-    CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd"
+    IF NOT DEFINED DefaultsSource CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" ^
+        || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
     SET "distFullPath=%~dp0"
     SET "srcpath=%~dp0v60\"
     CALL "%~dp0find_distributive.cmd" || EXIT /B

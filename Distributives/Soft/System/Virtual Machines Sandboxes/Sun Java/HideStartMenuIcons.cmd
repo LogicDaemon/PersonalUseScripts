@@ -48,7 +48,7 @@ EXIT /B
 
     CALL :testexe %locvar% "\Distributives\Soft\PreInstalled\utils\%seekforexecfname%"
     IF NOT "%ERRORLEVEL%"=="9009" EXIT /B
-    CALL :testexe %locvar% "\\Srv0\Distributives\Soft\PreInstalled\utils\%seekforexecfname%"
+    CALL :testexe %locvar% "\\Server.local\Distributives\Soft\PreInstalled\utils\%seekforexecfname%"
     IF NOT "%ERRORLEVEL%"=="9009" EXIT /B
 
     :findexeNextPath

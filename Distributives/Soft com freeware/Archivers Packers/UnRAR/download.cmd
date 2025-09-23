@@ -9,4 +9,4 @@ IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%U
 SET "noarchmasks=*.exe *.zip *.gz *.bz2 *.rar"
 SET "moreDirs="
 )
-CALL "%ProgramData%\mobilmir.ru\Common_Scripts\wget_the_site.cmd" www.rarlab.com http://www.rarlab.com/rar_add.htm -ml1 -np "-A.zip,.exe,.rar"
+CALL wget_the_site.cmd www.rarlab.com http://www.rarlab.com/rar_add.htm -ml1 -np "-A.zip,.exe,.rar"

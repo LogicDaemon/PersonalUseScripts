@@ -7,7 +7,7 @@ IF NOT DEFINED PROGRAMDATA SET "PROGRAMDATA=%ALLUSERSPROFILE%\Application Data"
 IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%USERPROFILE%\Application Data"
 
 IF EXIST "%SystemRoot%\SysNative\cmd.exe" (SET "System32=%SystemRoot%\SysNative") ELSE SET "System32=%SystemRoot%\System32"
-SET "TaskRelPath=Tasks\mobilmir.ru\Restart Spooler"
+SET "TaskRelPath=Tasks\Restart Spooler"
 )
 (
 rem RUNAS /User:Пользователь

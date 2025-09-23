@@ -9,7 +9,8 @@ CALL "%SoftSourceDir%\Archivers Packers\7Zip\install.cmd"
 EXIT /B
 
 :GetConfigDir
-CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd"
+IF NOT DEFINED DefaultsSource CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" ^
+    || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
 (
 CALL :GetDir ConfigDir "%DefaultsSource%"
 EXIT /B

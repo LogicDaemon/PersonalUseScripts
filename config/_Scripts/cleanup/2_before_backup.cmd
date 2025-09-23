@@ -120,7 +120,7 @@ EXIT /B 1
 )
 :FindBackupScriptPath
     ECHO %DATE% %TIME% searching for %1 on local drives and in predefined network locations
-    FOR %%I IN (D: E: F: G: H: I: J: K: L: M: N: O: P: Q: S: T: U: V: W: X: Y: Z: A: B: "\\IT-Head.office0.mobilmir\Backup" "\\AcerAspire7720G.office0.mobilmir\wbadmin-Backups") DO (
+    FOR %%I IN (D: E: F: G: H: I: J: K: L: M: N: O: P: Q: S: T: U: V: W: X: Y: Z: A: B: "\\Server.local\wbadmin-Backups") DO (
 	REM "IF EXIST" shows message box "drive not ready" with 3 buttons when hitting a drive w/o media. So use DIR!
 	rem DIR "%%~I\%~nx1" || ECHO.| NET USE "%%~I" /user:guest ""
 	DIR "%%~I\%~nx1" || ECHO.| NET USE "%%~I" /user:guest0 0

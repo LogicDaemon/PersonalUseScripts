@@ -68,4 +68,4 @@ RemoveEnding(t, ending) {
     return t
 }
 
-#include *i \\Srv0.office0.mobilmir\profiles$\Share\config\thunderbird\FindThunderbirdProfile.ahk
+#include *i \\Server.local\profiles$\Share\config\thunderbird\FindThunderbirdProfile.ahk

@@ -49,11 +49,11 @@ EXIT /B
 )
 :ScheduleSingleTask <TaskName> <XML>
 (
-    REM %System32%\SCHTASKS.exe /Delete /TN "mobilmir\%~1" /F
-    ECHO.|%System32%\SCHTASKS.exe /Create /TN "mobilmir.ru\%~1" /XML %2 %AddArgs% %taskschdAddSwitches%
+    REM %System32%\SCHTASKS.exe /Delete /TN "%~1" /F
+    ECHO.|%System32%\SCHTASKS.exe /Create /TN "%~1" /XML %2 %AddArgs% %taskschdAddSwitches%
     IF ERRORLEVEL 1 GOTO :SetError
     REM Everyone=*S-1-1-0
-    "%WinDir%\System32\icacls.exe" "%System32%\Tasks\mobilmir.ru\%~1" /grant "*S-1-1-0:RX"
+    "%WinDir%\System32\icacls.exe" "%System32%\Tasks\%~1" /grant "*S-1-1-0:RX"
     EXIT /B
 )
 :SetError

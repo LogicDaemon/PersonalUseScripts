@@ -18,7 +18,7 @@ IfMsgBox Yes
     ToolTip,, Изменение настроек addressbookssync
     FileAppend,
     (
-    user_pref("extensions.addressbookssync.localpath", "\\\\Srv1S-B.office0.mobilmir\\Users\\Public\\Shares\\profiles$\\Share\\adrbooks");
+    user_pref("extensions.addressbookssync.localpath", "\\\\Server.local\\Users\\Public\\Shares\\profiles$\\Share\\adrbooks");
     
     ),*%MTProfilePath%\prefs.js
     ToolTip

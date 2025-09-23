@@ -8,4 +8,4 @@ IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%U
 SET "noarchmasks=*.exe *.zip *.gz *.bz2"
 SET "moreDirs="
 )
-CALL "%ProgramData%\mobilmir.ru\Common_Scripts\wget_the_site.cmd" www.ltr-data.se http://www.ltr-data.se/opencode.html
+CALL wget_the_site.cmd www.ltr-data.se http://www.ltr-data.se/opencode.html

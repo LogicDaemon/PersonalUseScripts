@@ -38,7 +38,7 @@ While !(uncmd := GetOneDriveUninstallString()) {
 
 Try DefaultConfigDir:=getDefaultConfigDir()
 If (!DefaultConfigDir)
-    DefaultConfigDir := "\\Srv1S-B.office0.mobilmir\Users\Public\Shares\profiles$\Share\config"
+    DefaultConfigDir := "\\Server.local\Users\Public\Shares\profiles$\Share\config"
 
 ; нельзя так делать, поскольку записи – в реестре пользователя
 ;If (!A_IsAdmin) {

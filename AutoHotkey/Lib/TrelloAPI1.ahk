@@ -49,7 +49,7 @@ GetTrelloAuthToken(ByRef reqAPIkey := "", ByRef interactively := -1, ByRef scope
 	EnvGet LocalAppData,LOCALAPPDATA
 	If (!LocalAppData)
 	    LocalAppData := GetKnownFolder("LocalAppData")
-	secretsDir = %LocalAppData%\mobilmir.ru\Trello-ahk\%appName%
+	secretsDir = %LocalAppData%\_sec\Trello-ahk\%appName%
 	
 	APIkeytxt = %secretsDir%\APIkey.txt
 	Try FileRead APIkey, %APIkeytxt%

@@ -7,16 +7,16 @@ IF NOT DEFINED PROGRAMDATA SET "PROGRAMDATA=%ALLUSERSPROFILE%\Application Data"
 IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%USERPROFILE%\Application Data"
 IF NOT DEFINED LOCALAPPDATA IF EXIST "%USERPROFILE%\Local Settings\Application Data" SET "APPDATA=%USERPROFILE%\Local Settings\Application Data"
 
-    SET "pubkeysDest=\\Srv1S-B.office0.mobilmir\Users\Public\Shares\profiles$\Share\gpg"
+    SET "pubkeysDest=\\Server.local\Users\Public\Shares\profiles$\Share\gpg"
     SET "fnameTest=%DATE% %TIME::=% access test from %COMPUTERNAME%.tmp"
     SET "schTaskName=ScriptUpdater-autoupdate"
 )
 (    
     %SystemRoot%\System32\fltmc.exe >nul 2>&1
     IF ERRORLEVEL 1 ( REM not admin
-	SET "txtScriptUpdaterDir=%LOCALAPPDATA%\mobilmir.ru"
+	SET "txtScriptUpdaterDir=%LOCALAPPDATA%\Scripts"
     ) ELSE ( REM Admin
-	SET "txtScriptUpdaterDir=%PROGRAMDATA%\mobilmir.ru"
+	SET "txtScriptUpdaterDir=%PROGRAMDATA%\Common_Scripts"
 	SET "IsAdmin=1"
     )
     IF "%~1"=="" (
@@ -28,14 +28,14 @@ IF NOT DEFINED LOCALAPPDATA IF EXIST "%USERPROFILE%\Local Settings\Application D
 		    SET "ScriptUpdaterDir=d:\Local_Scripts\ScriptUpdater"
 		    SET "taskXML=ScriptUpdater-autoupdate D_Local_Scripts.xml"
 		) ELSE (
-		    SET "ScriptUpdaterDir=%PROGRAMDATA%\mobilmir.ru\ScriptUpdater"
+		    SET "ScriptUpdaterDir=%PROGRAMDATA%\Common_Scripts\ScriptUpdater"
 		    SET "taskXML=ScriptUpdater-autoupdate ProgramData.xml"
 		)
 	    ) ELSE ( REM not admin
 		SET "UserIDPrefix=%USERNAME%_"
-		SET "ScriptUpdaterDir=%LOCALAPPDATA%\mobilmir.ru"
+		SET "ScriptUpdaterDir=%LOCALAPPDATA%\Scripts"
 		REM due to limitation of command length in schtasks command line, have to shorten any paths
-		SET "taskScriptUpdaterDir=%%LOCALAPPDATA%%\mobilmir.ru"
+		SET "taskScriptUpdaterDir=%%LOCALAPPDATA%%\Scripts"
 		CALL :ScriptUpdaterDirNonDefault
 	    )
 	)
@@ -66,7 +66,7 @@ IF NOT DEFINED LOCALAPPDATA IF EXIST "%USERPROFILE%\Local Settings\Application D
     
     ECHO OFF
     CALL "%~dp0..\Tasks\_Schedule WinVista+ Task.cmd" "%~dp0Tasks.7z" "%schTaskName%" "%taskXML%" /RU "%schedUserName%" /RP "%schedUserPwd%"
-    IF DEFINED ModifyTask %SystemRoot%\System32\schtasks.exe /Change /TN "mobilmir.ru\%schTaskName%" /RU "%schedUserName%" /RP "%schedUserPwd%" /TR "%%comspec%% /C ''%ScriptUpdaterDir%\autoupdate.cmd' >'%TEMP%\ScriptUpdater-autoupdate.log' 2>&1'" <NUL
+    IF DEFINED ModifyTask %SystemRoot%\System32\schtasks.exe /Change /TN "%schTaskName%" /RU "%schedUserName%" /RP "%schedUserPwd%" /TR "%%comspec%% /C ''%ScriptUpdaterDir%\autoupdate.cmd' >'%TEMP%\ScriptUpdater-autoupdate.log' 2>&1'" <NUL
 
     EXIT /B
 )
@@ -91,7 +91,7 @@ EXIT /B
     ECHO Папка "%pubkeysDest%" недоступна для записи.
     IF DEFINED LastTry EXIT /B 1
     SET "srvPubkeysDest=%pubkeysDest%"
-    SET "pubkeysDest=%LOCALAPPDATA%\mobilmir.ru\ScriptUpdater-PubKeys"
+    SET "pubkeysDest=%LOCALAPPDATA%\Scripts\ScriptUpdater-PubKeys"
 )
 (
     MKDIR "%pubkeysDest%"
@@ -113,7 +113,7 @@ EXIT /B
 )
 :GenKeyring
 (
-    CALL "%~dp0..\genGpgKeyring.cmd" "%pubkeysDest%" "%UserIDPrefix%%Hostname%@ScriptUpdater.mobilmir" "ScriptUpdater"
+    CALL "%~dp0..\genGpgKeyring.cmd" "%pubkeysDest%" "%UserIDPrefix%%Hostname%@ScriptUpdater" "ScriptUpdater"
     IF DEFINED CannotSaveToServer IF NOT "%RunInteractiveInstalls%"=="0" (
         %SystemRoot%\explorer.exe /explore,"%pubkeysDest%"
         CALL "%~dp0..\FindAutoHotkeyExe.cmd" "%~dp0..\GUI\MsgBox.ahk" 48 "%~nx0" "Открытые ключи сохранены в %pubkeysDest%, чтобы адресная книга обновлялась - поместите их в %srvPubkeysDest%"

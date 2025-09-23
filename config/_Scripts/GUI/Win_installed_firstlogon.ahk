@@ -11,7 +11,7 @@ IniWrite https://trello.com/b/9SqV3GUA, %A_Desktop%\¡Шаблон_ подгот
 If (!FileExist((sysNative := SystemRoot "\SysNative") "\cmd.exe"))
     sysNative := SystemRoot "\System32"
 
-defaultConfigDir = \\Srv1S-B.office0.mobilmir\Users\Public\Shares\profiles$\Share\config
+defaultConfigDir = \\Server.local\Users\Public\Shares\profiles$\Share\config
 configScriptsDir = %A_ScriptDir%\..
 If (!InStr(FileExist(configDir := defaultConfigDir), "D")) {
     FileCreateShortcut %SystemRoot%\explorer.exe, %A_Desktop%\config@Srv1S-B.lnk,, /open`,"%defaultConfigDir%"
@@ -40,8 +40,7 @@ For i,name in [ "SwapSpace_FORMAT_MOUNT.lnk"
     FileCopy %configScriptsDir%\lnk\%name%, %shortcutsDest%\%i% %name%
 }
 
-FileCopy \\Srv1S-B.office0.mobilmir\Distributives\Updates\Windows\wsusoffline\Initial Update Unattended +Autoreboot*.lnk, %shortcutsDest%\*.*
-;FileCopy \\Srv1S-B.office0.mobilmir\Distributives\Updates\Windows\wsusoffline\Initial Update Unattended +Autoreboot - Srv1S-B.lnk, %shortcutsDest%\*.*
+FileCopy \\Server.local\Distributives\Updates\Windows\wsusoffline\Initial Update Unattended +Autoreboot*.lnk, %shortcutsDest%\*.*
 
 If (!A_IsAdmin) {
     RunWait % "*RunAs " DllCall( "GetCommandLine", "Str" ),,UseErrorLevel  ; Requires v1.0.92.01+
@@ -74,7 +73,7 @@ If (StartsWith(Hostname, "DESKTOP-") || StartsWith(Hostname, "LAPTOP-")) {
 
 ;EnvSet Write-trello-id.ahk-params, /nag
 RunWait %comspec% /C "%configDir%\..\Inventory\collector-script\SaveArchiveReport.cmd", %A_Temp%, Min
-;If (!FileExist(A_AppDataCommon "\mobilmir.ru\trello-id.txt")) {
+;If (!FileExist(A_AppDataCommon "\ComputerID\trello-id.txt")) {
 ;}
 
 ;If (FileExist("D:\")) {
@@ -84,7 +83,7 @@ RunWait %comspec% /C "%configDir%\..\Inventory\collector-script\SaveArchiveRepor
 ;}
 
 If (A_OSVersion == "WIN_7")
-    RunWait %comspec% /C ""\\Srv0.office0.mobilmir\Distributives\Updates\Windows\7 From Scratch\install.cmd" /noreboot"
+    RunWait %comspec% /C ""\\Server.local\Distributives\Updates\Windows\7 From Scratch\install.cmd" /noreboot"
 
 ExitApp
 

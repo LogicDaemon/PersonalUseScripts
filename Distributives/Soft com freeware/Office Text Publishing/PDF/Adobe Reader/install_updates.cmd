@@ -46,7 +46,8 @@ IF NOT DEFINED configDir CALL :findconfigDir
     GOTO :SetFirstExistingExe
 )
 :findconfigDir
-IF NOT DEFINED DefaultsSource CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd" || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
+IF NOT DEFINED DefaultsSource CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" ^
+    || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
 (
     CALL :GetDir configDir "%DefaultsSource%"
 EXIT /B

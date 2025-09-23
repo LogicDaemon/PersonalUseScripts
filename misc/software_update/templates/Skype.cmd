@@ -1,5 +1,5 @@
 @(REM coding:CP866
-SET "SkypeInstFlag=%ProgramData%\mobilmir.ru\Skype-Must-Be-Installed.flag"
+SET "SkypeInstFlag=%PROGRAMDATA%\Common_Scripts\Skype-Must-Be-Installed.flag"
 rem defined in software_update.cmd -- SET "logmsi=%s_uscriptsStatus%\%~nx0-msiexec.log"
 SET "TempDst=%TEMP%\SkypeDistributive"
 )

@@ -39,15 +39,9 @@ IF NOT DEFINED LOCALAPPDATA IF EXIST "%USERPROFILE%\Local Settings\Application D
     EXIT /B
 )
 :InstallTC
+SET "TCDistRelPath=PreInstalled\manual\TotalCommander.cmd"
 (
-    SET "TCDistRelPath=PreInstalled\manual\TotalCommander.cmd"
-    IF NOT DEFINED DefaultsSource CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd" || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
-)
-    CALL :GetDir ConfigDir "%DefaultsSource%"
-    CALL "%ConfigDir%_Scripts\FindSoftwareSource.cmd"
-(
-    IF DEFINED SoftSourceDir CALL :InstallFirst "%SoftSourceDir%\%TCDistRelPath%" && GOTO :FindTCPath
-    CALL :InstallFirst "D:\Distributives\Soft\%TCDistRelPath%" "\\miwifi.com\Distributives\Soft\%TCDistRelPath%" && GOTO :FindTCPath
+    CALL :InstallFirst "D:\Distributives\Soft\%TCDistRelPath%" "\\localhost\Distributives\Soft\%TCDistRelPath%" && GOTO :FindTCPath
     ECHO Install failed!
     EXIT /B
 )

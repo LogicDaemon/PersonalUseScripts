@@ -1,8 +1,5 @@
 ﻿;0BSD (https://opensource.org/license/0bsd) / public domain by LogicDaemon <https://www.logicdaemon.ru/>
 
-;https://redbooth.com/a/#!/projects/59756/tasks/32350056
-;https://drive.google.com/a/mobilmir.ru/file/d/0B6JDqImUdYmlejlIRTRWY0JCZjA/view?usp=sharing
-
 ExtendedFindTrelloCard(ByRef query, Byref cards, ByRef nMatches := 0, ByRef fp := "", matchCallback := -1) {
     If (matchCallback==-1)
 	matchCallback := Func("ExtendedFindTrelloCard_LogMatches").Bind(["Карточка ", " подошла по параметрам ", "`n", "Выражения расширенного поиска: ", "`n"])

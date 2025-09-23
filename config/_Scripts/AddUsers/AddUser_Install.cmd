@@ -24,12 +24,12 @@ IF NOT DEFINED ErrorCmd SET ErrorCmd=PAUSE
     FOR /F "usebackq tokens=2*" %%I IN (`REG QUERY "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" /v "Hostname"`) DO SET "Hostname=%%~J"
 )
 (
-    IF NOT EXIST "%ProgramData%\mobilmir.ru\trello-id.txt" %AutoHotkeyExe% "%~dp0..\Write-trello-id.ahk"
+    IF NOT EXIST "%ProgramData%\ComputerID\trello-id.txt" %AutoHotkeyExe% "%~dp0..\Write-trello-id.ahk"
     
     SET "newPwd=%PasswdPart1:~-4%-%PasswdPart2:~-4%"
     SET "showPwd=%PasswdPart1:~-4%-%PasswdPart2:~-4%"
     IF NOT EXIST "%PassFilePath%" IF EXIST "%TEMP%\install-pwd.txt" ECHO Y|MOVE /Y "%TEMP%\install-pwd.txt" "%PassFilePath%"
-    IF NOT EXIST "%PassFilePath%" IF EXIST "%PROGRAMDATA%\mobilmir.ru\install-pwd.txt" ECHO Y|MOVE /Y "%PROGRAMDATA%\mobilmir.ru\install-pwd.txt" "%PassFilePath%"
+    IF NOT EXIST "%PassFilePath%" IF EXIST "%PROGRAMDATA%\UserAccounts\install-pwd.txt" ECHO Y|MOVE /Y "%PROGRAMDATA%\UserAccounts\install-pwd.txt" "%PassFilePath%"
 )
 rem :CreateNewUser
 %AutoHotkeyExe% "%~dp0AddUser_Install_PostPasswordToForm.ahk" "%InstallUsername%" "%showPwd%" "предварительная отправка (до смены пароля)" || (
@@ -63,7 +63,7 @@ EXIT /B
 :ExistingUser
 (
     SET "findExeTestExecutionOptions=-?"
-    CALL "%~dp0..\find_exe.cmd" passwdexe "%SystemRoot%\SysUtils\UnxUtils\Uri\passwd.exe" "%~dp0..\..\..\Programs\passwd.exe" \\Srv1S-B.office0.mobilmir\Users\Public\Shares\profiles$\Share\Programs\passwd.exe || (
+    CALL "%~dp0..\find_exe.cmd" passwdexe passwd.exe || (
 	ECHO passwd.exe not found. Trying to reset the password.
 	GOTO :ExistingUserResetPwd
     )

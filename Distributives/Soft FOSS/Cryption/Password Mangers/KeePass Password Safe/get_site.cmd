@@ -9,7 +9,7 @@ IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%U
 SET "noarchmasks=*.zip *.exe *.7z *.rar *.xpi *.msi *.u3p *.plg *.plgx"
 SET "moreDirs="
 )
-SET wgetSideCMD=CALL "%ProgramData%\mobilmir.ru\Common_Scripts\wget_the_site.cmd"
+SET wgetSideCMD=CALL wget_the_site.cmd
 (
 %wgetSideCMD% keepass.info
 IF NOT EXIST "%~dp0keepass.info\extensions" EXIT /B

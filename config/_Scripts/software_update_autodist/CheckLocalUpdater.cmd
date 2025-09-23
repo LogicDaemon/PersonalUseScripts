@@ -6,7 +6,7 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
 IF NOT DEFINED PROGRAMDATA SET "PROGRAMDATA=%ALLUSERSPROFILE%\Application Data"
 IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%USERPROFILE%\Application Data"
 )
-CALL "%ProgramData%\mobilmir.ru\_get_SoftUpdateScripts_source.cmd"
+CALL "%PROGRAMDATA%\Common_Scripts\_get_SoftUpdateScripts_source.cmd"
 (
     FOR /F "usebackq delims=" %%A IN (`DIR /B /O-D "%s_uscriptsStatus%\*.*"`) DO (
 	SET "lastLog=%s_uscriptsStatus%\%%~A"

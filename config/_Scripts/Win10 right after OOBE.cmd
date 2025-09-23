@@ -12,7 +12,7 @@ SETLOCAL ENABLEEXTENSIONS
     IF /I "%USERNAME%"=="Install" SET "setTheme=1"
     IF /I "%USERNAME%"=="Anton.Derbenev" SET "setTheme=1"
     IF DEFINED setTheme (
-        COPY /Y /B "%~dp0..\Users\Default\AppData\Local\mobilmir.ru\plain_grey_dark.deskthemepack" "%TEMP%\plain_grey_dark.deskthemepack"
+        COPY /Y /B "%~dp0..\Users\Default\AppData\Local\Themes\plain_grey_dark.deskthemepack" "%TEMP%\plain_grey_dark.deskthemepack"
         START "" "%TEMP%\plain_grey_dark.deskthemepack"
     )
     SET "setTheme=%setTheme%"

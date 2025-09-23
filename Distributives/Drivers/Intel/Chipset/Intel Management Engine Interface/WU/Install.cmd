@@ -26,8 +26,10 @@ EXIT /B
 )
 
 :find7z
-    IF EXIST "\\Srv0.office0.mobilmir\profiles$\Share\config\_Scripts\find_exe.cmd" CALL "\\Srv0.office0.mobilmir\profiles$\Share\config\_Scripts\find_exe.cmd" exe7z 7z.exe || CALL "\\Srv0.office0.mobilmir\profiles$\Share\config\_Scripts\find_exe.cmd" exe7z 7za.exe
-    IF NOT DEFINED exe7z CALL :findexe exe7z 7z.exe || CALL :findexe exe7z 7za.exe || SET exe7z=7z.exe
+    CALL find_exe.cmd exe7z 7z.exe ^
+        || CALL :findexe exe7z 7z.exe ^
+        || CALL :findexe exe7z 7za.exe ^
+        || SET exe7z=7z.exe
 EXIT /B
 
 :findexe
@@ -56,7 +58,7 @@ EXIT /B
     
     CALL :testexe %locvar% "\Distributives\Soft\PreInstalled\utils\%seekforexecfname%"
     IF NOT "%ERRORLEVEL%"=="9009" EXIT /B
-    CALL :testexe %locvar% "\\Srv0.office0.mobilmir\Distributives\Soft\PreInstalled\utils\%seekforexecfname%"
+    CALL :testexe %locvar% "\\Server.local\Distributives\Soft\PreInstalled\utils\%seekforexecfname%"
     IF NOT "%ERRORLEVEL%"=="9009" EXIT /B
 
     :findexeNextPath

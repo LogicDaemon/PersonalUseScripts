@@ -3,7 +3,8 @@ REM Script to unpack preinstalled and no-install software to new PCs
 REM by LogicDaemon <www.logicdaemon.ru>
 REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <http://creativecommons.org/licenses/by-sa/4.0/deed.ru>.
 SETLOCAL ENABLEEXTENSIONS
-    IF NOT DEFINED DefaultsSource CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd"
+    IF NOT DEFINED DefaultsSource CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" ^
+        || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
     IF NOT DEFINED ErrorCmd (
 	SET "ErrorCmd=SET ErrorPresence=1"
 	SET "ErrorPresence="

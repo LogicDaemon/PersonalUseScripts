@@ -45,7 +45,6 @@ IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%U
 	SET "PATH=%PATH%;%SystemDrive%\SysUtils\libs"
 	IF EXIST "%SystemDrive%\SysUtils\gnupg\gpg.exe" ( SET gpgexe="%SystemDrive%\SysUtils\gnupg\gpg.exe" ) ELSE ( CALL "%~dp0findgpgexe.cmd" ) || EXIT /B
     )
-    rem IF NOT DEFINED MailUserId CALL "%ProgramData%\mobilmir.ru\_get_SharedMailUserId.cmd"
 
     rem -- for XP only: diskperf.exe -y
     IF DEFINED Domain SET "Hostname=%Hostname%.%Domain%"

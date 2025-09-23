@@ -29,7 +29,7 @@
     CALL "%~dp0..\FindAutoHotkeyExe.cmd"
 )
 (
-    "%SystemRoot%\System32\schtasks.exe" /End /TN "mobilmir.ru\Update_Distributives" /F
+    "%SystemRoot%\System32\schtasks.exe" /End /TN "Update_Distributives" /F
     IF NOT EXIST "%instDest%" MKDIR "%instDest%"
     IF NOT EXIST "%instDest%" (
 	ECHO Не удалось создать папку %instDest%. Продолжение установки невозможно.
@@ -66,8 +66,8 @@ IF NOT DEFINED schedUserName SET /P "schedUserName=Имя пользователя для задачи о
     SET "retaskq=0"
     CALL "%~dp0..\CheckWinVer.cmd" 6 || ( CALL :SchTasksXP & GOTO :checkSchtasksError )
     IF NOT ERRORLEVEL 1 (
-	rem "%SystemRoot%\System32\schtasks.exe" /Delete /TN "mobilmir\Update_Distributives" /F
-	"%SystemRoot%\System32\schtasks.exe" /Create /TN "mobilmir.ru\Update_Distributives" /XML "%~dp0Update_Distributives.xml" /RU "%schedUserName%" %schtaskPassSw% /NP /F
+	rem "%SystemRoot%\System32\schtasks.exe" /Delete /TN "Update_Distributives" /F
+	"%SystemRoot%\System32\schtasks.exe" /Create /TN "Update_Distributives" /XML "%~dp0Update_Distributives.xml" /RU "%schedUserName%" %schtaskPassSw% /NP /F
     )
 )
 :checkSchtasksError
@@ -110,7 +110,7 @@ IF NOT DEFINED configDir CALL :getconfigDir
     ECHO.
     ECHO Отправка информации в форму...
 
-    CALL "%ProgramData%\mobilmir.ru\_get_SharedMailUserId.cmd"
+    CALL "%PROGRAMDATA%\Common_Scripts\_get_SharedMailUserId.cmd"
     IF NOT DEFINED MailUserId SET "MailUserId=%COMPUTERNAME%"
 )
 FOR /F "usebackq delims=" %%A IN ("%~dp0..\pseudo-secrets\%~nx0.txt") DO (
@@ -159,7 +159,7 @@ EXIT /B
     IF EXIST "%DistDst%\%rsyncDistRelpath%" (
 	%exe7z% x -y -o%SystemDrive%\SysUtils -- "%DistDst%\%rsyncDistRelpath%"
     ) ELSE (
-	%exe7z% x -y -o%SystemDrive%\SysUtils -- "\\Srv0.office0.mobilmir\Distributives\%rsyncDistRelpath%"
+	%exe7z% x -y -o%SystemDrive%\SysUtils -- "\\Server.local\Distributives\%rsyncDistRelpath%"
     )
     EXIT /B
 )
@@ -181,7 +181,7 @@ EXIT /B
 )
 :getconfigDir
 (
-    IF NOT DEFINED DefaultsSource CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd" || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd" || (CALL "%~dp0..\copy_defaultconfig_to_localhost.cmd" "%~dp0..\..\nul" & GOTO :getconfigDir)
+    IF NOT DEFINED DefaultsSource CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd" || (CALL "%~dp0..\copy_defaultconfig_to_localhost.cmd" "%~dp0..\..\nul" & GOTO :getconfigDir)
     IF NOT DEFINED DefaultsSource (
 	SET "DefaultsSource=%~dp0..\..\nul"
 	ECHO Не удалось найти или скопировать _get_defaultconfig_source.cmd. Скрипты обновления установятся, но без этого файла работать не будут.
@@ -211,8 +211,8 @@ EXIT /B
     ECHO Waiting for PreInstalled to be copied...
 )
 (
-    ( %comspec% /C ""%configDir%_Scripts\rSync_DistributivesFromSrv0.cmd" "D:\Distributives\Soft\PreInstalled"" ) && GOTO :distSysUtilsUpdated
-    XCOPY "\\Srv0.office0.mobilmir\Distributives\Soft\PreInstalled" "D:\Distributives\Soft\PreInstalled" /D /E /C /I /H /K /Y && GOTO :distSysUtilsUpdated
+    ( %comspec% /C ""%configDir%_Scripts\rSync_DistributivesFromServer.cmd" "D:\Distributives\Soft\PreInstalled"" ) && GOTO :distSysUtilsUpdated
+    XCOPY "\\Server.local\Distributives\Soft\PreInstalled" "D:\Distributives\Soft\PreInstalled" /D /E /C /I /H /K /Y && GOTO :distSysUtilsUpdated
 EXIT /B 32767
 )
 :distSysUtilsUpdated

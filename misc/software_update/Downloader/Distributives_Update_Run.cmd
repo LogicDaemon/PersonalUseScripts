@@ -11,7 +11,7 @@ ECHO %DATE% %TIME% Starting distributives download
 IF NOT DEFINED PROGRAMDATA SET "PROGRAMDATA=%ALLUSERSPROFILE%\Application Data"
 IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%USERPROFILE%\Application Data"
 )
-CALL "%ProgramData%\mobilmir.ru\_get_SoftUpdateScripts_source.cmd"
+CALL "%PROGRAMDATA%\Common_Scripts\_get_SoftUpdateScripts_source.cmd"
 (
 IF NOT DEFINED s_uscripts SET "s_uscripts=%~dp0..\client_exec"
 REM depts SET "s_uscripts=%DistUpdRunDir%software_update\scripts"
@@ -26,8 +26,6 @@ SET "baseDistributives=%~d0\Distributives"
 )
 IF EXIST "%baseDistributives%_Download" (
     SET "baseWorkdir=%baseDistributives%_Download"
-) ELSE IF EXIST "%~d0\ProgramData\mobilmir.ru\Distributives_download" (
-    SET "baseWorkdir=%~d0\ProgramData\mobilmir.ru\Distributives_download\"
 ) ELSE SET "baseLogsDir=%TEMP%\distupdatelogs"
 (
 ECHO baseScripts: %baseScripts%

@@ -5,7 +5,7 @@ IF NOT "%~1"=="" SET username=%~1
 IF NOT "%~2"=="" (
     SET mailaddress=%~2
 ) ELSE (
-    SET mailaddress=%~1@mobilmir.ru
+    SET mailaddress=%~1@company.com
 )
 
 @CHCP 65001 >NUL & (

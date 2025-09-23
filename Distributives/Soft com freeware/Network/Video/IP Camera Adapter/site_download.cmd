@@ -8,4 +8,4 @@ SET "moreDirs="
 
 REM HEAD method not allowed, thus --no-timestamping
 )
-CALL "%ProgramData%\mobilmir.ru\Common_Scripts\wget_the_site.cmd" ip-webcam.appspot.com -m --no-timestamping
+CALL wget_the_site.cmd ip-webcam.appspot.com -m --no-timestamping

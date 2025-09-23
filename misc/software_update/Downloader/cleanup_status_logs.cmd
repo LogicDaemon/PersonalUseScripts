@@ -4,7 +4,7 @@ REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 In
 SETLOCAL ENABLEEXTENSIONS
 
     CALL :RunFromConfig _Scripts\FindAutoHotkeyExe.cmd
-    IF NOT DEFINED s_uscriptsOldLogs CALL "%ProgramData%\mobilmir.ru\_get_SoftUpdateScripts_source.cmd"
+    IF NOT DEFINED s_uscriptsOldLogs CALL "%PROGRAMDATA%\Common_Scripts\_get_SoftUpdateScripts_source.cmd"
 )
 (
     IF DEFINED s_uscriptsOldLogs CALL :clean "%s_uscriptsOldLogs%\.."
@@ -35,7 +35,8 @@ IF NOT DEFINED configDir CALL :findconfigDir
     EXIT /B
 )
 :findconfigDir
-IF NOT DEFINED DefaultsSource CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd" || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
+IF NOT DEFINED DefaultsSource CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" ^
+    || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
 (
     CALL :GetDir configDir "%DefaultsSource%"
 EXIT /B

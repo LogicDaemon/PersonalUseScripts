@@ -31,7 +31,7 @@ user_pref("calendar.registry.60a38c09-40b6-45dd-9a2e-9c5b67bd9251.imip.identity.
 user_pref("calendar.registry.60a38c09-40b6-45dd-9a2e-9c5b67bd9251.name", "Рабочие совещания");
 user_pref("calendar.registry.60a38c09-40b6-45dd-9a2e-9c5b67bd9251.readOnly", true);
 user_pref("calendar.registry.60a38c09-40b6-45dd-9a2e-9c5b67bd9251.type", "gdata");
-user_pref("calendar.registry.60a38c09-40b6-45dd-9a2e-9c5b67bd9251.uri", "http://www.google.com/calendar/ical/mobilmir.ru_hgsttbnrotercojdimc0mv25u0%40group.calendar.google.com/public/basic.ics");
+user_pref("calendar.registry.60a38c09-40b6-45dd-9a2e-9c5b67bd9251.uri", "http://www.google.com/calendar/ical/company_hgsttbnrotercojdimc0mv25u0%40group.calendar.google.com/public/basic.ics");
 
 user_pref("calendar.registry.b7471ab3-9c48-42b9-92e5-bf7f96b21d32.calendar-main-in-composite", true);
 user_pref("calendar.registry.b7471ab3-9c48-42b9-92e5-bf7f96b21d32.color", "#FF0000");

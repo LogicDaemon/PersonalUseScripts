@@ -9,7 +9,7 @@ EnvGet SystemRoot,SystemRoot
 RegWrite REG_DWORD, HKEY_CURRENT_USER\Software\TeamViewer\Version5.1, ShowTaskbarInfoOnMinimize, 0
 
 cardText=
-FileReadLine nameTV, %A_AppDataCommon%\mobilmir.ru\trello-id.txt, 3
+FileReadLine nameTV, %A_AppDataCommon%\ComputerID\trello-id.txt, 3
 If (!TVName)
     nameTV = %A_USERNAME% \\%A_COMPUTERNAME%
 

@@ -26,7 +26,7 @@ REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 In
     IF NOT DEFINED Unattended START "" %SystemRoot%\System32\control.exe userpasswords2
 )
 (
-IF DEFINED AutoHotkeyExe IF NOT EXIST "%ProgramData%\mobilmir.ru\trello-id.txt" %AutoHotkeyExe% "%~dp0..\Write-trello-id.ahk"
+IF DEFINED AutoHotkeyExe IF NOT EXIST "%ProgramData%\ComputerID\trello-id.txt" %AutoHotkeyExe% "%~dp0..\Write-trello-id.ahk"
 EXIT /B
 )
 :SetupAdmin <username/flags> <fullName> <gpgUserID> <DirForPlaintext>
@@ -65,7 +65,7 @@ EXIT /B
     SET "dirGPGout="
     IF DEFINED gpgUserID (
 	IF NOT DEFINED gpgexe CALL "%~dp0..\preparegpgexe.cmd"
-	IF DEFINED gpgexe SET "dirGPGout=%ProgramData%\mobilmir.ru\%~n0"
+	IF DEFINED gpgexe SET "dirGPGout=%ProgramData%\UserAccounts\%~n0"
     )
     
     REM IF NOT DEFINED flag_p
@@ -94,8 +94,8 @@ EXIT /B
     IF DEFINED dirGPGout (
 	IF NOT EXIST "%dirGPGout%" MKDIR "%dirGPGout%"
 	SET gpgencOut="%dirGPGout%\%gpgUserID%.txt.gpg"
-	IF NOT EXIST "\\Srv1S-B.office0.mobilmir\Users\Public\Shares\profiles$\Administrators\new\%newUsername%" MKDIR "\\Srv1S-B.office0.mobilmir\Users\Public\Shares\profiles$\Administrators\new\%newUsername%"
-	SET gpgServerCopy="\\Srv1S-B.office0.mobilmir\Users\Public\Shares\profiles$\Administrators\new\%newUsername%\%Hostname%.%Domain% %DATE:~-4,4%-%DATE:~-7,2%-%DATE:~-10,2% %TIME::=% %RANDOM%.txt.gpg"
+	IF NOT EXIST "\\Server.local\Users\Public\Shares\profiles$\Administrators\new\%newUsername%" MKDIR "\\Server.local\Users\Public\Shares\profiles$\Administrators\new\%newUsername%"
+	SET gpgServerCopy="\\Server.local\Users\Public\Shares\profiles$\Administrators\new\%newUsername%\%Hostname%.%Domain% %DATE:~-4,4%-%DATE:~-7,2%-%DATE:~-10,2% %TIME::=% %RANDOM%.txt.gpg"
     )
 )
 @(

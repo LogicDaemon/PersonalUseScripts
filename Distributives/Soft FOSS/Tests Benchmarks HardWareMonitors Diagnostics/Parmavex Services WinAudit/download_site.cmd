@@ -9,4 +9,4 @@ IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%U
 SET "noarchmasks=*.zip"
 SET "moreDirs=www.nanozip.net"
 )
-CALL "%ProgramData%\mobilmir.ru\Common_Scripts\wget_the_site.cmd" www.pxserver.com http://www.pxserver.com/WinAudit/contents.html
+CALL wget_the_site.cmd www.pxserver.com http://www.pxserver.com/WinAudit/contents.html

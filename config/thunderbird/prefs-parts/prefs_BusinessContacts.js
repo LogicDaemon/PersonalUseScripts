@@ -4,6 +4,5 @@ user_pref("ldap_2.servers.businesscontacts.description", "business_contacts");
 user_pref("ldap_2.servers.businesscontacts.dirType", 2);
 user_pref("ldap_2.servers.businesscontacts.filename", "business_contacts.mab");
 user_pref("ldap_2.servers.businesscontacts.position", 1);
-//user_pref("extensions.addressbookssync.localpath", "\\\\Srv1S-B.office0.mobilmir\\Users\\Public\\Shares\\profiles$\\Share\\adrbooks");
-//user_pref("extensions.addressbookssync.localpath", "c:\\ProgramData\\mobilmir.ru\\AddressBook");
+//user_pref("extensions.addressbookssync.localpath", "\\\\Server.local\\Users\\Public\\Shares\\profiles$\\Share\\adrbooks");
 //user_pref("extensions.addressbookssync.localpath", "\\\\{$MailUserId$}-K\\AddressBook$");

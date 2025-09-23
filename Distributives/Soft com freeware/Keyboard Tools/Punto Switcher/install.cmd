@@ -18,7 +18,7 @@ REM Можно вернуть возможно_битые настройки обратно
 MOVE /Y "%AppData%\Yandex_" "%AppData%\Yandex"
 MOVE /Y "%AppData%\Yandex\Punto Switcher_" "%AppData%\Yandex\Punto Switcher"
 
-CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd" & IF NOT DEFINED DefaultsSource EXIT /B
+CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" & IF NOT DEFINED DefaultsSource EXIT /B
 RD /S /Q "%ProgramFiles%\Yandex\Punto Switcher\Images" 
 RD /S /Q "%ProgramFiles%\Yandex\Punto Switcher\Updater"
 )

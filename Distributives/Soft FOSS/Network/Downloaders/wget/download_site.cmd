@@ -5,11 +5,7 @@ SETLOCAL ENABLEEXTENSIONS
 IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     SET "noarchmasks=*.exe *.zip *.gz *.bz2 *.rar"
     SET "moreDirs="
-    IF EXIST "%ProgramData%\mobilmir.ru\Common_Scripts\wget_the_site.cmd" (
-        SET "wgetSideCMD=CALL "%ProgramData%\mobilmir.ru\Common_Scripts\wget_the_site.cmd""
-    ) ELSE (
-        SET "wgetSideCMD=CALL wget_the_site.cmd"
-    )
+    SET "wgetSideCMD=CALL wget_the_site.cmd"
 )
 (
 %wgetSideCMD% eternallybored.org --trust-server-names -mnp -X"releases/old,src" https://eternallybored.org/misc/wget/

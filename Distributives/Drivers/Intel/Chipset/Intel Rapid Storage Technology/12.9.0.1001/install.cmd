@@ -4,7 +4,7 @@ SET srcpath=%~dp0
 IF "%srcpath%"=="" SET srcpath=%CD%\
 
 SET dstpath=%~p0
-IF /I "%dstpath:~0,5%" NEQ "Srv0\" GOTO :skipCopying
+IF /I "%dstpath:~0,5%" NEQ "server\" GOTO :skipCopying
 SET dstpath=d:%dstpath:~4%
 MKDIR "%dstpath%"
 IF NOT EXIST "%dstpath%" GOTO :skipCopying

@@ -16,7 +16,6 @@ SETLOCAL ENABLEEXTENSIONS
     rem BleachBit, бывает работает, через планировщик. В этом случае explorer.exe закрывается у пользователя! TASKKILL /F /IM explorer.exe
     ENDLOCAL
 EXIT /B
-rem CALL "\\Srv0.office0.mobilmir\profiles$\Share\Programs\BleachBit-Portable\_run_from_localtemp.cmd" -c --no-uac --preset
 )
 :ProcessArgs
 @(

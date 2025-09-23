@@ -40,7 +40,7 @@ EXIT /B
 
 :GetInstallQueue <var>
 (
-SET "%~1=%ProgramData%\mobilmir.ru\InstallQueue"
+SET "%~1=%PROGRAMDATA%\Common_Scripts\InstallQueue"
 EXIT /B
 )
 :GetToday <var>

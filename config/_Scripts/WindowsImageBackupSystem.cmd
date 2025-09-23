@@ -48,7 +48,7 @@
     MKDIR "%dstDirWIB%" 2>NUL
     %SystemRoot%\System32\wbadmin.exe START BACKUP -backupTarget:"%dstBaseDir%" %includes% %wbAdminQuiet%
     IF ERRORLEVEL 1 CALL :wbAdminError || EXIT /B
-    COPY /B /Y "%ProgramData%\mobilmir.ru\trello-id.txt" "%dstDirWIB%\%Hostname%\"
+    COPY /B /Y "%ProgramData%\ComputerID\trello-id.txt" "%dstDirWIB%\%Hostname%\"
     MKDIR "%dstDirWIB%\%Hostname%\Logs"
     COPY /B /Y "%SystemRoot%\Logs\WindowsBackup\*.*" "%dstDirWIB%\%Hostname%\Logs\"
     

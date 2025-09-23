@@ -10,11 +10,12 @@ IF NOT DEFINED ProgramData (
 IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%USERPROFILE%\Application Data"
 
 CALL "%~dp0FindSoftwareSource.cmd"
-IF NOT DEFINED DefaultsSource CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd"
+IF NOT DEFINED DefaultsSource CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" ^
+    || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
 CALL "%~dp0FindAutoHotkeyExe.cmd"
 
-IF NOT EXIST "%ProgramData%\mobilmir.ru\Logs" MKDIR "%ProgramData%\mobilmir.ru\Logs"
-IF NOT DEFINED logfile SET logfile="%ProgramData%\mobilmir.ru\Logs\%~n0.log"
+IF NOT EXIST "%PROGRAMDATA%\Common_Scripts\Logs" MKDIR "%PROGRAMDATA%\Common_Scripts\Logs"
+IF NOT DEFINED logfile SET logfile="%PROGRAMDATA%\Common_Scripts\Logs\%~n0.log"
 
 IF NOT DEFINED InstallQueue CALL "%~dp0Lib\.utils.cmd" GetInstallQueue InstallQueue
 
@@ -56,7 +57,8 @@ EXIT /B
 )
 :GetconfigDir
 (
-CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd" || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
+IF NOT DEFINED DefaultsSource CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" ^
+    || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
 IF NOT DEFINED DefaultsSource EXIT /B 32010
 )
 (

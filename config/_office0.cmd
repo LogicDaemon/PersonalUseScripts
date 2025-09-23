@@ -19,9 +19,8 @@ rem rundll32.exe shell32.dll,Control_RunDLL inetcpl.cpl,,4
 :restart
 IF NOT EXIST D:\ ECHO Driveletter D: [Data] not accessible & PAUSE & GOTO :restart
 
-rem CALL "%~dp0_Scripts\FindSoftwareSource.cmd"
 rem Dirty way to get paths in any situation
-rem SET PATH=%PATH%;%ProgramData%\mobilmir.ru\Common_Scripts;%SystemDrive%\SysUtils;%SystemDrive%\SysUtils\gnupg;%SystemDrive%\SysUtils\lbrisar;%SystemDrive%\SysUtils\libs;%SystemDrive%\SysUtils\libs\OpenSSL;%SystemDrive%\SysUtils\libs\OpenSSL\bin;%SystemDrive%\SysUtils\ResKit;%SystemDrive%\SysUtils\SysInternals;%SystemDrive%\SysUtils\UnxUtils;%SystemDrive%\SysUtils\UnxUtils\Uri
+rem SET PATH=%PATH%;%ProgramData%\Common_Scripts;%SystemDrive%\SysUtils;%SystemDrive%\SysUtils\gnupg;%SystemDrive%\SysUtils\lbrisar;%SystemDrive%\SysUtils\libs;%SystemDrive%\SysUtils\libs\OpenSSL;%SystemDrive%\SysUtils\libs\OpenSSL\bin;%SystemDrive%\SysUtils\ResKit;%SystemDrive%\SysUtils\SysInternals;%SystemDrive%\SysUtils\UnxUtils;%SystemDrive%\SysUtils\UnxUtils\Uri
 
 REM parsing command line arguments
 SET arg=%~1
@@ -37,15 +36,12 @@ TITLE Initial config
 START "Добавление стандартных администраторов" %comspec% /C "%~dp0_Scripts\AddUsers\Add_Admins.cmd"
 
 REM Writing DefaultsSource
-IF NOT EXIST "%ProgramData%\mobilmir.ru" MKDIR "%ProgramData%\mobilmir.ru"
-SET "DefaultsSourceScript=%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd"
 SET "DefaultsSource=%~dp0Apps_office.7z"
-(ECHO SET DefaultsSource=%DefaultsSource%)>"%DefaultsSourceScript%"
 
 REM Executing _business_config.cmd
 CALL "%~dp0_Scripts\_business_config.cmd"
 rem WMIC computersystem where name="%COMPUTERNAME%" call joindomainorworkgroup name="OFFICE0"
-rem REG ADD "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" /v "NV Domain" /d "office0.mobilmir" /f
+rem REG ADD "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" /v "NV Domain" /d "domain" /f
 
 :All
 REM Common procedure

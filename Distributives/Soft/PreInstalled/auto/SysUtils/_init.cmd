@@ -26,6 +26,6 @@ REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 In
 (
     IF NOT DEFINED exe7z SET exe7z="%utilsdir%%exename7za%"
     IF NOT DEFINED AutohotkeyExe SET AutohotkeyExe="%utilsdir%%exenameAutohotkey%"
-    SET "pathString=%ProgramData%\mobilmir.ru;%ProgramData%\mobilmir.ru\Common_Scripts;%SysUtilsDir%\libs;%SysUtilsDir%;%SysUtilsDir%\libs\GTK+\lib;%SysUtilsDir%\libs\OpenSSL\bin;%SysUtilsDir%\libs\OpenSSL;%SysUtilsDir%\SysInternals;%SysUtilsDir%\gnupg;%SysUtilsDir%\ResKit;%SysUtilsDir%\Support Tools;%SysUtilsDir%\UnxUtils;%SysUtilsDir%\UnxUtils\Uri;%SysUtilsDir%\UnxUtils\lbrisar;%SysUtilsDir%\kliu;%SysUtilsDir%\gnupg"
+    SET "pathString=%PROGRAMDATA%\Common_Scripts;%SysUtilsDir%\libs;%SysUtilsDir%;%SysUtilsDir%\libs\GTK+\lib;%SysUtilsDir%\libs\OpenSSL\bin;%SysUtilsDir%\libs\OpenSSL;%SysUtilsDir%\SysInternals;%SysUtilsDir%\gnupg;%SysUtilsDir%\ResKit;%SysUtilsDir%\Support Tools;%SysUtilsDir%\UnxUtils;%SysUtilsDir%\UnxUtils\Uri;%SysUtilsDir%\UnxUtils\lbrisar;%SysUtilsDir%\kliu;%SysUtilsDir%\gnupg"
     EXIT /B
 )

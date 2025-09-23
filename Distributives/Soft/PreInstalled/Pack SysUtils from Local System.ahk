@@ -45,7 +45,7 @@ Loop Files, %tempArcDir%\*.7z
     
 ; not working: MsgBox Not found destination or error moving "%A_LoopFileFullPath%"
 
-Run %comspec% /C ""%A_AppDataCommon%\mobilmir.ru\Common_Scripts\tc.cmd" "%tempArcDir%" "%A_ScriptDir%""
+Run %comspec% /C "tc.cmd "%tempArcDir%" "%A_ScriptDir%""
 
 CompareMoveDiff(src,dest) {
     IfExist %dest%

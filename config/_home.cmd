@@ -20,7 +20,7 @@
         ECHO User profile is not on D:, it's in "%USERPROFILE%"
         PAUSE
     )
-    START "" "%~dp0Users\Default\AppData\Local\mobilmir.ru\plain_grey_dark.deskthemepack"
+    START "" "%~dp0Users\Default\AppData\Local\Themes\plain_grey_dark.deskthemepack"
     CALL "%~dp0_Scripts\registry\reg_LogicDaemon.cmd"
     CALL "%~dp0..\Soft\PreInstalled\manual\TotalCommander.cmd"
     CALL "%~dp0..\Soft com freeware\Network\HTTP\Vivaldi\install.cmd"

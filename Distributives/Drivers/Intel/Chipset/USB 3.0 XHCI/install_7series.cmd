@@ -14,5 +14,5 @@ EXIT /B
 :SkipGetFirstArg
 IF NOT DEFINED AutohotkeyExe SET AutohotkeyExe="autohotkey.exe"
 )
-IF NOT EXIST %AutohotkeyExe% CALL "\\Srv0.office0.mobilmir\profiles$\Share\config\_Scripts\FindAutoHotkeyExe.cmd"
+IF NOT EXIST %AutohotkeyExe% CALL "\\Server.local\profiles$\Share\config\_Scripts\FindAutoHotkeyExe.cmd"
 %AutohotkeyExe% "%srcpath%..\..\install Intel zip.ahk" "%srcpath%7 Series, C216\Intel(R)_USB_3.0_eXtensible_Host_Controller_Driver.zip"

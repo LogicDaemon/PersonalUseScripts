@@ -7,7 +7,7 @@ SET "AppExec=%srcpath%freemind.exe"
 REM for 64-bit Java:
 rem ftype Freemind=javaw -cp "%srcpath%lib\freemind.jar";"%srcpath%lib\commons-lang-2.0.jar";"%srcpath%lib\forms-1.0.5.jar";"%srcpath%lib\jibx\jibx-run.jar";"%srcpath%lib\jibx\xpp3.jar";"%srcpath%lib\bindings.jar" freemind.main.FreeMindStarter "%1"
 
-CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd"
+IF NOT DEFINED DefaultsSource CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" || CALL "%LOCALAPPDATA%\Scripts\_get_defaultconfig_source.cmd"
 IF DEFINED DefaultsSource (
     ASSOC .mm=Freemind
     FTYPE Freemind="%AppExec%" "%%1"

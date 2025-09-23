@@ -9,6 +9,6 @@ IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%U
 SET "noarchmasks=*.exe *.zip *.gz *.bz2 *.rar"
 SET "moreDirs="
 )
-CALL "%ProgramData%\mobilmir.ru\Common_Scripts\wget_the_site.cmd" www.pps.univ-paris-diderot.fr "http://www.pps.univ-paris-diderot.fr/~vouillon/unison/"
+CALL wget_the_site.cmd www.pps.univ-paris-diderot.fr "http://www.pps.univ-paris-diderot.fr/~vouillon/unison/"
 rem CALL wget_the_site alan.petitepomme.net http://alan.petitepomme.net/unison/index.html
 rem CALL wget_the_site www.pps.jussieu.fr http://www.pps.jussieu.fr/~vouillon/unison/

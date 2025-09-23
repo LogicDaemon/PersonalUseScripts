@@ -15,7 +15,7 @@ EXIT /B 1
 :ProceedWithInstall
     "%~dp0%distName%" /S
     SET "InstallErrorLevel=%ERRORLEVEL%"
-    CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd"
+    CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd"
     IF DEFINED DefaultsSource CALL :HideDesktopShortcut
 EXIT /B %InstallErrorLevel%
 

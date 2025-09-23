@@ -19,7 +19,7 @@ For i, System32 in [ SystemRoot "\SysNative", SystemRoot "\System32" ]
 	break
 
 ; Отметить текущий запуск, чтобы скрипт не перезапускался при каждой загрузке, если место освободить не удаётся
-flagFName := A_AppDataCommon "\mobilmir.ru\" A_ScriptName ".flag"
+flagFName := A_AppDataCommon "\Common_Scripts\" A_ScriptName ".flag"
 Loop Files, %flagFName%
 {
     age := ""
@@ -81,7 +81,7 @@ If (GetAndLogFreeSpace(SystemDrive) < FreeSpaceLowMarginMB && InStr(FileExist(Sy
 }
 
 If (GetAndLogFreeSpace(A_ProgramFiles) < FreeSpaceLowMarginMB) {
-    ; – закрывает explorer.exe и перезапускает от администратора – RunWait %comspec% /C "\\Srv0.office0.mobilmir\profiles$\Share\config\_Scripts\cleanup\BleachBit-auto.cmd"
+    ; – закрывает explorer.exe и перезапускает от администратора – RunWait %comspec% /C "\\Server.local\profiles$\Share\config\_Scripts\cleanup\BleachBit-auto.cmd"
 
     For i, dirProgFiles in GetProgramFilesDirs()
         If (FileExist(ClickToRunsUpdatesDir := dirProgFiles "\Common Files\Microsoft Shared\ClickToRun\Updates")) {

@@ -9,7 +9,7 @@ SETLOCAL ENABLEEXTENSIONS
     IF NOT DEFINED exe7z CALL "%~dp0..\find7zexe.cmd" || %ErrorCmd%
     IF NOT DEFINED xln CALL "%~dp0..\find_exe.cmd" xln xln.exe || %ErrorCmd%
 
-    IF NOT DEFINED DefaultsSource CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd" || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
+    IF NOT DEFINED DefaultsSource CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" || CALL "%LOCALAPPDATA%\Scripts\_get_defaultconfig_source.cmd"
     IF NOT DEFINED DefaultsSource EXIT /B
 
     rem Getting DefaultUserProfile location
@@ -40,12 +40,9 @@ SETLOCAL ENABLEEXTENSIONS
     RD /S /Q "%DefaultUserProfile%\AppData\Roaming\Opera"
     RD /S /Q "%DefaultUserProfile%\AppData\Roaming\DefaultUserRegistrySettings.7z"
     
-    RD /S /Q "%DefaultUserProfile%\AppData\Local\mobilmir.ru"
-    
     XCOPY "%~dp0..\..\Users\Default\*.*" "%DefaultUserProfile%" /E /I /Q /G /H /K /Y
 
     %exe7z% x -aoa -y -o"%DefaultUserProfile%\AppData\Roaming" -- "%~dp0default_AppDataRoaming.7z"
-    rem XCOPY "\\Srv0\profiles$\Share\Users\Public\*.*" "%PublicUserProfile%" /E /I /Q /G /H /Y
 
     RD /S /Q "%TEMP%\Users"
     %exe7z% x -aoa -y -o"%TEMP%" -- "%DefaultsSource%" "Users\Default" "Users\Public"

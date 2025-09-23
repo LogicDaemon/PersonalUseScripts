@@ -8,6 +8,6 @@ IF EXIST "%SystemDrive%\SysUtils" IF EXIST "%SoftSourceDir%\PreInstalled\auto\Sy
     ECHO %DATE% %TIME% Удаление SysUtils, Common_Scripts и notepad2
     RD /S /Q "%SystemDrive%\SysUtils"
     RD /S /Q "%SystemDrive%\Common_Scripts"
-    RD /S /Q "%ProgramData%\mobilmir.ru\Common_Scripts"
+    RD /S /Q "%ProgramData%\Common_Scripts"
     RD /S /Q "%ProgramFiles32%\notepad2"
 )

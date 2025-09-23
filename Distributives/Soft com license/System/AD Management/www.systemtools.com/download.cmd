@@ -9,4 +9,4 @@ IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%U
 SET "noarchmasks=*.exe *.zip *.gz *.bz2 *.rar"
 SET "moreDirs="
 )
-CALL "%ProgramData%\mobilmir.ru\Common_Scripts\wget_the_site.cmd" www.systemtools.com -np http://www.systemtools.com/free.htm
+CALL wget_the_site.cmd www.systemtools.com -np http://www.systemtools.com/free.htm

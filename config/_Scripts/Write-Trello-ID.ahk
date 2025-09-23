@@ -1,19 +1,16 @@
 ﻿;by LogicDaemon <www.logicdaemon.ru>
 ;This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <http://creativecommons.org/licenses/by-sa/4.0/deed.ru>.
 
-;https://redbooth.com/a/#!/projects/59756/tasks/32350056
-;https://drive.google.com/a/mobilmir.ru/file/d/0B6JDqImUdYmlejlIRTRWY0JCZjA/view?usp=sharing
-
 #NoEnv
 FileEncoding UTF-8
 
 EnvGet LocalAppData,LOCALAPPDATA
 EnvGet SystemRoot,SystemRoot
 
-pathTrelloIDtxt = %A_AppDataCommon%\mobilmir.ru\trello-id.txt
-pathTrelloCardDesctxt = %A_AppDataCommon%\mobilmir.ru\trello-card.txt
+pathTrelloIDtxt = %A_AppDataCommon%\ComputerID\trello-id.txt
+pathTrelloCardDesctxt = %A_AppDataCommon%\ComputerID\trello-card.txt
 
-pathTrelloID=%A_AppDataCommon%\mobilmir.ru\trello-id.txt
+pathTrelloID=%A_AppDataCommon%\ComputerID\trello-id.txt
 regpathAutorun=HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run
 regKNAutorun=%A_ScriptName%
 
@@ -84,7 +81,7 @@ If (writeSavedID && nMatches==1) {
 		newcardname = %pathTrelloIDtxt%.%A_Now%.txt
 		FileMove %newpathTrelloIDtxt%, %newcardname%
 		If (!Unattended)
-		    Run "%A_AhkPath%" "%A_ScriptDir%\GUI\Write-trello-id-showmsg.ahk" "%A_AppDataCommon%\mobilmir.ru" "Карточка`, найденная для компьютера`, отличается ссылкой или ID от уже сохранённой. Найденная карточка записана в %newcardname%`, а файл %pathTrelloIDtxt% остался без изменений."
+		    Run "%A_AhkPath%" "%A_ScriptDir%\GUI\Write-trello-id-showmsg.ahk" "%A_AppDataCommon%\ComputerID" "Карточка`, найденная для компьютера`, отличается ссылкой или ID от уже сохранённой. Найденная карточка записана в %newcardname%`, а файл %pathTrelloIDtxt% остался без изменений."
 		ExitApp
 	    }
 	}

@@ -14,7 +14,7 @@ If A_UserName In Install,Admin,Administrator,Администратор,Guest,Г
 
 Try DefaultConfigDir:=getDefaultConfigDir()
 If (!DefaultConfigDir)
-    DefaultConfigDir:="\\Srv0.office0.mobilmir\profiles$\Share\config"
+    DefaultConfigDir:="\\Server.local\profiles$\Share\config"
 
 FileEncoding cp1 ; OEM
 FileRead fullAdminList, %DefaultConfigDir%\_Scripts\AddUsers\Add_Admins_list.txt
@@ -71,10 +71,9 @@ SharedUserActions() {
 RunCreateMTProfile(subpath:="") {
     global DefaultConfigDir
     For i, basePath in [  DefaultConfigDir
-			, "\\Srv1S-B.office0.mobilmir\Users\Public\Shares\profiles$\Share\config"
-			, "\\Srv0.office0.mobilmir\profiles$\Share\config"
-			, "D:\Distributives\config"
-			, A_AppDataCommon "\mobilmir.ru\config" ]
+			, "\\Server.local\Users\Public\Shares\profiles$\Share\config"
+			, "\\Server.local\profiles$\Share\config"
+			, "D:\Distributives\config" ]
 	If (FileExist(execCmd := basePath "\" subpath))
 	    break
 	Else

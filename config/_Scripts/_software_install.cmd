@@ -7,12 +7,13 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
 IF NOT DEFINED PROGRAMDATA SET "PROGRAMDATA=%ALLUSERSPROFILE%\Application Data"
 IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%USERPROFILE%\Application Data"
 
-IF NOT DEFINED DefaultsSource CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd"
+IF NOT DEFINED DefaultsSource CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" ^
+    || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
 CALL "%~dp0FindAutoHotkeyExe.cmd"
 )
 (
     REM weird PATH workaround
-    SET "PATH=%PATH%;%ProgramData%\mobilmir.ru\Common_Scripts;%SystemDrive%\SysUtils;%SystemDrive%\SysUtils\libs;%utilsdir%"
+    SET "PATH=%PATH%;%ProgramData%\Common_Scripts;%SystemDrive%\SysUtils;%SystemDrive%\SysUtils\libs;%utilsdir%"
 
     CALL :GetNameNoExt DefaultsName "%DefaultsSource%"
 

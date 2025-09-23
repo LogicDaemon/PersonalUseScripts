@@ -6,8 +6,6 @@
 ;path_with_a_backslash_in_it must contain a "\"
 ;any_path - not necessarily
 ;
-;default MailUserId is UserName
-;default MailDomain is "mobilmir.ru"
 ;default profile path is "%UserProfile%\Mail\Thunderbird\profile" 
 ;
 ;by LogicDaemon <www.logicdaemon.ru>
@@ -50,7 +48,7 @@ For i, argv in A_Args {
 If (!MailUserId)
     MailUserId := A_UserName
 If (!MailDomain)
-    MailDomain := "mobilmir.ru"
+    MailDomain := "company.com"
 mailAddress := MailUserId . "@" . MailDomain
 
 If (!mailProfileDir)

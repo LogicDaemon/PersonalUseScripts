@@ -59,7 +59,7 @@ SIDAdministrators=S-1-5-32-544
 
 findexefunc:="findexe"
 If(IsFunc(findexefunc))
-    Try SetACLexe := %findexefunc%(SystemDrive . "\SysUtils\SetACL.exe", "\\Srv0.office0.mobilmir\Distributives\Soft\PreInstalled\utils")
+    Try SetACLexe := %findexefunc%(SystemDrive . "\SysUtils\SetACL.exe", "\\Server.local\Distributives\Soft\PreInstalled\utils")
 If (SetACLexe) {
     RunWait "%SetACLexe%" -on "%ProfilesDest%" -ot file -actn ace -ace "n:%SIDUsers%;s:y;p:read;i:np;m:set" -actn ace -ace "n:%SIDEveryone%;s:y;p:read;i:np;m:set" -actn ace -ace "n:%SIDSYSTEM%;s:y;p:full" -actn ace -ace "n:%SIDAdministrators%;s:y;p:full" -actn setowner -ownr "n:%SIDSYSTEM%;s:y"
 } Else {

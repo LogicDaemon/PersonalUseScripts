@@ -10,4 +10,4 @@ SET "noarchmasks=*.exe *.zip *.gz *.bz2 *.rar"
 SET "moreDirs="
 rem START "" /D"%srcpath%" /B /WAIT wget -N http://download.sysinternals.com/Files/SysinternalsSuite.zip
 )
-CALL "%ProgramData%\mobilmir.ru\Common_Scripts\wget_the_site.cmd" live.sysinternals.com
+CALL wget_the_site.cmd live.sysinternals.com

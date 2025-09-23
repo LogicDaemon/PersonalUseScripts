@@ -12,12 +12,13 @@ IF NOT DEFINED DistSourceDir CALL "%ConfigDir%_Scripts\FindSoftwareSource.cmd"
     PING 127.0.0.1 -n 10>NUL
     %SystemRoot%\System32\sc.exe start TeamViewer5
 
-    START "Collecting inventory information with TeamViewer ID" /I %comspec% /C "\\Srv1S-B.office0.mobilmir\Users\Public\Shares\profiles$\Share\Inventory\collector-script\SaveArchiveReport.cmd"
+    START "Collecting inventory information with TeamViewer ID" /I %comspec% /C "\\Server.local\Users\Public\Shares\profiles$\Share\Inventory\collector-script\SaveArchiveReport.cmd"
 EXIT /B
 )
 
 :GetConfigDir
-CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd"
+IF NOT DEFINED DefaultsSource CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" ^
+    || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
 (
 CALL :GetDir ConfigDir "%DefaultsSource%"
 EXIT /B

@@ -31,10 +31,6 @@ RD /S /Q "%tempdst%"
 
 EXIT /B
 :find7z
-    IF EXIST "\\Srv0\profiles$\Share\config\_Scripts\find_exe.cmd" (
-	CALL "\\Srv0\profiles$\Share\config\_Scripts\find_exe.cmd" exe7z 7z.exe
-	IF ERRORLEVEL 9009 CALL "\\Srv0\profiles$\Share\config\_Scripts\find_exe.cmd" exe7z 7za.exe
-    )
     IF NOT DEFINED exe7z CALL :findexe exe7z 7z.exe
     IF NOT DEFINED exe7z CALL :findexe exe7z 7za.exe
     IF NOT DEFINED exe7z SET exe7z=7z.exe

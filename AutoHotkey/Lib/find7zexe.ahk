@@ -70,8 +70,6 @@ find7zaexe(paths*) {
     paths.push(	  "\Distributives\Soft\PreInstalled\utils"
                 , "D:\Distributives\Soft\PreInstalled\utils"
                 , "\\localhost\Distributives\Soft\PreInstalled\utils"
-                , "\\Srv1S-B.office0.mobilmir\Distributives\Soft\PreInstalled\utils"
-                , "\\Srv0.office0.mobilmir\Distributives\Soft\PreInstalled\utils"
                 , A_LineFile "\..\..\..\..\Soft\PreInstalled\utils")
     If (A_Is64bitOS)
         Try return find7zexe("7za64.exe", paths*)

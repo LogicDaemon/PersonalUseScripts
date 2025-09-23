@@ -6,8 +6,9 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
 IF NOT DEFINED PROGRAMDATA SET "PROGRAMDATA=%ALLUSERSPROFILE%\Application Data"
 IF NOT DEFINED APPDATA IF EXIST "%USERPROFILE%\Application Data" SET "APPDATA=%USERPROFILE%\Application Data"
 
-CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd" || CALL "c:\Local_Scripts\_get_defaultconfig_source.cmd"
-IF DEFINED DefaultsSource ( CALL :Find7zLocally ) ELSE CALL "\\Srv0.office0.mobilmir\profiles$\Share\config\_Scripts\find7zexe.cmd"
+IF NOT DEFINED DefaultsSource CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" ^
+        || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
+IF DEFINED DefaultsSource ( CALL :Find7zLocally ) ELSE CALL "\\Server.local\profiles$\Share\config\_Scripts\find7zexe.cmd"
 IF NOT DEFINED exe7z ( ECHO 7-Zip не найден. & PAUSE & EXIT /B )
 
 %SystemRoot%\System32\net.exe stop squid

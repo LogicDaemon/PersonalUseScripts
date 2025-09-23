@@ -34,8 +34,8 @@ user_pref("calendar.alarms.onforevents", 1);
 user_pref("calendar.alarms.onfortodos", 1);
 //user_pref("calendar.categories.names", "Бизнес,Встречи,Годовщины,Дни рождения,Доходы,Заказчики,Звонки,Идеи,Избранное,Каникулы,Клиенты,Конкурсы,Личное,Ответы,Отпуск,Подарки,Поставщики,Праздники,Проекты,Путешествия,Разное");
 user_pref("calendar.google.calPrefs.{$MailUserId$}@{$MailDomain$}.googleUser", "{$MailUserId$}@{$MailDomain$}");
-user_pref("calendar.google.calPrefs.mobilmir.ru_hgsttbnrotercojdimc0mv25u0@group.calendar.google.com.googleUser", "{$MailUserId$}@{$MailDomain$}");
-user_pref("calendar.google.calPrefs.mobilmir.ru_n2fj0e8644mb2g814jmir6jpnc@group.calendar.google.com.googleUser", "{$MailUserId$}@{$MailDomain$}");
+user_pref("calendar.google.calPrefs.company_hgsttbnrotercojdimc0mv25u0@group.calendar.google.com.googleUser", "{$MailUserId$}@{$MailDomain$}");
+user_pref("calendar.google.calPrefs.company_n2fj0e8644mb2g814jmir6jpnc@group.calendar.google.com.googleUser", "{$MailUserId$}@{$MailDomain$}");
 
 user_pref("calendar.google.migrate", false);
 user_pref("calendar.list.sortOrder", "d35971d0-5578-4b46-8bea-cbd27dac9f85 b7471ab3-9c48-42b9-92e5-bf7f96b21d32 2303084d-5b8c-4bc1-8e25-86c82d272664");
@@ -56,7 +56,7 @@ user_pref("calendar.registry.60a38c09-40b6-45dd-9a2e-9c5b67bd9251.imip.identity.
 user_pref("calendar.registry.60a38c09-40b6-45dd-9a2e-9c5b67bd9251.name", "Рабочие совещания");
 user_pref("calendar.registry.60a38c09-40b6-45dd-9a2e-9c5b67bd9251.readOnly", true);
 user_pref("calendar.registry.60a38c09-40b6-45dd-9a2e-9c5b67bd9251.type", "gdata");
-user_pref("calendar.registry.60a38c09-40b6-45dd-9a2e-9c5b67bd9251.uri", "http://www.google.com/calendar/ical/mobilmir.ru_hgsttbnrotercojdimc0mv25u0%40group.calendar.google.com/public/basic.ics");
+user_pref("calendar.registry.60a38c09-40b6-45dd-9a2e-9c5b67bd9251.uri", "http://www.google.com/calendar/ical/company_hgsttbnrotercojdimc0mv25u0%40group.calendar.google.com/public/basic.ics");
 
 user_pref("calendar.registry.b7471ab3-9c48-42b9-92e5-bf7f96b21d32.calendar-main-in-composite", true);
 user_pref("calendar.registry.b7471ab3-9c48-42b9-92e5-bf7f96b21d32.color", "#FF0000");
@@ -110,8 +110,8 @@ user_pref("extensions.addressbookssync.ldap_2.servers.history.down", false);
 user_pref("extensions.addressbookssync.ldap_2.servers.history.up", false);
 user_pref("extensions.addressbookssync.ldap_2.servers.pab.down", false);
 user_pref("extensions.addressbookssync.ldap_2.servers.pab.up", false);
-user_pref("extensions.addressbookssync.localpath", "\\\\Srv1S-B.office0.mobilmir\\Users\\Public\\Shares\\profiles$\\Share\\adrbooks");
-//user_pref("extensions.addressbookssync.localpath", "c:\\ProgramData\\mobilmir.ru\\AddressBook");
+user_pref("extensions.addressbookssync.localpath", "\\\\Server.local\\Users\\Public\\Shares\\profiles$\\Share\\adrbooks");
+//user_pref("extensions.addressbookssync.localpath", "c:\\ProgramData\\company\\AddressBook");
 //user_pref("extensions.addressbookssync.localpath", "\\\\{$MailUserId$}-K\\AddressBook$");
 user_pref("extensions.addressbookssync.noupload", true);
 //user_pref("extensions.addressbookssync.syncpolicy", "file");

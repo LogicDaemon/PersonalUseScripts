@@ -10,7 +10,8 @@ MOVE /Y "%SystemDrive%\SysUtils" "%SystemDrive%\Windows\Temp\SysUtils_%DATE%_%RA
 ECHO Running %~dp0prepare.cmd ...
 START "Installing PreInstalled" /MIN /WAIT %comspec% /C "%~dp0prepare.cmd"
 
-IF NOT DEFINED DefaultsSource CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd" || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
+IF NOT DEFINED DefaultsSource CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" ^
+    || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
 )
 CALL :GetDir ConfigDir "%DefaultsSource%"
 (

@@ -3,7 +3,7 @@ REM by LogicDaemon <www.logicdaemon.ru>
 REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <http://creativecommons.org/licenses/by-sa/4.0/deed.ru>.
 SETLOCAL ENABLEEXTENSIONS
 IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
-    IF NOT DEFINED DefaultsSource CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd" || EXIT /B
+    IF NOT DEFINED DefaultsSource CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" || EXIT /B
     IF NOT DEFINED exe7z CALL :RunFromConfig "_Scripts\find7zexe.cmd" || CALL :SetFirstExistingExe exe7z "%~dp0..\..\PreInstalled\utils\7za.exe" || EXIT /B
     IF NOT DEFINED sedexe SET "pathAppendSubpath=libs" & CALL :RunFromConfig "_Scripts\find_exe.cmd" sedexe "%SystemDrive%\SysUtils\sed.exe" || CALL :SetFirstExistingExe sedexe "%SystemDrive%\SysUtils\sed.exe" || EXIT /B
     IF NOT DEFINED configDir CALL :findconfigDir
@@ -40,7 +40,8 @@ IF NOT DEFINED configDir CALL :findconfigDir
     GOTO :SetFirstExistingExe
 )
 :findconfigDir
-IF NOT DEFINED DefaultsSource CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd" || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
+IF NOT DEFINED DefaultsSource CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" ^
+    || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
 (
     CALL :GetDir configDir "%DefaultsSource%"
 EXIT /B

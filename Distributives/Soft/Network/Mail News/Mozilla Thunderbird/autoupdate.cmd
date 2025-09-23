@@ -39,7 +39,8 @@ EXIT /B
     EXIT /B 1
 )
 :find7zexe
-IF NOT DEFINED DefaultsSource CALL "%ProgramData%\mobilmir.ru\_get_defaultconfig_source.cmd" || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
+IF NOT DEFINED DefaultsSource CALL "%ProgramData%\Common_Scripts\_get_defaultconfig_source.cmd" ^
+    || CALL "%SystemDrive%\Local_Scripts\_get_defaultconfig_source.cmd"
 CALL :GetDir ConfigDir "%DefaultsSource%"
 CALL "%ConfigDir%_Scripts\find7zexe.cmd"
 EXIT /B

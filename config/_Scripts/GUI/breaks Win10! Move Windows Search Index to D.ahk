@@ -64,7 +64,7 @@ If (curSearchRoot != newSearchRoot) {
         ;ControlClick Button2
         ;WinWait Advanced Options ahk_pid %rundllPID%
         ;ControlClick Button7
-        backupBaseDir := A_AppDataCommon "\mobilmir.ru\reg-backup"
+        backupBaseDir := A_AppDataCommon "\Common_Scripts\reg-backup"
         backupName := backupBaseDir "\Windows Search bak " A_Now ".reg"
         FileCreateDir %backupBaseDir%
         RunWait %SystemRoot%\System32\reg.exe export "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Search" "%backupName%",,Min

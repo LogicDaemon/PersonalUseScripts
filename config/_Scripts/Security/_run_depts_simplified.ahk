@@ -10,7 +10,7 @@ If (!A_IsAdmin) {
 
 EnvGet LocalAppData, LOCALAPPDATA
 SplitPath A_ScriptName, , , , ScriptName
-configDir = %A_AppDataCommon%\mobilmir.ru\%ScriptName%
+configDir = %A_AppDataCommon%\Common_Scripts\%ScriptName%
 logsDir = %A_Temp%
 FileCreateDir %configDir%
 FileCreateDir %logsDir%

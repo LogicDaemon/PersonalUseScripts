@@ -8,8 +8,7 @@ RetailStatusReport(ByRef st:="", ByRef einf:="", ByRef mdl:="") {
     
     If (hostname != oldHostname)
 	hostSuffix := oldHostname
-    If (domain != "office0.mobilmir")
-	hostname .= "." domain
+    hostname .= "." domain
     
     If (mdl == "") {
 	FileGetTime scriptmtime, %A_ScriptFullPath%

@@ -74,4 +74,4 @@ RegKeyCopy(ByRef src, ByRef dst) {
     ErrorLevel := errors
 }
 
-#include \\Srv1S-B.office0.mobilmir\Users\Public\Shares\profiles$\Share\config\_Scripts\Lib\ObjectToText.ahk
+#include <ObjectToText>
