@@ -1,6 +1,5 @@
 @(REM coding:CP866
-REM by LogicDaemon <www.logicdaemon.ru>
-REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode.ru>.
+REM 0BSD (https://opensource.org/license/0bsd) / public domain by LogicDaemon <https://www.logicdaemon.ru/>
 SETLOCAL ENABLEEXTENSIONS
 
     CALL find7zexe.cmd
@@ -20,9 +19,10 @@ SETLOCAL ENABLEEXTENSIONS
 )
 :found
 @(
-    CALL :install "%dstfname%"
+    CALL :install "%dstfname%" || EXIT /B
+    IF NOT DEFINED installDest EXIT /B 1
     FOR /D %%A IN ("%~dp0plugins\*") DO CALL :installplugin "%%~A"
-    COMPACT /C /S:"%LOCALAPPDATA%\Programs\obs-studio" /EXE:LZX
+    COMPACT /C /S:"%LOCALAPPDATA%\Programs\obs-studio" /EXE:LZX >NUL
 EXIT /B
 )
 :install
@@ -30,7 +30,7 @@ EXIT /B
     %exe7z% x -xr!*.pdb -x!"$APPDATA" -x!"$PLUGINSDIR" -x!"uninstall.exe.nsis" -aos -y -o"%LOCALAPPDATA%\Programs\%~n1" -- "%~1" || EXIT /B
     ECHO N|RMDIR "%LOCALAPPDATA%\Programs\obs-studio"
     ECHO N|DEL "%LOCALAPPDATA%\Programs\obs-studio"
-    MKLINK /D "%LOCALAPPDATA%\Programs\obs-studio" "%LOCALAPPDATA%\Programs\%~n1" || MKLINK /J "%LOCALAPPDATA%\Programs\obs-studio" "%LOCALAPPDATA%\Programs\%~n1"
+    MKLINK /D "%LOCALAPPDATA%\Programs\obs-studio" "%LOCALAPPDATA%\Programs\%~n1" || MKLINK /J "%LOCALAPPDATA%\Programs\obs-studio" "%LOCALAPPDATA%\Programs\%~n1" || EXIT /B
     SET "installDest=%LOCALAPPDATA%\Programs\%~n1"
 EXIT /B
 )
@@ -42,7 +42,7 @@ EXIT /B
                                         "%~1\*-win64.7z" ^
                                         "%~1\*-win64.rar" ^
                                       `) DO @(
-        %exe7z% x -xr!*.pdb -aos -y -o"%installDest%" -- "%%~A"
+        %exe7z% x -xr!*.pdb -aos -y -o"%installDest%" -- "%~1\%%~A"
         EXIT /B
     )
     EXIT /B 1
