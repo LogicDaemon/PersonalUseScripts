@@ -1,0 +1,341 @@
+<html>
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1251">
+<meta name=Generator content="Microsoft Word 15 (filtered)">
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Aptos;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:8.0pt;
+	margin-left:0in;
+	line-height:115%;
+	font-size:12.0pt;
+	font-family:"Aptos",sans-serif;}
+a:link, span.MsoHyperlink
+	{color:#467886;
+	text-decoration:underline;}
+.MsoPapDefault
+	{margin-bottom:8.0pt;
+	line-height:115%;}
+@page WordSection1
+	{size:8.5in 11.0in;
+	margin:56.7pt 42.5pt 56.7pt 85.05pt;}
+div.WordSection1
+	{page:WordSection1;}
+-->
+</style>
+
+</head>
+
+<body lang=EN-US link="#467886" vlink="#96607D" style='word-wrap:break-word'>
+
+<div class=WordSection1>
+
+<p class=MsoNormal><b>Giving &quot;native&quot; tool calling to Gemma 3 (or
+really any model) </b></p>
+
+<p class=MsoNormal><a
+href="https://www.reddit.com/r/LocalLLaMA/?f=flair_name%3A%22Tutorial%20%7C%20Guide%22"></a></p>
+
+<p class=MsoNormal><span class=MsoHyperlink><a
+href="https://www.reddit.com/r/LocalLLaMA/?f=flair_name%3A%22Tutorial%20%7C%20Guide%22">Tutorial
+| Guide </a></span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>Gemma 3 is great at following instructions, but doesn't have
+&quot;native&quot; tool/function calling. Let's change that (at least as best
+we can). </p>
+
+<p class=MsoNormal>(Quick note, I'm going to be using Ollama as the example
+here, but this works equally well with Jinja templates, just need to change the
+syntax a bit.) </p>
+
+<p class=MsoNormal><b>Defining Tools</b></p>
+
+<p class=MsoNormal>Let's start by figuring out how 'native' function calling
+works in Ollama. Here's qwen2.5's chat template: </p>
+
+<p class=MsoNormal>{{- if or .System .Tools }}&lt;|im_start|&gt;system</p>
+
+<p class=MsoNormal>{{- if .System }}</p>
+
+<p class=MsoNormal>{{ .System }}</p>
+
+<p class=MsoNormal>{{- end }}</p>
+
+<p class=MsoNormal>{{- if .Tools }}</p>
+
+<p class=MsoNormal># Tools</p>
+
+<p class=MsoNormal>You may call one or more functions to assist with the user
+query.</p>
+
+<p class=MsoNormal>You are provided with function signatures within
+&lt;tools&gt;&lt;/tools&gt; XML tags:</p>
+
+<p class=MsoNormal>&lt;tools&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>{{- range .Tools }}</p>
+
+<p class=MsoNormal>{&quot;type&quot;: &quot;function&quot;,
+&quot;function&quot;: {{ .Function }}}</p>
+
+<p class=MsoNormal>{{- end }}</p>
+
+<p class=MsoNormal>&lt;/tools&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>For each function call, return a json object with function
+name and arguments within &lt;tool_call&gt;&lt;/tool_call&gt; XML tags:</p>
+
+<p class=MsoNormal>&lt;tool_call&gt;</p>
+
+<p class=MsoNormal>{&quot;name&quot;: &lt;function-name&gt;,
+&quot;arguments&quot;: &lt;args-json-object&gt;}</p>
+
+<p class=MsoNormal>&lt;/tool_call&gt;</p>
+
+<p class=MsoNormal>{{- end }}&lt;|im_end|&gt;</p>
+
+<p class=MsoNormal>If you think this looks like the second half of your average
+homebrew tool calling system prompt, you're spot on. <b>This is literally
+appending markdown-formatted instructions on what tools are available and how
+to call them to the end of the system prompt.</b> </p>
+
+<p class=MsoNormal>Already, Ollama will recognize the tools you give it in the tools
+part of your OpenAI completions request, and inject them into the system
+prompt. </p>
+
+<p class=MsoNormal><b>Parsing Tools</b></p>
+
+<p class=MsoNormal>Let's scroll down a bit and see how tool call messages are
+handled: </p>
+
+<p class=MsoNormal>{{ else if eq .Role &quot;assistant&quot;
+}}&lt;|im_start|&gt;assistant</p>
+
+<p class=MsoNormal>{{ if .Content }}{{ .Content }}</p>
+
+<p class=MsoNormal>{{- else if .ToolCalls }}&lt;tool_call&gt;</p>
+
+<p class=MsoNormal>{{ range .ToolCalls }}{&quot;name&quot;: &quot;{{
+.Function.Name }}&quot;, &quot;arguments&quot;: {{ .Function.Arguments }}}</p>
+
+<p class=MsoNormal>{{ end }}&lt;/tool_call&gt;</p>
+
+<p class=MsoNormal>{{- end }}{{ if not $last }}&lt;|im_end|&gt;</p>
+
+<p class=MsoNormal>This is the <b>tool call parser</b>. If the first token (or
+couple tokens) that the model outputs is &lt;tool_call&gt;, Ollama handles the
+parsing of the tool calls. Assuming the model is decent at following
+instructions, <i>this means the tool calls will actually populate the</i> tool_calls
+<i>field rather than</i> content. </p>
+
+<p class=MsoNormal><b>Demonstration</b></p>
+
+<p class=MsoNormal>So just for gits and shiggles, let's see if we can get Gemma
+3 to call tools properly. I adapted the same concepts from qwen2.5's chat
+template to Gemma 3's chat template. Before I show that template, let me show
+you that it works. </p>
+
+<p class=MsoNormal>import ollama</p>
+
+<p class=MsoNormal>def add_two_numbers(a: int, b: int) -&gt; int:</p>
+
+<p class=MsoNormal>    &quot;&quot;&quot;</p>
+
+<p class=MsoNormal>    Add two numbers</p>
+
+<p class=MsoNormal>    Args:</p>
+
+<p class=MsoNormal>        a: The first integer number</p>
+
+<p class=MsoNormal>        b: The second integer number</p>
+
+<p class=MsoNormal>    Returns:</p>
+
+<p class=MsoNormal>        int: The sum of the two numbers</p>
+
+<p class=MsoNormal>    &quot;&quot;&quot;</p>
+
+<p class=MsoNormal>    return a + b</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>response = ollama.chat(</p>
+
+<p class=MsoNormal>    'gemma3-tools',</p>
+
+<p class=MsoNormal>    messages=[{'role': 'user', 'content': 'What is 10 +
+10?'}],</p>
+
+<p class=MsoNormal>    tools=[add_two_numbers],</p>
+
+<p class=MsoNormal>)</p>
+
+<p class=MsoNormal>print(response)</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal># model='gemma3-tools'
+created_at='2025-03-14T02:47:29.234101Z' </p>
+
+<p class=MsoNormal># done=True done_reason='stop' total_duration=19211740040 </p>
+
+<p class=MsoNormal># load_duration=8867467023 prompt_eval_count=79 </p>
+
+<p class=MsoNormal># prompt_eval_duration=6591000000 eval_count=35 </p>
+
+<p class=MsoNormal># eval_duration=3736000000 </p>
+
+<p class=MsoNormal># message=Message(role='assistant', content='', images=None,
+</p>
+
+<p class=MsoNormal>#
+tool_calls=[ToolCall(function=Function(name='add_two_numbers', </p>
+
+<p class=MsoNormal># arguments={'a': 10, 'b': 10}))])</p>
+
+<p class=MsoNormal>Booyah! Native function calling with Gemma 3. </p>
+
+<p class=MsoNormal>It's not bullet-proof, mainly because it's not strictly
+enforcing a grammar. But assuming the model follows instructions, it should
+work *most* of the time. </p>
+
+<div class=MsoNormal align=center style='text-align:center'>
+
+<hr size=2 width="100%" align=center>
+
+</div>
+
+<p class=MsoNormal>Here's the template I used. It's very much like qwen2.5 in
+terms of the structure and logic, but using the tags of Gemma 3. Give it a
+shot, and better yet adapt this pattern to other models that you wish had
+tools. </p>
+
+<p class=MsoNormal>TEMPLATE &quot;&quot;&quot;{{- if .Messages }}</p>
+
+<p class=MsoNormal>{{- if or .System .Tools }}&lt;start_of_turn&gt;user</p>
+
+<p class=MsoNormal>{{- if .System}}</p>
+
+<p class=MsoNormal>{{ .System }}</p>
+
+<p class=MsoNormal>{{- end }}</p>
+
+<p class=MsoNormal>{{- if .Tools }}</p>
+
+<p class=MsoNormal># Tools</p>
+
+<p class=MsoNormal>You may call one or more functions to assist with the user
+query.</p>
+
+<p class=MsoNormal>You are provided with function signatures within
+&lt;tools&gt;&lt;/tools&gt; XML tags:</p>
+
+<p class=MsoNormal>&lt;tools&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>{{- range $.Tools }}</p>
+
+<p class=MsoNormal>{&quot;type&quot;: &quot;function&quot;,
+&quot;function&quot;: {{ .Function }}}</p>
+
+<p class=MsoNormal>{{- end }}</p>
+
+<p class=MsoNormal>&lt;/tools&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>For each function call, return a json object with function
+name and arguments within &lt;tool_call&gt;&lt;/tool_call&gt; XML tags:</p>
+
+<p class=MsoNormal>&lt;tool_call&gt;</p>
+
+<p class=MsoNormal>{&quot;name&quot;: &lt;function-name&gt;,
+&quot;arguments&quot;: &lt;args-json-object&gt;}</p>
+
+<p class=MsoNormal>&lt;/tool_call&gt;</p>
+
+<p class=MsoNormal>{{- end }}&lt;end_of_turn&gt;</p>
+
+<p class=MsoNormal>{{ end }}</p>
+
+<p class=MsoNormal>{{- range $i, $_ := .Messages }}</p>
+
+<p class=MsoNormal>{{- $last := eq (len (slice $.Messages $i)) 1 -}}</p>
+
+<p class=MsoNormal>{{- if eq .Role &quot;user&quot; }}&lt;start_of_turn&gt;user</p>
+
+<p class=MsoNormal>{{ .Content }}&lt;end_of_turn&gt;</p>
+
+<p class=MsoNormal>{{ else if eq .Role &quot;assistant&quot;
+}}&lt;start_of_turn&gt;model</p>
+
+<p class=MsoNormal>{{ if .Content }}{{ .Content }}</p>
+
+<p class=MsoNormal>{{- else if .ToolCalls }}&lt;tool_call&gt;</p>
+
+<p class=MsoNormal>{{ range .ToolCalls }}{&quot;name&quot;: &quot;{{
+.Function.Name }}&quot;, &quot;arguments&quot;: {{ .Function.Arguments}}}</p>
+
+<p class=MsoNormal>{{ end }}&lt;/tool_call&gt;</p>
+
+<p class=MsoNormal>{{- end }}{{ if not $last }}&lt;end_of_turn&gt;</p>
+
+<p class=MsoNormal>{{ end }}</p>
+
+<p class=MsoNormal>{{- else if eq .Role &quot;tool&quot;
+}}&lt;start_of_turn&gt;user</p>
+
+<p class=MsoNormal>&lt;tool_response&gt;</p>
+
+<p class=MsoNormal>{{ .Content }}</p>
+
+<p class=MsoNormal>&lt;/tool_response&gt;&lt;end_of_turn&gt;</p>
+
+<p class=MsoNormal>{{ end }}</p>
+
+<p class=MsoNormal>{{- if and (ne .Role &quot;assistant&quot;) $last
+}}&lt;start_of_turn&gt;model</p>
+
+<p class=MsoNormal>{{ end }}</p>
+
+<p class=MsoNormal>{{- end }}</p>
+
+<p class=MsoNormal>{{- else }}</p>
+
+<p class=MsoNormal>{{- if .System }}&lt;start_of_turn&gt;user</p>
+
+<p class=MsoNormal>{{ .System }}&lt;end_of_turn&gt;</p>
+
+<p class=MsoNormal>{{ end }}{{ if .Prompt }}&lt;start_of_turn&gt;user</p>
+
+<p class=MsoNormal>{{ .Prompt }}&lt;end_of_turn&gt;</p>
+
+<p class=MsoNormal>{{ end }}&lt;start_of_turn&gt;model</p>
+
+<p class=MsoNormal>{{ end }}{{ .Response }}{{ if .Response
+}}&lt;end_of_turn&gt;{{ end }}&quot;&quot;&quot;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>
