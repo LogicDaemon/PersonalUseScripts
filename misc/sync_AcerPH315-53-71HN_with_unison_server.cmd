@@ -15,7 +15,7 @@ SETLOCAL ENABLEEXTENSIONS
     
     IF DEFINED filterSyncs IF NOT "%filterSyncs%"=="0" (
         ECHO Checking for changes
-        <NUL %unisontext% "Distributives@u327016.your-storagebox.de" -root "%unisonServer%v:/Distributives" -auto=false && (
+        <NUL %unisontext% "Distributives@u327016.your-storagebox.de" -root "%unisonServer%v:/Distributives" -auto=false -sortnewfirst && (
             ECHO No changes, exiting
             PING 127.0.0.1 >NUL
             EXIT /B
