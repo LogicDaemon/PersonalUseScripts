@@ -7,7 +7,7 @@ EnvGet SystemRoot,SystemRoot
 
 scoopBase=%LocalAppData%\Programs\scoop
 bucketDir=%scoopBase%\buckets\fixes
-runmode=Hide
+runmode=Min
 
 RunWait git pull, %bucketDir%, %runmode% UseErrorLevel
 RunWait powershell.exe -NoProfile -ExecutionPolicy Bypass -Command ".\bin\checkver.ps1" -Update cursor, %bucketDir%, %runmode% UseErrorLevel

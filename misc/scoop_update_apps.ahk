@@ -19,6 +19,11 @@ For _, v in A_Args {
     }
 }
 
+; Cursor updater uses scoop, and it may update the bucket, so it must run
+; before scoop updater. Also it relies on scoop cleanup ran separately.
+If (FileExist(scoopBaseDir "\apps\cursor"))
+    RunWait "%A_AhkPath%" "%A_ScriptDir%\update_cursor.ahk"
+
 ;RunWait scoop.cmd update -a,, Min
 FileMove %logPath%, %logPath%_old, 1
 RunScoopUpdates(scoopBaseDir, logPath, GetScoopPostUpdateScripts(), GetNoAutoUpdateApps(), mode)
