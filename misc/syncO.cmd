@@ -7,7 +7,7 @@
 @(
     IF "%~1"=="" (
         IF NOT DEFINED unisonopt SET unisonopt=-auto
-    ) ELSE SET unisonopt=%unisonopt% %*
+    ) ELSE SET "unisonopt=%unisonopt% %*"
 
     rem SET UNISONLOCALHOSTNAME=LogicDaemonHome
 

@@ -359,6 +359,9 @@ Launch_App2::F15
     #Hotstring *0 ?0 C0 Z0
 #IfWinActive
 
+; Disable RightAlt+F4 because right alt is next to Fn on my external keyboard, and Fn+F4 is play/pause
+>!F4::Media_Play_Pause
+
 #,::                                                          ;Win+< #<
     clipBak := ClipboardAll
     Clipboard=

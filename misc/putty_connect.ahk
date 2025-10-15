@@ -32,7 +32,9 @@ ButtonOK:
         connName := DecodePuttyConnName(selConnItem)
         Run putty.exe -load "%connName%"
     } Else {
-        Run putty.exe %selConnItem%
+	selConnItem := Trim(selConnItem)
+	args := (selConnItem ~= "\.(telecomsvc\.com|serverpod\.net)$") ? "-load proxy" : ""
+        Run putty.exe %args% "%selConnItem%"
     }
     WinWaitActive ahk_exe putty.exe
     Sleep 1000

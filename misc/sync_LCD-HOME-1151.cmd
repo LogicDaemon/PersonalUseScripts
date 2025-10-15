@@ -9,7 +9,7 @@ SETLOCAL ENABLEEXTENSIONS
         IF NOT DEFINED unisonopt SET unisonopt=-auto
         SET skipPresyncs=1
     ) ELSE (
-        SET unisonopt=%unisonopt% %*
+        SET "unisonopt=%unisonopt% %*"
         SET skipPresyncs=1
     )
 )

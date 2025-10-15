@@ -8,7 +8,7 @@ SETLOCAL ENABLEEXTENSIONS
     IF "%~1"=="" (
         IF NOT DEFINED unisonopt SET unisonopt=-auto
     ) ELSE (
-        SET unisonopt=%unisonopt% %*
+        SET "unisonopt=%unisonopt% %*"
     )
     
     IF NOT DEFINED unisonPort SET /A unisonPort=%RANDOM%/2+16384

@@ -4,7 +4,11 @@ REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 In
 SETLOCAL ENABLEEXTENSIONS
     IF NOT DEFINED syncprog CALL _unison_get_command.cmd
 )
-@IF NOT DEFINED syncprog ( SET "syncprog=%unisontext%" ) ELSE IF NOT DEFINED filterSyncs IF NOT [%unisontext%]==[%syncprog%] SET "filterSyncs=1"
+@IF NOT DEFINED syncprog (
+    SET "syncprog=%unisontext%"
+) ELSE (
+    IF NOT DEFINED filterSyncs IF "%unisontext%" NEQ "%syncprog%" SET "filterSyncs=1"
+)
 @(
     rem "%LocalAppData%\Programs\msys64\ucrt64.exe" 
     SET "PATH=%LocalAppData%\Programs\msys64\usr\bin;%PATH"

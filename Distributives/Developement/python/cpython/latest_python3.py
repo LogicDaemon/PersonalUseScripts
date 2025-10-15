@@ -55,11 +55,10 @@ def restart_with_requirements(
         print('Restart already attempted', file=sys.stderr)
         os.abort()
 
-    subprocess.run([
+    subprocess.check_call([
         python_executable, '-m', 'pip', 'install', '--user', '-r',
         str(req_file)
-    ],
-                   check=True)
+    ])
     os.environ[flag_envvar] = '1'
     print('Restarting:', sys.executable, *sys.argv, file=sys.stderr)
     os.execl(sys.executable, sys.executable, *sys.argv)
