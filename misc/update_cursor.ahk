@@ -9,6 +9,7 @@ scoopBase=%LocalAppData%\Programs\scoop
 bucketDir=%scoopBase%\buckets\fixes
 runmode=Min
 
+RunWait git reset --hard, %bucketDir%, %runmode% UseErrorLevel
 RunWait git pull, %bucketDir%, %runmode% UseErrorLevel
 RunWait powershell.exe -NoProfile -ExecutionPolicy Bypass -Command ".\bin\checkver.ps1" -Update cursor, %bucketDir%, %runmode% UseErrorLevel
 RunWait powershell.exe -noprofile -ex unrestricted -file "%scoopBase%\apps\scoop\current\bin\scoop.ps1" update cursor, %scoopBase%, %runmode% UseErrorLevel
