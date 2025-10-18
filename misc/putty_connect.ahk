@@ -33,6 +33,13 @@ ButtonOK:
         Run putty.exe -load "%connName%"
     } Else {
 	selConnItem := Trim(selConnItem)
+	If (selConnItem ~= "^dev(hpbx|voiceapp|presence\d*)-[^.]+\.\w+$")
+	    selConnItem .= ".devintermedia.net"
+	Else If (selConnItem ~= "^qa(hpbx|ips|voiceapp|presence\d*)-[^.]+\.\w+$")
+	    selConnItem .= ".qaserverdata.net"
+	Else If (selConnItem ~= "^(hpbx\d+-\d+|presence\d+-witness)\.\w+$")
+	    selConnItem .= ".telecomsvc.com"
+	;MsgBox % selConnItem "`n" (selConnItem ~= "hpbx\d+-\d+\.\w{2,3}")
 	args := (selConnItem ~= "\.(telecomsvc\.com|serverpod\.net)$") ? "-load proxy" : ""
         Run putty.exe %args% "%selConnItem%"
     }
