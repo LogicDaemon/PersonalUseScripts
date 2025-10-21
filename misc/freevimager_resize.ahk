@@ -18,8 +18,14 @@ Resize() {
     Local
     Static MAX_WH := [3440, 1440]
     WinGetTitle title, A
+    ; FreeVimager ≥9
     ; FreeVimager - [D:\Users\LogicDaemon\Pictures\Sorted Photos\Тбилиси\IMG_20220514_200908.jpg , 282/459 , 4640x3472 RGB24 , 9.1MB]
     dimensions := RegExMatch(title, ", (\d+x\d+) \w+ , [\d.]+\wB( \*)?\]", m)
+    If (!dimensions) {
+        ; FreeVimager 7.7.0
+        ; FreeVimager - [IMG_20160306_112323_HDR.jpg , File 3 of 3 in Directory, 4160x3120 , RGB24 , File: 2091 KB]
+        dimensions := RegExMatch(title, ", (\d+x\d+) , \w+", m)
+    }
     If (!dimensions) {
         MsgBox Failed to get dimensions from title:`n%title%
         Return
