@@ -26,8 +26,20 @@ SETLOCAL ENABLEEXTENSIONS
         ECHO %%A %%B
         SET "ahkVer=%%~A"
         SET "ahkDistFilename=%%~B"
-        SET "ahkDestDir=%LOCALAPPDATA%\Programs\AutoHotkey %%~A"
+        GOTO :found
     )
+    FOR /F "usebackq delims=" %%A IN (`DIR /B /O-D "%~dp0AutoHotkey_*.zip"`) DO @(
+        SET "ahkDistFilename=%%~A"
+        SET "ahkDistFilenameNoExt=%%~nA"
+        CALL :ParseVersionFromDistZipName
+        GOTO :found
+    )
+    IF NOT DEFINED ahkDestDir EXIT /B 1
+)
+:found
+(
+    IF NOT DEFINED ahkVer EXIT /B 1
+    SET "ahkDestDir=%LOCALAPPDATA%\Programs\AutoHotkey %ahkVer%"
 )
 (
     %exe7z% x -aoa -y -o"%ahkDestDir%" %add7zArgs% -- "%~dp0%ahkDistFilename%" || CALL :SaveExitErrorCode
@@ -53,5 +65,10 @@ EXIT /B %ExitErrorCode%
 :SaveExitErrorCode
 (
     SET "ExitErrorCode=%ERRORLEVEL%"
+EXIT /B
+)
+:ParseVersionFromDistZipName
+(
+    SET "ahkVer=%ahkDistFilenameNoExt:~11%"
 EXIT /B
 )
