@@ -72,6 +72,7 @@ For i, exe64suffix in (A_Is64bitOS ? ["64", ""] : [""]) {
                                   , SystemDrive "\SysUtils\SysInternals\procexp" exe64suffix ".exe")
 }
 vscode := A_ScriptDir "\vscode-any.ahk"
+zedexe := scoopDir "\apps\zed\current\Zed.exe"
 notepad2exe := FirstExisting(laPrograms "\Total Commander\bin\notepad2.exe"
                            , totalcmdexe "\..\notepad2.exe"
                            , ProgramFiles "\notepad2\notepad2.exe"
@@ -87,11 +88,20 @@ AU3_Spy := FirstExisting( AhkExeDir "\AU3_Spy.exe"
                                    , laPrograms "\AutoHotkey\WindowSpy.ahk" )
 
 keepassahk := FirstExisting(A_ScriptDir "\KeePass_" A_UserName ".ahk", A_ScriptDir "\KeePass.ahk")
+scoopDir := FindScoopBaseDir()
 
-FileAppend Found executables:`ncalc: %calcexe%`nnotepad2: %notepad2exe%`ntc: %totalcmdexe%`nprocexp: %procexpexe%`nkeepassahk: %keepassahk%, *
+FileAppend,
+(
+Found paths:
+calc: %calcexe%
+notepad2: %notepad2exe%
+tc: %totalcmdexe%
+procexp: %procexpexe%
+keepassahk: %keepassahk%
+scoop: %scoopDir%
+), *
 
 layouts := GetLayoutList()
-
 
 FillDelayedRunGroups()
 
@@ -543,13 +553,14 @@ FillDelayedRunGroups() {
                                             , "Browser_Favorites": [A_ScriptDir "\Skype.cmd",,,,7]
                                             , "Launch_Mail": [A_ScriptDir "\EmailButton.ahk"] }
                                 ; VK5A=Z, VK51=Q
-                                , "#VK51":  { "^VK45":   [notepad2exe, """" A_ScriptFullPath """"]               ;vk45=e ^e
-                                            , "^+VK45":  [notepad2exe, """" hotkeys_custom_ahk """"]             ;vk45=e ^+e
-                                            , "#VK57":   [AU3_Spy]                                               ;vk57=w #w
-                                            , "#VK52":   [A_ScriptDir "\ResizeOrRecord.ahk",,""]                 ;vk52=r #r
+                                , "#VK51":  { "^VK45":   [Func("EditAhk"), A_ScriptFullPath]                     ;vk45=e ^e
+                                            , "^+VK45":  [Func("EditAhk"), hotkeys_custom_ahk]                   ;vk45=e ^+e
+                                            , "#VK57":   [AU3_Spy,,,,-1]                                         ;vk57=w #w
+                                            , "#VK52":   [A_ScriptDir "\ResizeOrRecord.ahk"]                     ;vk52=r #r
                                             , "#VK43":   [A_ScriptDir "\putty_connect.ahk"]                      ;vk43=c #c
                                             , "#VK50":   [A_ScriptDir "\putty_smartact.ahk"]                     ;vk50=p #p
                                             , "#+VK44":  [A_ScriptDir "\Dropbox.ahk"]                            ;vk44=d #+d
+                                            , "#VK5A":   [zedexe]                                                ;vk5a=z #z
                                             , "F1":      [A_ScriptDir "\F1.ahk"]
                                             , "+F1":     [A_ScriptDir "\AutohotkeyHelp.ahk"] } }
 
@@ -563,17 +574,15 @@ FillDelayedRunGroups() {
             Hotkey If
         }
         For key,args in HotkeysRunDelayed {
-            If (FileExist(args[1])) {
-                SplitPath % args[1], , , OutExtension
-                If (OutExtension = "ahk") {
-                    args[2] := """" args[1] """ " args[2]
-                    args[1] := A_AhkPath
-                }
-                hotkeyFunc := Func("RunDelayed").Bind(args*)
-                HotKey %key%, %hotkeyFunc%
-            } Else {
-                FileAppend % "Not found: " args[1], *
+            If (!FileExist(args[1]))
+                FileAppend % "Not found: " args[1] "`n", **
+            SplitPath % args[1], , , OutExtension
+            If (OutExtension = "ahk") {
+                args[2] := """" args[1] """ " args[2]
+                , args[1] := A_AhkPath
             }
+            hotkeyFunc := Func("RunDelayed").Bind(args*)
+            HotKey %key%, %hotkeyFunc%
         }
     }
     If (altKey)
@@ -583,7 +592,7 @@ FillDelayedRunGroups() {
 RemoveToolTip:
     SetTimer RemoveToolTip, Off
     ToolTip
-return
+Return
 
 ~LShift Up:: SwtichLang(layouts[1]) ; LOCALE_EN := 0x4090409
 ~RShift Up:: SwtichLang(layouts[2]) ; LOCALE_RU := 0x4190419
@@ -708,7 +717,7 @@ lReload:
     Sleep 300 ; if successful, the reload will close this instance during the Sleep, so the line below will never be reached.
     MsgBox 4,, The script could not be reloaded. Would you like to open it for editing?
     IfMsgBox, Yes
-        RunDelayed(notepad2exe, """" A_ScriptFullPath """")
+        EditAhk(A_ScriptFullPath)
 return
     
 lToggleWindowMonitor:
@@ -747,14 +756,23 @@ lMaximizeWindow:
     ; ToDo: restore window original position
     return
 
+EditAhk(ByRef path) {
+    Local
+    Global vscode, zedexe, notepad2exe
+    For _, edexe in [vscode, zedexe, notepad2exe]
+        If (FileExist(edexe))
+            Return RunDelayed(edexe, """" path """")
+    Run *Edit "%path%"
+}
+
 RunDelayed(ByRef params*) {
     ; File [, Arguments, Directory, Operation, Show]; for ShellRun
     ; File [, Arguments, Directory, Options, -1]; for Run
     static runQueue := []
     
-    If (IsObject(params) && nparams := params.Length()) {
+    If (params.Length()) {
         AlternateHotkeysOff()
-        RunQueue.Push((nparams==1) ? params[1] : params)
+        RunQueue.Push(params)
         SetTimer %A_ThisFunc%, 100
         textAdded := params[1]
         SplitPath textAdded, textAdded
@@ -767,14 +785,27 @@ RunDelayed(ByRef params*) {
         SetTimer ,,Off
         Return
     }
-    ToolTip
 
     cmd := runQueue.Pop()
-    If (IsObject(cmd)) { ; an array
-        If (cmd[5] == -1) ; [executable name, args, workdir, options, -1]
+    If (IsObject(cmd)) { ; an array or function object
+        If IsFunc(cmd[1]) {
+            fn := cmd[1]
+            args := cmd
+            args.RemoveAt(1)
+            ; MsgBox % "Calling function " fn.Name " with args: " ObjectToText(args)
+            Return fn.Call(cmd*)
+        }
+        SplitPath % cmd[1], exeName
+        If (!cmd[2] && !cmd[4] && WinExist("ahk_exe " exeName) && !WinActive("ahk_exe " exeName)) {
+            WinActivateBottom ahk_exe %exeName%
+        } Else If (cmd[5] == -1) { ; [executable name, args, workdir, options, -1]
             RunAndActivate(cmd*)
-        Else ; [executable name, args, workdir, operation, show]
+        } Else {
+            ; [executable name, args, workdir, operation, show]
+            ToolTip % "Starting """ cmd[1] """ through shell"
+            SetTimer RemoveToolTip, 1000        
             nprivRun(cmd*)
+        }
         Return
     }
     ; Just a string
@@ -858,3 +889,4 @@ FirstExisting(paths*) {
 }
 
 #include <nprivRun>
+#include <FindScoopBaseDir>
