@@ -9,14 +9,7 @@ EXIT /B
 :mvold
     SETLOCAL
     SET destination=%~1
-    SET destination=%destination:\Distributives\Soft\=\Distributives\Soft_old\%
-    SET destination=%destination:\Distributives\Soft_uncommon\=\Distributives\Soft_old\%
-    SET destination=%destination:\Distributives\Soft com freeware\=\Distributives\Soft_old\%
-    SET destination=%destination:\Distributives\Soft com license\=\Distributives\Soft_old\%
-    SET destination=%destination:\Distributives\Soft FOSS\=\Distributives\Soft_old\%
-    SET destination=%destination:\Distributives\Soft private use only\=\Distributives\Soft_old\%
-    SET destination=%destination:\Distributives\Drivers\=\Distributives\Drivers_old\%
-    SET destination=%destination:\Distributives\Developement\=\Distributives\Developement_old\%
+    SET destination=%destination:\Distributives\=\Distributives\_old\%
     CALL :mkpath "%destination%"
     ECHO Moving "%~1" to "%destination%"
     MOVE "%~1" "%destination%"

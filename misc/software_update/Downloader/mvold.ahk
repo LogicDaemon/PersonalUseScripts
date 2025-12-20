@@ -10,36 +10,64 @@ If (A_ScriptFullPath == A_LineFile) {
     ExitApp
 }
 
+GuessBaseDistributives(ByRef outDir) {
+    ; Normalize outDir
+    Loop Files, %outDir%, D
+    {
+        path := A_LoopFileLongPath
+        break
+    }
+    ; 
+    Loop
+    {
+        ; SplitPath, InputVar [, OutFileName, OutDir, OutExtension, OutNameNoExt, OutDrive]
+        prevPath := path
+        SplitPath path, dirName, path
+        If (!dirName || StrLen(path) < 2 || prevPath == path)
+            Break
+        prefix := SubStr(dirName, 1, 4)
+        If (prefix = "dist")
+            Return prevPath
+        If (prefix = "soft") {
+            Return path
+        }
+    }
+    ; not found
+    Return ""
+}
+
+RelativePath(ByRef fullPath, ByRef basePath) {
+    ; both fullPath and basePath are absolute paths
+    ; return the relative path from basePath to fullPath
+    baseLen := StrLen(basePath)
+    If (SubStr(fullPath, 1, baseLen) = basePath)
+        Return SubStr(fullPath, baseLen + 2) ; +2 = (+1 because offsets are counted from 1) + (+1 to skip the backslash)
+    Return ; not a subpath
+}
+
 MoveToOld(path) {
     ; given a path like
     ; d:\Distributives\Soft\Archivers Packers\7Zip\7z2408-x64 64-bit x64.exe
-    ; move it to d:\Distributives\Soft_old\Archivers Packers\7Zip\7z2408-x64 64-bit x64.exe
+    ; move it to d:\Distributives\_old\Soft\Archivers Packers\7Zip\7z2408-x64 64-bit x64.exe
     ; or d:\Distributives\Soft FOSS\Archivers Packers\7-Zip\7-zip.org\a\7z2408-x64.exe
-    ; to d:\Distributives\Soft_old\Archivers Packers\7-Zip\7-zip.org\a\7z2408-x64.exe
-    ; Soft -> Soft_old
-    ; Drivers -> Drivers_old
-    ; Developement -> Developement_old
+    ; to d:\Distributives\_old\Soft FOSS\Archivers Packers\7-Zip\7-zip.org\a\7z2408-x64.exe
+    ; Soft -> _old\Soft
+    ; Drivers -> _old\Drivers
+    ; Developement -> _old\Developement
     local
-    STABLE_PREFIX := "Distributives\"
+    EnvGet baseDistributives, baseDistributives
+    Loop Files, %path%
+        path := A_LoopFileLongPath
+    If (!baseDistributives) {
+        baseDistributives := GuessBaseDistributives(path "\..")
+        If (!baseDistributives)
+            Throw Exception("Cannot guess baseDistributives from path",, path)
+    }
 
-    distOffset := InStr(path, STABLE_PREFIX)
-    If (!distOffset)
-        Throw Exception("Path does not contain """ STABLE_PREFIX """", , path)
-
-    modOffset := distOffset + StrLen(STABLE_PREFIX)
-    stablePrefix := SubStr(path, 1, modOffset - 1)
-
-    subPathOffset := InStr(path, "\", true, modOffset + 1)
-    subPath := SubStr(path, subPathOffset + 1)
-
-    modName := SubStr(path, modOffset, subPathOffset - modOffset)
-    If (SubStr(modName, -4) == "_old")
-        Throw Exception("Path already contains ""_old""", , path)
-
-    modPrefixLen := InStr(modName, " ", true)
-    moddedName := (modPrefixLen ? SubStr(modName, 1, modPrefixLen - 1) : modName) . "_old"
-
-    newPath := stablePrefix . moddedName "\" subPath
+    relPath := RelativePath(path, baseDistributives)
+    If (!relPath)
+        Throw Exception("Path is not a subpath of baseDistributives",, path)
+    newPath := baseDistributives "\_old\" relPath
     SplitPath newPath, , newPathDir
     FileCreateDir %newPathDir%
     If (InStr(FileExist(path), "D"))

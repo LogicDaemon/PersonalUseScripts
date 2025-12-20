@@ -461,7 +461,8 @@ def cleanup(do_not_delete_files: Iterable[Path]) -> None:
         The list is stored in the config.out_dir with the name
         _DistDownload.py.list.
     """
-    keep_files = set(str(v) for v in do_not_delete_files)
+    keep_files = set(
+        str(v.relative_to(config.out_dir)) for v in do_not_delete_files)
     list_path = (config.out_dir /
                  os.path.basename(__file__)).with_suffix('.list')
 
