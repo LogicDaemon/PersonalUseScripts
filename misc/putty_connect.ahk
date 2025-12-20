@@ -30,20 +30,40 @@ ButtonOK:
     }
     If (connSet.HasKey(selConnItem)) {
         connName := DecodePuttyConnName(selConnItem)
-        Run putty.exe -load "%connName%"
+        Run putty.exe -load "%connName%",,, ppid
     } Else {
-	selConnItem := Trim(selConnItem)
-	If (selConnItem ~= "^dev(hpbx|voiceapp|presence\d*)-[^.]+\.\w+$")
-	    selConnItem .= ".devintermedia.net"
-	Else If (selConnItem ~= "^qa(hpbx|ips|voiceapp|presence\d*)-[^.]+\.\w+$")
-	    selConnItem .= ".qaserverdata.net"
-	Else If (selConnItem ~= "^(hpbx\d+-\d+|presence\d+-witness)\.\w+$")
-	    selConnItem .= ".telecomsvc.com"
-	;MsgBox % selConnItem "`n" (selConnItem ~= "hpbx\d+-\d+\.\w{2,3}")
-	args := (selConnItem ~= "\.(telecomsvc\.com|serverpod\.net)$") ? "-load proxy" : ""
-        Run putty.exe %args% "%selConnItem%"
+        selConnItem := Trim(selConnItem)
+        Loop Read, %A_LineFile%_conn_domains.tsv
+        {
+            tabPos := InStr(A_LoopReadLine, A_Tab)
+            If (selConnItem ~= SubStr(A_LoopReadLine, 1, tabPos-1)) {
+                selConnItem .= SubStr(A_LoopReadLine, tabPos+1)
+            Break
+            }
+        }
+        Loop Read, %A_LineFile%_conn_profiles.tsv
+        {
+            tabPos := InStr(A_LoopReadLine, A_Tab)
+            If (selConnItem ~= SubStr(A_LoopReadLine, 1, tabPos-1))
+                args .= " -load " SubStr(A_LoopReadLine, tabPos+1)
+        }
+        Loop Read, %A_LineFile%_conn_handlers.tsv
+        {
+            tabPos := InStr(A_LoopReadLine, A_Tab)
+            If (selConnItem ~= SubStr(A_LoopReadLine, 1, tabPos-1)) {
+                cmd := SubStr(A_LoopReadLine, tabPos+1)
+                ToolTip Starting %cmd% for %selConnItem%
+                Run %cmd% "%selConnItem%",, Min, ppid
+                selConnItem:=""
+            }
+        }
+        If (selConnItem) {
+            ToolTip Connecting %selConnItem% %args%
+            Run putty.exe %args% "%selConnItem%",,, ppid
+        }
     }
-    WinWaitActive ahk_exe putty.exe
+    If (ppid)
+        WinWait ahk_pid %ppid%,,10
     Sleep 1000
     ToolTip
 ExitApp

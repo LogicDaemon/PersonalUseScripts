@@ -67,8 +67,7 @@ If (!ErrorLevel)
 
 Process Exist, ollama.exe
 If (!ErrorLevel) {
-    EnvSet OLLAMA_ORIGINS, *
-    Run ollama serve,, Min UseErrorLevel
+    Run "%A_AhkPath%" "%A_ScriptDir%\ollama_serve.ahk"
 }
 
 ExitApp

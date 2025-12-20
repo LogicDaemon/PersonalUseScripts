@@ -17,6 +17,9 @@ Run wsl.exe echo init complete,, Min
 Run sc.exe stop AdobeARMservice,, Min
 Run sc.exe config AdobeARMservice start= disabled,, Min
 
+RunWait sc.exe stop NvContainerLocalSystem,, Min
+Run sc.exe config NvContainerLocalSystem start= disabled,, Min
+
 GroupAdd _1password, ahk_exe 1password.exe
 WinKill ahk_group _1password
 Loop

@@ -31,6 +31,8 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     MKDIR "%RAMDrive%\Temp\NVIDIA Corporation\NV_Cache"
     COMPACT /U "%RAMDrive%\Temp\NVIDIA Corporation"
 
+    IF EXIST "c:\Intel" MKDIR "%RAMDrive%\Intel\IntelOptaneData"
+    
     MKDIR "%RAMDrive%\Steam\appcache\httpcache"
     MKDIR "%RAMDrive%\Steam\depotcache"
     MKDIR "%RAMDrive%\Steam\dumps"
@@ -54,8 +56,6 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     MKDIR "%RAMDrive%\Temp\RivetNetworks\ImageCache"
     MKDIR "%RAMDrive%\Temp\RivetNetworks\Killer\ActivityLog"
     MKDIR "%RAMDrive%\Temp\SecuriSyncDiagnosticReport"
-    
-    IF EXIST "c:\Intel" MKDIR "%RAMDrive%\Intel\IntelOptaneData"
 
     IF EXIST "%ProgramData%\GOG.com" (
         MKDIR "%RAMDrive%\ProgramData\GOG.com\Galaxy\webcache\common"
@@ -88,10 +88,11 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     IF DEFINED vscodeRemoteWSLDist MKLINK /J "r:\Temp\vscode-remote-wsl" "%vscodeRemoteWSLDist%"
 
     SET "tryRenaming=1"
-    rem CALL :MoveToRAMDrive "c:\OEM\AcerLogs"
-    rem CALL :MoveToRAMDrive "c:\OEM\CareCenter"
-    rem CALL :MoveToRAMDrive "c:\OEM\Preload"
-    CALL :MoveToRAMDrive "%APPDATA%\npm-cache"
+    IF EXIST "%USERPROFILE%\My SecuriSync" CALL :MoveToRAMDrive "%USERPROFILE%\My SecuriSync\.SecuriSync\Spool Files"
+    IF EXIST "c:\OEM\AcerLogs" CALL :MoveToRAMDrive "c:\OEM\AcerLogs"
+    IF EXIST "c:\OEM\CareCenter" CALL :MoveToRAMDrive "c:\OEM\CareCenter"
+    IF EXIST "c:\OEM\Preload" CALL :MoveToRAMDrive "c:\OEM\Preload"
+    IF EXIST "%APPDATA%\npm-cache" CALL :MoveToRAMDrive "%APPDATA%\npm-cache"
     CALL :MoveToRAMDrive "%APPDATA%\obs-studio\crashes"
     CALL :MoveToRAMDrive "%APPDATA%\obs-studio\logs"
     CALL :MoveToRAMDrive "%APPDATA%\obs-studio\profiler_data"
@@ -234,12 +235,13 @@ rem     CALL :MoveToRAMDrive
     )
 
     REM %USERPROFILE%\.cache\gpt4all\ contains downloaded gguf files, so they should be linked back to avoid wasting multi-gb downloads
-    FOR %%D IN ("d:\Users\LogicDaemon\GPT4All\Models" "%USERPROFILE%\GPT4All\Models" "V:\Distributives\LLMs\gguf") DO @(
-        IF EXIST "%%~D" (
-            MKLINK /J "%USERPROFILE%\.cache\gpt4all" "%%~D"
-            
-        )
-    )
+    rem FOR %%D IN ("d:\Users\LogicDaemon\GPT4All\Models" ^
+    rem 	    "%USERPROFILE%\GPT4All\Models" ^
+    rem 	    "V:\Distributives\LLMs\gguf" ^
+    rem 	    "d:\Distributives\LLMs\gguf" ^
+    rem 	   ) DO @(
+    rem     IF EXIST "%%~D" MKLINK /J "%USERPROFILE%\.cache\gpt4all" "%%~D"
+    rem )
 
     EXIT /B
 )

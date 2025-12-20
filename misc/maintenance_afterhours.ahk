@@ -56,6 +56,7 @@ If (!foundVSCode)
     KillProcesses([ "git.exe" ])
 
 SetWorkingDir %A_ScriptDir%
+Run "%A_ScriptDir%\Remove nVidia tray icon.cmd",, Min
 Run "%A_AhkPath%" "%A_ScriptDir%\RemoveMicrosoftEdgeAutoLaunch.ahk"
 Run "%A_AhkPath%" "%A_ScriptDir%\update_KeePass.ahk"
 Run "%A_AhkPath%" "%A_ScriptDir%\nprivRun.ahk" "%A_ScriptDir%\scoop_update_apps.ahk"
@@ -91,9 +92,10 @@ If (FileExist(comprDir)) {
         CompactCompressible(A_LoopFileFullPath "\Data")
 }
 
-RunWait "%LocalAppData%\Programs\DFHL_2.6\DFHL.exe" /r /l /o .vscode .vscode-insiders, %USERPROFILE%, Min
+RunWait DFHL.exe /r /l /q .vscode .vscode-insiders, %USERPROFILE%, Min
 For _, comprDir in [ USERPROFILE "\.vscode"
-                   , USERPROFILE "\.vscode-insiders" ] {
+                   , USERPROFILE "\.vscode-insiders"
+                   , USERPROFILE "\.cursor" ] {
     If (FileExist(comprDir)) {
         CompactCompressible(A_LoopFileFullPath "\Data")
     }

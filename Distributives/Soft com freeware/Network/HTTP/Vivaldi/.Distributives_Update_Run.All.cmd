@@ -1,7 +1,7 @@
 @(REM coding:CP866
 SETLOCAL ENABLEEXTENSIONS
     IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
-    IF NOT DEFINED baseScripts SET "baseScripts=\Distributives\Local_Scripts\software_update\Downloader"
+    IF NOT DEFINED baseScripts SET "baseScripts=%LOCALAPPDATA%\Scripts\software_update\Downloader"
 )
 (
 rem     https://downloads.vivaldi.com/stable/Vivaldi.2.11.1811.52.x64.exe

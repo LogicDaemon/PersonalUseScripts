@@ -1,7 +1,8 @@
 @(REM coding:CP866
 SETLOCAL ENABLEEXTENSIONS
     SET "srcpath=%~dp0"
+
     IF NOT DEFINED baseScripts SET "baseScripts=%LOCALAPPDATA%\Scripts\software_update\Downloader"
-    SET "AddtoS_UScripts=1"
-    CALL "%~dp0download.cmd" %*
+    PUSHD "%~dp0"
+    CALL "%~dp0winget_download.cmd"
 )

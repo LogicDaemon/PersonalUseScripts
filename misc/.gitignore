@@ -1,0 +1,8 @@
+_Distributives.base_dirs.auth.txt
+_Distributives.base_dirs.txt
+alt_browser@*.ahk
+Hotkeys_Custom.*.ahk
+Hotkeys_Custom.ahk
+KeePass_*.ahk
+putty_connect.ahk_*.tsv
+update_aws_cred_post_actions.cmd

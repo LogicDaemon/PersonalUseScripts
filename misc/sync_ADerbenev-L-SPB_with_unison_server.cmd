@@ -1,6 +1,4 @@
 @(REM coding:CP866
-REM by LogicDaemon <www.logicdaemon.ru>
-REM This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License <https://creativecommons.org/licenses/by-sa/4.0/legalcode.ru>.
 SETLOCAL ENABLEEXTENSIONS
     IF NOT DEFINED syncprog CALL _unison_get_command.cmd
 )
@@ -16,6 +14,8 @@ IF NOT DEFINED syncprog (
     SET name=Unison
     CALL :CheckSync "%unisonServer%%USERPROFILE:\=/%/My SecuriSync/config/.unison/default" "\\AcerPH315-53-71HN\Users\LogicDaemon\.unison/default"
     CALL :CheckSync "%unisonServer%%USERPROFILE:\=/%/My SecuriSync/config/.unison" "\\AcerPH315-53-71HN\Users\LogicDaemon\.unison" -ignore "Regex [^.]+" -ignore "Name .nomedia" -ignore "Name unison.log"
+    SET name=.continue
+    CALL :CheckSync "%unisonServer%d:/Users/LogicDaemon/.continue" "\\AcerPH315-53-71HN\Users\LogicDaemon\Dropbox\config\#Home\.continue"
     SET name=Distributives
     CALL :CheckSync "Distributives@AcerPH315-53-71HN" -root "%unisonServer%d:/Distributives"
     SET name=ahkLib
