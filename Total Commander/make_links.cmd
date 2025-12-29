@@ -2,6 +2,7 @@
 REM 0BSD (https://opensource.org/license/0bsd) / public domain by LogicDaemon <https://www.logicdaemon.ru/>
 SETLOCAL ENABLEEXTENSIONS
 
+	CALL :FindAutoHotkeyPath
 	FOR /F "usebackq delims=" %%A IN (`scoop prefix scoop`) DO (
 		IF "%%~A"=="%LOCALAPPDATA%\Programs\scoop\apps\scoop\current" (
 			SET "scoopRoot=%LOCALAPPDATA%\Programs\scoop"
@@ -23,24 +24,26 @@ SETLOCAL ENABLEEXTENSIONS
 
 	MKLINK /J "%~dp0PlugIns\wcx\Total7zip\Lang" "%scoopRoot%\apps\7zip\current\Lang"
 
-	CALL :Link "%~dp0bin\AutoHotkey.exe" "%ahkPath%"
-	CALL :Link "%~dp0bin\AutoHotkeyU64.exe" "%ahkPath%"
+	CALL :Link "%~dp0bin\AutoHotkey.exe" "%AutohotkeyExe%"
+	CALL :Link "%~dp0bin\AutoHotkeyU64.exe" "%AutohotkeyExe%"
 EXIT /B
 )
 :Link <linkPath> <targetPath> <targetPath2> <targetPath3> ...
 (
-	IF EXIST %2 MKLINK %1 %2 || MKLINK /H %1 %2 & EXIT /B
+	IF EXIST %2 MKLINK %1 %2 & EXIT /B
 	IF "%~3"=="" EXIT /B 1
 	SHIFT /2
 	GOTO :Link
 )
 :FindAutoHotkeyPath
 (
-	FOR %%A IN ("%scoopRoot%\apps\autohotkey\current\AutoHotkeyU64.exe" ^
+	FOR %%A IN ( ^
+		    "%scoopRoot%\apps\autohotkey1.1\current\AutoHotkeyU64.exe" ^
 		    "%LocalAppData%\Programs\AutoHotkey\AutoHotkeyU64.exe" ^
 		    "%ProgramFiles%\AutoHotkey\AutoHotkeyU64.exe" ^
-	           ) DO IF EXIST %%A SET ahkPath=%%A & EXIT /B 0
-	EXIT /B 1
+	           ) DO IF EXIST %%A SET "AutohotkeyExe=%%~A" & EXIT /B 0
+	CALL FindAutoHotkeyExe.cmd
+	EXIT /B
 )
 :getScoopDirFromPrefix <scoopPrefix>
 @SETLOCAL

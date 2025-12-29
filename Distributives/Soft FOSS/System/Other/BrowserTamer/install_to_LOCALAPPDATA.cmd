@@ -10,7 +10,8 @@ SETLOCAL ENABLEEXTENSIONS
 )
 CALL :install "%dstfname%" "%LOCALAPPDATA%\Programs\" bt "" || EXIT /B
 (
-    IF DEFINED installDest COMPACT /C /S:"%installDest%" /EXE:LZX
+    rem IF DEFINED installDest COMPACT /C /S:"%installDest%" /EXE:LZX
+    IF EXIST "%LOCALAPPDATA%\Scripts\py\link_configs_to_Dropbox.py" START "" /B /WAIT py "%LOCALAPPDATA%\Scripts\py\link_configs_to_Dropbox.py" "%LocalAppData%\bt\config.ini" BrowserTamer
 EXIT /B
 )
 :install <src> <destBase> <destName> <unpackedSubdirMask>

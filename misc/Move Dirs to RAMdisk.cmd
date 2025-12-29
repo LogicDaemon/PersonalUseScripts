@@ -32,6 +32,7 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     COMPACT /U "%RAMDrive%\Temp\NVIDIA Corporation"
 
     IF EXIST "c:\Intel" MKDIR "%RAMDrive%\Intel\IntelOptaneData"
+    IF EXIST d:\elevoc_dnn_kernel.log ECHO.>"%RAMDrive%\elevoc_dnn_kernel.log"
     
     MKDIR "%RAMDrive%\Steam\appcache\httpcache"
     MKDIR "%RAMDrive%\Steam\depotcache"
