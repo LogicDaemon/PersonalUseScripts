@@ -1,5 +1,3 @@
-#NoEnv
-
 Find_Distributives_subpath(ByRef subpath) {
     local
     static baseDirsList := ""

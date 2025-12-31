@@ -2,7 +2,7 @@
 #Warn
 
 Try {
-    keePassExePath := Find_KeePass_exe()
+    keePassExePath := FindKeePassExe()
     FileGetVersion KeePassExeVer, %keePassExePath%
 } Catch {
     EnvGet LocalAppData,LocalAppData
@@ -64,7 +64,7 @@ GetKeepassUpdateVer(ByRef distDir := "") {
 
 #Warn Unreachable, Off
 
-#include <find_KeePass_exe>
+#include <FindKeePassExe>
 #include <GetURL>
 #include <VersionCompare>
 #include <Find_Distributives_subpath>

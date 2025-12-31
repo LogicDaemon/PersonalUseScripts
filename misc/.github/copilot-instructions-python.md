@@ -17,6 +17,7 @@
   - Avoid single-use variables, especially before `return`, `if` or a function call, unless the line is too long or expression is overly complex (multiple brackets, etc).
   - Do not hide output of subprocess calls (no stderr=subprocess.DEVNULL). If it corrupts display, capture it and output in a file.
   - Let `problems` tool or Pylance MCP surface syntax issues
+  - Avoid `dict.keys()` unless it's performance-optimal (avoids copying)
 
 #### Functions:
   - Avoid:

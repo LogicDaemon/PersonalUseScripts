@@ -114,7 +114,7 @@ KeepassExeUpdated() {
     Loop 2
     {
         Try {
-            KeePassExePath := Find_KeePass_exe()
+            KeePassExePath := FindKeePassExe()
             
             RegRead lastUpdateCheck, HKEY_CURRENT_USER\SOFTWARE\LogicDaemon\KeePassLauncher, LastUpdateCheckYYYYMMDDHH
         }
@@ -206,4 +206,4 @@ FirstExisting(paths*) {
     return ""
 }
 
-#include <find_KeePass_exe>
+#include <FindKeePassExe>

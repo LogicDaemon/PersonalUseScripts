@@ -10,19 +10,19 @@
                         "request": "launch",
                         "program": "${file}",
                         "console": "integratedTerminal",
-                        // "justMyCode": false,
+                        "justMyCode": false,
                         "env": {
                                 // "GEVENT_SUPPORT": "True",
                                 "DEBUG": "1",
                         },
                 },
                 {
-                        "name": "Python: Current File with -d",
+                        "name": "Python: Current File with debug",
                         "type": "debugpy",
                         "request": "launch",
                         "program": "${file}",
                         "args": [
-                                "-d"
+                                "--debug"
                         ],
                         "console": "integratedTerminal",
                         "justMyCode": true,

@@ -1,6 +1,6 @@
-﻿Find_KeePass_exe(KeePassExeName := "KeePass.exe", keepassPaths := "") {
-    local
-    static KeePassExePath := ""
+﻿FindKeePassExe(KeePassExeName := "KeePass.exe", keepassPaths := "") {
+    Local
+    Static KeePassExePath := ""
     If (KeePassExePath)
         return KeePassExePath
     EnvGet LocalAppData,LOCALAPPDATA
@@ -14,5 +14,5 @@
     }
     If (!(KeePassExePath := FirstExisting( keepassPaths* )))
         Throw Exception("KeePass.exe not found")
-    return KeePassExePath
+    Return KeePassExePath
 }
