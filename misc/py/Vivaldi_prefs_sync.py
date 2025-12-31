@@ -69,10 +69,10 @@ def main() -> None:
     profiles = link_or_copy_settings_to_dropbox(perhost_dir / 'Vivaldi' /
                                                 'User Data')
 
-    # if any(proc.info['name'] == 'vivaldi.exe'
-    #        for proc in psutil.process_iter(['name'])):
-    #     raise RuntimeError(
-    #         'Vivaldi is running; please close it before running this script.')
+    if any(proc.info['name'] == 'vivaldi.exe'
+           for proc in psutil.process_iter(['name'])):
+        raise RuntimeError(
+            'Vivaldi is running; please close it before running this script.')
 
     group_name = (perhost_dir / '#group.txt').read_text().strip()
     group_dir = configs_dir / f'#{group_name}' / 'Vivaldi'

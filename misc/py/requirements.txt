@@ -3,6 +3,7 @@ requests
 pywin32
 # truststore    # https://stackoverflow.com/a/52961564/1421036
 pip-system-certs  # https://stackoverflow.com/q/39356413/1421036#comment129292368_64058012
+psutil
 
 #gevent
 #rich
