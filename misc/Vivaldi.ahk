@@ -2,20 +2,27 @@
 #NoEnv
 #SingleInstance force
 
+EnvGet LocalAppData, LocalAppData
+
 SetTitleMatchMode RegEx
 VivaldiWinTitleRegex := ".+ - Vivaldi$ ahk_exe vivaldi\.exe"
 
-Run "%A_AhkPath%" "%A_ScriptDir%\Vivaldi_prefs_backup.ahk"
-
 If (A_Args.Length()) {
     cmdlArgs := ParseScriptCommandLine()
-} else If (WinExist(VivaldiWinTitleRegex)) {
+} Else If (WinExist(VivaldiWinTitleRegex)) {
     If (WinActive())
         ForceWinActivateBottom(VivaldiWinTitleRegex)
     Else
         ForceWinActivate(VivaldiWinTitleRegex)
+    BackupSettingsToDropbox()
     ExitApp
 }
+
+pythonExe := FindPython("pythonw.exe")
+If (!pythonExe)
+    pythonExe := FindPython()
+RunWait "%pythonExe%" "%A_ScriptDir%\py\Vivaldi_prefs_sync.py"
+BackupSettingsToDropbox()
 
 ; HKEY_CURRENT_USER\SOFTWARE\Clients\StartMenuInternet\Vivaldi.TMQETQK6ARTJHNK4EKWDEFN3NM\shell\open\command
 For i, classMask in [ "VivaldiHTM"
@@ -89,7 +96,7 @@ RegQuery(regBasePath, regex, mode := "K") {
 }
 
 ParseCmdShellOpen(ByRef cmdShellOpen) {
-    local
+    Local
     flagInsideQuote:=0
     Loop Parse, cmdShellOpen, %A_Space%
     {
@@ -110,6 +117,50 @@ ParseCmdShellOpen(ByRef cmdShellOpen) {
     return pathExec
 }
 
+BackupSettingsToDropbox() {
+    Local
+    Global LocalAppData
+    RegRead hostname, HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters, Hostname
+
+    FilesToBackup := { "Bookmarks": ""
+                     , "Calendar": ""
+                     , "Contacts": ""
+                     , "contextmenu.json": ""
+                     , "Custom Dictionary.txt": ""
+                     , "Notes": ""
+                     , "Preferences": ""
+                     , "Secure Preferences": ""
+                     , "Shortcuts": ""
+                     , "Web Data": "" }
+
+    SkipProfiles := { "System Profile": ""
+                    , "Guest Profile": "" }
+    destDir := GetDropboxDir(false) "\Config\@" hostname "\Vivaldi\User Data\"
+    SetWorkingDir % LocalAppData "\Vivaldi\User Data"
+
+    Loop Files, *.*, D
+    {
+        If (SkipProfiles.HasKey(A_LoopFileName) || !FileExist(A_LoopFileFullPath "\Preferences"))
+            Continue
+        FileCreateDir %destDir%%A_LoopFileName%
+        For fname in FilesToBackup {
+            If (!FileExist(relPath := A_LoopFileFullPath "\" fname))
+                Continue
+            dest=%destDir%%relPath%
+            While (CreateHardLink(relPath, dest)) {
+                If (A_Index == 1) {
+                    FileDelete %dest%
+                    Continue
+                }
+                FileCopy %relPath%, %dest%, 1
+                Break
+            }
+        }
+    }
+}
+
 #include <ForceWinActivate>
 #include <ForceWinActivateBottom>
 #Include <nprivRun>
+#include <GetDropboxDir>
+#include <CreateHardLink>
