@@ -40,7 +40,7 @@ For i, classMask in [ "VivaldiHTM"
         WinWait %VivaldiWinTitleRegex%,,30
         If (ErrorLevel) {
             ToolTip Failed to open %classMask%`, trying other options
-            resetToolTip:=True
+            resetToolTip := True
         } Else {
             ForceWinActivate(VivaldiWinTitleRegex)
             break
@@ -97,18 +97,17 @@ RegQuery(regBasePath, regex, mode := "K") {
 
 ParseCmdShellOpen(ByRef cmdShellOpen) {
     Local
-    flagInsideQuote:=0
+    flagInsideQuote := 0
     Loop Parse, cmdShellOpen, %A_Space%
     {
         pathExec .= A_LoopField
-        ; there may be several quotes w/o spaces in single argument -- IfInString A_LoopField, "
-        ;    flagInsideQuote:=!flagInsideQuote
+        ; there may be several quotes w/o spaces in single argument -- IfInString A_LoopField, ", flagInsideQuote := !flagInsideQuote
         Loop Parse, A_LoopField, "
-            flagInsideQuote:=!flagInsideQuote
+            flagInsideQuote := !flagInsideQuote
         If (flagInsideQuote) { ; since Loop ran (<number of «"»> + 1) times, currently flag in inverted, the substring is not in the quote, and the path is parsed completely
             break
         } Else {
-            flagInsideQuote:=!flagInsideQuote ; invert flag to restore meaning, because above Loop ran (<number of «"»> + 1) times (it counted quotes + 1)
+            flagInsideQuote := !flagInsideQuote ; invert flag to restore meaning, because above Loop ran (<number of «"»> + 1) times (it counted quotes + 1)
             ; path is not yet parsed completely, keep appending it (with space delimeter)
             pathExec .= A_Space
         }
@@ -119,7 +118,7 @@ ParseCmdShellOpen(ByRef cmdShellOpen) {
 
 BackupSettingsToDropbox() {
     Local
-    Global LocalAppData
+    Global LocalAppData,resetToolTip
     RegRead hostname, HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters, Hostname
 
     FilesToBackup := { "Bookmarks": ""
@@ -135,7 +134,12 @@ BackupSettingsToDropbox() {
 
     SkipProfiles := { "System Profile": ""
                     , "Guest Profile": "" }
-    destDir := GetDropboxDir(false) "\Config\@" hostname "\Vivaldi\User Data\"
+    Try destDir := GetDropboxDir(false) "\Config\@" hostname "\Vivaldi\User Data\"
+    If (!destDir) {
+        ToolTip Dropbox folder not found. Backup skipped.
+        resetToolTip := True
+        return
+    }
     SetWorkingDir % LocalAppData "\Vivaldi\User Data"
 
     Loop Files, *.*, D

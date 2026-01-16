@@ -10,7 +10,7 @@ ProcessList_ReturnTrue(ByRef v) {
 ;   an empty string to get all processes
 ;   a string to filter the process list by the name of the process
 ;   a function object to filter the process list by the name of the process
-ProcessList(nameOrFilter := "", unloadPsapi := True) {
+ProcessList(nameOrFilter := "", unloadPsapi := False) {
     local
     static PsapiDllhModule := 0
     If (nameOrFilter == "") {

@@ -17,12 +17,10 @@ GetDropboxDir(startDropboxWaitms := 10000) {
 
     If (startDropboxWaitms) {
         TrayTip,, Starting Dropbox
-        While startDropboxWaitms {
-            Process Exist, dropbox.exe
-            If (!ErrorLevel) {
-                RunWait "%A_AhkPath%" "%A_ScriptDir%\Dropbox.ahk"
-                Sleep %startDropboxWaitms%
-            }
+        Process Exist, dropbox.exe
+        If (!ErrorLevel) {
+            RunWait "%A_AhkPath%" "%A_ScriptDir%\Dropbox.ahk"
+            Sleep %startDropboxWaitms%
         }
     }
 

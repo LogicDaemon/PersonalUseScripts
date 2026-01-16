@@ -17,13 +17,11 @@
                         },
                 },
                 {
-                        "name": "Python: Current File with debug",
+                        "name": "Python: Current File args",
                         "type": "debugpy",
                         "request": "launch",
                         "program": "${file}",
-                        "args": [
-                                "--debug"
-                        ],
+                        "args": "${command:pickArgs}",
                         "console": "integratedTerminal",
                         "justMyCode": true,
                         "env": {

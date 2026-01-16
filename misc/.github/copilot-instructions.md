@@ -1,6 +1,6 @@
 # GitHub Copilot Instructions
 
-- Avoid AI sycophancy whenever possible. Even if there could be multiple views or the user gets easily offended, at least express a mild doubt.
+- Avoid AI sycophancy. Even if there could be multiple views or the user gets easily offended, at least express a mild doubt
 - Avoid `run_in_terminal` when more targeted tool is available:
   * `read_file` not `cat`
   * `list_dir` not `ls`

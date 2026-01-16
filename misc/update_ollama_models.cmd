@@ -1,14 +1,15 @@
 @(REM coding:CP866
-REM 0BSD (https://opensource.org/license/0bsd) / public domain by LogicDaemon <https://www.logicdaemon.ru/>
 SETLOCAL ENABLEEXTENSIONS
-
-SET "modelsSubdir=LLMs\ollama\models\manifests\registry.ollama.ai\library"
+rem SET "modelsSubdir=LLMs\ollama\models\manifests\registry.ollama.ai\library"
+rem )
+rem CALL _Distributives.find_subpath.cmd Distributives "%modelsSubdir%" || (
+rem 	ECHO Failed to find the ollama models directory.
+rem 	EXIT /B 1
+rem )
+rem SET "modelDir=%Distributives%\%modelsSubdir%"
+SET "modelDir=%USERPROFILE%\.ollama\models\manifests\registry.ollama.ai\library"
 )
-CALL _Distributives.find_subpath.cmd Distributives "%modelsSubdir%" || (
-	ECHO Failed to find the ollama models directory.
-	EXIT /B 1
-)
-FOR /D %%A IN ("%Distributives%\%modelsSubdir%\*") DO @(
+FOR /D %%A IN ("%modelDir%\*") DO @(
 	FOR %%B IN ("%%~A\*.*") DO @(
 		ECHO Updating "%%~nxA:%%~nxB"
 		ollama pull "%%~nxA:%%~nxB" && CALL :addParametrizedVariants "%%~nxA:%%~nxB"

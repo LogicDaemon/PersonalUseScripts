@@ -1,0 +1,26 @@
+backgroundTaskHost.exe
+CrossDeviceResume.exe
+# ElevocControlService.exe
+# IntelCpHDCPSvc.exe
+Lenovo.Modern.ImController.exe
+LenovoUtilityService.exe
+LenovoVantage-(GenericMessagingAddin).exe
+LenovoVantage-(LenovoGamingSystemAddin).exe
+LenovoVantage-(SmartDisplayAddin).exe
+LenovoVantage-(VantageCoreAddin).exe
+LenovoVantageService.exe
+LockApp.exe
+#MessagingPlugin.exe # a huge Alt+Tab lag appears
+#MicrosoftStartFeedProvider.exe # a huge Alt+Tab lag appears
+msedgewebview2.exe # poteltially huge Alt+Tab lag appears
+# OneApp.IGCC.WinService.exe
+platform_runtime_RGB_service.exe
+SearchHost.exe
+smartscreen.exe
+#StartMenuExperienceHost.exe # a huge Alt+Tab lag appears
+WidgetService.exe
+#WindowsPackageManagerServer.exe # a huge Alt+Tab lag appears
+WMIRegistrationService.exe
+PsiService_2.exe
+xTendUtilityService.exe
+XtuService.exe

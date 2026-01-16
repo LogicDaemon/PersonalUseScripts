@@ -34,7 +34,7 @@ hotkeys_custom_ahk := FirstExisting( A_ScriptDir "\Hotkeys_Custom." A_USERNAME "
                                    , A_ScriptDir "\Hotkeys_Custom." A_USERNAME ".ahk"
                                    , A_ScriptDir "\Hotkeys_Custom.ahk" ) ; same order as includes
 
-GroupAdd WindowsActionCenter, Action center ahk_class Windows.UI.Core.CoreWindow ahk_exe ShellExperienceHost.exe
+GroupAdd WindowsActionCenter, Action center ahk_class ^\QWindows.UI.Core.CoreWindow\E ahk_exe \b\QShellExperienceHost.exe\E\b
 
 GroupAdd ExcludedFromAutoReplace, ahk_class ^SALFRAME
 ;GroupAdd ExcludedFromAutoReplace, ahk_class ^OperaWindowClass
@@ -44,14 +44,14 @@ GroupAdd ExcludedFromAutoReplace, ahk_class ^ConsoleWindowClass
 ;GroupAdd ExcludedFromAutoReplace, ahk_class ^Notepad2, ANSI
 GroupAdd ExcludedFromAutoReplace, \.(bat|cmd|py|go|js|yaml|yml) ahk_class ^Notepad2
 ;GroupAdd ExcludedFromAutoReplace, \.ahk ahk_class ^Notepad2
-GroupAdd ExcludedFromAutoReplace, \.(bat|cmd|py|go|js|yaml|yml)\b.* - Visual Studio Code ahk_exe \bCode\.exe\b
+GroupAdd ExcludedFromAutoReplace, \.(bat|cmd|py|go|js|yaml|yml)\b.* - Visual Studio Code ahk_exe i)\b\QCode.exe\E\b
 
-GroupAdd NonStandardLayoutSwitching, ahk_exe \iexplore\.exe\b
-GroupAdd NonStandardLayoutSwitching, ahk_exe \boutlook\.exe\b
-GroupAdd NonStandardLayoutSwitching, ahk_exe \bOUTLOOK\.EXE\b
-GroupAdd NonStandardLayoutSwitching, ahk_exe \bcmd\.exe\b
-GroupAdd NonStandardLayoutSwitching, ahk_exe \bconhost\.exe\b
-GroupAdd NonStandardLayoutSwitching, ahk_exe \bWINWORD\.EXE\b
+GroupAdd NonStandardLayoutSwitching, ahk_exe i)\b\Qiexplore.exe\E\b
+GroupAdd NonStandardLayoutSwitching, ahk_exe i)\b\Qoutlook.exe\E\b
+GroupAdd NonStandardLayoutSwitching, ahk_exe i)\b\QOUTLOOK.EXE\E\b
+GroupAdd NonStandardLayoutSwitching, ahk_exe i)\b\Qcmd.exe\E\b
+GroupAdd NonStandardLayoutSwitching, ahk_exe i)\b\Qconhost.exe\E\b
+GroupAdd NonStandardLayoutSwitching, ahk_exe i)\b\QWINWORD.EXE\E\b
 GroupAdd NonStandardLayoutSwitching, ahk_class ^OpusApp
 
 GroupAdd NoLayoutSwitching, ahk_exe CDViewer\.exe
@@ -510,8 +510,9 @@ FillDelayedRunGroups() {
     #If AlternateHotkeys==0x51
     #If
     local altKey, HotkeysRunDelayed, altMode, altFunc, key, args, hotkeyFunc, OutExtension
-    ; {key: [File, Arguments, Directory, Operation, Show], ...} ; Show is as in ShellRun or -1 to run as ahk script (w/o ShellRun)
+    ; {key: [File, Arguments, Directory, Operation, Show], ...}
     ;Show = args[5]:
+    ;-1 to run as ahk script (w/o ShellRun)
     ;0 Open the application with a hidden window.
     ;1 Open the application with a normal window. If the window is minimized or maximized, the system restores it to its original size and position.
     ;2 Open the application with a minimized window.
@@ -520,20 +521,20 @@ FillDelayedRunGroups() {
     ;5 Open the application with its window at its current size and position.
     ;7 Open the application with a minimized window. The active window remains active.
     ;10 Open the application with its window in the default state specified by the application.
-        , RunDelayedGroups :=   { "":       { "#!VK43":  [calcexe,, ""]                                          ;VK43=c #!c
+        , RunDelayedGroups :=   { "":       { "#!VK43":  [calcexe]                                               ;VK43=c #!c
                                             , "#VK43":   [A_ScriptDir "\Select audio device.ahk"]                ;VK43=c #c
                                             , "SC132":   [A_ScriptDir "\default_browser.ahk"]                    ;SC132=Homepage
                                             , "#VK57":   [A_ScriptDir "\default_browser.ahk"]                    ;vk57=w #w
                                             , "#+VK57":  [A_ScriptDir "\alt_browser.ahk"]                        ;vk57=w #+w
                                             , "+SC132":  [A_ScriptDir "\alt_browser.ahk"]                        ;SC132=Homepage +Homepage
-                                            , "^!+Esc":  [procexpexe]                                            ;^!+Esc
-                                            ;, "#SC132":  [A_ScriptDir "\ie.cmd",,,,7]                            ;#Homepage
-                                            , "#^!VK57": [A_ScriptDir "\WinActivateOrExec.ahk", """" laPrograms "\Tor Browser\Browser\firefox.exe"""] ;#^!w
-                                            , "^!SC132": [A_ScriptDir "\WinActivateOrExec.ahk", """" laPrograms "\Tor Browser\Browser\firefox.exe"""] ;^!Homepage
+                                            , "^!+Esc":  [procexpexe,,,,-1]                                      ;^!+Esc
+                                            ;, "#SC132":  [A_ScriptDir "\ie.cmd",,,,7]                           ;#Homepage
+                                            ; , "#^!VK57": ["""" laPrograms "\Tor Browser\Browser\firefox.exe"""]  ;#^!w
+                                            ; , "^!SC132": ["""" laPrograms "\Tor Browser\Browser\firefox.exe"""]  ;^!Homepage
                                             , "#F1":     [comspec, " /K ""CD /D """ A_ScriptDir """ & PUSHD ""%TEMP%"" & ECHO POPD to go to " A_ScriptDir """"] ;/U https://twitter.com/LogicDaemon/status/936259452617060354
                                             ;, "#+F1":    [LocalAppData "\Programs\bin\mintty.exe", "wsl --cd ~"]
                                             , "#+F1":    [LocalAppData "\Microsoft\WindowsApps\Microsoft.WindowsTerminal_8wekyb3d8bbwe\wt.exe", "nt -p Debian"]
-                                            , "#VK45":   [A_ScriptDir "\WinActivateOrExec.ahk", """" totalcmdexe """",,""] ;vk45=e #e
+                                            , "#VK45":   [totalcmdexe]                                           ;vk45=e #e
                                             , "#+VK45":  [totalcmdexe,,,,-1]                                     ;vk45=e #+e
                                             , "#!VK45":  ["shell:MyComputerFolder"]                              ;vk45=e #!e
                                             ;, "#^VK45":  [A_ScriptDir "\RemoveDrive.ahk"]                       ;vk45=e #^e
@@ -544,8 +545,8 @@ FillDelayedRunGroups() {
                                             , "#!+VK4B": [laPrograms "\WinAuth\WinAuth.exe"]                     ;vk4B=k #!+k
                                             , "#VK50":   [notepad2exe,""]                                        ;vk50=p #p
                                             , "#+VK50":  [notepad2exe,"/c /b"]                                   ;vk50=p #+p
-                                            , "#!VK50":  [A_ScriptDir "\QuickText.ahk"]                          ;vk50=p #!p
-                                            , "#VK54":   [A_ScriptDir "\WinActivateOrExec.ahk", laPrograms "\Telegram\telegram.exe"] ;vk54=t #t
+                                            , "#!VK50":  [A_ScriptDir "\QuickText.ahk",,,,-1]                    ;vk50=p #!p
+                                            , "#VK54":   [laPrograms "\Telegram\telegram.exe"]                   ;vk54=t #t
                                             , "#!VK54":  [A_ScriptDir "\tombo.cmd",,,,7]                         ;vk54=t #!t
                                             ;, "#VK55":   [A_AhkPath, A_ScriptDir "\putty_smartact.ahk"]         ;vk55=u #u
                                             , "#VK56":   [vscode]                                                ;vk56=v #v
@@ -795,9 +796,17 @@ RunDelayed(ByRef params*) {
             ; MsgBox % "Calling function " fn.Name " with args: " ObjectToText(args)
             Return fn.Call(cmd*)
         }
-        SplitPath % cmd[1], exeName
-        If (!cmd[2] && !cmd[4] && WinExist("ahk_exe " exeName) && !WinActive("ahk_exe " exeName)) {
-            WinActivateBottom ahk_exe %exeName%
+        SplitPath % cmd[1], exeName,, ext
+
+        winTitle := "ahk_exe i)\b\Q" exeName "\E\b"
+        If (ext = "exe" && !cmd[2] && !cmd[4] && WinExist(winTitle) && !WinActive(winTitle)) {
+            WinGet state, MinMax
+            If (state == -1) {
+                WinRestore
+                WinActivate
+            } Else {
+                WinActivateBottom ahk_exe %exeName%
+            }
         } Else If (cmd[5] == -1) { ; [executable name, args, workdir, options, -1]
             RunAndActivate(cmd*)
         } Else {
@@ -814,12 +823,13 @@ RunDelayed(ByRef params*) {
         Return
     }
     ; Executable name, with no parameters or workdir
-    SplitPath cmd, exename, wd, ext
-    ; this does not find any window running under other user / non-admin :: UniqueID := WinExist("ahk_exe" exename)
-    If (ext == "exe" && (UniqueID := WinExist("ahk_exe " exename)) && !WinActive("ahk_id " UniqueID)) {
-        WinGet state, MinMax, ahk_exe %exename%
+    SplitPath cmd, exeName, wd, ext
+    winTitle := "ahk_exe i)\b\Q" exeName "\E\b"
+    ; this does not find any window running under other user / non-admin :: UniqueID := WinExist("ahk_exe" exeName)
+    If (ext == "exe" && (UniqueID := WinExist(winTitle)) && !WinActive("ahk_id " UniqueID)) {
+        WinGet state, MinMax, %winTitle%
         If (state == -1)
-            WinRestore ahk_exe %exename%
+            WinRestore
         WinActivate
         ToolTip % "Activated " cmd
         SetTimer RemoveToolTip, 1000

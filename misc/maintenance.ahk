@@ -14,16 +14,22 @@ cmds := [ [A_AppData "\GHISLER\download pci.ids and convert to pci.db.ahk"]
         , [A_ScriptDir "\compact Chrome cache.cmd", "/purgeCaches /purgeIndexedDB /chrome /chromium"]
         , [A_ScriptDir "\compact_lzx_ProgramsDirs.cmd"]
         , [SystemRoot "\System32\sc.exe", "config ""Backupper Service"" start= demand"]
-        , [SystemRoot "\System32\sc.exe", "config ""SBIS3Plugin"" start= demand"] ]
+        , [SystemRoot "\System32\sc.exe", "config ""SBIS3Plugin"" start= demand"]
+        , [A_ScriptDir "\BloatwareSetEfficiencyMode.ahk"] ]
 
 Try {
     dirDropbox := GetDropboxDir()
-    
     cmds.Push([dirDropbox "\Config\scripts\call _link.cmd for HOSTNAME and GROUP.cmd"]
             , [dirDropbox "\Config\scripts\copy tasks.cmd"]
             , [dirDropbox "\Config\scripts\export registry settings.cmd"]
-            , [A_ScriptDir "\Vivaldi_prefs_backup.ahk"]
             , ["icacls.exe", "DropboxExt*.dll /deny LogicDaemon:(X)", A_AppData "\Dropbox\bin"] )
+}
+Try pythonExe := FindPython("pythonw.exe")
+Try {
+    If (!pythonExe)
+        pythonExe := FindPython()
+    cmds.Push( [pythonExe, "%A_ScriptDir%\py\Vivaldi_prefs_sync.py" ] )
+        ; , [A_ScriptDir "\Vivaldi_prefs_backup.ahk"]
 }
 
 killProcesses = [ "update_notifier.exe"
@@ -75,6 +81,7 @@ Menu Tray, Tip, All maintenance processes finished
 DllCall("SetPriorityClass", "UInt", DllCall("GetCurrentProcess"), "UInt", 0x00200000) ; PROCESS_MODE_BACKGROUND_END=0x00200000 https://msdn.microsoft.com/en-us/library/ms686219.aspx
 
 Process Priority,, Low
+SetEfficiencyMode(0) ; 0 = on self
 
 extToCompact={"exe": "", "dll": "", "sys": "", "mui": "", "eml": "", "qml": "", "js": "", "pyd": "", "py": "", "qmltypes": "", "rcc": "", "inf": "", "manifest": ""}
 dirs := {}
@@ -140,3 +147,5 @@ RunScript(cmdline) {
 }
 
 #include <GetDropboxDir>
+#include <SetEfficiencyMode>
+#include <FindPython>
