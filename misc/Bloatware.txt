@@ -19,7 +19,7 @@ SearchHost.exe
 smartscreen.exe
 #StartMenuExperienceHost.exe # a huge Alt+Tab lag appears
 WidgetService.exe
-#WindowsPackageManagerServer.exe # a huge Alt+Tab lag appears
+WindowsPackageManagerServer.exe # a huge Alt+Tab lag appears
 WMIRegistrationService.exe
 PsiService_2.exe
 xTendUtilityService.exe

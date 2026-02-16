@@ -281,9 +281,11 @@ class Config:
                 # a value is already loaded from the config file;
                 # just removing the default is not enough for bool
                 parser_kwargs['default'] = getattr(self, conf_field.name)
-                parser_kwargs['required'] = False
+                if not positional:
+                    parser_kwargs['required'] = False
             elif (conf_field.default is not dataclasses.MISSING
                   and 'default' not in parser_kwargs):
+                # no value loaded from config file, use the dataclass default
                 parser_kwargs['default'] = conf_field.default
             yield parser_args, parser_kwargs
         yield (['--help', '-h', '-?'],

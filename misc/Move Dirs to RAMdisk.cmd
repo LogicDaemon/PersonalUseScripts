@@ -64,13 +64,30 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
         MKDIR "%RAMDrive%\ProgramData\GOG.com\Galaxy\logs"
         MKDIR "%RAMDrive%\ProgramData\GOG.com\Galaxy\crashdumps"
     )
-    IF EXIST "%ProgramData%\NVIDIA Corporation\NVIDIA app" (
-        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\NVIDIA app\Installer\Logs"
-        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\NVIDIA app\Logs"
-        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\NVIDIA app\MessageBus"
-        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\NVIDIA app\NvContainer"
-        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\NVIDIA app\SessionLogs"
-        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\NVIDIA app\UXD"
+    IF EXIST "%ProgramData%\NVIDIA Corporation" (
+        IF EXIST "%ProgramData%\NVIDIA Corporation\NVIDIA app" (
+            MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\NVIDIA app\Installer\Logs"
+            MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\NVIDIA app\Logs"
+            MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\NVIDIA app\MessageBus"
+            MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\NVIDIA app\NvContainer"
+            MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\NVIDIA app\SessionLogs"
+            MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\NVIDIA app\UXD"
+        )
+        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\CrashDumps"
+        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\DisplayDriverRAS"
+        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\Drs"
+        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\FrameViewSDK"
+        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\GameSessionTelemetry"
+        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\GfnRuntimeSdk"
+        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\NVIDIA Broadcast"
+        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\NVIDIA GeForce Experience"
+        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\NvProfileUpdaterPlugin"
+        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\NvTelemetry"
+        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\nvtopps"
+        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\NvVAD"
+        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\RX"
+        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\ShadowPlay"
+        MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\umdlogs"
     )
     IF EXIST "%ProgramData%\Dropbox" MKDIR "%RAMDrive%\ProgramData\Dropbox\Update\Log"
     
@@ -101,15 +118,17 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     
     rem Electron apps
     FOR /D %%B IN ("%APPDATA%\Beyond-All-Reason" ^
-                   "%APPDATA%\Dropbox" ^
-                   "%APPDATA%\Code" ^
                    "%APPDATA%\Code - Insiders" ^
+                   "%APPDATA%\Code" ^
                    "%APPDATA%\Cursor" ^
-                   "%APPDATA%\update-hub" ^
                    "%APPDATA%\discord" ^
-                   "%APPDATA%\obs-studio\plugin_config\obs-browser" ^
+                   "%APPDATA%\Dropbox" ^
                    "%AppData%\Dropbox\Partitions\*.*" ^
-                   "%APPDATA%\obs-studio\plugin_config\obs-browser\obs_profile_cookies\*") DO @(
+                   "%AppData%\Intermedia Unite" ^
+                   "%APPDATA%\obs-studio\plugin_config\obs-browser" ^
+                   "%APPDATA%\obs-studio\plugin_config\obs-browser\obs_profile_cookies\*" ^
+                   "%APPDATA%\update-hub" ^
+                  ) DO @(
         IF EXIST "%%~B" FOR %%C IN ("Cache" ^
                                     "CachedData" ^
                                     "CachedExtensions" ^

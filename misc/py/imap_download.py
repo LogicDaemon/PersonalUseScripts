@@ -190,11 +190,13 @@ class Config:
             parser_kwargs: ConfigOption = option.copy()
             if hasattr(self, conf_field.name):
                 # a value is already loaded from the config file;
-                # just removing the default is not enough for bool
+                # just removing the default is not enough for bools
                 parser_kwargs['default'] = getattr(self, conf_field.name)
-                parser_kwargs['required'] = False
+                if not positional:
+                    parser_kwargs['required'] = False
             elif ('default' not in parser_kwargs and
                   conf_field.default is not dataclasses.MISSING):
+                # no value loaded from config file, use the dataclass default
                 parser_kwargs['default'] = conf_field.default
             short_name = parser_kwargs.pop('short_name', None)
             parser_args = ([f'--{name}'] +

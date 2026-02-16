@@ -20,13 +20,16 @@ EXIT /B
 :addParametrizedVariants
 @(
 	CALL :addContextVariant %1 "%~1-8k" 8192
+	CALL :addContextVariant %1 "%~1-16k" 16384
 	CALL :addContextVariant %1 "%~1-32k" 32768
-	CALL :addContextVariant %1 "%~1-128k" 131072
+	CALL :addContextVariant %1 "%~1-40k" 40960
+	rem CALL :addContextVariant %1 "%~1-128k" 131072
 	EXIT /B
 )
 
 :addContextVariant <base> <variantname> <num_ctx>
 @(
+	ollama rm "%~2"
 	(
 		ECHO FROM %~1
 		ECHO PARAMETER num_ctx %~3
