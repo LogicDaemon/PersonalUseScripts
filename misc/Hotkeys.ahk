@@ -30,9 +30,9 @@ EnvGet SystemDrive, SystemDrive
 EnvGet SystemRoot, SystemRoot
 laPrograms := LocalAppData "\Programs"
 hotkeys_custom_ahk := FirstExisting( A_ScriptDir "\Hotkeys_Custom." A_USERNAME "@" A_COMPUTERNAME ".ahk"
-                                   , A_ScriptDir "\Hotkeys_Custom." A_COMPUTERNAME ".ahk"
-                                   , A_ScriptDir "\Hotkeys_Custom." A_USERNAME ".ahk"
-                                   , A_ScriptDir "\Hotkeys_Custom.ahk" ) ; same order as includes
+    , A_ScriptDir "\Hotkeys_Custom." A_COMPUTERNAME ".ahk"
+    , A_ScriptDir "\Hotkeys_Custom." A_USERNAME ".ahk"
+    , A_ScriptDir "\Hotkeys_Custom.ahk" ) ; same order as includes
 
 GroupAdd WindowsActionCenter, Action center ahk_class ^\QWindows.UI.Core.CoreWindow\E ahk_exe \b\QShellExperienceHost.exe\E\b
 
@@ -42,9 +42,10 @@ GroupAdd ExcludedFromAutoReplace, ahk_class ^{E7076D1C-A7BF-4f39-B771-BCBE88F2A2
 GroupAdd ExcludedFromAutoReplace, ahk_class ^TMsgWindow
 GroupAdd ExcludedFromAutoReplace, ahk_class ^ConsoleWindowClass
 ;GroupAdd ExcludedFromAutoReplace, ahk_class ^Notepad2, ANSI
-GroupAdd ExcludedFromAutoReplace, \.(bat|cmd|py|go|js|yaml|yml) ahk_class ^Notepad2
+GroupAdd ExcludedFromAutoReplace, \.(bat|cmd|[ch](pp)?|lua|py|go|js|ya?ml) ahk_class ^Notepad2
 ;GroupAdd ExcludedFromAutoReplace, \.ahk ahk_class ^Notepad2
-GroupAdd ExcludedFromAutoReplace, \.(bat|cmd|py|go|js|yaml|yml)\b.* - Visual Studio Code ahk_exe i)\b\QCode.exe\E\b
+GroupAdd ExcludedFromAutoReplace, \.(bat|cmd|[ch](pp)?|lua|py|go|js|ya?ml)\b.* - Visual Studio Code ahk_exe i)\b\QCode.exe\E\b
+GroupAdd ExcludedFromAutoReplace, \.(bat|cmd|[ch](pp)?|lua|py|go|js|ya?ml)\b.* ahk_exe \b\QZed.exe\E\b
 
 GroupAdd NonStandardLayoutSwitching, ahk_exe i)\b\Qiexplore.exe\E\b
 GroupAdd NonStandardLayoutSwitching, ahk_exe i)\b\Qoutlook.exe\E\b
@@ -59,36 +60,52 @@ GroupAdd NoLayoutSwitching, ahk_exe CDViewer\.exe
 ;GroupAdd OverrideMultimediaHotkeys, ahk_exe ts3client_win64.exe
 
 calcexe := FirstExisting(laPrograms "\speedcrunch-0.12-win32\speedcrunch.exe"
-                       , laPrograms "\calculators\preccalc-32bit\preccalc.exe"
-                       , SystemRoot "\System32\calc.exe" )
+    , laPrograms "\calculators\preccalc-32bit\preccalc.exe"
+    , SystemRoot "\System32\calc.exe" )
 For i, exe64suffix in (A_Is64bitOS ? ["64", ""] : [""]) {
     If (!totalcmdexe)
         totalcmdexe := FirstExisting(laPrograms "\Total Commander\TOTALCMD" exe64suffix ".EXE"
-                                   , ProgramFiles . "\Total Commander\TOTALCMD" exe64suffix ".EXE"
-                                   , ProgramFilesx86 . "\Total Commander\TOTALCMD" exe64suffix ".EXE")
+            , ProgramFiles . "\Total Commander\TOTALCMD" exe64suffix ".EXE"
+            , ProgramFilesx86 . "\Total Commander\TOTALCMD" exe64suffix ".EXE")
     If (!procexpexe)
         procexpexe := FirstExisting(laPrograms "\SysUtils\SysInternals\procexp" exe64suffix ".exe"
-                                  , laPrograms "\SysInternals\procexp" exe64suffix ".exe"
-                                  , SystemDrive "\SysUtils\SysInternals\procexp" exe64suffix ".exe")
+            , laPrograms "\SysInternals\procexp" exe64suffix ".exe"
+            , SystemDrive "\SysUtils\SysInternals\procexp" exe64suffix ".exe")
 }
 vscode := A_ScriptDir "\vscode-any.ahk"
 zedexe := scoopDir "\apps\zed\current\Zed.exe"
 notepad2exe := FirstExisting(laPrograms "\Total Commander\bin\notepad2.exe"
-                           , totalcmdexe "\..\notepad2.exe"
-                           , ProgramFiles "\notepad2\notepad2.exe"
-                           , ProgramFilesx86 "\notepad2\notepad2.exe"
-                           , ProgramFilesx86 "\Notepad++\notepad++.exe"
-                           , LocalAppData "\Programs\VS Code\Code.exe"
-                           , SystemRoot "\System32\notepad.exe")
+    , totalcmdexe "\..\notepad2.exe"
+    , ProgramFiles "\notepad2\notepad2.exe"
+    , ProgramFilesx86 "\notepad2\notepad2.exe"
+    , ProgramFilesx86 "\Notepad++\notepad++.exe"
+    , LocalAppData "\Programs\VS Code\Code.exe"
+    , SystemRoot "\System32\notepad.exe")
 
 AU3_Spy := FirstExisting( AhkExeDir "\AU3_Spy.exe"
-                                   , AhkExeDir "\AU3_Spy.exe"
-                                   , laPrograms "\AutoHotkey\AU3_Spy.exe"
-                                   , AhkExeDir "\WindowSpy.ahk"
-                                   , laPrograms "\AutoHotkey\WindowSpy.ahk" )
+    , AhkExeDir "\AU3_Spy.exe"
+    , laPrograms "\AutoHotkey\AU3_Spy.exe"
+    , AhkExeDir "\WindowSpy.ahk"
+    , laPrograms "\AutoHotkey\WindowSpy.ahk" )
 
 keepassahk := FirstExisting(A_ScriptDir "\KeePass_" A_UserName ".ahk", A_ScriptDir "\KeePass.ahk")
 scoopDir := FindScoopBaseDir()
+If FileExist(weztermexe := scoopDir "\apps\wezterm\current\wezterm-gui.exe") {
+    shiftTerminalCommand := [weztermexe, "start -- wsl"]
+} Else If (FileExist(wtexe := LocalAppData "\Microsoft\WindowsApps\Microsoft.WindowsTerminal_8wekyb3d8bbwe\wt.exe")) {
+    FileRead wtSettingsRaw, %LocalAppData%\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
+    For i, wtprofile in JSON.Load(wtSettingsRaw).profiles.list {
+        If (wtprofile.hidden)
+            Continue
+        If (wtprofile.source == "Windows.Terminal.Wsl" || InStr(wtprofile.commandline, "wsl.exe")) {
+            wslProfile := wtprofile.name
+            Break
+        }
+    }
+    shiftTerminalCommand := wslProfile ? [wtexe, "new-tab -p " . wslProfile] : [wtexe, "new-tab wsl"]
+    wtSettingsRaw := wtprofile := wslProfile := ""
+} Else
+    shiftTerminalCommand := ["wsl"]
 
 FileAppend,
 (
@@ -132,7 +149,7 @@ Launch_App2::F15
     ;R: Send the replacement text raw
     ;SI or SP or SE [v1.0.43+]: Sets the method by which auto-replace hotstrings send their keystrokes
     ;Z: This rarely-used option resets the hotstring recognizer after each triggering of the hotstring
-    
+
     ;typography
     ;:?:"<::«
     ;::ЭБ::«
@@ -364,7 +381,6 @@ Launch_App2::F15
     ::[60] ::㉍ ` ; U+324D e3 89 8d 	circled number sixty on black square
     ::[70] ::㉎ ` ; U+324E e3 89 8e 	circled number seventy on black square
     ::[80] ::㉏ ` ; U+324F e3 89 8f 	circled number eighty on black square
-    
 
     #Hotstring *0 ?0 C0 Z0
 #IfWinActive
@@ -372,7 +388,7 @@ Launch_App2::F15
 ; Disable RightAlt+F4 because right alt is next to Fn on my external keyboard, and Fn+F4 is play/pause
 >!F4::Media_Play_Pause
 
-#,::                                                          ;Win+< #<
+#,:: ;Win+< #<
     clipBak := ClipboardAll
     Clipboard=
     SendEvent +{Delete}
@@ -383,33 +399,40 @@ Launch_App2::F15
     Clipboard := clipBak
     clipBak=
 return
-#+/::               Send ¿                                    ;Win+Shift+/ #+/
-#^,::               Send «                                    ;Win+Ctrl+<  #^<
-#^.::               Send »                                    ;Win+Ctrl+>  #^>
-#+,::               Send ≤                                    ;Win+Shift+< #+<
-#+.::               Send ≥                                    ;Win+Shift+> #+>
-#!,::               Send ←                                    ;Win+Alt+<   #!<
-#!.::               Send →                                    ;Win+Alt+>   #!>
-#+VK44::            Send %A_YYYY%-%A_MM%-%A_DD%               ;vk44=d      #+d
-#+VK54::            Send %A_Hour%%A_Min%                      ;vk54=t      #+t
-#NumpadSub::        Send – ; en dash
-#+NumpadSub::       Send — ; em dash
-#NumPadMult::       Send ×
-#+NumPadMult::      Send ⋆
-#!NumPadMult::      Send ☆
-#!+NumPadMult::     Send ★
-#!Insert::          SendRaw %Clipboard%
+;OfficeKey could not be disabled that way
+;^!+#::              Return
+;$^!+#::              Return
+; ^!+LWin:: Return
+; ^!+RWin:: Return
+;But this works
++!^LWin:: Send {Blind}{vkE8} ;Ctrl+Alt+Shift+Win Disable OfficeKey
+#+/:: Send ¿ ;Win+Shift+/ #+/
+#^,:: Send « ;Win+Ctrl+<  #^<
+#^.:: Send » ;Win+Ctrl+>  #^>
+#+,:: Send ≤ ;Win+Shift+< #+<
+#+.:: Send ≥ ;Win+Shift+> #+>
+#!,:: Send ← ;Win+Alt+<   #!<
+#!.:: Send → ;Win+Alt+>   #!>
+#+VK44:: Send %A_YYYY%-%A_MM%-%A_DD% ;vk44=d      #+d
+#+VK54:: Send %A_Hour%%A_Min% ;vk54=t      #+t
+#NumpadSub:: Send – ; en dash
+#+NumpadSub:: Send — ; em dash
+#NumPadMult:: Send ×
+#+NumPadMult:: Send ⋆
+#!NumPadMult:: Send ☆
+#!+NumPadMult:: Send ★
+#!Insert:: SendRaw %Clipboard%
 
-#^!+VK5A::          GoTo lReload                                                    ;vk5a=z #^!+z
-#^VK43::            Run "%A_AhkPath%" "%A_ScriptDir%\ClipboardMonitor.ahk",, Min    ;vk43=c #^c
+#^!+VK5A:: GoTo lReload ;vk5a=z #^!+z
+#^VK43:: Run "%A_AhkPath%" "%A_ScriptDir%\ClipboardMonitor.ahk",, Min ;vk43=c #^c
 
-#^F1::              Run % "*RunAs " comspec " /K CD /D ""%TEMP%"""
-#Enter::            GoTo lMaximizeWindow
-#+Enter::           GoTo lToggleWindowMonitor
+#^F1:: Run % "*RunAs " comspec " /K CD /D ""%TEMP%"""
+#Enter:: GoTo lMaximizeWindow
+#+Enter:: GoTo lToggleWindowMonitor
 
-#^!NumPad0::        WinSet AlwaysOnTop, Toggle, A
-#^Delete::          WinKill A
-#+Down::            PostMessage 0x112, 0xF020,,, A ; 0x112 = WM_SYSCOMMAND, 0xF020 = SC_MINIMIZE, see https://msdn.microsoft.com/ru-ru/library/windows/desktop/ms646360.aspx
+#^!NumPad0:: WinSet AlwaysOnTop, Toggle, A
+#^Delete:: WinKill A
+#+Down:: PostMessage 0x112, 0xF020,,, A ; 0x112 = WM_SYSCOMMAND, 0xF020 = SC_MINIMIZE, see https://msdn.microsoft.com/ru-ru/library/windows/desktop/ms646360.aspx
 
 #!Numpad1::
 #!Numpad2::
@@ -422,7 +445,7 @@ return
     If (WinActive("ahk_group WindowsActionCenter")) {
         MoveActionCenter(SubStr(A_ThisLabel,0))
         return
-    }    
+    }
     If ( A_TimeSincePriorHotkey < 1000) {
         If (A_PriorHotkey == A_ThisHotkey)
             magnitudeSeq += magnitudeSeq < WindowSplitSize.MaxIndex()
@@ -435,7 +458,7 @@ return
 return
 
 FindWindowMonitorIndex(winX, winY, winW, winH) {
-    local
+    Local
     winCenterX := winX + winW/2, winCenterY := winY + winH/2
 
     Loop {
@@ -456,9 +479,9 @@ Max(a,b) {
 }
 
 MoveActionCenter(corner := 0) {
-    local
+    Local
     WinGetPos winX, winY, winW, winH, ahk_group WindowsActionCenter
-    
+
     ;curMon := FindWindowMonitorIndex(winX, winY, winW, winH)
     monCentralPoints := []
     Loop {
@@ -468,21 +491,21 @@ MoveActionCenter(corner := 0) {
         If ( MonDimLeft <= winX && MonDimRight >= winX && MonDimTop <= winY && MonDimBottom >= winY )
             curMon := A_Index
         monCentralPoints[A_Index] := [MonDimLeft + (MonDimRight - MonDimLeft)/2, MonDimTop + (MonDimBottom - MonDimTop)/2]
-        , monCount := A_Index
-        , monMaxWidth := Max(monMaxWidth, MonDimRight - MonDimLeft)
-        , monMaxHeight := Max(monMaxHeight, MonDimBottom - MonDimTop)
+            , monCount := A_Index
+            , monMaxWidth := Max(monMaxWidth, MonDimRight - MonDimLeft)
+            , monMaxHeight := Max(monMaxHeight, MonDimBottom - MonDimTop)
     }
 
     If (corner) {
         ; Find the best matching monitor
         ;                 1  2  3  4 5 6  7 8 9
-        scoreXmult   := [-1, 0, 1,-3,0,3,-1,0,1][corner]
-        , scoreYmult := [-1,-3,-1, 0,0,0, 1,3,1][corner]
-        , curMonCenter := monCentralPoints[curMon]
-        , bestScore := -1
+        scoreXmult := [-1, 0, 1,-3,0,3,-1,0,1][corner]
+            , scoreYmult := [-1,-3,-1, 0,0,0, 1,3,1][corner]
+            , curMonCenter := monCentralPoints[curMon]
+            , bestScore := -1
         For i, mon in monCentralPoints {
             curScoreX := scoreXmult * monMaxWidth / (mon[1] - curMonCenter[1])
-            , curScoreY := scoreYmult * monMaxHeight / (mon[2] - curMonCenter[2])
+                , curScoreY := scoreYmult * monMaxHeight / (mon[2] - curMonCenter[2])
             If (curScoreX < 0 || curScoreY < 0)
                 Continue
             curScore := curScoreX*curScoreX + curScoreY*curScoreY
@@ -503,13 +526,13 @@ MoveActionCenter(corner := 0) {
 }
 
 FillDelayedRunGroups() {
-    ;Error:  Parameter #2 must match an existing #If expression.
-    ;--->	087: Hotkey,If,("AlternateHotkeys==" altMode)
-    ;vk5a=z #z
-    ;vk51=q #q
-    #If AlternateHotkeys==0x51
-    #If
-    local altKey, HotkeysRunDelayed, altMode, altFunc, key, args, hotkeyFunc, OutExtension
+;Error:  Parameter #2 must match an existing #If expression.
+;--->	087: Hotkey,If,("AlternateHotkeys==" altMode)
+;vk5a=z #z
+;vk51=q #q
+#If AlternateHotkeys==0x51
+#If
+Local altKey, HotkeysRunDelayed, altMode, altFunc, key, args, hotkeyFunc, OutExtension
     ; {key: [File, Arguments, Directory, Operation, Show], ...}
     ;Show = args[5]:
     ;-1 to run as ahk script (w/o ShellRun)
@@ -521,73 +544,73 @@ FillDelayedRunGroups() {
     ;5 Open the application with its window at its current size and position.
     ;7 Open the application with a minimized window. The active window remains active.
     ;10 Open the application with its window in the default state specified by the application.
-        , RunDelayedGroups :=   { "":       { "#!VK43":  [calcexe]                                               ;VK43=c #!c
-                                            , "#VK43":   [A_ScriptDir "\Select audio device.ahk"]                ;VK43=c #c
-                                            , "SC132":   [A_ScriptDir "\default_browser.ahk"]                    ;SC132=Homepage
-                                            , "#VK57":   [A_ScriptDir "\default_browser.ahk"]                    ;vk57=w #w
-                                            , "#+VK57":  [A_ScriptDir "\alt_browser.ahk"]                        ;vk57=w #+w
-                                            , "+SC132":  [A_ScriptDir "\alt_browser.ahk"]                        ;SC132=Homepage +Homepage
-                                            , "^!+Esc":  [procexpexe,,,,-1]                                      ;^!+Esc
-                                            ;, "#SC132":  [A_ScriptDir "\ie.cmd",,,,7]                           ;#Homepage
-                                            ; , "#^!VK57": ["""" laPrograms "\Tor Browser\Browser\firefox.exe"""]  ;#^!w
-                                            ; , "^!SC132": ["""" laPrograms "\Tor Browser\Browser\firefox.exe"""]  ;^!Homepage
-                                            , "#F1":     [comspec, " /K ""CD /D """ A_ScriptDir """ & PUSHD ""%TEMP%"" & ECHO POPD to go to " A_ScriptDir """"] ;/U https://twitter.com/LogicDaemon/status/936259452617060354
-                                            ;, "#+F1":    [LocalAppData "\Programs\bin\mintty.exe", "wsl --cd ~"]
-                                            , "#+F1":    [LocalAppData "\Microsoft\WindowsApps\Microsoft.WindowsTerminal_8wekyb3d8bbwe\wt.exe", "nt -p Debian"]
-                                            , "#VK45":   [totalcmdexe]                                           ;vk45=e #e
-                                            , "#+VK45":  [totalcmdexe,,,,-1]                                     ;vk45=e #+e
-                                            , "#!VK45":  ["shell:MyComputerFolder"]                              ;vk45=e #!e
-                                            ;, "#^VK45":  [A_ScriptDir "\RemoveDrive.ahk"]                       ;vk45=e #^e
-                                            , "#^VK45":  [A_ScriptDir "\PassPhrase\email.ahk"]                   ;vk45=e #^e
-                                            , "#^+VK45": [A_ScriptDir "\PassPhrase\pass_phrase.ahk"]             ;vk45=e #^+e
-                                            , "#VK4A":   [A_ScriptDir "\JDownloader.ahk"]                        ;vk4A=j #j
-                                            , "#!VK4B":  [keepassahk,,,,-1]                  ;vk4B=k #!k
-                                            , "#!+VK4B": [laPrograms "\WinAuth\WinAuth.exe"]                     ;vk4B=k #!+k
-                                            , "#VK50":   [notepad2exe,""]                                        ;vk50=p #p
-                                            , "#+VK50":  [notepad2exe,"/c /b"]                                   ;vk50=p #+p
-                                            , "#!VK50":  [A_ScriptDir "\QuickText.ahk",,,,-1]                    ;vk50=p #!p
-                                            , "#VK54":   [laPrograms "\Telegram\telegram.exe"]                   ;vk54=t #t
-                                            , "#!VK54":  [A_ScriptDir "\tombo.cmd",,,,7]                         ;vk54=t #!t
-                                            ;, "#VK55":   [A_AhkPath, A_ScriptDir "\putty_smartact.ahk"]         ;vk55=u #u
-                                            , "#VK56":   [vscode]                                                ;vk56=v #v
-                                            , "#!VK53":  [A_ScriptDir "\EmailSelection.ahk",, ""]                ;vk53=s #!s
-                                            , "Browser_Favorites": [A_ScriptDir "\Skype.cmd",,,,7]
-                                            , "Launch_Mail": [A_ScriptDir "\EmailButton.ahk"] }
-                                ; VK5A=Z, VK51=Q
-                                , "#VK51":  { "^VK45":   [Func("EditAhk"), A_ScriptFullPath]                     ;vk45=e ^e
-                                            , "^+VK45":  [Func("EditAhk"), hotkeys_custom_ahk]                   ;vk45=e ^+e
-                                            , "#VK57":   [AU3_Spy,,,,-1]                                         ;vk57=w #w
-                                            , "#VK52":   [A_ScriptDir "\ResizeOrRecord.ahk"]                     ;vk52=r #r
-                                            , "#VK43":   [A_ScriptDir "\putty_connect.ahk"]                      ;vk43=c #c
-                                            , "#VK50":   [A_ScriptDir "\putty_smartact.ahk"]                     ;vk50=p #p
-                                            , "#+VK44":  [A_ScriptDir "\Dropbox.ahk"]                            ;vk44=d #+d
-                                            , "#VK5A":   [zedexe]                                                ;vk5a=z #z
-                                            , "F1":      [A_ScriptDir "\F1.ahk"]
-                                            , "+F1":     [A_ScriptDir "\AutohotkeyHelp.ahk"] } }
+    , RunDelayedGroups := { "": { "#!VK43": [calcexe] ;VK43=c #!c
+            , "#VK43": [A_ScriptDir "\Select audio device.ahk"] ;VK43=c #c
+            , "SC132": [A_ScriptDir "\default_browser.ahk"] ;SC132=Homepage
+            , "#VK57": [A_ScriptDir "\default_browser.ahk"] ;vk57=w #w
+            , "#+VK57": [A_ScriptDir "\alt_browser.ahk"] ;vk57=w #+w
+            , "+SC132": [A_ScriptDir "\alt_browser.ahk"] ;SC132=Homepage +Homepage
+            , "^!+Esc": [procexpexe,,,,-1] ;^!+Esc
+            ;, "#SC132":  [A_ScriptDir "\ie.cmd",,,,7]                           ;#Homepage
+            ; , "#^!VK57": ["""" laPrograms "\Tor Browser\Browser\firefox.exe"""]  ;#^!w
+            ; , "^!SC132": ["""" laPrograms "\Tor Browser\Browser\firefox.exe"""]  ;^!Homepage
+            , "#F1": [comspec, " /K ""CD /D """ A_ScriptDir """ & PUSHD ""%TEMP%"" & ECHO POPD to go to " A_ScriptDir """"] ;/U https://twitter.com/LogicDaemon/status/936259452617060354
+            ; , "#+F1":    [LocalAppData "\Programs\bin\mintty.exe", "wsl -- cd ~"]
+            , "#+F1": shiftTerminalCommand
+            , "#VK45": [totalcmdexe] ;vk45=e #e
+            , "#+VK45": [totalcmdexe,,,,-1] ;vk45=e #+e
+            , "#!VK45": ["shell:MyComputerFolder"] ;vk45=e #!e
+            ;, "#^VK45":  [A_ScriptDir "\RemoveDrive.ahk"]                       ;vk45=e #^e
+            , "#^VK45": [A_ScriptDir "\PassPhrase\email.ahk"] ;vk45=e #^e
+            , "#^+VK45": [A_ScriptDir "\PassPhrase\pass_phrase.ahk"] ;vk45=e #^+e
+            , "#VK4A": [A_ScriptDir "\JDownloader.ahk"] ;vk4A=j #j
+            , "#!VK4B": [keepassahk,,,,-1] ;vk4B=k #!k
+            , "#!+VK4B": [laPrograms "\WinAuth\WinAuth.exe"] ;vk4B=k #!+k
+            , "#VK50": [notepad2exe] ;vk50=p #p
+            , "#+VK50": [notepad2exe,"/c /b"] ;vk50=p #+p
+            , "#!VK50": [A_ScriptDir "\QuickText.ahk",,,,-1] ;vk50=p #!p
+            , "#VK54": [laPrograms "\Telegram\telegram.exe"] ;vk54=t #t
+            , "#!VK54": [A_ScriptDir "\tombo.cmd",,,,7] ;vk54=t #!t
+            ;, "#VK55":   [A_AhkPath, A_ScriptDir "\putty_smartact.ahk"]         ;vk55=u #u
+            , "#VK56": [vscode] ;vk56=v #v
+            , "#!VK53": [A_ScriptDir "\EmailSelection.ahk",, ""] ;vk53=s #!s
+            , "Browser_Favorites": [A_ScriptDir "\Skype.cmd",,,,7]
+            , "Launch_Mail": [A_ScriptDir "\EmailButton.ahk"] }
+        ; VK5A=Z, VK51=Q
+        , "#VK51": { "^VK45": [Func("EditAhk"), A_ScriptFullPath] ;vk45=e ^e
+            , "^+VK45": [Func("EditAhk"), hotkeys_custom_ahk] ;vk45=e ^+e
+            , "#VK57": [AU3_Spy,,,,-1] ;vk57=w #w
+            , "#VK52": [A_ScriptDir "\ResizeOrRecord.ahk"] ;vk52=r #r
+            , "#VK43": [A_ScriptDir "\putty_connect.ahk"] ;vk43=c #c
+            , "#VK50": [A_ScriptDir "\putty_smartact.ahk"] ;vk50=p #p
+            , "#+VK44": [A_ScriptDir "\Dropbox.ahk"] ;vk44=d #+d
+            , "#VK5A": [zedexe] ;vk5a=z #z
+            , "F1": [A_ScriptDir "\F1.ahk"]
+            , "+F1": [A_ScriptDir "\AutohotkeyHelp.ahk"] } }
 
-    For altKey, HotkeysRunDelayed in RunDelayedGroups {
-        If (altKey) {
-            altMode := SubStr(altKey,-1) ; two last characters for label name are VK code, used as AlternateHotkeys code
-            altFunc := Func("PrepareAltMode").Bind(altMode)
-            Hotkey %altKey%, %altFunc%
-            Hotkey If, AlternateHotkeys==0x%altMode%
-        } Else {
-            Hotkey If
-        }
-        For key,args in HotkeysRunDelayed {
-            If (!FileExist(args[1]))
-                FileAppend % "Not found: " args[1] "`n", **
-            SplitPath % args[1], , , OutExtension
-            If (OutExtension = "ahk") {
-                args[2] := """" args[1] """ " args[2]
-                , args[1] := A_AhkPath
-            }
-            hotkeyFunc := Func("RunDelayed").Bind(args*)
-            HotKey %key%, %hotkeyFunc%
-        }
+For altKey, HotkeysRunDelayed in RunDelayedGroups {
+    If (altKey) {
+        altMode := SubStr(altKey,-1) ; two last characters for label name are VK code, used as AlternateHotkeys code
+        altFunc := Func("PrepareAltMode").Bind(altMode)
+        Hotkey %altKey%, %altFunc%
+        Hotkey If, AlternateHotkeys==0x%altMode%
+    } Else {
+        Hotkey If
     }
-    If (altKey)
-        HotKey If
+    For key,args in HotkeysRunDelayed {
+        If (!FileExist(args[1]))
+            FileAppend % "Not found: " args[1] "`n", **
+        SplitPath % args[1], , , OutExtension
+        If (OutExtension = "ahk") {
+            args[2] := """" args[1] """ " args[2]
+                , args[1] := A_AhkPath
+        }
+        hotkeyFunc := Func("RunDelayed").Bind(args*)
+        HotKey %key%, %hotkeyFunc%
+    }
+}
+If (altKey)
+    HotKey If
 }
 
 RemoveToolTip:
@@ -660,19 +683,19 @@ MoveToCorner(HorizSplit, VertSplit, MonNum := -1) {
     ; -1 = fullscreen, -2 = left/top half of screen,    -3 = left/top third of screen, etc.
     ;  MonNum is monitor # as in SysGet, var, Monitor, #
     ; -1 for monitor of current window, "" for primary monitor
-    
+
     IfWinNotExist A
         return
-    
+
     ; Now get window position
     WinGetPos newX, newY, newW, newH
 
-    If (MonNum == -1) {         ; If current window' monitor should be used, find it
+    If (MonNum == -1) { ; If current window' monitor should be used, find it
         MonNum := FindWindowMonitorIndex(newX, newY, newW, newH)
-        If (MonNum == "")       ; Primary monitor will be used instead
+        If (MonNum == "") ; Primary monitor will be used instead
             TrayTip window @ (x%newX% y%newY% w%newW% h%newH%) is out of bounds,Cannot find current monitor,,0x22
     }
-    
+
     SysGet MonWA, MonitorWorkArea, %MonNum%
     borderSize := 8
     If (HorizSplit) {
@@ -689,8 +712,8 @@ MoveToCorner(HorizSplit, VertSplit, MonNum := -1) {
         else
             NewY := MonWABottom - NewH + borderSize
     }
-        
-    WinMove,,, newX, newY, , 
+
+    WinMove,,, newX, newY, ,
     WinMove,,, , , newW, newH
     ; ToolTip newX: %newX% newY: %newY%`nnewW: %newW% newH: %newH%
 }
@@ -720,7 +743,7 @@ lReload:
     IfMsgBox, Yes
         EditAhk(A_ScriptFullPath)
 return
-    
+
 lToggleWindowMonitor:
     If (WinActive("ahk_group WindowsActionCenter")) {
         MoveActionCenter()
@@ -734,7 +757,7 @@ lToggleWindowMonitor:
     WinGetPos X, Y, W, H
     WinCentralPointX := X + W/2
     WinCentralPointY := Y + H/2
-    
+
     ; ToDo: find current monitor, select next (get it from resizing func.)
     SysGet Monitor1Dimensions, Monitor, 1
     SysGet Monitor2Dimensions, Monitor, 2
@@ -742,8 +765,8 @@ lToggleWindowMonitor:
         X := X - Monitor1DimensionsLeft + Monitor2DimensionsLeft
     else
         X := X - Monitor2DimensionsLeft + Monitor1DimensionsLeft
-    
-    PostMessage, 0x112, 0xF120,,, A  ; 0x112 = WM_SYSCOMMAND, 0xF120 = SC_RESTORE
+
+    PostMessage, 0x112, 0xF120,,, A ; 0x112 = WM_SYSCOMMAND, 0xF120 = SC_RESTORE
     Sleep 0
     WinMove %X%, %Y%
     Sleep 0
@@ -753,9 +776,9 @@ lMaximizeWindow:
     If WinMinMaxState
         PostMessage, 0x112, 0xF120,,, A ; 0x112 = WM_SYSCOMMAND, 0xF120 = SC_RESTORE
     Else
-        PostMessage 0x112, 0xF030,,, A  ; 0x112 = WM_SYSCOMMAND, 0xF030 = SC_MAXIMIZE
-    ; ToDo: restore window original position
-    return
+        PostMessage 0x112, 0xF030,,, A ; 0x112 = WM_SYSCOMMAND, 0xF030 = SC_MAXIMIZE
+; ToDo: restore window original position
+return
 
 EditAhk(ByRef path) {
     Local
@@ -769,8 +792,7 @@ EditAhk(ByRef path) {
 RunDelayed(ByRef params*) {
     ; File [, Arguments, Directory, Operation, Show]; for ShellRun
     ; File [, Arguments, Directory, Options, -1]; for Run
-    static runQueue := []
-    
+    Static runQueue := [], lastActiveHWND := ""
     If (params.Length()) {
         AlternateHotkeysOff()
         RunQueue.Push(params)
@@ -783,10 +805,9 @@ RunDelayed(ByRef params*) {
         Return
     }
     If (!runQueue.Length()) {
-        SetTimer ,,Off
+        SetTimer %A_ThisFunc%,,Off
         Return
     }
-
     cmd := runQueue.Pop()
     If (IsObject(cmd)) { ; an array or function object
         If IsFunc(cmd[1]) {
@@ -797,22 +818,42 @@ RunDelayed(ByRef params*) {
             Return fn.Call(cmd*)
         }
         SplitPath % cmd[1], exeName,, ext
-
         winTitle := "ahk_exe i)\b\Q" exeName "\E\b"
-        If (ext = "exe" && !cmd[2] && !cmd[4] && WinExist(winTitle) && !WinActive(winTitle)) {
-            WinGet state, MinMax
-            If (state == -1) {
-                WinRestore
-                WinActivate
+        currentActiveHWND := WinActive(winTitle)
+        If (ext = "exe" && !cmd[2] && !cmd[4]
+            && WinExist(winTitle)
+            && currentActiveHWND != lastActiveHWND) {
+            lastActiveHWND := currentActiveHWND
+            If (WinActive(winTitle)) {
+                WinGet state, MinMax
+                If (state == -1) {
+                    WinRestore
+                    WinActivate
+                } Else {
+                    WinActivateBottom %winTitle%
+                }
             } Else {
-                WinActivateBottom ahk_exe %exeName%
+                WinActivate %winTitle%
             }
-        } Else If (cmd[5] == -1) { ; [executable name, args, workdir, options, -1]
+            WinWaitActive %winTitle%,,1
+            If (!ErrorLevel) {
+                currentActiveHWND := WinActive()
+                If (lastActiveHWND != currentActiveHWND) {
+                    lastActiveHWND := ""
+                    Return
+                }
+                ToolTip Activation succeeded but the last window is still active
+                ; If the window was activated, but it's the same as before,
+                ; it means that the activation fails.
+            }
+            ; Continuing if activation failed
+        }
+        If (cmd[5] == -1) { ; [executable name, args, workdir, options, -1]
             RunAndActivate(cmd*)
         } Else {
             ; [executable name, args, workdir, operation, show]
             ToolTip % "Starting """ cmd[1] """ through shell"
-            SetTimer RemoveToolTip, 1000        
+            SetTimer RemoveToolTip, 1000
             nprivRun(cmd*)
         }
         Return
@@ -835,8 +876,8 @@ RunDelayed(ByRef params*) {
         SetTimer RemoveToolTip, 1000
     } Else {
         cmdAndArgs := ext = "ahk" ? [A_AhkPath, """" cmd """"]
-                       : ext = "cmd" ? [comspec, " /C """ cmd """"]
-                       : ["", cmd]
+            : ext = "cmd" ? [comspec, " /C """ cmd """"]
+            : ["", cmd]
         RunAndActivate(cmdAndArgs*)
     }
 }
