@@ -1,4 +1,8 @@
-### Python:
+---
+description: Python code style, types, and best practices
+applyTo: '**/*.py'
+---
+# Python
 - Use single quotes for strings
 - Prefer r-strings over escaping backslashes
 - Docstrings keep triple double-quotes with a one-line summary followed by optional details. Use """ text """ formatting, with spaces around and without final `.`
@@ -28,7 +32,7 @@
     · When deep merging or resolving conflicts, iterate over intersection of keys: `base.keys() & override.keys()` to avoid checking all keys
 - Use `problems` tool or Pylance MCP to surface issues
 
-#### Functions:
+## Functions:
 - Avoid:
   * passing in arguments to another function without additional logic
   * functions calculating a single expression and only used once
@@ -37,7 +41,7 @@
 - If a function returns more than 2 values, or 2 values of of same type, use NamedTuple
 - Never introduce wrappers just to pass same parameters; use functools.partial or lambdas when passing to higher-order functions
 
-#### Exceptions:
+## Exceptions:
 - Exceptions over checking first (EAFP over LBYL)
   * ESPECIALLY where race conditions are possible:
     · never check for a file existence/readability before trying to open it
@@ -57,7 +61,7 @@
 - Do not wrap exceptions just to re-raise them
 - The example above is a very frequent mistake, re-check the code after implementing any change to ensure it wasn't introduced
 
-#### Additional passes
+## Additional passes
 After implementing the working script logic, review the code in a few passes (focusing on one item below at a time):
 0. Move imports to the top of the module
 1. Check the codebase for any functions and constants similar to the ones introduced and use them

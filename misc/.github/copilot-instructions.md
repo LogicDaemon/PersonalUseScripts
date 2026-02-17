@@ -28,4 +28,4 @@
   3. Step-by-step plan, each step with a verifiable outcome. After implementing each step, mark it as "verifying" and test. If it works, mark it as "done" and proceed to the next step. If it doesn't work, update the current state analysis, adjust the plan accordingly and undo any changes from the failed step
 - When starting/continuing a task, review the file and re-analyze the repository contents to understand the context and avoid repeating past mistakes, and to check if the file is up-to-date
 - When the task is done, append the summary to the file
-- This file is not part of the codebase, but should be stored alongside the code changes until the task is done. Do not remove it yourself, let the user decide when to delete it
+- This file should be stored alongside the code changes until the task is done. Do not remove it yourself, let the user decide when to delete it
