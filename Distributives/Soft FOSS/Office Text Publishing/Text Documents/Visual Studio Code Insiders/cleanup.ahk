@@ -18,11 +18,14 @@ Loop Files, %A_ScriptDir%\*.zip
 	found[A_LoopFileName] := [mver, A_LoopFileDateModified]
 	If (VerCompare(mver, ">" lastVer)) {
 		lastVer := mver
-	}
-	If (lastVer == mver && A_LoopFileDateModified > lastDate) {
+		lastDate := A_LoopFileDateModified
+	} Else If (lastVer == mver && A_LoopFileDateModified > lastDate) {
 		lastDate := A_LoopFileDateModified
 	}
 }
+
+If (!lastVer || !lastDate)
+	Throw Exception("Failed to find a latest version")
 
 For file, ver in found {
 	If (ver[1] != lastVer || ver[2] != lastDate) {

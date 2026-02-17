@@ -33,6 +33,7 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
 
     IF EXIST "c:\Intel" MKDIR "%RAMDrive%\Intel\IntelOptaneData"
     IF EXIST d:\elevoc_dnn_kernel.log ECHO.>"%RAMDrive%\elevoc_dnn_kernel.log"
+    FOR %%B IN (Pictures Videos Music "My SecuriSync") DO IF EXIST "%USERPROFILE%\%%~B\.SecuriSync" MKDIR "%RAMDrive%\.SecuriSync\%%~B\Spool Files"
     
     MKDIR "%RAMDrive%\Steam\appcache\httpcache"
     MKDIR "%RAMDrive%\Steam\depotcache"

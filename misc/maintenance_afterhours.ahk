@@ -86,6 +86,15 @@ backupScript=%A_ScriptDir%\backup_%hostname%.cmd
 If (FileExist(backupScript))
     Run %comspec% /C "%A_ScriptDir%\backup_%hostname%.cmd",, Min
 
+For _, v in ["d:\", "d:\DevDrive"] {
+    If (!FileExist(v))
+        Continue
+    RunWait refsutil iometrics /q "%v%",, Hide UseErrorLevel
+    If (ErrorLevel)
+        Continue
+    Run refsutil dedup "%v%" /d /cpu 25,, Min
+}
+
 comprDir := "w:\FileHistory\" A_UserName
 If (FileExist(comprDir)) {
     Loop Files, %comprDir%\*.*, D
