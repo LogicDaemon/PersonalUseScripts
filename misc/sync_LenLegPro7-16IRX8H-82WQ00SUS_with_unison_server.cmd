@@ -19,23 +19,21 @@ EXIT /B
         -root "%unisonServer%d:/Distributives" ^
         -prefer "\\AcerPH315-53-71HN\Distributives$" -auto -batch
 
-    SET "name=Unison" & CALL :CheckSync "%unisonServer%%USERPROFILE:\=/%\.unison" "\\AcerPH315-53-71HN\Users\LogicDaemon\.unison" -ignore "Name *" -ignorenot "Name *.prf" -ignorenot "Name default"
-    SET "name=Distributives" & CALL :CheckSync "Distributives@AcerPH315-53-71HN" -root "%unisonServer%d:/Distributives"
+    CALL :CheckSync "%unisonServer%%USERPROFILE:\=/%\.unison" "\\AcerPH315-53-71HN\Users\LogicDaemon\.unison" -ignore "Name *" -ignorenot "Name *.prf" -ignorenot "Name default"
+    CALL :CheckSync "Distributives@AcerPH315-53-71HN" -root "%unisonServer%d:/Distributives"
 
-    FOR %%A IN ("%USERPROFILE%\.unison\*_to_AcerPH315-53-71HN.prf") DO @(
-        SET "name=%%~nA"
-        CALL :CheckSync "%%~nA" "-auto=false"
-    )
-
+    FOR %%A IN ("%USERPROFILE%\.unison\*_to_AcerPH315-53-71HN.prf") DO @CALL :CheckSync "%%~nA" "-auto=false"
     FOR /F "usebackq delims== tokens=1*" %%A IN (`SET sync_`) DO %syncprog% %%B %unisonopt%
     EXIT /B
 )
 :CheckSync
+IF NOT DEFINED name SET "name=%~nx1"
 (
     IF DEFINED filterSyncs (
         <NUL %unisontext% %* "-auto=false" || SET "sync_%name%=%*"
     ) ELSE (
         VERIFY INVALID 2>NUL
     ) || SET "sync_%name%=%*"
+    SET name=
     EXIT /B
 )

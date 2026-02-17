@@ -18,7 +18,7 @@ GetBDEKey(mountPoint) {
     If (IsSet(key))
         return key
     keyFile := LocalAppData "\_sec\" RegExReplace(mountPoint, "[:\\]", "") ".key"
-    f := FileOpen(keyFile, "r", "cp1")
+    f := FileOpen(keyFile, "r", "cp866")
     If (!f)
         Throw Exception("Failed to open key file", , keyFile)
     contents := f.Read()

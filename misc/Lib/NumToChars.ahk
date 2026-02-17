@@ -7,7 +7,7 @@ GetEncoding() {
     encFile := LocalAppData "\_sec\encoding.txt"
     ; for example,
     ; " !""#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~⌂░▒▓│┤╡╢╖╕╣║╗╝╜╛┐╢┴┬╣─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀Ўў°∙·√№¤■ "
-    f := FileOpen(encFile, "r", "cp1")
+    f := FileOpen(encFile, "r", "cp866")
     If (!f)
         Throw Exception("Failed to open encoding file", , encFile)
     chars := f.Read()

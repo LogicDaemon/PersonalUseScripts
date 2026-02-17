@@ -7,6 +7,7 @@ EnvGet SystemRoot,SystemRoot
 
 found := {}
 lastVer := 0
+lastDate := 0
 
 Loop Files, %A_ScriptDir%\*.zip
 {
@@ -14,14 +15,17 @@ Loop Files, %A_ScriptDir%\*.zip
 	If (!RegexMatch(A_LoopFileName, ".*?-(?P<ver>\d+\.[\d\.]+)", m)) {
 		Continue
 	}
-	If (VerCompare(mver, ">" . lastVer)) {
+	found[A_LoopFileName] := [mver, A_LoopFileDateModified]
+	If (VerCompare(mver, ">" lastVer)) {
 		lastVer := mver
 	}
-	found[A_LoopFileName] := mver
+	If (lastVer == mver && A_LoopFileDateModified > lastDate) {
+		lastDate := A_LoopFileDateModified
+	}
 }
 
 For file, ver in found {
-	If (ver != lastVer) {
+	If (ver[1] != lastVer || ver[2] != lastDate) {
 		FileDelete %A_ScriptDir%\%file%
 	}
 }
