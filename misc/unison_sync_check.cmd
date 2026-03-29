@@ -3,7 +3,7 @@
 @IF NOT DEFINED name SET "name=%~nx1"
 @(
 	IF DEFINED filterSyncs (
-		<NUL %unisontext% %* "-auto=false" || SET "sync_%name%=%*"
+		<NUL %unisontext% %* "-auto=false" -fastercheckUNSAFE || SET "sync_%name%=%*"
 	) ELSE (
 		VERIFY INVALID 2>NUL
 	) || SET "sync_%name%=%*"

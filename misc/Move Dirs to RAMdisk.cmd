@@ -2,7 +2,7 @@
 SETLOCAL ENABLEEXTENSIONS
 IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
 
-    VOL R: | FIND " Volume in drive R is RamDisk" && SET "RAMDrive=r:"
+    IF NOT DEFINED RAMDrive VOL R: | FIND " Volume in drive R is RamDisk" && SET "RAMDrive=r:"
     IF NOT DEFINED RAMDrive VOL R: | FIND " Volume in drive R is RAM disk" && SET "RAMDrive=r:"
     IF NOT DEFINED RAMDrive EXIT /B 1
     
@@ -33,7 +33,6 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
 
     IF EXIST "c:\Intel" MKDIR "%RAMDrive%\Intel\IntelOptaneData"
     IF EXIST d:\elevoc_dnn_kernel.log ECHO.>"%RAMDrive%\elevoc_dnn_kernel.log"
-    FOR %%B IN (Pictures Videos Music "My SecuriSync") DO IF EXIST "%USERPROFILE%\%%~B\.SecuriSync" MKDIR "%RAMDrive%\.SecuriSync\%%~B\Spool Files"
     
     MKDIR "%RAMDrive%\Steam\appcache\httpcache"
     MKDIR "%RAMDrive%\Steam\depotcache"
@@ -91,6 +90,7 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
         MKDIR "%RAMDrive%\ProgramData\NVIDIA Corporation\umdlogs"
     )
     IF EXIST "%ProgramData%\Dropbox" MKDIR "%RAMDrive%\ProgramData\Dropbox\Update\Log"
+    FOR %%B IN (Pictures Videos Music "My SecuriSync") DO IF EXIST "%USERPROFILE%\%%~B\.SecuriSync" CALL :MoveToRAMDrive "%USERPROFILE%\%%~B\.SecuriSync\Spool Files"
     
     @REM CALL :MkDirsWithCopiedPermissions "%SystemRoot%" "%RAMDrive%" ServiceProfiles LocalService AppData Local Temp
     CALL :MoveLinkBack "%SystemRoot%\ServiceProfiles\LocalService\AppData\Local\Temp\TfsStore" "%RAMDrive%\ServiceProfiles\LocalService\AppData\Local\Temp\TfsStore"
@@ -103,15 +103,14 @@ IF "%~dp0"=="" (SET "srcpath=%CD%\") ELSE SET "srcpath=%~dp0"
     REM but if it's non-empty dir, it will stay as is (note lack of "/S")
     RD /Q "%LOCALAPPDATA%\Temp"
     REM this is needed because now the directory will be moved to R:, and if it's a link to R:, that might break MOVE which will move files to themselves and then remove from source (but as it's linked to dest, remove that single copy altogether)
-    CALL :MoveLinkBack "%LOCALAPPDATA%\Temp" "r:\Temp"
-    IF DEFINED vscodeRemoteWSLDist MKLINK /J "r:\Temp\vscode-remote-wsl" "%vscodeRemoteWSLDist%"
+    IF NOT EXIST "%LOCALAPPDATA%\Temp" CALL :MoveLinkBack "%LOCALAPPDATA%\Temp" "%RAMDrive%\Temp"
+    IF DEFINED vscodeRemoteWSLDist MKLINK /J "%RAMDrive%\Temp\vscode-remote-wsl" "%vscodeRemoteWSLDist%"
+    IF EXIST "%APPDATA%\npm-cache" CALL :MoveToRAMDrive "%APPDATA%\npm-cache"
 
     SET "tryRenaming=1"
-    IF EXIST "%USERPROFILE%\My SecuriSync" CALL :MoveToRAMDrive "%USERPROFILE%\My SecuriSync\.SecuriSync\Spool Files"
     IF EXIST "c:\OEM\AcerLogs" CALL :MoveToRAMDrive "c:\OEM\AcerLogs"
     IF EXIST "c:\OEM\CareCenter" CALL :MoveToRAMDrive "c:\OEM\CareCenter"
     IF EXIST "c:\OEM\Preload" CALL :MoveToRAMDrive "c:\OEM\Preload"
-    IF EXIST "%APPDATA%\npm-cache" CALL :MoveToRAMDrive "%APPDATA%\npm-cache"
     CALL :MoveToRAMDrive "%APPDATA%\obs-studio\crashes"
     CALL :MoveToRAMDrive "%APPDATA%\obs-studio\logs"
     CALL :MoveToRAMDrive "%APPDATA%\obs-studio\profiler_data"
@@ -174,6 +173,7 @@ rem                                     "WebStorage" ^
     CALL :MoveToRAMDrive "%USERPROFILE%\AppData\LocalLow\Sun\Java\Deployment\tmp"
     CALL :MoveToRAMDrive "%USERPROFILE%\AppData\LocalLow\Sun\Java\Deployment\log"
     CALL :MoveToRAMDrive "%USERPROFILE%\.cache"
+    IF EXIST "%LOCALAPPDATA%\opencode\cache" MKLINK /J "%USERPROFILE%\.cache\opencode" "%LOCALAPPDATA%\opencode\cache"
     
     REM DLLs there
     rem CALL :MoveToRAMDrive "%USERPROFILE%\.openjfx\cache"
@@ -273,16 +273,29 @@ EXIT /B
 )
 :MoveLinkBack <source> <destination>
 (
-    CALL :MkdirMissingTreeWithPermissions %1 %2
-    IF NOT EXIST %2 MKDIR %2 || EXIT /B
-    IF EXIST %1 RD /Q %1
-    IF EXIST %1 ECHO N|DEL %1
-    IF DEFINED tryRenaming IF EXIST %1 MOVE %1 "%1.LINKED_FROM_RAM_DISK_%DATE%_%TIME::=%" || EXIT /B
-    IF EXIST %1 EXIT /B
-    MKLINK /D %1 %2 || MKLINK /J %1 %2
+    CALL :MkdirMissingBaseDirWithPermissions %1 %2
+    IF NOT EXIST %2 MKDIR %2
+    IF EXIST %1 (
+        REM Try removing an empty dir/junction
+        IF NOT EXIST "%~1\*.*" RD /Q %1
+        REM maybe it's a symlink
+        IF EXIST %1 ECHO N|DEL %1
+        IF EXIST %1 (
+            REM It still exists, so it seems to be a legit non-empty directory
+            IF DEFINED tryRenaming (
+                MOVE %1 "%~1.LINKED_%DATE:/=%_%TIME::=%" || EXIT /B
+            ) ELSE (
+                EXIT /B
+            )
+        )
+    ) ELSE (
+        IF NOT EXIST "%~dp1" MKDIR "%~dp1"
+    )
+    ECHO Linking %2 to %1
+    MKLINK /J %1 %2 || MKLINK /D %1 %2
 EXIT /B
 )
-:MkdirMissingTreeWithPermissions <source> <destination>
+:MkdirMissingBaseDirWithPermissions <source> <destination>
 @(
     SET "sourceDir=%~dp1"
     SET "destinationDir=%~dp2"
@@ -291,10 +304,11 @@ EXIT /B
     IF "%sourceDir:~-1%"=="\" SET "sourceDir=%sourceDir:~0,-1%"
     IF "%destinationDir:~-1%"=="\" SET "destinationDir=%destinationDir:~0,-1%"
 )
-@IF NOT EXIST "%destinationDir%" CALL :MkdirMissingTreeWithPermissions "%sourceDir%" "%destinationDir%"
+@REM if parents do not exist, deal with them first
+@IF NOT EXIST "%destinationDir%" CALL :MkdirMissingBaseDirWithPermissions "%sourceDir%" "%destinationDir%"
 :CopyDirPermissions <source> <destination>
 @(
-    IF DEFINED acfile GOTO :CopyDirPermissionsTmpPathDefined
+    IF DEFINED aclfile GOTO :CopyDirPermissionsTmpPathDefined
     SET "s=%RANDOM%"
 )
 @(
@@ -304,16 +318,18 @@ EXIT /B
 )
 :CopyDirPermissionsTmpPathDefined
 @(
-    IF NOT EXIST %2 MKDIR %2
-    PUSHD "%~1" && (
-        icacls . /save "%aclfile%"
-        POPD
-        PUSHD "%~2" || EXIT /B
-        icacls . /restore "%aclfile%"
-        POPD
+    IF NOT EXIST %2 MKDIR %2 || EXIT /B
+    PUSHD "%~1" || EXIT /B
+    icacls . /save "%aclfile%" || (
         DEL "%aclfile%"
+        EXIT /B
     )
-    EXIT /B
+    POPD
+    PUSHD "%~2" || EXIT /B
+    icacls . /restore "%aclfile%" || ECHO Error restoring permissions on "%~2">&2
+    POPD
+    DEL "%aclfile%"
+EXIT /B
 )
 :MkDirsWithCopiedPermissions <source> <destination> <directories>
 (
