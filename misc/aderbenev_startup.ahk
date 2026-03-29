@@ -29,6 +29,8 @@ Loop
 
 Process Priority, %selfPID%, B
 
+Run DISKPART /S "D:\DevDrive-Mount.diskpartscript",, Min
+
 ProcPri :=  { "LMS.exe": "L"
             , "AeXNSAgent.exe": "L"
             , "AeXAgentUIHost.exe": "L"

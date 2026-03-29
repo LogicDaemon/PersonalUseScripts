@@ -820,9 +820,10 @@ RunDelayed(ByRef params*) {
         SplitPath % cmd[1], exeName,, ext
         winTitle := "ahk_exe i)\b\Q" exeName "\E\b"
         currentActiveHWND := WinActive(winTitle)
+        ; MsgBox ext: %ext%`ncurrentActiveHWND: %currentActiveHWND%`nlastActiveHWND: %lastActiveHWND%
         If (ext = "exe" && !cmd[2] && !cmd[4]
             && WinExist(winTitle)
-            && currentActiveHWND != lastActiveHWND) {
+            && (!currentActiveHWND || currentActiveHWND != lastActiveHWND)) {
             lastActiveHWND := currentActiveHWND
             If (WinActive(winTitle)) {
                 WinGet state, MinMax

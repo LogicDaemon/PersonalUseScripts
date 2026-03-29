@@ -1,6 +1,8 @@
 _Distributives.base_dirs.auth.txt
 _Distributives.base_dirs.txt
 alt_browser@*.ahk
+backup_*.cmd
+sync_*.cmd
 Hotkeys_Custom.*.ahk
 Hotkeys_Custom.ahk
 KeePass_*.ahk

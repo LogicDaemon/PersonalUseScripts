@@ -1,5 +1,10 @@
 backgroundTaskHost.exe
+WindowsPackageManagerServer.exe
 CrossDeviceResume.exe
+WidgetService.exe
+Microsoft.Management.Services.IntuneWindowsAgent.exe
+CcmExec.exe
+SCNotification.exe
 # ElevocControlService.exe
 # IntelCpHDCPSvc.exe
 Lenovo.Modern.ImController.exe
@@ -24,3 +29,10 @@ WMIRegistrationService.exe
 PsiService_2.exe
 xTendUtilityService.exe
 XtuService.exe
+wscript.exe
+splunkd.exe
+QualysAgent.exe
+CSFalconService.exe
+CSFalconContainer.exe
+OfficeClickToRun.exe
+SearchIndexer.exe

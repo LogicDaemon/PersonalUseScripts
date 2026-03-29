@@ -1,7 +1,7 @@
 ---
 description: GitHub Actions workflows configuration and best practices
 name: GitHub Actions Workflows
-applyTo: '.github/workflows/**/*.yml, .github/workflows/**/*.yaml'
+applyTo: '.github/workflows/**'
 ---
 # GitHub Actions Workflows
 - Prefer `hashicorp/vault-action` for secret retrieval over manual CLI commands

@@ -15,7 +15,7 @@
 SET "unisonServer=socket://localhost:%unisonPort%/"
 (
 PUSHD "%TEMP%" || EXIT /B
-START "Distributives Unison server" /MIN %unisontext% -socket "%unisonPort%"
+START "Distributives Unison server" /B /MIN %unisontext% -socket "%unisonPort%"
 PING -n 2 127.0.0.1 >NUL
 EXIT /B
 )

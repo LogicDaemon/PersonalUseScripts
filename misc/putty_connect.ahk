@@ -53,12 +53,12 @@ ButtonOK:
             If (selConnItem ~= SubStr(A_LoopReadLine, 1, tabPos-1)) {
                 cmd := SubStr(A_LoopReadLine, tabPos+1)
                 ToolTip Starting %cmd% for %selConnItem%
-                Run %cmd% "%selConnItem%",, Min, ppid
+                RunWait %cmd% "%selConnItem%",, Min, ppid
                 selConnItem:=""
             }
         }
         If (selConnItem) {
-            ToolTip Connecting %selConnItem% %args%
+            ToolTip Connecting "%selConnItem%" %args%
             Run putty.exe %args% "%selConnItem%",,, ppid
         }
     }

@@ -22,6 +22,7 @@ applyTo: '**/*.py'
   * Do not hide output of subprocess calls (no subprocess.DEVNULL) except in loops
     · If necessary to avoid flooding the terminal or corrupting display output, capture it to a file
   * Avoid unnecessary "stabilization" like sorting, `.get()`, `Path.resolve()`, `str(value)`, `if bool(var)` unless there is a specific need
+    · particularly, for any `.strip()` add a comment why it makes any sense, or just remove the call
   * Every method/call has a cost and thus should be justified
   * Prefer direct checking `if var` over expressions, except `is [not] None`
   * In newer pythons, prefer `if var := expression:` or `if not (var := expression)`, or even `if xxx and (yyy := expression())` instead of assignment on a separate line
@@ -69,8 +70,9 @@ After implementing the working script logic, review the code in a few passes (fo
 2. Merge regular expressions and other string operations applied in sequence
 3. Remove unnecessary single-use variables
 4. Remove short single-use functions which could be inlined, especially if they just calculate a single expression
-5. Remove redundant exceptions and reduce `try:` scopes and `except:` types
-6. Refactor loops (both blocks and comprehensions) to use set or dict operations where possble to avoid unnecessary iterations and checks
-7. Use trenary operator and walrus operator where appropriate to simplify the code and reduce the number of lines
-8. Run 'problems' tool or Pylance MCP if available, or pylint and mypy in shell, and fix any issues they raise
-9. Add types to functions and variables where the exact type could not be inferred from the first assignment, and ensure they are specific (not `Any`) except when parsing an unknown structure (e.g. JSON from a user input; but for API, always define the expected types)
+5. Remove .get-s where missing the value will lead to a failure down the line
+6. Remove redundant exceptions and reduce `try:` scopes and `except:` types
+7. Refactor loops (both blocks and comprehensions) to use set or dict operations where possble to avoid unnecessary iterations and checks
+8. Use trenary operator and walrus operator where appropriate to simplify the code and reduce the number of lines
+9. Run 'problems' tool or Pylance MCP if available, or pylint and mypy in shell, and fix any issues they raise
+10. Add types to functions and variables where the exact type could not be inferred from the first assignment, and ensure they are specific (not `Any`) except when parsing an unknown structure (e.g. JSON from a user input; but for API, always define the expected types)

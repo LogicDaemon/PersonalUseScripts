@@ -19,21 +19,26 @@ For _, v in A_Args {
 	}
 }
 
+Process Exist, LibreHardwareMonitor.exe
+While (ErrorLevel) {
+	RunWait schtasks.exe /end /tn %A_UserName%\LibreHardwareMonitor,, Hide UseErrorLevel
+	Process Close, LibreHardwareMonitor.exe
+}
+
 ; Cursor updater uses scoop, and it may update the bucket, so it must run
 ; before scoop updater. Also it relies on scoop cleanup ran separately.
 If (FileExist(scoopBaseDir "\apps\cursor"))
 	RunWait "%A_AhkPath%" "%A_ScriptDir%\update_cursor.ahk"
 
-;RunWait scoop.cmd update -a,, Min
 FileMove %logPath%, %logPath%_old, 1
-RunScoopUpdates(scoopBaseDir, logPath, GetScoopPostUpdateScripts(), GetNoAutoUpdateApps(), mode)
+RunScoopUpdates(scoopBaseDir, logPath, GetNoAutoUpdateApps(), mode)
 
 RunWait "%A_AhkPath%" "%A_ScriptDir%\scoop_clean_cache.ahk"
-Run DFHL.exe /l ., %LocalAppData%\Programs\scoop\shims, Min
-Run DFHL.exe /l ., %scoopBaseDir%\cache, Min
+Run DFHL.exe /l ., %LocalAppData%\Programs\scoop\shims, Hide
+Run DFHL.exe /l ., %scoopBaseDir%\cache, Hide
 ExitApp 
 
-RunScoopUpdates(scoopBaseDir, logPath, scoopPostUpdateScripts, scoopNoAutoUpdate, runMode:="Hide") {
+RunScoopUpdates(scoopBaseDir, logPath, scoopNoAutoUpdate, runMode:="Hide") {
 	local
 	
 	If (scoopNoAutoUpdate.Count() == 0) {
@@ -61,25 +66,37 @@ RunScoopUpdates(scoopBaseDir, logPath, scoopPostUpdateScripts, scoopNoAutoUpdate
 			updateAllSucceeded := True
 		}
 	}
-
+	If (updateAll) {
+		Loop Files, %scoopBaseDir%\apps\*.*, D
+			RunPostUpdateScript(A_LoopFileName)
+	}
 	If (!updateAll || !updateAllSucceeded) {
-	Loop Files, %scoopBaseDir%\apps\*.*, D
-	{
-		If (scoopNoAutoUpdate.HasKey(A_LoopFileName))
-		Continue
-		If (!updateAll) {
-		FileAppend Updating %A_LoopFileName%...`n, %logPath%, CP1
-		RunWait %comspec% /C "scoop.cmd update "%A_LoopFileName%" >>"%logPath%" 2>&1",, %runMode%
-		If (ErrorLevel)
-			Continue
-		FileAppend Cleaning up %A_LoopFileName%...`n, %logPath%, CP1
-		RunWait %comspec% /C "scoop.cmd cleanup "%A_LoopFileName%" >>"%logPath%" 2>&1",, %runMode%
+		Loop Files, %scoopBaseDir%\apps\*.*, D
+		{
+			If (scoopNoAutoUpdate.HasKey(A_LoopFileName))
+				Continue
+			FileAppend Updating %A_LoopFileName%...`n, %logPath%, CP1
+			RunWait %comspec% /C "scoop.cmd update "%A_LoopFileName%" >>"%logPath%" 2>&1",, %runMode%
+			If (ErrorLevel)
+				Continue
+			FileAppend Cleaning up %A_LoopFileName%...`n, %logPath%, CP1
+			RunWait %comspec% /C "scoop.cmd cleanup "%A_LoopFileName%" >>"%logPath%" 2>&1",, %runMode%
+			RunPostUpdateScript(A_LoopFileName)
 		}
-		postUpdateScript := scoopPostUpdateScripts[A_LoopFileName]
+	}
+	
+	RunWait compact.exe /C "%logPath%",, %runMode%
+}
+
+RunPostUpdateScript(updatedApp) {
+	Local
+	For _, postUpdateScript in GetScoopPostUpdateScript(updatedApp) {
+		If (!postUpdateScript)
+			Continue
 		If (IsFunc(postUpdateScript)) {
-		FileAppend Running post-update script for %A_LoopFileName%...`n, %logPath%, CP1
-		postUpdateScript.Call()
-		} Else If (postUpdateScript) {
+			postUpdateScript.Call()
+			Continue
+		}
 		FileAppend Running post-update script %postUpdateScript%...`n, %logPath%, CP1
 		SplitPath postUpdateScript,,, scriptExt
 		If (scriptExt = "reg")
@@ -88,16 +105,15 @@ RunScoopUpdates(scoopBaseDir, logPath, scoopPostUpdateScripts, scoopNoAutoUpdate
 			Run %comspec% /C ""%A_AhkPath%" "%A_LoopFileFullPath%\current\%postUpdateScript%" >>"%logPath%" 2>&1"
 		Else
 			Run %comspec% /C ""%A_LoopFileFullPath%\current\%postUpdateScript%" >>"%logPath%" 2>&1"
-		}
 	}
-	}
-	
-	RunWait compact.exe /C "%logPath%",, %runMode%
 }
 
-GetScoopPostUpdateScripts() {
-	Return { "python": "install-pep-514.reg"
-   		, "qbittorrent": Func("DeleteFiles").Bind("*.pdb") }
+GetScoopPostUpdateScript(appName) {
+	; "" means applies for all updates
+	;Return ({ "python": "install-pep-514.reg"
+	;	, "qbittorrent": Func("DeleteFiles").Bind("*.pdb") }[appName]
+	;	|| Func("DeleteFiles").Bind("*.pdb"))
+	Return Func("DeleteFiles").Bind("*.pdb")
 }
 
 GetNoAutoUpdateApps() {

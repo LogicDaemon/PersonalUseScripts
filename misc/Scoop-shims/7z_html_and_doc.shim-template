@@ -1,0 +1,3 @@
+path = "%LocalAppData%\Programs\AutoHotkey\AutoHotkeyU64.exe"
+path = "%ProgramFiles%\AutoHotkey\AutoHotkeyU64.exe"
+args = %LocalAppData%\Scripts\_html_and_doc.ahk

@@ -1,0 +1,5 @@
+@(REM coding:CP866
+SET "TEMP=%LOCALAPPDATA%\Temp"
+SET "TMP=%LOCALAPPDATA%\Temp"
+)
+%*

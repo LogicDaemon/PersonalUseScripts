@@ -11,9 +11,13 @@ SC STOP edgeupdate
 SC CONFIG edgeupdatem start= demand
 SC CONFIG edgeupdate start= demand
 
-@REM SC STOP "DolbyDAXAPI"
+REM DolbyDAXAPI particularly repeatedly creates
+REM c:\Program Files\Common Files\Dolby\DAX3\RADARHOST\Res.zip,
+REM unpacks it and then deletes, in a tight loop
+SC STOP "DolbyDAXAPI"
 
 FOR %%A IN ( ^
+	DolbyDAXAPI ^
 	"TISmartAmpService" ^
 	"igfxCUIService2.0.0.0" ^
 	"igccservice" ^

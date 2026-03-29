@@ -9,16 +9,15 @@
 ; Possibly with -path subdir also.
 
 config := ProcessCLArgs( {"needADrive": "d"}, 0, True )
-syncScriptArgs := syncProg := ""
+syncScriptArgs := searchTextUnison := ""
 For _, v in config[""] {
-	If (v = "/text")
-		syncProg := Which("unison.exe")
+	If (v = "/text" && !searchTextUnison)
+		searchTextUnison := True
 	Else
 		syncScriptArgs .= " " v
 }
 
-If (!syncProg)
-	EnvSet syncProg, % """" FindUnisonGuiOrText() """"
+EnvSet syncProg, % """" FindUnisonGuiOrText(searchTextUnison) """"
 
 RegRead hostname, HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters, Hostname
 syncScriptPath := A_ScriptDir "\sync_" hostname ".cmd"
@@ -43,37 +42,50 @@ ExitApp
 RunScript(ByRef syncScript, syncScriptArgs := "", runDir := "") {
 	Local
 	If (!FileExist(syncScript))
-    	Throw Exception("Script not found",, syncScript)
+		Throw Exception("Script not found",, syncScript)
 	If (runDir == "")
-    	runDir := A_Temp
+		runDir := A_Temp
 
+	fullCommand = %syncScript% %syncScriptArgs%
+	mintty := ""
+	Try mintty := Which("mintty.exe")
+	If (mintty) {
+		fullCommand := StrReplace(fullCommand, "\", "\\")
+		;fullCommand := StrReplace(fullCommand, "/", "\/")
+		;fullCommand := StrReplace(fullCommand, """", "\""")
+		fullCommand = %mintty% -t "%syncScriptArgs%" -e cmd \/C "%fullCommand%"
+	} Else {
+		fullCommand = %comspec% /C "%syncScript% %syncScriptArgs%"
+	}
 	TrayTip Running script, %SyncScript%, 15, 1
-	Run %comspec% /C "%syncScript% %syncScriptArgs%", %runDir%
-	err := ErrorLevel
-	If (err)
-    	Sleep 3000
+	Run %fullCommand%, %runDir%
+	;Run %comspec% /C "%syncScript% %syncScriptArgs%", %runDir%
+	If (err := ErrorLevel)
+		Sleep 3000
 	TrayTip
 	Return !err
 }
 
-FindUnisonGuiOrText() {
+FindUnisonGuiOrText(textOnly) {
 	Local
-	unisonGUINames := ["unison-text+gui.exe", "unison-gui.exe", "unison-gtk2.exe", "unison-gtk.exe"]
 	textsyncprog := Which("unison.exe")
 	SplitPath textsyncprog,, shimDir
 	If (FileExist(shimPath := shimDir "\unison.shim")) {
-    	unisonShim := ReadScoopShim(shimPath)
-    	textsyncprog := unisonShim["path"]
-    	If (SubStr(textsyncprog, 1, 1) == """" && SubStr(textsyncprog, 0) == """")
-        	textsyncprog := SubStr(textsyncprog, 2, -1)
+		unisonShim := ReadScoopShim(shimPath)
+		textsyncprog := unisonShim["path"]
+		If (SubStr(textsyncprog, 1, 1) == """" && SubStr(textsyncprog, 0) == """")
+			textsyncprog := SubStr(textsyncprog, 2, -1)
 	}
+	If (textOnly)
+		Return textsyncprog
 	If (!textsyncprog)
-    	Throw Exception("Unison not found",, shimPath)
-	
+		Throw Exception("Unison not found",, shimPath)
+
 	SplitPath textsyncprog,, unisonDir
+	unisonGUINames := ["unison-text+gui.exe", "unison-gui.exe", "unison-gtk2.exe", "unison-gtk.exe"]
 	For _, unisonGuiName in unisonGUINames {
-    	If (FileExist(guisyncprog := unisonDir "\" unisonGuiName))
-        	Return guisyncprog
+		If (FileExist(guisyncprog := unisonDir "\" unisonGuiName))
+			Return guisyncprog
 	}
 	Try Return Which(*unisonGUINames)
 	
