@@ -29,14 +29,21 @@ If (FileExist(jdDir "\cfg\uid")) {
 }
 If (!backupFailed)
     SetTimer BackupConfig, 1800000 ; 30 minutes
-For i, jreDirMask in [ ProgramFiles "\Java\jre*"
-                  , FindScoopBaseDir() "\apps\openjdk\current" ] {
-    Loop Files, %jreDirMask%, D
-    {
-        If (FileExist(jreExePath := A_LoopFileFullPath "\bin\javaw.exe"))
-            break
-        jreExePath := ""
-    }
+Loop Files, ProgramFiles "\Java\jre*", D
+{
+    If (FileExist(jreExePath := A_LoopFileFullPath "\bin\javaw.exe"))
+        break
+    jreExePath := ""
+}
+If (!jreExePath) {
+    For _, scoopAppNamePrefix in [ "openjdk", "ojdkbuild" ] {
+        Loop Files, % FindScoopBaseDir() "\apps\" scoopAppNamePrefix "*", D
+        {
+            If (FileExist(jreExePath := A_LoopFileFullPath "\current\bin\javaw.exe"))
+                break
+            jreExePath := ""
+        }
+    } Until jreExePath
 }
 
 If (!jreExePath) {
