@@ -8,3 +8,4 @@ Hotkeys_Custom.ahk
 KeePass_*.ahk
 putty_connect.ahk_*.tsv
 update_aws_cred_post_actions.cmd
+_Distributives.base_dirs@*.txt

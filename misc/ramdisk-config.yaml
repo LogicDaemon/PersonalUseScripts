@@ -1,0 +1,309 @@
+# RAMDisk Linker Configuration
+# Semantics of values:
+# - Root level relative paths: logger issues a warning and the path is resolved against the configuration file directory.
+# - Null/Empty: if source exists and is not a link:
+#   1. create target on RAM
+#   2. rename source to source+".LINKED_{datetime}"
+#   3. create junction at the source path pointing to the RAM target
+# - "?prefix": only process if the source exists (skip unused apps)
+# - "<file": inline that file’s lines as keys at the current level (used for reusable lists like Chrome caches)
+# - ">": override destination target (if value is a string, link to it; if list, link to the first existing path)
+# - ":mkdir": create the empty subdirs
+# - ":defs": reusable definitions (can be referenced with *alias, expanded by yaml parser, ignored by the app)
+# Non-empty non-links get renamed.
+# Files are handled separately: if the source is
+# * a file symlink whose target is on the RAM drive and missing, touch the target on RAM
+# * an existing file, touch the target (on RAM drive or specified by ">"), then rename source, and create file symlink at the source path pointing to the RAM drive
+# * if does not exist, touch the target (on RAM drive or specified by ">"), and create file symlink at the source path pointing to the RAM drive
+
+":exec_pre":
+  - ATTRIB +I "%RAMDrive%\*.*" /S /D /L
+# ":exec_post":
+#   - COMPACT /C "%Log%" /Q
+# ":uselinkstarget": true  # keep existing junction/symlink targets instead of repointing them to RAM
+":env":
+  # Env vars starting with "?" are only set if they are not yet defined or empty
+  # Note that the order of items in the env section is not guaranteed,
+  # so the program must resolve them recursively
+  # but once resolved, the result should be saved to customEnv
+  "?APPDATA": "%USERPROFILE%\\AppData\\Roaming"
+  "?LOCALAPPDATA": "%USERPROFILE%\\AppData\\Local"
+  "?USERPROFILE": "d:\\Users\\LogicDaemon"
+":log": "%RAMDrive%\\RAMDiskLinker.log"  # if relative, base is configDir
+":uselinkstarget": true  # if true, when updating links, do not change the target path, but only create the destination if it doesn't exist
+
+":mkdir":
+  "Temp":
+    "cache":
+    "Diagnostics":
+    "DiagOutputDir":
+    "NvTelemetry_WD":
+    "Outlook Logging":
+    "RivetNetworks":
+      "ImageCache":
+      "Killer\\ActivityLog":
+    "SecuriSyncDiagnosticReports":
+    "NVIDIA Corporation\\NV_Cache":
+
+# System and drivers trash
+"?d:\\elevoc_dnn_kernel.log":
+"?%SystemRoot%\\ServiceProfiles\\LocalService\\AppData\\Local\\Temp\\TfsStore":
+
+# OEM logs
+"?c:\\Intel\\IntelOptaneData":
+"?c:\\OEM\\AcerLogs":
+"?c:\\OEM\\CareCenter":
+"?c:\\OEM\\Preload":
+
+# posix-like cache paths
+"%USERPROFILE%\\.cache":
+  # Target override: base stays on RAM, but subdir is redirected
+  "opencode":
+    ">": "%LOCALAPPDATA%\\opencode\\cache"
+
+  # GPT4All models: link back to first existing model store instead of RAM copy
+  "gpt4all":
+    ">":
+      - "%USERPROFILE%\\GPT4All\\Models"
+      - "d:\\Distributives\\LLMs\\gguf"
+
+"?%USERPROFILE%\\.openjfx\\cache":
+
+# Low rights (LocalLow)
+"%USERPROFILE%\\AppData\\LocalLow":
+  "?webviewdata":
+  "?Sun\\Java\\Deployment":
+    "cache":
+    "tmp":
+    "log":
+
+# SecuriSync spools (only if per-folder .SecuriSync exists)
+"%USERPROFILE%":
+  "?Pictures\\.SecuriSync\\Spool Files":
+  "?Videos\\.SecuriSync\\Spool Files":
+  "?Music\\.SecuriSync\\Spool Files":
+  "?My SecuriSync\\.SecuriSync\\Spool Files":
+
+# AppData\Roaming level (APPDATA)
+"?%APPDATA%\\npm-cache":
+
+"?%APPDATA%\\obs-studio":
+  "crashes":
+  "logs":
+  "profiler_data":
+  "updates":
+
+# Electron-style apps (list mirrors the FOR loop) reuse a common cache list
+":defs":
+  electron_cache: &electron_cache
+    "Cache":
+    "CachedData":
+    "CachedExtensions":
+    "CachedProfilesData":
+    "Code Cache":
+    "Crashpad":
+    "DawnCache":
+    "DawnGraphiteCache":
+    "DawnWebGPUCache":
+    "GPUCache":
+    "GrShaderCache":
+    "logs":
+    "Service Worker\\CacheStorage":
+    "Service Worker\\ScriptCache":
+    "Shared Dictionary\\cache":
+    "Session Storage":
+    "ShaderCache":
+    # "WebStorage":
+
+  chrome_user_data: &chrome_user_data
+    "?User Data":
+      "GraphiteDawnCache":
+      "GrShaderCache":
+      "Default":
+        "<Chrome_Profile_Temporary.txt":
+        "Storage\\ext\\*":
+          "<Chrome_Profile_Temporary.txt":
+      "Profile *":
+        "<Chrome_Profile_Temporary.txt":
+        "Storage\\ext\\*":
+          "<Chrome_Profile_Temporary.txt":
+      "Guest Profile":
+      "?Crashpad":
+      "?ShaderCache":
+
+"%APPDATA%":
+  "?Beyond-All-Reason": *electron_cache
+  "?Code - Insiders": *electron_cache
+  "?Code": *electron_cache
+  "?Cursor": *electron_cache
+  "?discord": *electron_cache
+  "?Dropbox": *electron_cache
+  "?Dropbox\\Partitions\\*": *electron_cache
+  "?Intermedia Unite": *electron_cache
+  "?obs-studio\\plugin_config\\obs-browser": *electron_cache
+  "?obs-studio\\plugin_config\\obs-browser\\obs_profile_cookies\\*": *electron_cache
+  "?update-hub": *electron_cache
+
+# ProgramData / system-level caches created on RAM when present
+"?%ProgramData%\\GOG.com\\Galaxy":
+  "webcache\\common":
+  "lock-files":
+  "logs":
+  "crashdumps":
+"?%ProgramData%\\Dropbox":
+  "Update\\Log":
+"?%ProgramData%\\NVIDIA Corporation":
+  "?NVIDIA app":
+    "Installer\\Logs":
+    "Logs":
+    "MessageBus":
+    "NvContainer":
+    "SessionLogs":
+    "UXD":
+  "CrashDumps":
+  "DisplayDriverRAS":
+  "Drs":
+  "?FrameViewSDK":
+  "GameSessionTelemetry":
+  "?GfnRuntimeSdk":
+  "NVIDIA Broadcast":
+  "?NVIDIA GeForce Experience":
+  "NvProfileUpdaterPlugin":
+  "NvTelemetry":
+  "nvtopps":
+  "NvVAD":
+  "RX":
+  "ShadowPlay":
+  "umdlogs":
+
+# Local caches (%LOCALAPPDATA%) grouped to reduce repetition
+"%LOCALAPPDATA%":
+  "cache":
+  "IconCache.db":
+  "?uv\\cache":
+  "Scripts\\software_update\\Downloader\\.mypy_cache":
+    ">": "%RAMDrive%\\Temp\\.mypy_cache"
+  "?CrashDumps":
+  "?NuGet":
+  "?Google\\YAPF":
+    "Cache":
+  "?gopls":
+  "?go-build":
+  "?goimports":
+  "Microsoft":
+    "?Edge":
+    "?Internet Explorer":
+    "?Media Player":
+    "?Olk":
+      "cache":
+      "logs":
+    "?OneDrive":
+      "logs":
+      "setup\\logs":
+    "Terminal Server Client":
+      "Cache":
+    "Windows":
+      "Explorer":
+      "INetCache":
+      "INetCookies":
+      "Notifications":
+      "WebCache":
+
+  "?AMD":
+    "DxCache":
+    "DxcCache":
+    "OglCache":
+    "VkCache":
+
+  "?NVIDIA Corporation":
+    "?NVIDIA Notification":
+    "?NVIDIA Share":
+      "?CefCache":
+        "Cache":
+        "Code Cache":
+        "GPUCache":
+
+  "?Dropbox":
+    "avatar_cache":
+    "Crashpad":
+    "CrashReports":
+    "events":
+    "exceptions":
+    "metrics":
+    "QuitReports":
+    "logs":
+  "?DropboxUpdate":
+    "CrashReports":
+    "Update\\Download":
+
+  "?Jedi":
+  "?Kalypso Media":
+  "?kdenlive":
+  "?MAGIX":
+  "?MusicMaker":
+  "?VEGAS":
+
+  "?Battle.net":
+    "BrowserCache":
+    "Cache":
+  "?CD Projekt Red":
+    "*\\cache":
+
+  # Steam: create a few cache folders on RAM; then move the whole Steam local tree
+  "?Steam":
+    # Entire Steam folder linked, but also some subdirs are created
+    ":mkdir":
+      "appcache\\httpcache":
+      "depotcache":
+      "dumps":
+      "GPUCache":
+      "htmlcache":
+      "logs":
+
+  "?Programs\\Tor Browser":
+    "Browser\\TorBrowser\\Data\\Browser":
+        "Caches":
+        "profile.*\\storage":
+
+  "?Programs\\jdownloader":
+    "logs":
+    "tmp":
+
+  "?Programs\\TeamSpeak":
+    "config":
+      "crashdumps":
+      "logs":
+      "qtwebengine_cache":
+      "qtwebengine_persistant_storage":
+        "GPUCache":
+        "Platform Notifications":
+        "Session Storage":
+
+  "?EpicGamesLauncher":
+    "Saved\\Config\\CrashReportClient":
+    "Saved\\Logs":
+    "Saved\\webcache_4430":
+
+  "?EpicOnlineServicesUIHelper":
+    "Saved\\Logs":
+
+  "?nomic.ai\\GPT4All":
+
+  # Firefox profiles under LocalAppData
+  "Mozilla\\Firefox\\Profiles\\*":
+
+  # Chrome-based apps: per-app User Data handling
+  "Google\\Chrome": *chrome_user_data
+  "Google\\Chrome Beta": *chrome_user_data
+  "Chromium": *chrome_user_data
+  "Vivaldi": *chrome_user_data
+  "Microsoft\\Olk\\EBWebView": *chrome_user_data
+
+  # Windows AppX caches
+  "Packages\\*":
+    "AC\\INetCache":
+    "AC\\INetHistory":
+    "AC\\Temp":
+    "LocalState\\Cache":
+    "LocalState\\LiveTile":
+    "TempState":
