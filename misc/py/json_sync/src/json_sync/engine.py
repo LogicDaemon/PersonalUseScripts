@@ -1,3 +1,6 @@
+""" Utilities for syncing changes across multiple JSON files
+    based on their differences from previous versions
+"""
 from __future__ import annotations
 import json
 import logging
