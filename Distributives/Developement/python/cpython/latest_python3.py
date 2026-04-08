@@ -422,7 +422,7 @@ def update_progress(
         print()
 
 
-def main() -> Optional[int]:
+def main() -> None:
     """ Main function """
     # get python version in 3.11 format
     pyver = version.parse('.'.join(map(str, sys.version_info[:3])))
@@ -510,7 +510,7 @@ def main() -> Optional[int]:
             # just output the first matching version
             # (should be the latest according to the site layout)
             print(ver)
-            return 0
+            return
 
         src_url = f'https://www.python.org/ftp/python/{ver}/Python-{ver}.tar.xz'  # NOQA: E501
         # src_url = ver.downloads_page_href
@@ -547,9 +547,9 @@ def main() -> Optional[int]:
         break
     else:
         logging.error('No suitable version found')
-        return 1
+        sys.exit(1)
     if args.mode in ['download', 'download_all']:
-        return 0
+        return
     assert 'ver' in locals(), 'the else block should have exited'
     overlay_merged_root = None
     if overlay:
@@ -567,4 +567,4 @@ def main() -> Optional[int]:
 
 if __name__ == '__main__':
     # This is executed when run from the command line
-    sys.exit(main())
+    main()
