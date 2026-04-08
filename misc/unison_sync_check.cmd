@@ -1,12 +1,17 @@
-@REM coding:CP866
+@REM coding:CP1
 :CheckSync
 @IF NOT DEFINED name SET "name=%~nx1"
 @(
 	IF DEFINED filterSyncs (
-		<NUL %unisontext% %* "-auto=false" -fastercheckUNSAFE || SET "sync_%name%=%*"
+		<NUL %unisontext% %* "-auto=false" -fastercheckUNSAFE
 	) ELSE (
 		VERIFY INVALID 2>NUL
-	) || SET "sync_%name%=%*"
+	)
+	IF ERRORLEVEL 1 SET "sync_%name%=%*"
+	IF DEFINED FinishSyncAfterCheck (
+		START "%name%" %comspec% /C "%~dp0unison_finish_syncs.cmd"
+		SET "sync_%name%="
+	)
 	SET name=
 	EXIT /B
 )

@@ -51,7 +51,9 @@ FindScoopBaseDir() {
     Throw Exception("Scoop not found in PATH")
 }
 
-; MsgBox % "Found: " FindScoopBaseDir()
+If (A_ScriptFullPath == A_LineFile) {
+    MsgBox % FindScoopBaseDir()
+}
 #include <ExpandEnvVars>
 #Warn LocalSameAsGlobal, Off
 #include <JSON>

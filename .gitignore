@@ -1,7 +1,9 @@
 **/.mypy_cache/**
-temp-backup-scripts/**
-software_update/**
+/update@*.cmd
 Distributives/Developement/python/cpython/python_versions.html
 Distributives/Soft com freeware/MultiMedia/Codecs/codecguide.com/K-Lite Codec Pack/download.list
-misc/sync_ADerbenev-L-SPB_*.cmd
 misc/hpbx-terraform-login.cmd
+misc/sync_ADerbenev-L-SPB_*.cmd
+misc\software_update\Downloader\download_appcast.deps
+software_update/**
+temp-backup-scripts/**

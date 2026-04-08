@@ -1,0 +1,2 @@
+path = "%LocalAppData%\Programs\scoop\apps\python\current\python.exe"
+args = d:\DevDrive\git_repos\github.com\newren\git-filter-repo\git_filter_repo.py

@@ -1,0 +1,2 @@
+path = "%LocalAppData%\Programs\msys64\usr\bin\bash.exe"
+args = --login -i ~/.local/bin/convert2ansible

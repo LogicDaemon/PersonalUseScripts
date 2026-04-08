@@ -29,6 +29,5 @@ Safe Browsing Network
 Service Worker\CacheStorage
 Service Worker\ScriptCache
 Session Storage
-Site Characteristics Database
 VideoDecodeStats
 WebRTC Logs

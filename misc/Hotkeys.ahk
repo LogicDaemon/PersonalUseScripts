@@ -30,7 +30,7 @@ EnvGet SystemDrive, SystemDrive
 EnvGet SystemRoot, SystemRoot
 laPrograms := LocalAppData "\Programs"
 hotkeys_custom_ahk := FirstExisting( A_ScriptDir "\Hotkeys_Custom." A_USERNAME "@" A_COMPUTERNAME ".ahk"
-    , A_ScriptDir "\Hotkeys_Custom." A_COMPUTERNAME ".ahk"
+    , A_ScriptDir "\Hotkeys_Custom@" A_COMPUTERNAME ".ahk"
     , A_ScriptDir "\Hotkeys_Custom." A_USERNAME ".ahk"
     , A_ScriptDir "\Hotkeys_Custom.ahk" ) ; same order as includes
 
@@ -59,6 +59,7 @@ GroupAdd NoLayoutSwitching, ahk_exe CDViewer\.exe
 
 ;GroupAdd OverrideMultimediaHotkeys, ahk_exe ts3client_win64.exe
 
+scoopDir := FindScoopBaseDir()
 calcexe := FirstExisting(laPrograms "\speedcrunch-0.12-win32\speedcrunch.exe"
     , laPrograms "\calculators\preccalc-32bit\preccalc.exe"
     , SystemRoot "\System32\calc.exe" )
@@ -79,7 +80,6 @@ notepad2exe := FirstExisting(laPrograms "\Total Commander\bin\notepad2.exe"
     , ProgramFiles "\notepad2\notepad2.exe"
     , ProgramFilesx86 "\notepad2\notepad2.exe"
     , ProgramFilesx86 "\Notepad++\notepad++.exe"
-    , LocalAppData "\Programs\VS Code\Code.exe"
     , SystemRoot "\System32\notepad.exe")
 
 AU3_Spy := FirstExisting( AhkExeDir "\AU3_Spy.exe"
@@ -89,9 +89,11 @@ AU3_Spy := FirstExisting( AhkExeDir "\AU3_Spy.exe"
     , laPrograms "\AutoHotkey\WindowSpy.ahk" )
 
 keepassahk := FirstExisting(A_ScriptDir "\KeePass_" A_UserName ".ahk", A_ScriptDir "\KeePass.ahk")
-scoopDir := FindScoopBaseDir()
-If FileExist(weztermexe := scoopDir "\apps\wezterm\current\wezterm-gui.exe") {
+
+If (FileExist(weztermexe := scoopDir "\apps\wezterm\current\wezterm-gui.exe")) {
     shiftTerminalCommand := [weztermexe, "start -- wsl"]
+} Else If (FileExist(alacritty := scoopDir "\apps\alacritty\current\alacritty.exe")) {
+    shiftTerminalCommand := [alacritty, "-T wsl -e wsl"]
 } Else If (FileExist(wtexe := LocalAppData "\Microsoft\WindowsApps\Microsoft.WindowsTerminal_8wekyb3d8bbwe\wt.exe")) {
     FileRead wtSettingsRaw, %LocalAppData%\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
     For i, wtprofile in JSON.Load(wtSettingsRaw).profiles.list {
@@ -104,8 +106,9 @@ If FileExist(weztermexe := scoopDir "\apps\wezterm\current\wezterm-gui.exe") {
     }
     shiftTerminalCommand := wslProfile ? [wtexe, "new-tab -p " . wslProfile] : [wtexe, "new-tab wsl"]
     wtSettingsRaw := wtprofile := wslProfile := ""
-} Else
+} Else {
     shiftTerminalCommand := ["wsl"]
+}
 
 FileAppend,
 (
@@ -126,7 +129,7 @@ FillDelayedRunGroups()
 DllCall("psapi.dll\EmptyWorkingSet", "Int", -1, "Int")
 
 #include *i %A_ScriptDir%\Hotkeys_Custom.%A_USERNAME%@%A_COMPUTERNAME%.ahk
-#include *i %A_ScriptDir%\Hotkeys_Custom.%A_COMPUTERNAME%.ahk
+#include *i %A_ScriptDir%\Hotkeys_Custom@%A_COMPUTERNAME%.ahk
 #include *i %A_ScriptDir%\Hotkeys_Custom.%A_USERNAME%.ahk
 #include *i %A_ScriptDir%\Hotkeys_Custom.ahk
 return
@@ -573,7 +576,7 @@ Local altKey, HotkeysRunDelayed, altMode, altFunc, key, args, hotkeyFunc, OutExt
             , "#!VK54": [A_ScriptDir "\tombo.cmd",,,,7] ;vk54=t #!t
             ;, "#VK55":   [A_AhkPath, A_ScriptDir "\putty_smartact.ahk"]         ;vk55=u #u
             , "#VK56": [vscode] ;vk56=v #v
-            , "#!VK53": [A_ScriptDir "\EmailSelection.ahk",, ""] ;vk53=s #!s
+            ;, "#!VK53": [A_ScriptDir "\EmailSelection.ahk",, ""] ;vk53=s #!s
             , "Browser_Favorites": [A_ScriptDir "\Skype.cmd",,,,7]
             , "Launch_Mail": [A_ScriptDir "\EmailButton.ahk"] }
         ; VK5A=Z, VK51=Q
