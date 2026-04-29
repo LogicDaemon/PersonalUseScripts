@@ -621,6 +621,41 @@ RemoveToolTip:
     ToolTip
 Return
 
+ConditionalTooltip:
+    If (IsFunc(conditionTooltipCallback) && !conditionTooltipCallback.Call())
+        Return
+    ToolTip %conditionalTooltipText%
+    SetTimer RemoveToolTip, -3000
+Return
+
+DelayedConditionalTooltip(ByRef text, conditionCallback, delay := 3000) {
+    Local
+    Global conditionTooltipCallback, conditionalTooltipText
+    conditionTooltipCallback := conditionCallback
+    conditionalTooltipText := text
+    SetTimer ConditionalTooltip, -%delay%
+}
+
+WinWaitOrShowTooltip(ByRef text, delay := 3000, mode := "", ByRef winTitle := "", ByRef winText := "", ByRef excludeTitle := "", ByRef excludeText := "") {
+    If (!mode || mode = "Exist")
+        WinWait %winTitle%, %winText%, %delay%, %excludeTitle%, %excludeText%
+    Else If (mode = "Active")
+        WinWaitActive %winTitle%, %winText%, %delay%, %excludeTitle%, %excludeText%
+    Else If (mode = "NotActive")
+        WinWaitNotActive %winTitle%, %winText%, %delay%, %excludeTitle%, %excludeText%
+    Else If (mode = "Close")
+        WinWaitClose %winTitle%, %winText%, %delay%, %excludeTitle%, %excludeText%
+    If (!ErrorLevel)
+        Return
+    ToolTip %text%
+    SetTimer RemoveToolTip, -3000
+}
+
+DelayedTooltipIfNoWindow(ByRef text, delay := 3000, mode := "", ByRef winTitle := "", ByRef winText := "", ByRef excludeTitle := "", ByRef excludeText := "") {
+    call := Func("WinWaitOrShowTooltip").Bind(text, delay, mode, winTitle, winText, excludeTitle, excludeText)
+    SetTimer % call, -0
+}
+
 ~LShift Up:: SwtichLang(layouts[1]) ; LOCALE_EN := 0x4090409
 ~RShift Up:: SwtichLang(layouts[2]) ; LOCALE_RU := 0x4190419
 SwtichLang(newLocale) {
@@ -803,8 +838,8 @@ RunDelayed(ByRef params*) {
         textAdded := params[1]
         SplitPath textAdded, textAdded
         textAdded .= " " params[2]
-        ToolTip % "Added " textAdded " to launch queue"
-        SetTimer RemoveToolTip, 1000
+        ;ToolTip Added %textAdded% to launch queue
+        ;SetTimer RemoveToolTip, 1000
         Return
     }
     If (!runQueue.Length()) {
@@ -834,36 +869,38 @@ RunDelayed(ByRef params*) {
                     WinRestore
                     WinActivate
                 } Else {
+                    ; #MULTIWIN There is no easy way to check if there are multiple windows, so let's try activating another one...
                     WinActivateBottom %winTitle%
+                    ; WinActivateBottom does not set Last Found Window
+                    WinWaitNotActive,,, 1
                 }
             } Else {
                 WinActivate %winTitle%
             }
-            WinWaitActive %winTitle%,,1
-            If (!ErrorLevel) {
-                currentActiveHWND := WinActive()
+            If (currentActiveHWND := WinActive(winTitle)) {
                 If (lastActiveHWND != currentActiveHWND) {
                     lastActiveHWND := ""
                     Return
                 }
-                ToolTip Activation succeeded but the last window is still active
-                ; If the window was activated, but it's the same as before,
-                ; it means that the activation fails.
+                ; #MULTIWIN and if it fails, assume there is just 1
+                ToolTip Activation succeeded but the same window is still active
             }
-            ; Continuing if activation failed
+            ; Continuing if activation failed (there is no other window of the app)
         }
+        ; Either there are no app windows, just 1 window and it's already active, or it's not exe
         If (cmd[5] == -1) { ; [executable name, args, workdir, options, -1]
             RunAndActivate(cmd*)
         } Else {
             ; [executable name, args, workdir, operation, show]
-            ToolTip % "Starting """ cmd[1] """ through shell"
-            SetTimer RemoveToolTip, 1000
+            ; ToolTip % "Starting """ cmd[1] """ through shell"
+            ; SetTimer RemoveToolTip, 1000
+            DelayedTooltipIfNoWindow("Started " cmd[1] " through shell",, winTitle)
             nprivRun(cmd*)
         }
         Return
     }
     ; Just a string
-    If (!FileExist(cmd)) { ; unknown contents, try to run it as is
+    If (!FileExist(cmd)) { ; unknown string, try to run it as is
         RunAndActivate("", cmd)
         Return
     }
@@ -876,8 +913,10 @@ RunDelayed(ByRef params*) {
         If (state == -1)
             WinRestore
         WinActivate
-        ToolTip % "Activated " cmd
-        SetTimer RemoveToolTip, 1000
+        ; ToolTip % "Activated " cmd
+        ; SetTimer RemoveToolTip, 1000
+        ; DelayedConditionalTooltip("Activated " cmd, Func("WinActive").Bind(winTitle), 1000)
+        DelayedTooltipIfNoWindow("Activated " cmd, 1000, "Active", winTitle)
     } Else {
         cmdAndArgs := ext = "ahk" ? [A_AhkPath, """" cmd """"]
             : ext = "cmd" ? [comspec, " /C """ cmd """"]
@@ -898,18 +937,30 @@ ObjectToText_nocheck(obj) {
 }
 
 RunAndActivate(tgt, ByRef args := "", ByRef wd := "", ByRef options := "") {
+    Local
     If (!wd)
         wd := A_Temp
     If (tgt) {
         If (InStr(tgt, " "))
             tgt = "%tgt%"
-        tgt .= A_Space
+        If (args)
+            tgt .= A_Space
     }
     Run %tgt%%args%, %wd%, %options%, r_PID
-    WinWait ahk_PID %r_PID%,,3
-    If (!ErrorLevel)
-        WinActivate
-    Tooltip Started and activated %tgt%
+    If (r_PID) {
+        WinWait ahk_pid %r_PID%,,3
+        If (ErrorLevel) {
+            Tooltip Started %tgt%%args%
+        } Else If (!WinActive()) {
+            WinActivate
+            Tooltip Started and activated %tgt%%args%
+        } Else {
+            ; Else started and currently active: no need for a tooltip
+            Return
+        }
+    } Else {
+        ToolTip Started %tgt%%args%
+    }
     SetTimer RemoveToolTip, 1000
 }
 
