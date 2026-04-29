@@ -1,0 +1,81 @@
+// Place your tool sets here...
+// Example:
+// {
+// 	"toolSetName": {
+// 		"tools": [
+// 			"someTool",
+// 			"anotherTool"
+// 		],
+// 		"description": "description",
+// 		"icon": "tools"
+// 	}
+// }
+{
+        "base": {
+                "tools": [
+                        "agent",
+                        // "browser",
+                        "edit",
+                        "execute",
+                        "read",
+                        "search",
+                        // "todo",
+                        // "vscode",
+                        "web",
+                        "fetch",
+                        "getAccessibleAtlassianResources",
+                        "getConfluencePage",
+                        "getConfluencePageDescendants",
+                        "getConfluencePageFooterComments",
+                        "getConfluencePageInlineComments",
+                        "getConfluenceSpaces",
+                        "getJiraIssue",
+                        "getJiraIssueRemoteIssueLinks",
+                        "getJiraIssueTypeMetaWithFields",
+                        "getJiraProjectIssueTypesMetadata",
+                        "getPagesInConfluenceSpace",
+                        "getVisibleJiraProjects",
+                        "lookupJiraAccountId",
+                        "search",
+                        "searchConfluenceUsingCql",
+                        "searchJiraIssuesUsingJql",
+                        "get_commit",
+                        "get_file_contents",
+                        "get_latest_release",
+                        "get_tag",
+                        "list_branches",
+                        "list_commits",
+                        "list_tags",
+                        "pull_request_read",
+                        "search_code",
+                        "search_repositories",
+                        "git_blame",
+                        "git_branch",
+                        "git_log_or_diff",
+                        "git_status",
+                        "gitkraken_workspace_list",
+                        "repository_get_file_content",
+                        "pylance-mcp-server",
+                        "pylanceDocString",
+                        "pylanceDocuments",
+                        "pylanceFileSyntaxErrors",
+                        "pylanceImports",
+                        "pylanceInstalledTopLevelModules",
+                        "pylanceInvokeRefactoring",
+                        "pylancePythonEnvironments",
+                        "pylanceRunCodeSnippet",
+                        "pylanceSettings",
+                        "pylanceSyntaxErrors",
+                        "pylanceUpdatePythonEnvironment",
+                        "pylanceWorkspaceRoots",
+                        "pylanceWorkspaceUserFiles",
+                        "renderMermaidDiagram",
+                        "configurePythonEnvironment",
+                        "getPythonEnvironmentInfo",
+                        "getPythonExecutableCommand",
+                        "installPythonPackage"
+                ],
+                "description": "Base toolset",
+                "icon": "tools"
+        }
+}

@@ -204,7 +204,7 @@ return
 ButtonEditList:
 	RunWait, *Edit "%DBFile%"
 	GUI Destroy
-	GoTo GUIStart
+GoTo GUIStart
 
 ; --------------------------------------------------------------------------
 
@@ -222,14 +222,18 @@ WindowInput(CtrlHwnd, GuiEvent, EventInfo, ErrLevel:="") {
 		SearchFor := Eingabe
 		If (SearchFor == "") {
 			Wordlist := StartList
+			count := ""
 		} Else {
 			;Erstellen der Trefferliste
 			hitlist := SearchDB(SearchFor)
-			Wordlist := "|" . (hitlist.Count() == 0 ? "" : FilterJoin("|", hitlist, linesFullContents))
+			count := hitlist.Count()
+			Wordlist := "|" . (count == 0 ? "" : FilterJoin("|", hitlist, linesFullContents))
 		}
-		GuiControl, -Redraw, ListBox1
+		GuiControl -Redraw, ListBox1
 		GuiControl,, ListBox1, %Wordlist%
-		GuiControl, +Redraw, ListBox1
+		If (count)
+			GuiControl Choose, ListBox1, %count%
+		GuiControl +Redraw, ListBox1
 		Choice := 1
 		Direction:=0
 		ModeNr:=1

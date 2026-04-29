@@ -23,7 +23,10 @@ EXIT /B
 	CALL :addContextVariant %1 "%~1-16k" 16384
 	CALL :addContextVariant %1 "%~1-32k" 32768
 	CALL :addContextVariant %1 "%~1-40k" 40960
-	rem CALL :addContextVariant %1 "%~1-128k" 131072
+	CALL :addContextVariant %1 "%~1-64k" 65536
+	CALL :addContextVariant %1 "%~1-80k" 81920
+	CALL :addContextVariant %1 "%~1-96k" 98304
+	CALL :addContextVariant %1 "%~1-128k" 131072
 	EXIT /B
 )
 

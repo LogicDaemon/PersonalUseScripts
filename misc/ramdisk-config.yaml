@@ -54,12 +54,14 @@
 
 # OEM logs
 "?c:\\Intel\\IntelOptaneData":
+"?c:\\Intel\\iGfx":
 "?c:\\OEM\\AcerLogs":
 "?c:\\OEM\\CareCenter":
 "?c:\\OEM\\Preload":
 
 # ProgramData / system-level caches created on RAM when present
 "%ProgramData%":
+  "?Tobii\\Tobii Interaction":
   "?GOG.com\\Galaxy":
     "webcache\\common":
     "lock-files":
@@ -179,6 +181,7 @@
   "?update-hub": *electron_cache
   "?LosslessCut": *electron_cache
   "?Netmarble Launcher_EPIC": *electron_cache
+  "?ollama app.exe\\EBWebView":
   "?omniverse-launcher": *electron_cache
   "?Vortex": *electron_cache
   "?obs-studio":

@@ -101,6 +101,9 @@ If (FileExist(comprDir)) {
         CompactCompressible(A_LoopFileFullPath "\Data")
 }
 
+If (FileExist("D:\Distributives")) {
+    Run DFHL.exe /r /l /q Developement scoop_cache, D:\Distributives, Min
+}
 RunWait DFHL.exe /r /l /q .vscode .vscode-insiders, %USERPROFILE%, Min
 For _, comprDir in [ USERPROFILE "\.vscode"
                    , USERPROFILE "\.vscode-insiders"

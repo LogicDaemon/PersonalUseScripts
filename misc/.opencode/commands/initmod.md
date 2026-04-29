@@ -31,9 +31,10 @@ Exclude:
 - content stored in another file referenced via `opencode.json` `instructions`
 
 Prefer short sections and bullets. If the repo is simple, keep the file small. If the repo is large, specify structural facts to ease search of more specific items.
-If `AGENTS.md` already exists at `/`, improve it in place rather than rewriting . Preserve verified useful guidance, delete fluff or stale claims, and reconcile it with the current codebase.
+If `AGENTS.md` already exists at `/`, improve it in place rather than rewriting. Preserve verified useful guidance, delete fluff or stale claims, and reconcile it with the current codebase.
 $ARGUMENTS
 
-After writing, do a second pass to:
-1. Group the instructions by section.
-2. Deduplicate and remove obvious and unnecessary. Every line should answer: "Would an agent likely miss this without help?" If not, leave it out.
+**AFTER** writing it, do a second edit to:
+1. Remove everything unnecessary from the file, like headers (**Source of Truth**, **Backwards Compatibility**), inconsequential (for the coding) advise ("Treat inputs, secrets, and defaults defined directly in the workflow YAML files as the source of truth.", "Several workflows require Docker on the runner."), adjectives, and adverbs.
+2. Group the instructions by section.
+3. Deduplicate and remove obvious and unnecessary. Every line should answer: "Would an agent likely miss this without help?" If not, leave it out.
