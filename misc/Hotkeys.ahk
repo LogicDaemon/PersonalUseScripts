@@ -883,7 +883,8 @@ RunDelayed(ByRef params*) {
                     Return
                 }
                 ; #MULTIWIN and if it fails, assume there is just 1
-                ToolTip Activation succeeded but the same window is still active
+                ToolTip % "Activation succeeded but the same window is still active. Starting " cmd[1]
+                SetTimer RemoveToolTip, 1000
             }
             ; Continuing if activation failed (there is no other window of the app)
         }

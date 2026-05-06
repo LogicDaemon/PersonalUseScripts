@@ -76,6 +76,10 @@ If (FileExist(ExpandEnvVars("%LocalAppData%\Programs\go")))
 If (FileExist(ExpandEnvVars("%LOCALAPPDATA%\LogicDaemon\Distributives\Developement\Amazon\AWSCLIV2\lastInstalled.txt")))
     RunWait %comspec% /C "%A_ScriptDir%\update_aws_cli.cmd",, Hide
 
+RegRead KLCPVer, HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\KLCodecPack, base_version
+If (KLCPVer)
+    Run "%A_AhkPath%" "%A_ScriptDir%\update_KLCP.ahk"
+
 If (FileExist("%LOCALAPPDATA%\Programs\msys64\ucrt64.exe")) {
     RunWait "%LOCALAPPDATA%\Programs\msys64\ucrt64.exe" pacman -Suy --noconfirm,, Hide
     Run "%LOCALAPPDATA%\Programs\msys64\ucrt64.exe" paccache -r --noconfirm,, Hide

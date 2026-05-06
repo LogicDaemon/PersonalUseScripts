@@ -1,0 +1,8 @@
+":env":
+  # Env vars starting with "?" are only set if they are not yet defined or empty
+  # Note that the order of items in the env section is not guaranteed,
+  # so the program must resolve them recursively
+  # but once resolved, the result should be saved to customEnv
+  "USERPROFILE": "d:\\Users\\LogicDaemon"
+  "APPDATA": "%USERPROFILE%\\AppData\\Roaming"
+  "LOCALAPPDATA": "%USERPROFILE%\\AppData\\Local"

@@ -1,14 +1,20 @@
 _Distributives.base_dirs.auth.txt
 _Distributives.base_dirs.txt
 _Distributives.base_dirs@*.txt
+.vscode/prompts/* task definition.chatmode.md
 alt_browser@*.ahk
 backup_*.cmd
 default_browser@*.ahk
 Hotkeys_Custom.*.ahk
 Hotkeys_Custom.ahk
 Hotkeys_Custom@*.ahk
+hpbx-terraform-login.cmd
+imdisk setup/*.reg
 KeePass_*.ahk
 putty_connect.ahk_*.tsv
-ramdisk-config.*.yaml
+sandbox_*.wsb
+software_update/Downloader/download_appcast.deps
 sync_*.cmd
+sync_*.cmd
+Tasks/*.xml
 update_aws_cred_post_actions.cmd

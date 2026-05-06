@@ -7,7 +7,9 @@
 	) ELSE (
 		VERIFY INVALID 2>NUL
 	)
-	IF ERRORLEVEL 1 SET "sync_%name%=%*"
+	IF ERRORLEVEL 1 (
+		SET "sync_%name%=%*"
+	)
 	IF DEFINED FinishSyncAfterCheck (
 		START "%name%" %comspec% /C "%~dp0unison_finish_syncs.cmd"
 		SET "sync_%name%="

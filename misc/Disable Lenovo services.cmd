@@ -4,13 +4,13 @@ SETLOCAL ENABLEEXTENSIONS
 
 rem LenovoWMService = Lenovo Whisper Mode Service
 FOR %%A IN ( ^
-	LenovoFnAndFunctionKeys ^
-	LenovoProcessManagement ^
-	LenovoVantageService ^
-	LenovoWMService ^
-	logi_lamparray_service ^
-	NahimicService ^
 	UDCService ^
+	LenovoVantageService ^
+	NahimicService ^
+	LenovoWMService ^
+	LenovoProcessManagement ^
+	LenovoFnAndFunctionKeys ^
+	logi_lamparray_service ^
 	) DO @(
 	sc config %%A start= demand
 	sc stop %%A

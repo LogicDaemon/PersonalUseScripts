@@ -1,2 +1,3 @@
 ﻿
 config.json %USERPROFILE%\.config\opencode\config.json
+node_modules link to %LocalAppData%\opencode\.opencode\node_modules

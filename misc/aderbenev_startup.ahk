@@ -3,33 +3,29 @@
 FileEncoding UTF-8
 EnvGet LocalAppData, LocalAppData
 
-selfPID := DllCall("GetCurrentProcessId")
-Process Priority, %selfPID%, H
-
 RunWait "%A_AhkPath%" "%A_ScriptDir%\unlockBDE.ahk"
-Run "%A_AhkPath%" "%A_ScriptDir%\Hotkeys.ahk"
-
+Run DISKPART /S "%A_MyDocuments%\DevDrive\DevDrive-Mount.diskpartscript",, Min
 Run wsl.exe echo init complete,, Min
 
-;Run %comspec% /C "update.cmd", %LocalAppData%\Programs\SysInternals, Min
-;Run "%A_AhkPath%" "%LocalAppData%\Programs\pac\wpad.js update.ahk"
+selfPID := DllCall("GetCurrentProcessId")
+Process Priority, %selfPID%, H
+Run "%A_AhkPath%" "%A_ScriptDir%\Hotkeys.ahk"
 
+Process Priority, %selfPID%, B
+;Run "%A_AhkPath%" "%LocalAppData%\Programs\pac\wpad.js update.ahk"
 Run sc.exe stop AdobeARMservice,, Min
 Run sc.exe config AdobeARMservice start= disabled,, Min
 
-RunWait sc.exe stop NvContainerLocalSystem,, Min
+Run sc.exe stop NvContainerLocalSystem,, Min
 Run sc.exe config NvContainerLocalSystem start= disabled,, Min
 
 GroupAdd _1password, ahk_exe 1password.exe
 WinKill ahk_group _1password
+
 Loop
 {
     Process Close, 1password.exe
 } Until !ErrorLevel
-
-Process Priority, %selfPID%, B
-
-Run DISKPART /S "D:\DevDrive-Mount.diskpartscript",, Min
 
 ProcPri :=  { "LMS.exe": "L"
             , "AeXNSAgent.exe": "L"
@@ -51,7 +47,7 @@ For pid, path in ProcessList("FilterProcess") {
     Process Priority, %pid%, % ProcPri[name]
 }
 
-Run "%A_AhkPath%" "%A_ScriptDir%\nVidia Broadcast.ahk"
+;Run "%A_AhkPath%" "%A_ScriptDir%\nVidia Broadcast.ahk"
 
 ExitApp
 

@@ -13,6 +13,8 @@
   - use `pylanceRunCodeSnippet` instead of shell when it's available
   - In OpenCode on Windows, `bash` tool actually executes `cmd.exe`, which does not support Here-Doc `<<EOF` and `<<<`.
   - *ALWAYS* make backups when updating files without `edit` tool
+    - If the repository uses jujutsu, run `jj st --no-pager` to make the backups
+- When calling subagents, use `Gemini 3.1 Pro (Preview)`, flash for simplier tasks, or GPT-4.1 for a large number of/trivial ones (only 128K context but it's free). Do not use claude models!
 - Do not commit anything to git unless requested to. Before committing, run `git status` and `git diff` to ensure only the intended changes are included
 
 ## If multi-root worspace:
@@ -67,4 +69,4 @@ Do not create the task files right away
   - If it doesn't work:
     1. Update the corrections, remove the failed step from the plan
     2. Undo changes from the failed step (use {`git` or `jj`} {`diff` or `history`})
-- ONLY when the task is done AND you got the user's confirmation, call subagent to append the summary (TL;DR) to the TOP of the file. Make sure it's specific.
+- ONLY when the task is done AND you got the user's confirmation, call subagent to add TL;DR (a brief) to the TOP of the file. Make sure it's specific.

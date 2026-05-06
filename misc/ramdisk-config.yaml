@@ -197,9 +197,10 @@
 "%LOCALAPPDATA%":
   "?cache":
   "?IconCache.db":
-  "?uv\\cache":
+  #"?uv":
+  #  "cache": "d:\\Distributives\\Developement\\python\\uv\\cache"
   "?Scripts\\software_update\\Downloader\\.mypy_cache":
-      ">": "%RAMDrive%\\Temp\\.mypy_cache"
+    ">": "%RAMDrive%\\Temp\\.mypy_cache"
   "?CrashDumps":
   "?NuGet":
   "?Google\\YAPF":
